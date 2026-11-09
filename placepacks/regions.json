@@ -1,0 +1,2436 @@
+{
+ "note": "The 65 regions of the place packs. bbox: west, south, east, north (degrees), from Natural Earth Admin 1 (public domain), for reading a region's slice of the large sources. fips: the US state code of the Census; pruid: the Canadian province code of Statistics Canada.",
+ "regions": [
+  {
+   "id": "us-alabama",
+   "name": "Alabama",
+   "country": "United States",
+   "code": "AL",
+   "fips": "01",
+   "geofabrik": "north-america/us/alabama",
+   "bbox": [
+    -88.486,
+    30.224,
+    -84.898,
+    35.01
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-alaska",
+   "name": "Alaska",
+   "country": "United States",
+   "code": "AK",
+   "fips": "02",
+   "geofabrik": "north-america/us/alaska",
+   "bbox": [
+    -179.143,
+    51.215,
+    179.781,
+    71.412
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-arizona",
+   "name": "Arizona",
+   "country": "United States",
+   "code": "AZ",
+   "fips": "04",
+   "geofabrik": "north-america/us/arizona",
+   "bbox": [
+    -114.822,
+    31.327,
+    -109.047,
+    37.003
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-arkansas",
+   "name": "Arkansas",
+   "country": "United States",
+   "code": "AR",
+   "fips": "05",
+   "geofabrik": "north-america/us/arkansas",
+   "bbox": [
+    -94.618,
+    33.011,
+    -89.667,
+    36.5
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-california",
+   "name": "California",
+   "country": "United States",
+   "code": "CA",
+   "fips": "06",
+   "geofabrik": "north-america/us/california",
+   "bbox": [
+    -124.409,
+    32.532,
+    -114.119,
+    41.999
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-colorado",
+   "name": "Colorado",
+   "country": "United States",
+   "code": "CO",
+   "fips": "08",
+   "geofabrik": "north-america/us/colorado",
+   "bbox": [
+    -109.047,
+    37.0,
+    -102.04,
+    41.0
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-connecticut",
+   "name": "Connecticut",
+   "country": "United States",
+   "code": "CT",
+   "fips": "09",
+   "geofabrik": "north-america/us/connecticut",
+   "bbox": [
+    -73.723,
+    41.002,
+    -71.796,
+    42.054
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-delaware",
+   "name": "Delaware",
+   "country": "United States",
+   "code": "DE",
+   "fips": "10",
+   "geofabrik": "north-america/us/delaware",
+   "bbox": [
+    -75.789,
+    38.454,
+    -75.044,
+    39.838
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-district-of-columbia",
+   "name": "District of Columbia",
+   "country": "United States",
+   "code": "DC",
+   "fips": "11",
+   "geofabrik": "north-america/us/district-of-columbia",
+   "bbox": [
+    -77.12,
+    38.803,
+    -76.909,
+    38.996
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-florida",
+   "name": "Florida",
+   "country": "United States",
+   "code": "FL",
+   "fips": "12",
+   "geofabrik": "north-america/us/florida",
+   "bbox": [
+    -87.625,
+    24.543,
+    -80.032,
+    31.0
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-georgia",
+   "name": "Georgia",
+   "country": "United States",
+   "code": "GA",
+   "fips": "13",
+   "geofabrik": "north-america/us/georgia",
+   "bbox": [
+    -85.606,
+    30.369,
+    -80.836,
+    35.0
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-hawaii",
+   "name": "Hawaii",
+   "country": "United States",
+   "code": "HI",
+   "fips": "15",
+   "geofabrik": "north-america/us/hawaii",
+   "bbox": [
+    -178.304,
+    18.906,
+    -154.814,
+    28.393
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-idaho",
+   "name": "Idaho",
+   "country": "United States",
+   "code": "ID",
+   "fips": "16",
+   "geofabrik": "north-america/us/idaho",
+   "bbox": [
+    -117.215,
+    41.999,
+    -111.05,
+    48.992
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-illinois",
+   "name": "Illinois",
+   "country": "United States",
+   "code": "IL",
+   "fips": "17",
+   "geofabrik": "north-america/us/illinois",
+   "bbox": [
+    -91.519,
+    36.98,
+    -87.019,
+    42.512
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-indiana",
+   "name": "Indiana",
+   "country": "United States",
+   "code": "IN",
+   "fips": "18",
+   "geofabrik": "north-america/us/indiana",
+   "bbox": [
+    -88.112,
+    37.782,
+    -84.784,
+    41.76
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-iowa",
+   "name": "Iowa",
+   "country": "United States",
+   "code": "IA",
+   "fips": "19",
+   "geofabrik": "north-america/us/iowa",
+   "bbox": [
+    -96.638,
+    40.38,
+    -90.14,
+    43.501
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-kansas",
+   "name": "Kansas",
+   "country": "United States",
+   "code": "KS",
+   "fips": "20",
+   "geofabrik": "north-america/us/kansas",
+   "bbox": [
+    -102.051,
+    37.0,
+    -94.612,
+    40.0
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-kentucky",
+   "name": "Kentucky",
+   "country": "United States",
+   "code": "KY",
+   "fips": "21",
+   "geofabrik": "north-america/us/kentucky",
+   "bbox": [
+    -89.578,
+    36.499,
+    -81.965,
+    39.146
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-louisiana",
+   "name": "Louisiana",
+   "country": "United States",
+   "code": "LA",
+   "fips": "22",
+   "geofabrik": "north-america/us/louisiana",
+   "bbox": [
+    -94.043,
+    28.928,
+    -88.811,
+    33.014
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-maine",
+   "name": "Maine",
+   "country": "United States",
+   "code": "ME",
+   "fips": "23",
+   "geofabrik": "north-america/us/maine",
+   "bbox": [
+    -71.085,
+    43.084,
+    -66.977,
+    47.46
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-maryland",
+   "name": "Maryland",
+   "country": "United States",
+   "code": "MD",
+   "fips": "24",
+   "geofabrik": "north-america/us/maryland",
+   "bbox": [
+    -79.486,
+    37.931,
+    -75.044,
+    39.722
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-massachusetts",
+   "name": "Massachusetts",
+   "country": "United States",
+   "code": "MA",
+   "fips": "25",
+   "geofabrik": "north-america/us/massachusetts",
+   "bbox": [
+    -73.507,
+    41.247,
+    -69.925,
+    42.887
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-michigan",
+   "name": "Michigan",
+   "country": "United States",
+   "code": "MI",
+   "fips": "26",
+   "geofabrik": "north-america/us/michigan",
+   "bbox": [
+    -90.412,
+    41.697,
+    -82.145,
+    48.304
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-minnesota",
+   "name": "Minnesota",
+   "country": "United States",
+   "code": "MN",
+   "fips": "27",
+   "geofabrik": "north-america/us/minnesota",
+   "bbox": [
+    -97.229,
+    43.5,
+    -89.499,
+    49.37
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-mississippi",
+   "name": "Mississippi",
+   "country": "United States",
+   "code": "MS",
+   "fips": "28",
+   "geofabrik": "north-america/us/mississippi",
+   "bbox": [
+    -91.657,
+    30.181,
+    -88.088,
+    35.0
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-missouri",
+   "name": "Missouri",
+   "country": "United States",
+   "code": "MO",
+   "fips": "29",
+   "geofabrik": "north-america/us/missouri",
+   "bbox": [
+    -95.768,
+    35.986,
+    -89.124,
+    40.619
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-montana",
+   "name": "Montana",
+   "country": "United States",
+   "code": "MT",
+   "fips": "30",
+   "geofabrik": "north-america/us/montana",
+   "bbox": [
+    -116.049,
+    44.377,
+    -104.039,
+    48.993
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-nebraska",
+   "name": "Nebraska",
+   "country": "United States",
+   "code": "NE",
+   "fips": "31",
+   "geofabrik": "north-america/us/nebraska",
+   "bbox": [
+    -104.054,
+    40.0,
+    -95.317,
+    43.0
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-nevada",
+   "name": "Nevada",
+   "country": "United States",
+   "code": "NV",
+   "fips": "32",
+   "geofabrik": "north-america/us/nevada",
+   "bbox": [
+    -120.001,
+    35.004,
+    -114.042,
+    42.0
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-new-hampshire",
+   "name": "New Hampshire",
+   "country": "United States",
+   "code": "NH",
+   "fips": "33",
+   "geofabrik": "north-america/us/new-hampshire",
+   "bbox": [
+    -72.555,
+    42.702,
+    -70.709,
+    45.304
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-new-jersey",
+   "name": "New Jersey",
+   "country": "United States",
+   "code": "NJ",
+   "fips": "34",
+   "geofabrik": "north-america/us/new-jersey",
+   "bbox": [
+    -75.557,
+    38.926,
+    -73.907,
+    41.356
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-new-mexico",
+   "name": "New Mexico",
+   "country": "United States",
+   "code": "NM",
+   "fips": "35",
+   "geofabrik": "north-america/us/new-mexico",
+   "bbox": [
+    -109.047,
+    31.327,
+    -103.0,
+    37.0
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-new-york",
+   "name": "New York",
+   "country": "United States",
+   "code": "NY",
+   "fips": "36",
+   "geofabrik": "north-america/us/new-york",
+   "bbox": [
+    -79.763,
+    40.501,
+    -71.857,
+    45.009
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-north-carolina",
+   "name": "North Carolina",
+   "country": "United States",
+   "code": "NC",
+   "fips": "37",
+   "geofabrik": "north-america/us/north-carolina",
+   "bbox": [
+    -84.325,
+    33.848,
+    -75.452,
+    36.61
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-north-dakota",
+   "name": "North Dakota",
+   "country": "United States",
+   "code": "ND",
+   "fips": "38",
+   "geofabrik": "north-america/us/north-dakota",
+   "bbox": [
+    -104.048,
+    45.942,
+    -96.556,
+    48.993
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-ohio",
+   "name": "Ohio",
+   "country": "United States",
+   "code": "OH",
+   "fips": "39",
+   "geofabrik": "north-america/us/ohio",
+   "bbox": [
+    -84.823,
+    38.406,
+    -80.52,
+    42.324
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-oklahoma",
+   "name": "Oklahoma",
+   "country": "United States",
+   "code": "OK",
+   "fips": "40",
+   "geofabrik": "north-america/us/oklahoma",
+   "bbox": [
+    -103.001,
+    33.647,
+    -94.439,
+    37.0
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-oregon",
+   "name": "Oregon",
+   "country": "United States",
+   "code": "OR",
+   "fips": "41",
+   "geofabrik": "north-america/us/oregon",
+   "bbox": [
+    -124.567,
+    41.999,
+    -116.456,
+    46.256
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-pennsylvania",
+   "name": "Pennsylvania",
+   "country": "United States",
+   "code": "PA",
+   "fips": "42",
+   "geofabrik": "north-america/us/pennsylvania",
+   "bbox": [
+    -80.52,
+    39.721,
+    -74.699,
+    42.538
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-puerto-rico",
+   "name": "Puerto Rico",
+   "country": "United States",
+   "code": "PR",
+   "fips": "72",
+   "geofabrik": "north-america/us/puerto-rico",
+   "bbox": [
+    -67.938,
+    17.923,
+    -65.251,
+    18.523
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-rhode-island",
+   "name": "Rhode Island",
+   "country": "United States",
+   "code": "RI",
+   "fips": "44",
+   "geofabrik": "north-america/us/rhode-island",
+   "bbox": [
+    -71.878,
+    41.152,
+    -71.122,
+    42.016
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-south-carolina",
+   "name": "South Carolina",
+   "country": "United States",
+   "code": "SC",
+   "fips": "45",
+   "geofabrik": "north-america/us/south-carolina",
+   "bbox": [
+    -83.356,
+    32.033,
+    -78.573,
+    35.218
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-south-dakota",
+   "name": "South Dakota",
+   "country": "United States",
+   "code": "SD",
+   "fips": "46",
+   "geofabrik": "north-america/us/south-dakota",
+   "bbox": [
+    -104.057,
+    42.518,
+    -96.454,
+    45.942
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-tennessee",
+   "name": "Tennessee",
+   "country": "United States",
+   "code": "TN",
+   "fips": "47",
+   "geofabrik": "north-america/us/tennessee",
+   "bbox": [
+    -90.304,
+    34.987,
+    -81.659,
+    36.689
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-texas",
+   "name": "Texas",
+   "country": "United States",
+   "code": "TX",
+   "fips": "48",
+   "geofabrik": "north-america/us/texas",
+   "bbox": [
+    -106.662,
+    25.844,
+    -93.515,
+    36.5
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-utah",
+   "name": "Utah",
+   "country": "United States",
+   "code": "UT",
+   "fips": "49",
+   "geofabrik": "north-america/us/utah",
+   "bbox": [
+    -114.043,
+    37.0,
+    -109.046,
+    42.0
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-vermont",
+   "name": "Vermont",
+   "country": "United States",
+   "code": "VT",
+   "fips": "50",
+   "geofabrik": "north-america/us/vermont",
+   "bbox": [
+    -73.439,
+    42.729,
+    -71.506,
+    45.014
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-virginia",
+   "name": "Virginia",
+   "country": "United States",
+   "code": "VA",
+   "fips": "51",
+   "geofabrik": "north-america/us/virginia",
+   "bbox": [
+    -83.668,
+    36.54,
+    -75.243,
+    39.451
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-washington",
+   "name": "Washington",
+   "country": "United States",
+   "code": "WA",
+   "fips": "53",
+   "geofabrik": "north-america/us/washington",
+   "bbox": [
+    -124.735,
+    45.566,
+    -116.879,
+    48.992
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-west-virginia",
+   "name": "West Virginia",
+   "country": "United States",
+   "code": "WV",
+   "fips": "54",
+   "geofabrik": "north-america/us/west-virginia",
+   "bbox": [
+    -82.637,
+    37.205,
+    -77.735,
+    40.647
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-wisconsin",
+   "name": "Wisconsin",
+   "country": "United States",
+   "code": "WI",
+   "fips": "55",
+   "geofabrik": "north-america/us/wisconsin",
+   "bbox": [
+    -92.902,
+    42.496,
+    -86.251,
+    47.308
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "us-wyoming",
+   "name": "Wyoming",
+   "country": "United States",
+   "code": "WY",
+   "fips": "56",
+   "geofabrik": "north-america/us/wyoming",
+   "bbox": [
+    -111.051,
+    41.0,
+    -104.054,
+    45.0
+   ],
+   "continent": "North America",
+   "cc": "US"
+  },
+  {
+   "id": "ca-alberta",
+   "name": "Alberta",
+   "country": "Canada",
+   "code": "AB",
+   "pruid": "48",
+   "geofabrik": "north-america/canada/alberta",
+   "bbox": [
+    -120.001,
+    48.992,
+    -109.999,
+    60.0
+   ],
+   "continent": "North America",
+   "cc": "CA"
+  },
+  {
+   "id": "ca-british-columbia",
+   "name": "British Columbia",
+   "country": "Canada",
+   "code": "BC",
+   "pruid": "59",
+   "geofabrik": "north-america/canada/british-columbia",
+   "bbox": [
+    -139.06,
+    48.31,
+    -114.037,
+    60.0
+   ],
+   "continent": "North America",
+   "cc": "CA"
+  },
+  {
+   "id": "ca-manitoba",
+   "name": "Manitoba",
+   "country": "Canada",
+   "code": "MB",
+   "pruid": "46",
+   "geofabrik": "north-america/canada/manitoba",
+   "bbox": [
+    -102.002,
+    48.993,
+    -88.947,
+    60.0
+   ],
+   "continent": "North America",
+   "cc": "CA"
+  },
+  {
+   "id": "ca-new-brunswick",
+   "name": "New Brunswick",
+   "country": "Canada",
+   "code": "NB",
+   "pruid": "13",
+   "geofabrik": "north-america/canada/new-brunswick",
+   "bbox": [
+    -69.064,
+    44.606,
+    -63.771,
+    48.075
+   ],
+   "continent": "North America",
+   "cc": "CA"
+  },
+  {
+   "id": "ca-newfoundland-and-labrador",
+   "name": "Newfoundland and Labrador",
+   "country": "Canada",
+   "code": "NL",
+   "pruid": "10",
+   "geofabrik": "north-america/canada/newfoundland-and-labrador",
+   "bbox": [
+    -67.808,
+    46.618,
+    -52.617,
+    60.373
+   ],
+   "continent": "North America",
+   "cc": "CA"
+  },
+  {
+   "id": "ca-northwest-territories",
+   "name": "Northwest Territories",
+   "country": "Canada",
+   "code": "NT",
+   "pruid": "61",
+   "geofabrik": "north-america/canada/northwest-territories",
+   "bbox": [
+    -136.445,
+    60.0,
+    -101.987,
+    78.766
+   ],
+   "continent": "North America",
+   "cc": "CA"
+  },
+  {
+   "id": "ca-nova-scotia",
+   "name": "Nova Scotia",
+   "country": "Canada",
+   "code": "NS",
+   "pruid": "12",
+   "geofabrik": "north-america/canada/nova-scotia",
+   "bbox": [
+    -66.328,
+    43.422,
+    -59.695,
+    47.035
+   ],
+   "continent": "North America",
+   "cc": "CA"
+  },
+  {
+   "id": "ca-nunavut",
+   "name": "Nunavut",
+   "country": "Canada",
+   "code": "NU",
+   "pruid": "62",
+   "geofabrik": "north-america/canada/nunavut",
+   "bbox": [
+    -120.681,
+    51.92,
+    -61.086,
+    83.117
+   ],
+   "continent": "North America",
+   "cc": "CA"
+  },
+  {
+   "id": "ca-ontario",
+   "name": "Ontario",
+   "country": "Canada",
+   "code": "ON",
+   "pruid": "35",
+   "geofabrik": "north-america/canada/ontario",
+   "bbox": [
+    -95.161,
+    41.669,
+    -74.346,
+    56.861
+   ],
+   "continent": "North America",
+   "cc": "CA"
+  },
+  {
+   "id": "ca-prince-edward-island",
+   "name": "Prince Edward Island",
+   "country": "Canada",
+   "code": "PE",
+   "pruid": "11",
+   "geofabrik": "north-america/canada/prince-edward-island",
+   "bbox": [
+    -64.417,
+    45.951,
+    -61.977,
+    47.067
+   ],
+   "continent": "North America",
+   "cc": "CA"
+  },
+  {
+   "id": "ca-quebec",
+   "name": "Quebec",
+   "country": "Canada",
+   "code": "QC",
+   "pruid": "24",
+   "geofabrik": "north-america/canada/quebec",
+   "bbox": [
+    -79.766,
+    44.999,
+    -57.1,
+    62.594
+   ],
+   "continent": "North America",
+   "cc": "CA"
+  },
+  {
+   "id": "ca-saskatchewan",
+   "name": "Saskatchewan",
+   "country": "Canada",
+   "code": "SK",
+   "pruid": "47",
+   "geofabrik": "north-america/canada/saskatchewan",
+   "bbox": [
+    -110.0,
+    48.993,
+    -101.364,
+    60.0
+   ],
+   "continent": "North America",
+   "cc": "CA"
+  },
+  {
+   "id": "ca-yukon",
+   "name": "Yukon",
+   "country": "Canada",
+   "code": "YT",
+   "pruid": "60",
+   "geofabrik": "north-america/canada/yukon",
+   "bbox": [
+    -141.006,
+    60.0,
+    -123.819,
+    69.654
+   ],
+   "continent": "North America",
+   "cc": "CA"
+  },
+  {
+   "id": "gb-england",
+   "name": "England",
+   "country": "United Kingdom",
+   "cc": "GB",
+   "code": "GB",
+   "continent": "Europe",
+   "geofabrik": "europe/united-kingdom/england",
+   "bbox": [
+    -13.69,
+    49.91,
+    1.771,
+    60.848
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "gb-scotland",
+   "name": "Scotland",
+   "country": "United Kingdom",
+   "cc": "GB",
+   "code": "GB",
+   "continent": "Europe",
+   "geofabrik": "europe/united-kingdom/scotland",
+   "bbox": [
+    -13.69,
+    49.91,
+    1.771,
+    60.848
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "gb-wales",
+   "name": "Wales",
+   "country": "United Kingdom",
+   "cc": "GB",
+   "code": "GB",
+   "continent": "Europe",
+   "geofabrik": "europe/united-kingdom/wales",
+   "bbox": [
+    -13.69,
+    49.91,
+    1.771,
+    60.848
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "ie-ireland-and-northern-ireland",
+   "name": "Ireland and Northern Ireland",
+   "country": "Ireland",
+   "cc": "IE",
+   "code": "IE",
+   "continent": "Europe",
+   "geofabrik": "europe/ireland-and-northern-ireland",
+   "bbox": [
+    -10.478,
+    51.446,
+    -5.4308,
+    55.386
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-alsace",
+   "name": "Alsace",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/alsace",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-aquitaine",
+   "name": "Aquitaine",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/aquitaine",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-auvergne",
+   "name": "Auvergne",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/auvergne",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-basse-normandie",
+   "name": "Basse Normandie",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/basse-normandie",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-bourgogne",
+   "name": "Bourgogne",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/bourgogne",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-bretagne",
+   "name": "Bretagne",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/bretagne",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-centre",
+   "name": "Centre",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/centre",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-champagne-ardenne",
+   "name": "Champagne Ardenne",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/champagne-ardenne",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-corse",
+   "name": "Corse",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/corse",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-franche-comte",
+   "name": "Franche Comte",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/franche-comte",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-haute-normandie",
+   "name": "Haute Normandie",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/haute-normandie",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-ile-de-france",
+   "name": "Ile De France",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/ile-de-france",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-languedoc-roussillon",
+   "name": "Languedoc Roussillon",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/languedoc-roussillon",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-limousin",
+   "name": "Limousin",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/limousin",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-lorraine",
+   "name": "Lorraine",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/lorraine",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-midi-pyrenees",
+   "name": "Midi Pyrenees",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/midi-pyrenees",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-nord-pas-de-calais",
+   "name": "Nord Pas De Calais",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/nord-pas-de-calais",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-pays-de-la-loire",
+   "name": "Pays De La Loire",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/pays-de-la-loire",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-picardie",
+   "name": "Picardie",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/picardie",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-poitou-charentes",
+   "name": "Poitou Charentes",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/poitou-charentes",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-provence-alpes-cote-d-azur",
+   "name": "Provence Alpes Cote D Azur",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/provence-alpes-cote-d-azur",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fr-rhone-alpes",
+   "name": "Rhone Alpes",
+   "country": "France",
+   "cc": "FR",
+   "code": "FR",
+   "continent": "Europe",
+   "geofabrik": "europe/france/rhone-alpes",
+   "bbox": [
+    -5.133,
+    41.366,
+    9.56,
+    51.087
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "be-belgium",
+   "name": "Belgium",
+   "country": "Belgium",
+   "cc": "BE",
+   "code": "BE",
+   "continent": "Europe",
+   "geofabrik": "europe/belgium",
+   "bbox": [
+    2.522,
+    49.499,
+    6.375,
+    51.496
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "nl-netherlands",
+   "name": "Netherlands",
+   "country": "Netherlands",
+   "cc": "NL",
+   "code": "NL",
+   "continent": "Europe",
+   "geofabrik": "europe/netherlands",
+   "bbox": [
+    3.349,
+    50.75,
+    7.195,
+    53.558
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "lu-luxembourg",
+   "name": "Luxembourg",
+   "country": "Luxembourg",
+   "cc": "LU",
+   "code": "LU",
+   "continent": "Europe",
+   "geofabrik": "europe/luxembourg",
+   "bbox": [
+    5.715,
+    49.441,
+    6.503,
+    50.175
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-baden-wuerttemberg",
+   "name": "Baden Wuerttemberg",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/baden-wuerttemberg",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-bayern",
+   "name": "Bayern",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/bayern",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-berlin",
+   "name": "Berlin",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/berlin",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-brandenburg",
+   "name": "Brandenburg",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/brandenburg",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-bremen",
+   "name": "Bremen",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/bremen",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-hamburg",
+   "name": "Hamburg",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/hamburg",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-hessen",
+   "name": "Hessen",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/hessen",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-mecklenburg-vorpommern",
+   "name": "Mecklenburg Vorpommern",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/mecklenburg-vorpommern",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-niedersachsen",
+   "name": "Niedersachsen",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/niedersachsen",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-nordrhein-westfalen",
+   "name": "Nordrhein Westfalen",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/nordrhein-westfalen",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-rheinland-pfalz",
+   "name": "Rheinland Pfalz",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/rheinland-pfalz",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-saarland",
+   "name": "Saarland",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/saarland",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-sachsen",
+   "name": "Sachsen",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/sachsen",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-sachsen-anhalt",
+   "name": "Sachsen Anhalt",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/sachsen-anhalt",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-schleswig-holstein",
+   "name": "Schleswig Holstein",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/schleswig-holstein",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "de-thueringen",
+   "name": "Thueringen",
+   "country": "Germany",
+   "cc": "DE",
+   "code": "DE",
+   "continent": "Europe",
+   "geofabrik": "europe/germany/thueringen",
+   "bbox": [
+    5.853,
+    47.271,
+    15.022,
+    55.065
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "ch-switzerland",
+   "name": "Switzerland",
+   "country": "Switzerland",
+   "cc": "CH",
+   "code": "CH",
+   "continent": "Europe",
+   "geofabrik": "europe/switzerland",
+   "bbox": [
+    5.958,
+    45.821,
+    10.466,
+    47.795
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "at-austria",
+   "name": "Austria",
+   "country": "Austria",
+   "cc": "AT",
+   "code": "AT",
+   "continent": "Europe",
+   "geofabrik": "europe/austria",
+   "bbox": [
+    9.521,
+    46.379,
+    17.148,
+    49.006
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-andalucia",
+   "name": "Andalucia",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/andalucia",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-aragon",
+   "name": "Aragon",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/aragon",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-asturias",
+   "name": "Asturias",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/asturias",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-cantabria",
+   "name": "Cantabria",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/cantabria",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-castilla-la-mancha",
+   "name": "Castilla La Mancha",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/castilla-la-mancha",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-castilla-y-leon",
+   "name": "Castilla Y Leon",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/castilla-y-leon",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-cataluna",
+   "name": "Cataluna",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/cataluna",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-ceuta",
+   "name": "Ceuta",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/ceuta",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-extremadura",
+   "name": "Extremadura",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/extremadura",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-galicia",
+   "name": "Galicia",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/galicia",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-islas-baleares",
+   "name": "Islas Baleares",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/islas-baleares",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-la-rioja",
+   "name": "La Rioja",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/la-rioja",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-madrid",
+   "name": "Madrid",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/madrid",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-melilla",
+   "name": "Melilla",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/melilla",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-murcia",
+   "name": "Murcia",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/murcia",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-navarra",
+   "name": "Navarra",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/navarra",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-pais-vasco",
+   "name": "Pais Vasco",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/pais-vasco",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-valencia",
+   "name": "Valencia",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "europe/spain/valencia",
+   "bbox": [
+    -18.167,
+    27.642,
+    4.337,
+    43.791
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "pt-portugal",
+   "name": "Portugal",
+   "country": "Portugal",
+   "cc": "PT",
+   "code": "PT",
+   "continent": "Europe",
+   "geofabrik": "europe/portugal",
+   "bbox": [
+    -31.285,
+    30.029,
+    -6.206,
+    42.154
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "it-centro",
+   "name": "Centro",
+   "country": "Italy",
+   "cc": "IT",
+   "code": "IT",
+   "continent": "Europe",
+   "geofabrik": "europe/italy/centro",
+   "bbox": [
+    6.603,
+    35.489,
+    18.516,
+    47.085
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "it-isole",
+   "name": "Isole",
+   "country": "Italy",
+   "cc": "IT",
+   "code": "IT",
+   "continent": "Europe",
+   "geofabrik": "europe/italy/isole",
+   "bbox": [
+    6.603,
+    35.489,
+    18.516,
+    47.085
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "it-nord-est",
+   "name": "Nord Est",
+   "country": "Italy",
+   "cc": "IT",
+   "code": "IT",
+   "continent": "Europe",
+   "geofabrik": "europe/italy/nord-est",
+   "bbox": [
+    6.603,
+    35.489,
+    18.516,
+    47.085
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "it-nord-ovest",
+   "name": "Nord Ovest",
+   "country": "Italy",
+   "cc": "IT",
+   "code": "IT",
+   "continent": "Europe",
+   "geofabrik": "europe/italy/nord-ovest",
+   "bbox": [
+    6.603,
+    35.489,
+    18.516,
+    47.085
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "it-sud",
+   "name": "Sud",
+   "country": "Italy",
+   "cc": "IT",
+   "code": "IT",
+   "continent": "Europe",
+   "geofabrik": "europe/italy/sud",
+   "bbox": [
+    6.603,
+    35.489,
+    18.516,
+    47.085
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "dk-denmark",
+   "name": "Denmark",
+   "country": "Denmark",
+   "cc": "DK",
+   "code": "DK",
+   "continent": "Europe",
+   "geofabrik": "europe/denmark",
+   "bbox": [
+    8.095,
+    54.569,
+    15.151,
+    57.751
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "no-norway",
+   "name": "Norway",
+   "country": "Norway",
+   "cc": "NO",
+   "code": "NO",
+   "continent": "Europe",
+   "geofabrik": "europe/norway",
+   "bbox": [
+    -9.117,
+    57.993,
+    31.077,
+    71.178
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "se-sweden",
+   "name": "Sweden",
+   "country": "Sweden",
+   "cc": "SE",
+   "code": "SE",
+   "continent": "Europe",
+   "geofabrik": "europe/sweden",
+   "bbox": [
+    11.108,
+    55.345,
+    24.163,
+    69.036
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "fi-finland",
+   "name": "Finland",
+   "country": "Finland",
+   "cc": "FI",
+   "code": "FI",
+   "continent": "Europe",
+   "geofabrik": "europe/finland",
+   "bbox": [
+    20.623,
+    59.813,
+    31.57,
+    70.075
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "is-iceland",
+   "name": "Iceland",
+   "country": "Iceland",
+   "cc": "IS",
+   "code": "IS",
+   "continent": "Europe",
+   "geofabrik": "europe/iceland",
+   "bbox": [
+    -24.54,
+    63.397,
+    -13.508,
+    66.564
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "au-australia",
+   "name": "Australia",
+   "country": "Australia",
+   "cc": "AU",
+   "code": "AU",
+   "continent": "Oceania",
+   "geofabrik": "australia-oceania/australia",
+   "bbox": [
+    112.919,
+    -43.641,
+    153.631,
+    -9.24
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "nz-new-zealand",
+   "name": "New Zealand",
+   "country": "New Zealand",
+   "cc": "NZ",
+   "code": "NZ",
+   "continent": "Oceania",
+   "geofabrik": "australia-oceania/new-zealand",
+   "bbox": [
+    166.469,
+    -47.273,
+    178.564,
+    -34.147
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "jp-chubu",
+   "name": "Chubu",
+   "country": "Japan",
+   "cc": "JP",
+   "code": "JP",
+   "continent": "Asia",
+   "geofabrik": "asia/japan/chubu",
+   "bbox": [
+    122.939,
+    24.258,
+    145.825,
+    45.516
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "jp-chugoku",
+   "name": "Chugoku",
+   "country": "Japan",
+   "cc": "JP",
+   "code": "JP",
+   "continent": "Asia",
+   "geofabrik": "asia/japan/chugoku",
+   "bbox": [
+    122.939,
+    24.258,
+    145.825,
+    45.516
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "jp-hokkaido",
+   "name": "Hokkaido",
+   "country": "Japan",
+   "cc": "JP",
+   "code": "JP",
+   "continent": "Asia",
+   "geofabrik": "asia/japan/hokkaido",
+   "bbox": [
+    122.939,
+    24.258,
+    145.825,
+    45.516
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "jp-kansai",
+   "name": "Kansai",
+   "country": "Japan",
+   "cc": "JP",
+   "code": "JP",
+   "continent": "Asia",
+   "geofabrik": "asia/japan/kansai",
+   "bbox": [
+    122.939,
+    24.258,
+    145.825,
+    45.516
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "jp-kanto",
+   "name": "Kanto",
+   "country": "Japan",
+   "cc": "JP",
+   "code": "JP",
+   "continent": "Asia",
+   "geofabrik": "asia/japan/kanto",
+   "bbox": [
+    122.939,
+    24.258,
+    145.825,
+    45.516
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "jp-kyushu",
+   "name": "Kyushu",
+   "country": "Japan",
+   "cc": "JP",
+   "code": "JP",
+   "continent": "Asia",
+   "geofabrik": "asia/japan/kyushu",
+   "bbox": [
+    122.939,
+    24.258,
+    145.825,
+    45.516
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "jp-shikoku",
+   "name": "Shikoku",
+   "country": "Japan",
+   "cc": "JP",
+   "code": "JP",
+   "continent": "Asia",
+   "geofabrik": "asia/japan/shikoku",
+   "bbox": [
+    122.939,
+    24.258,
+    145.825,
+    45.516
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "jp-tohoku",
+   "name": "Tohoku",
+   "country": "Japan",
+   "cc": "JP",
+   "code": "JP",
+   "continent": "Asia",
+   "geofabrik": "asia/japan/tohoku",
+   "bbox": [
+    122.939,
+    24.258,
+    145.825,
+    45.516
+   ],
+   "bbox_note": "the country's box; refined from the extract at the build"
+  },
+  {
+   "id": "es-canarias",
+   "name": "Canarias",
+   "country": "Spain",
+   "cc": "ES",
+   "code": "ES",
+   "continent": "Europe",
+   "geofabrik": "africa/canary-islands",
+   "bbox": [
+    -18.17,
+    27.63,
+    -13.42,
+    29.42
+   ]
+  }
+ ]
+}

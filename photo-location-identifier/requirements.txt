@@ -1,0 +1,3 @@
+# What Photo Location Identifier needs to run from source (Python 3.12). placepacks is in this repository, one folder up.
+wxPython>=4.2.2,<4.3      # wxWindows Library Licence
+Pillow>=10.4              # MIT-CMU (HPND)

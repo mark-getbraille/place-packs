@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+work/
+out/
+national/
+national-split/
+national-whole/
+previous/
+seed/
+dist/
+*.partial
+*.osmpack
+!tests/data/*.osmpack

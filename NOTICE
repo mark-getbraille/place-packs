@@ -1,0 +1,22 @@
+Place packs: notices of the data sources
+
+Foursquare Open Source Places
+Copyright 2024 Foursquare Labs, Inc.
+Licensed under the Apache License, Version 2.0 (LICENSES/Apache-2.0.txt). The
+"extra" packs contain a selection of its places (names, categories, positions,
+and the dates they were created and closed), changed by the place-packs build:
+only the places inside each region, and their categories mapped to a few
+classes.
+
+Overture Maps Foundation places
+Places data from the Overture Maps Foundation (overturemaps.org), under the
+Community Data License Agreement - Permissive 2.0 (LICENSES/CDLA-Permissive-2.0.txt);
+some of its sources are under the Apache License 2.0.
+
+OpenStreetMap
+(c) OpenStreetMap contributors. The OpenStreetMap layer of each pack is
+available under the Open Database License 1.0 (LICENSES/ODbL-1.0.txt):
+https://www.openstreetmap.org/copyright
+
+The attribution of every other source is in SOURCES.md and in each pack's
+"sources" table.

@@ -1,0 +1,1249 @@
+{
+ "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
+ "settings": {
+  "tiger_year": "2025",
+  "tiger_seed_years": [
+   "2011",
+   "2014",
+   "2017",
+   "2020",
+   "2023"
+  ],
+  "nad_release": "20",
+  "nad_seed_releases": [],
+  "overture_release": "2026-10-22.0",
+  "overture_seed_releases": [],
+  "fsq_release": "2026-10-08",
+  "nces_year": "2324"
+ },
+ "licences": {
+  "ODbL-1.0": {
+   "name": "Open Database License 1.0",
+   "url": "https://opendatacommons.org/licenses/odbl/1-0/",
+   "file": "LICENSES/ODbL-1.0.txt"
+  },
+  "CDLA-Permissive-2.0": {
+   "name": "Community Data License Agreement - Permissive 2.0",
+   "url": "https://cdla.dev/permissive-2-0/",
+   "file": "LICENSES/CDLA-Permissive-2.0.txt"
+  },
+  "Apache-2.0": {
+   "name": "Apache License 2.0",
+   "url": "https://www.apache.org/licenses/LICENSE-2.0",
+   "file": "LICENSES/Apache-2.0.txt"
+  },
+  "OGL-Canada-2.0": {
+   "name": "Open Government Licence - Canada 2.0",
+   "url": "https://open.canada.ca/en/open-government-licence-canada",
+   "file": "LICENSES/OGL-Canada-2.0.txt"
+  },
+  "CC0-1.0": {
+   "name": "Creative Commons Zero 1.0 (public domain dedication)",
+   "url": "https://creativecommons.org/publicdomain/zero/1.0/",
+   "file": "LICENSES/CC0-1.0.txt"
+  },
+  "CC-BY-4.0": {
+   "name": "Creative Commons Attribution 4.0",
+   "url": "https://creativecommons.org/licenses/by/4.0/",
+   "file": "LICENSES/CC-BY-4.0.txt"
+  },
+  "US-Government-Work": {
+   "name": "Public domain: a work of the United States Government (17 U.S.C. 105)",
+   "url": "https://www.usa.gov/government-works",
+   "file": ""
+  },
+  "per-feed-open": {
+   "name": "Each feed's own open licence (Creative Commons BY or zero, ODC-By, PDDL, OGL-Canada, US government works), listed in the pack",
+   "url": "https://mobilitydatabase.org",
+   "file": ""
+  },
+  "per-source-open": {
+   "name": "Each source's own open licence (public domain, CC0, CC BY, ODC-By, OGL), listed in the pack; share-alike and non-commercial sources are left out",
+   "url": "https://openaddresses.io",
+   "file": ""
+  },
+  "OGL-UK-3.0": {
+   "name": "Open Government Licence v3.0 (UK)",
+   "url": "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+   "file": "LICENSES/OGL-UK-3.0.txt"
+  },
+  "etalab-2.0": {
+   "name": "Licence Ouverte / Open Licence 2.0 (Etalab)",
+   "url": "https://www.etalab.gouv.fr/licence-ouverte-open-licence/",
+   "file": "LICENSES/etalab-2.0.txt"
+  }
+ },
+ "accepted": [
+  {
+   "id": "osm",
+   "name": "OpenStreetMap",
+   "short": "OpenStreetMap",
+   "part": "core",
+   "countries": [
+    "US",
+    "CA",
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "ODbL-1.0",
+   "attribution": "© OpenStreetMap contributors, available under the Open Database License (ODbL) 1.0: https://www.openstreetmap.org/copyright",
+   "url": "https://www.openstreetmap.org",
+   "reader": "osm",
+   "fetch": {
+    "method": "http",
+    "url": "https://download.geofabrik.de/{geofabrik}-latest.osm.pbf",
+    "md5": true,
+    "pause": 30,
+    "file": "extract.osm.pbf"
+   },
+   "history": "From the first build (November 2026) on. OpenStreetMap's full history is open (ODbL), but per-state history extracts need an OpenStreetMap login at Geofabrik and the full planet history is about 150 GB, so it is not used."
+  },
+  {
+   "id": "nad",
+   "name": "National Address Database (USDOT)",
+   "short": "the National Address Database",
+   "part": "core",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Contains address points from the U.S. Department of Transportation's National Address Database, compiled from state, county, city and tribal addressing authorities. Not for use as a mailing list.",
+   "url": "https://www.transportation.gov/gis/national-address-database",
+   "reader": "tabular",
+   "kind": "addresses",
+   "fetch": {
+    "method": "national",
+    "url": "https://nationaladdressdata.s3.amazonaws.com/NAD_r{nad_release}_TXT.zip",
+    "split_column": "State",
+    "verify": true
+   },
+   "member": "*.txt",
+   "columns": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "number": "AddNo_Full",
+    "street": "StNam_Full",
+    "city": {
+     "first_of": [
+      "Post_City",
+      "Inc_Muni"
+     ]
+    }
+   },
+   "filter": {
+    "column": "State",
+    "equals": "{code}"
+   },
+   "exclude": {
+    "column": "State",
+    "values": [
+     "HI",
+     "MI",
+     "MN",
+     "NH",
+     "OR",
+     "SC",
+     "SD",
+     "CO",
+     "IL",
+     "KS",
+     "MD",
+     "ND"
+    ]
+   },
+   "history": "From the first build on; earlier NAD releases are added (nad_seed_releases) only if USDOT keeps them openly downloadable.",
+   "notes": "USDOT marks the data of HI, MI, MN, NH, OR, SC and SD, and parts of CO, IL, KS, MD and ND, as possibly not public domain; those states are left out until their terms are checked. State laws forbid using it as a mailing list; the packs are for naming places in pictures."
+  },
+  {
+   "id": "oda",
+   "name": "Open Database of Addresses (Statistics Canada)",
+   "short": "Statistics Canada's Open Database of Addresses",
+   "part": "core",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Statistics Canada, The Open Database of Addresses, and the local authorities listed in its documentation).",
+   "url": "https://www.statcan.gc.ca/en/lode/databases/oda",
+   "reader": "tabular",
+   "kind": "addresses",
+   "fetch": {
+    "method": "http",
+    "url": "https://www150.statcan.gc.ca/n1/pub/46-26-0001/2021001/ODA_{code}_v1.zip",
+    "verify": true
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "number": "street_no",
+    "street": "street",
+    "city": {
+     "first_of": [
+      "city",
+      "csdname"
+     ]
+    }
+   },
+   "history": "One release (2021); later releases are merged as they come."
+  },
+  {
+   "id": "openaddresses",
+   "name": "OpenAddresses",
+   "short": "OpenAddresses",
+   "part": "core",
+   "countries": [
+    "US",
+    "CA"
+   ],
+   "licence": "per-source-open",
+   "attribution": "Address data from OpenAddresses (openaddresses.io) and the sources listed in the pack, each under its own licence.",
+   "url": "https://openaddresses.io",
+   "reader": "tabular",
+   "kind": "addresses",
+   "fetch": {
+    "method": "manual",
+    "folder": "inputs/openaddresses/{id}"
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "LAT",
+    "lon": "LON",
+    "number": "NUMBER",
+    "street": "STREET",
+    "city": {
+     "first_of": [
+      "CITY",
+      "DISTRICT"
+     ]
+    }
+   },
+   "history": "From the first build on; OpenAddresses keeps past runs, but its downloads need an account, so they are not fetched automatically.",
+   "notes": "Only sources whose licence is public domain, CC0, CC BY, ODC-By or OGL-type are used (allowed_licences); share-alike and non-commercial sources are left out. Mainly for the states the NAD leaves out. Put the source's CSV and its JSON (with the licence) in inputs/openaddresses/<region id>/."
+  },
+  {
+   "id": "census-places",
+   "name": "US Census Bureau TIGER/Line places",
+   "short": "the US Census Bureau",
+   "part": "core",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Boundaries from the U.S. Census Bureau's TIGER/Line Shapefiles (public domain).",
+   "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html",
+   "reader": "shapes",
+   "kind": "areas",
+   "cls": "town",
+   "fetch": {
+    "method": "http",
+    "url": "https://www2.census.gov/geo/tiger/TIGER{tiger_year}/PLACE/tl_{tiger_year}_{fips}_place.zip"
+   },
+   "fields": {
+    "name": "NAME",
+    "key": "GEOID"
+   },
+   "history": "Yearly releases; the current one (seed years possible like the address ranges)."
+  },
+  {
+   "id": "census-cousub",
+   "name": "US Census Bureau TIGER/Line county subdivisions",
+   "short": "the US Census Bureau",
+   "part": "core",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Boundaries from the U.S. Census Bureau's TIGER/Line Shapefiles (public domain).",
+   "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html",
+   "reader": "shapes",
+   "kind": "areas",
+   "cls": "town",
+   "fetch": {
+    "method": "http",
+    "url": "https://www2.census.gov/geo/tiger/TIGER{tiger_year}/COUSUB/tl_{tiger_year}_{fips}_cousub.zip"
+   },
+   "fields": {
+    "name": "NAME",
+    "key": "GEOID"
+   },
+   "history": "Yearly releases; the current one."
+  },
+  {
+   "id": "census-zcta",
+   "name": "US Census Bureau ZIP Code Tabulation Areas",
+   "short": "the US Census Bureau",
+   "part": "core",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "ZIP Code Tabulation Areas from the U.S. Census Bureau's TIGER/Line Shapefiles (public domain).",
+   "url": "https://www.census.gov/programs-surveys/geography/guidance/geo-areas/zctas.html",
+   "reader": "shapes",
+   "kind": "areas",
+   "cls": "zip",
+   "name_format": "the {} area",
+   "fetch": {
+    "method": "national",
+    "url": "https://www2.census.gov/geo/tiger/TIGER{tiger_year}/ZCTA520/tl_{tiger_year}_us_zcta520.zip"
+   },
+   "fields": {
+    "name": "ZCTA5CE20",
+    "key": "GEOID20"
+   },
+   "history": "The 2020 areas (they change once a decade)."
+  },
+  {
+   "id": "tiger-addrfeat",
+   "name": "US Census Bureau TIGER/Line address ranges",
+   "short": "the US Census Bureau's address ranges",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Street names and address ranges from the U.S. Census Bureau's TIGER/Line Shapefiles (public domain).",
+   "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html",
+   "reader": "shapes",
+   "kind": "ranges",
+   "fetch": {
+    "method": "tiger_counties",
+    "url": "https://www2.census.gov/geo/tiger/TIGER{tiger_year}/ADDRFEAT/",
+    "prefix": "tl_{tiger_year}_{fips}",
+    "suffix": "_addrfeat.zip",
+    "pause": 2
+   },
+   "fields": {
+    "name": "FULLNAME",
+    "key": "TLID",
+    "lfrom": "LFROMHN",
+    "lto": "LTOHN",
+    "rfrom": "RFROMHN",
+    "rto": "RTOHN",
+    "zip": "ZIPL",
+    "zip2": "ZIPR"
+   },
+   "history": "Seeded from the yearly releases in tiger_seed_years (every 3 years from 2011, when ADDRFEAT starts), then every year: street renames, new streets and changed ranges. Keyed by TIGER's edge id (TLID)."
+  },
+  {
+   "id": "overture-places",
+   "name": "Overture Maps Foundation places",
+   "short": "Overture Maps",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA",
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "CDLA-Permissive-2.0",
+   "attribution": "Places data from the Overture Maps Foundation (overturemaps.org), under CDLA Permissive 2.0 (some of its sources under Apache 2.0); the licence text is in LICENSES/.",
+   "url": "https://docs.overturemaps.org/guides/places/",
+   "reader": "duckdb",
+   "s3_region": "us-west-2",
+   "remote": "s3://overturemaps-us-west-2/release/{overture_release}/theme=places/type=place/*",
+   "fetch": {
+    "method": "duckdb",
+    "file": "overture.slice.parquet"
+   },
+   "query": "SELECT id AS key, names.primary AS name, categories.primary AS cls, bbox.ymin AS lat, bbox.xmin AS lon FROM read_parquet('{src}', hive_partitioning = 1) WHERE bbox.xmin BETWEEN {west} AND {east} AND bbox.ymin BETWEEN {south} AND {north} AND confidence >= 0.6",
+   "class_map": {
+    "park": "park",
+    "school": "campus",
+    "college": "campus",
+    "university": "campus",
+    "hospital": "campus",
+    "library": "public",
+    "post_office": "public",
+    "police": "public",
+    "fire_station": "public",
+    "museum": "landmark",
+    "landmark": "landmark",
+    "monument": "landmark",
+    "bus_station": "transit",
+    "train_station": "transit",
+    "airport": "transit",
+    "*": "business"
+   },
+   "history": "From the first build on; earlier monthly releases are merged first (overture_seed_releases, for example one a quarter) while Overture still keeps them in its bucket. Keyed by the GERS id."
+  },
+  {
+   "id": "fsq-places",
+   "name": "Foursquare Open Source Places",
+   "short": "Foursquare Open Source Places",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA",
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "Apache-2.0",
+   "attribution": "Foursquare Open Source Places, Copyright 2024 Foursquare Labs, Inc., under the Apache License 2.0 (NOTICE and licence text in LICENSES/).",
+   "url": "https://docs.foursquare.com/data-products/docs/fsq-places-open-source",
+   "reader": "duckdb",
+   "s3_region": "us-east-1",
+   "remote": "s3://fsq-os-places-us-east-1/release/dt={fsq_release}/places/parquet/*.parquet",
+   "fetch": {
+    "method": "duckdb",
+    "file": "fsq.slice.parquet",
+    "verify": true
+   },
+   "query": "SELECT fsq_place_id AS key, name, COALESCE(fsq_category_labels[1], '') AS cls, latitude AS lat, longitude AS lon, CAST(date_created AS VARCHAR) AS first, CAST(date_closed AS VARCHAR) AS last FROM read_parquet('{src}') WHERE longitude BETWEEN {west} AND {east} AND latitude BETWEEN {south} AND {north}",
+   "class_map": {
+    "landmarks and outdoors > park": "park",
+    "education": "campus",
+    "health and medicine > hospital": "campus",
+    "community and government": "public",
+    "travel and transportation > transport hub": "transit",
+    "arts and entertainment > museum": "landmark",
+    "*": "business"
+   },
+   "history": "The dates Foursquare records: when a place was created and when it closed (date_closed), so closed businesses are kept closed. Keyed by fsq_place_id."
+  },
+  {
+   "id": "gnis",
+   "name": "USGS Geographic Names Information System",
+   "short": "the USGS Geographic Names Information System",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Names from the U.S. Geological Survey's Geographic Names Information System (public domain).",
+   "url": "https://www.usgs.gov/tools/geographic-names-information-system-gnis",
+   "reader": "tabular",
+   "kind": "points",
+   "delimiter": "|",
+   "fetch": {
+    "method": "http",
+    "url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/GeographicNames/DomesticNames/DomesticNames_{code}_Text.zip",
+    "verify": true
+   },
+   "member": "*.txt",
+   "columns": {
+    "lat": "prim_lat_dec",
+    "lon": "prim_long_dec",
+    "name": "feature_name",
+    "key": "feature_id",
+    "class_column": "feature_class"
+   },
+   "class_map": {
+    "Park": "park",
+    "Cemetery": "park",
+    "School": "campus",
+    "Hospital": "campus",
+    "Church": "landmark",
+    "Building": "building",
+    "Tower": "landmark",
+    "Dam": "landmark",
+    "Bridge": "landmark",
+    "Summit": "nature",
+    "Falls": "nature",
+    "Lake": "water",
+    "Reservoir": "water",
+    "Beach": "water",
+    "Bay": "water",
+    "Airport": "transit",
+    "Post Office": "public"
+   },
+   "history": "The current names, and older names as they change."
+  },
+  {
+   "id": "nces-schools",
+   "name": "NCES public school locations",
+   "short": "the National Center for Education Statistics",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "School locations from the National Center for Education Statistics (EDGE), U.S. Department of Education (public domain).",
+   "url": "https://nces.ed.gov/programs/edge/Geographic/SchoolLocations",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "campus",
+   "fetch": {
+    "method": "national",
+    "url": "https://nces.ed.gov/programs/edge/data/EDGE_GEOCODE_PUBLICSCH_{nces_year}.zip",
+    "verify": true
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "LAT",
+    "lon": "LON",
+    "name": "NAME",
+    "key": "NCESSCH"
+   },
+   "filter": {
+    "column": "STATE",
+    "equals": "{code}"
+   },
+   "history": "School years from the first build on."
+  },
+  {
+   "id": "imls-libraries",
+   "name": "IMLS Public Libraries Survey outlets",
+   "short": "the Institute of Museum and Library Services",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Public library locations from the Institute of Museum and Library Services' Public Libraries Survey (public domain).",
+   "url": "https://www.imls.gov/research-evaluation/data-collection/public-libraries-survey",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "fetch": {
+    "method": "manual",
+    "folder": "inputs/imls",
+    "note": "The survey's outlet CSV changes address every year; put it in inputs/imls/."
+   },
+   "member": "*outlet*.csv",
+   "columns": {
+    "lat": "LATITUDE",
+    "lon": "LONGITUD",
+    "name": "LIBNAME",
+    "key": [
+     "FSCSKEY",
+     "FSCS_SEQ"
+    ]
+   },
+   "filter": {
+    "column": "STABR",
+    "equals": "{code}"
+   },
+   "history": "Survey years from the first build on."
+  },
+  {
+   "id": "nrhp",
+   "name": "National Register of Historic Places",
+   "short": "the National Register of Historic Places",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Historic places from the National Park Service's National Register of Historic Places (public domain).",
+   "url": "https://www.nps.gov/subjects/nationalregister/data-downloads.htm",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "fetch": {
+    "method": "manual",
+    "folder": "inputs/nrhp",
+    "note": "Put the NRHP spatial data export as CSV (with decimal latitude and longitude) in inputs/nrhp/."
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "name": "Property Name",
+    "key": "Reference Number"
+   },
+   "filter": {
+    "column": "State",
+    "equals": "{name}"
+   },
+   "history": "Listings as published."
+  },
+  {
+   "id": "padus",
+   "name": "USGS Protected Areas Database of the United States (PAD-US)",
+   "short": "PAD-US (USGS)",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Protected areas from the U.S. Geological Survey's PAD-US (public domain).",
+   "url": "https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-overview",
+   "reader": "duckdb",
+   "spatial": true,
+   "cls": "park",
+   "fetch": {
+    "method": "manual",
+    "folder": "inputs/padus/{code}",
+    "note": "PAD-US state downloads come from ScienceBase; put the state's geodatabase or shapefile in inputs/padus/<code>/."
+   },
+   "query": "SELECT COALESCE(CAST(OBJECTID AS VARCHAR), Unit_Nm) AS key, Unit_Nm AS name, 'park' AS cls, ST_AsGeoJSON(ST_Transform(geom, 'EPSG:5070', 'EPSG:4326', always_xy := true)) AS geojson FROM ST_Read('{src}') WHERE Unit_Nm IS NOT NULL",
+   "history": "Releases as published."
+  },
+  {
+   "id": "faa-airports",
+   "name": "FAA airports (NASR)",
+   "short": "the Federal Aviation Administration",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Airports from the Federal Aviation Administration's National Airspace System Resources (public domain).",
+   "url": "https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/NASR_Subscription/",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "transit",
+   "fetch": {
+    "method": "manual",
+    "folder": "inputs/faa",
+    "note": "The NASR subscription changes address every 28 days; put APT_BASE.csv in inputs/faa/."
+   },
+   "member": "APT_BASE.csv",
+   "columns": {
+    "lat": "LAT_DECIMAL",
+    "lon": "LONG_DECIMAL",
+    "name": "ARPT_NAME",
+    "key": "ARPT_ID"
+   },
+   "filter": {
+    "column": "STATE_CODE",
+    "equals": "{code}"
+   },
+   "history": "Cycles from the first build on."
+  },
+  {
+   "id": "ntad-amtrak",
+   "name": "BTS National Transportation Atlas: Amtrak stations",
+   "short": "the Bureau of Transportation Statistics",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Stations from the Bureau of Transportation Statistics' National Transportation Atlas Database (public domain).",
+   "url": "https://geodata.bts.gov",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "transit",
+   "fetch": {
+    "method": "manual",
+    "folder": "inputs/ntad",
+    "note": "Put the NTAD Amtrak Stations CSV export in inputs/ntad/."
+   },
+   "member": "*Amtrak*.csv",
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "StationNam",
+    "key": "Code"
+   },
+   "filter": {
+    "column": "State",
+    "equals": "{code}"
+   },
+   "history": "From the first build on."
+  },
+  {
+   "id": "gtfs",
+   "name": "Public transit stops (GTFS feeds of the Mobility Database catalogue)",
+   "short": "transit agencies' open GTFS feeds",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA"
+   ],
+   "licence": "per-feed-open",
+   "attribution": "Transit stops from the agencies' GTFS feeds listed in the pack, each under its own open licence, found through the Mobility Database (mobilitydatabase.org).",
+   "url": "https://mobilitydatabase.org",
+   "reader": "gtfs",
+   "fetch": {
+    "method": "gtfs",
+    "url": "https://files.mobilitydatabase.org/feeds_v2.csv",
+    "pause": 2,
+    "verify": true
+   },
+   "history": "From the first build on. Keyed by feed and stop id."
+  },
+  {
+   "id": "wikidata",
+   "name": "Wikidata",
+   "short": "Wikidata",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA",
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Names, coordinates and dates from Wikidata (CC0).",
+   "url": "https://www.wikidata.org",
+   "reader": "wikidata",
+   "fetch": {
+    "method": "wikidata",
+    "url": "https://query.wikidata.org/sparql",
+    "pause": 10
+   },
+   "history": "Wikidata's own start and end dates (inception P571, start P580, dissolved or demolished P576, end P582), often decades back."
+  },
+  {
+   "id": "cgndb",
+   "name": "Canadian Geographical Names Database",
+   "short": "the Canadian Geographical Names Database",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Natural Resources Canada, Canadian Geographical Names Database).",
+   "url": "https://natural-resources.canada.ca/earth-sciences/geography/geographical-names-board-canada",
+   "reader": "tabular",
+   "kind": "points",
+   "fetch": {
+    "method": "national",
+    "url": "https://ftp.cartes.canada.ca/pub/nrcan_rncan/vector/geobase_cgn_toponyme/prov_csv_eng/cgn_canada_csv_eng.zip",
+    "verify": true
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "name": "Geographical Name",
+    "key": "CGNDB ID",
+    "class_column": "Generic Term"
+   },
+   "filter": {
+    "column": "Province - Territory",
+    "equals": "{name}"
+   },
+   "class_map": {
+    "Park": "park",
+    "Provincial Park": "park",
+    "National Park": "park",
+    "Lake": "water",
+    "Bay": "water",
+    "Beach": "water",
+    "Falls": "nature",
+    "Mountain": "nature",
+    "Hill": "nature",
+    "Island": "nature",
+    "Neighbourhood": "neighbourhood",
+    "Locality": "neighbourhood"
+   },
+   "history": "Current names; older names as they change."
+  },
+  {
+   "id": "statcan-facilities",
+   "name": "Statistics Canada open databases of educational, healthcare and cultural and art facilities",
+   "short": "Statistics Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Statistics Canada: The Open Database of Educational Facilities, of Healthcare Facilities, and of Cultural and Art Facilities).",
+   "url": "https://www.statcan.gc.ca/en/lode/databases",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "fetch": {
+    "method": "manual",
+    "folder": "inputs/statcan",
+    "note": "Put the ODEF, ODHF and ODCAF CSV files in inputs/statcan/."
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "name": {
+     "first_of": [
+      "Facility_Name",
+      "facility_name",
+      "Name"
+     ]
+    },
+    "key": {
+     "first_of": [
+      "index",
+      "Index"
+     ]
+    }
+   },
+   "filter": {
+    "column": {
+     "first_of": [
+      "Prov_Terr",
+      "province",
+      "Province"
+     ]
+    },
+    "equals": "{code}"
+   },
+   "history": "Releases as published."
+  },
+  {
+   "id": "ban",
+   "name": "Base Adresse Nationale (France)",
+   "short": "the Base Adresse Nationale",
+   "part": "core",
+   "countries": [
+    "FR"
+   ],
+   "licence": "etalab-2.0",
+   "attribution": "Base Adresse Nationale (adresse.data.gouv.fr), Licence Ouverte 2.0, with the date of the file used.",
+   "url": "https://adresse.data.gouv.fr",
+   "reader": "tabular",
+   "kind": "addresses",
+   "delimiter": ";",
+   "fetch": {
+    "method": "national",
+    "url": "https://adresse.data.gouv.fr/data/ban/adresses/latest/csv/adresses-france.csv.gz",
+    "verify": true
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "number": [
+     "numero",
+     "rep"
+    ],
+    "street": "nom_voie",
+    "city": "nom_commune"
+   },
+   "history": "From the first build; the BAN's dated archives on adresse.data.gouv.fr can seed earlier years (one a year)."
+  },
+  {
+   "id": "bag",
+   "name": "Basisregistratie Adressen en Gebouwen (Netherlands)",
+   "short": "the Dutch BAG",
+   "part": "core",
+   "countries": [
+    "NL"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Addresses from the Basisregistratie Adressen en Gebouwen (Kadaster, CC0).",
+   "url": "https://www.kadaster.nl/zakelijk/registraties/basisregistraties/bag",
+   "reader": "tabular",
+   "kind": "addresses",
+   "fetch": {
+    "method": "manual",
+    "folder": "inputs/bag",
+    "note": "Put a CSV export of the BAG address points (latitude, longitude, huisnummer, openbare_ruimte, woonplaats) in inputs/bag/."
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "number": [
+     "huisnummer",
+     "huisletter",
+     "toevoeging"
+    ],
+    "street": "openbare_ruimte",
+    "city": "woonplaats"
+   },
+   "history": "From the first build; the BAG keeps the history of every address itself (start and end dates), which can seed it."
+  },
+  {
+   "id": "os-open-names",
+   "name": "OS Open Names (Great Britain)",
+   "short": "Ordnance Survey",
+   "part": "core",
+   "countries": [
+    "GB"
+   ],
+   "licence": "OGL-UK-3.0",
+   "attribution": "Contains OS data © Crown copyright and database right (OS Open Names, Open Government Licence v3.0).",
+   "url": "https://www.ordnancesurvey.co.uk/products/os-open-names",
+   "reader": "tabular",
+   "kind": "points",
+   "fetch": {
+    "method": "manual",
+    "folder": "inputs/os-open-names",
+    "note": "Put the OS Open Names CSV files, converted to latitude and longitude (they are in British National Grid), in inputs/os-open-names/."
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "LAT",
+    "lon": "LON",
+    "name": "NAME1",
+    "key": "ID",
+    "class_column": "LOCAL_TYPE"
+   },
+   "class_map": {
+    "Named Road": "street",
+    "Suburban Area": "neighbourhood",
+    "Village": "settlement",
+    "Hamlet": "settlement",
+    "Town": "settlement",
+    "City": "settlement",
+    "Other Settlement": "neighbourhood",
+    "*": ""
+   },
+   "history": "Quarterly releases from the first build on."
+  },
+  {
+   "id": "linz-addresses",
+   "name": "NZ Addresses (Toitū Te Whenua LINZ)",
+   "short": "Toitū Te Whenua LINZ",
+   "part": "core",
+   "countries": [
+    "NZ"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Sourced from the LINZ Data Service and licensed for reuse under CC BY 4.0 (NZ Addresses).",
+   "url": "https://data.linz.govt.nz",
+   "reader": "tabular",
+   "kind": "addresses",
+   "fetch": {
+    "method": "manual",
+    "folder": "inputs/linz",
+    "note": "The LINZ Data Service needs a free account; put the NZ Addresses CSV (WGS84) in inputs/linz/."
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "shape_Y",
+    "lon": "shape_X",
+    "number": "address_number",
+    "street": "full_road_name",
+    "city": {
+     "first_of": [
+      "town_city",
+      "suburb_locality"
+     ]
+    }
+   },
+   "history": "From the first build; LINZ publishes changesets that can seed earlier dates."
+  },
+  {
+   "id": "nz-gazetteer",
+   "name": "New Zealand Gazetteer",
+   "short": "the New Zealand Gazetteer",
+   "part": "extra",
+   "countries": [
+    "NZ"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Place names from the New Zealand Gazetteer (Toitū Te Whenua LINZ), CC BY 4.0.",
+   "url": "https://gazetteer.linz.govt.nz",
+   "reader": "tabular",
+   "kind": "points",
+   "fetch": {
+    "method": "manual",
+    "folder": "inputs/nz-gazetteer",
+    "note": "Put the gazetteer CSV in inputs/nz-gazetteer/."
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "crd_latitude",
+    "lon": "crd_longitude",
+    "name": "name",
+    "key": "name_id",
+    "class_column": "feat_type"
+   },
+   "class_map": {
+    "Bay": "water",
+    "Beach": "water",
+    "Lake": "water",
+    "Park": "park",
+    "Locality": "neighbourhood",
+    "Suburb": "neighbourhood",
+    "*": "landmark"
+   },
+   "history": "Official names with their dates as published."
+  },
+  {
+   "id": "cartociudad",
+   "name": "CartoCiudad (Spain)",
+   "short": "CartoCiudad (IGN Spain)",
+   "part": "core",
+   "countries": [
+    "ES"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "CartoCiudad CC-BY 4.0 scne.es (Instituto Geográfico Nacional de España).",
+   "url": "https://www.cartociudad.es",
+   "reader": "tabular",
+   "kind": "addresses",
+   "fetch": {
+    "method": "manual",
+    "folder": "inputs/cartociudad",
+    "note": "CartoCiudad downloads come from the CNIG download centre per province; put the address points as CSV (latitude, longitude, numero, via, municipio) in inputs/cartociudad/."
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "number": "numero",
+    "street": "via",
+    "city": "municipio"
+   },
+   "history": "From the first build."
+  },
+  {
+   "id": "au-gazetteer",
+   "name": "Gazetteer of Australia",
+   "short": "the Gazetteer of Australia",
+   "part": "extra",
+   "countries": [
+    "AU"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Place names from the Gazetteer of Australia (Intergovernmental Committee on Surveying and Mapping), CC BY 4.0.",
+   "url": "https://placenames.fsdf.org.au",
+   "reader": "tabular",
+   "kind": "points",
+   "fetch": {
+    "method": "manual",
+    "folder": "inputs/au-gazetteer",
+    "note": "Put the Gazetteer of Australia CSV in inputs/au-gazetteer/."
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "name": "Name",
+    "key": "Record ID",
+    "class_column": "Feature Code"
+   },
+   "class_map": {
+    "PARK": "park",
+    "BAY": "water",
+    "BCH": "water",
+    "LAKE": "water",
+    "SUBR": "neighbourhood",
+    "*": "landmark"
+   },
+   "history": "Current names."
+  }
+ ],
+ "rejected": [
+  {
+   "name": "Google, Bing, Yelp, Apple and most commercial business directories",
+   "licence": "Terms of service",
+   "reason": "No redistribution allowed."
+  },
+  {
+   "name": "Wikipedia text",
+   "licence": "CC BY-SA 4.0",
+   "reason": "Share-alike text; only Wikidata's CC0 names, coordinates and dates are used."
+  },
+  {
+   "name": "Microsoft Global ML Building Footprints",
+   "licence": "ODbL-1.0",
+   "reason": "Open, but about 130 million US buildings would make the packs several times larger; not used for now (could be a third, optional part later)."
+  },
+  {
+   "name": "HIFLD Open",
+   "licence": "Public domain (per layer)",
+   "reason": "DHS shut HIFLD Open down in August 2025; its layers come from the original agencies, which are used directly (NCES, IMLS, FAA, BTS, NPS)."
+  },
+  {
+   "name": "CMS Hospital General Information",
+   "licence": "Public domain",
+   "reason": "Has addresses but no coordinates; hospitals come from OpenStreetMap, GNIS, Overture and Foursquare."
+  },
+  {
+   "name": "County assessor and parcel websites directly",
+   "licence": "Varies by county",
+   "reason": "Terms differ county by county and many forbid redistribution; their open address data reaches the packs through the NAD and OpenAddresses, whose per-source terms are known. Not scraped."
+  },
+  {
+   "name": "NAD data of HI, MI, MN, NH, OR, SC, SD (and parts of CO, IL, KS, MD, ND)",
+   "licence": "Possibly not public domain (USDOT)",
+   "reason": "Left out until each state's terms are checked; OpenAddresses sources with open licences can fill in."
+  },
+  {
+   "name": "OpenAddresses sources with share-alike or non-commercial licences",
+   "licence": "CC BY-SA, CC BY-NC, ODbL (per source)",
+   "reason": "Share-alike or non-commercial terms would bind the whole address layer."
+  },
+  {
+   "name": "Overture Maps addresses and buildings themes",
+   "licence": "Mixed per source; buildings ODbL",
+   "reason": "Addresses duplicate the NAD and OpenAddresses with mixed terms; buildings are large and partly OpenStreetMap."
+  },
+  {
+   "name": "OpenStreetMap full history and Geofabrik internal history extracts",
+   "licence": "ODbL-1.0",
+   "reason": "Open, but the planet history is about 150 GB and Geofabrik's per-state history extracts need an OpenStreetMap login; OpenStreetMap history starts at the first build."
+  },
+  {
+   "name": "Statistics Canada Open Database of Buildings and CanVec",
+   "licence": "OGL-Canada-2.0",
+   "reason": "Open, but mostly unnamed shapes; named features come from the Canadian Geographical Names Database."
+  },
+  {
+   "name": "National Road Network (Canada)",
+   "licence": "OGL-Canada-2.0",
+   "reason": "Open; not used yet (street names come from OpenStreetMap and the ODA). A later addition for Canadian address ranges."
+  },
+  {
+   "name": "GTFS feeds without a licence or with non-commercial or no-derivatives terms",
+   "licence": "Unknown or restrictive",
+   "reason": "Unclear or restrictive terms."
+  },
+  {
+   "name": "Statewide address portals not in the NAD",
+   "licence": "Varies",
+   "reason": "None added yet: each needs its licence checked (candidates: Minnesota, Michigan, Oregon, South Carolina address points). Add a state with an entry like openaddresses once its licence is confirmed open."
+  },
+  {
+   "name": "Ireland: Eircode",
+   "licence": "Commercial licence",
+   "reason": "Not open."
+  },
+  {
+   "name": "UK: OS AddressBase and Royal Mail PAF",
+   "licence": "Commercial licence",
+   "reason": "Not open; OS Open UPRN is open but has no address text, so it adds nothing to names."
+  },
+  {
+   "name": "Marine Regions IHO Sea Areas v3",
+   "licence": "CC BY-NC-SA 4.0",
+   "reason": "Non-commercial and share-alike; the program uses Natural Earth's public-domain marine names."
+  }
+ ],
+ "candidates": [
+  {
+   "name": "Denmark: Danmarks Adresseregister (DAR)",
+   "licence": "Danish free geodata terms (to check)",
+   "note": "Open and free; the terms must be checked for redistribution in a combined database."
+  },
+  {
+   "name": "Belgium: BOSA BeST addresses",
+   "licence": "Open licence (to check)",
+   "note": "Published openly by FPS BOSA; the licence text must be checked."
+  },
+  {
+   "name": "Germany: the open address data of the Länder (for example NRW, Berlin, Hamburg, Thüringen, Sachsen)",
+   "licence": "dl-de/zero-2.0 or dl-de/by-2.0 (per Land)",
+   "note": "Each Land publishes its own; add the Länder whose licence is dl-de/zero or dl-de/by one by one."
+  },
+  {
+   "name": "Austria: BEV Adressregister",
+   "licence": "CC BY 4.0 (to confirm)",
+   "note": "Add once the current terms are confirmed."
+  },
+  {
+   "name": "Switzerland: federal building and dwelling register addresses (GWR)",
+   "licence": "opendata.swiss open use with attribution (to confirm)",
+   "note": "Add once the terms are confirmed."
+  },
+  {
+   "name": "Norway: Kartverket address data (Matrikkelen)",
+   "licence": "CC BY 4.0 (to confirm)",
+   "note": "Add once confirmed."
+  },
+  {
+   "name": "Finland: DVV buildings and addresses",
+   "licence": "CC BY 4.0 (to confirm)",
+   "note": "Add once confirmed."
+  },
+  {
+   "name": "Sweden, Iceland, Portugal, Italy (ANNCSU): national address registers",
+   "licence": "Not confirmed open",
+   "note": "Later."
+  },
+  {
+   "name": "Australia: G-NAF",
+   "licence": "Open G-NAF EULA (CC BY 4.0 based, with a mail-use restriction)",
+   "note": "The extra restriction must be passed on; decide after reading the full EULA."
+  },
+  {
+   "name": "Japan: Address Base Registry (Digital Agency)",
+   "licence": "CC BY 4.0 (to confirm)",
+   "note": "Later."
+  },
+  {
+   "name": "GEBCO undersea feature names",
+   "licence": "To check",
+   "note": "Later, for named undersea features."
+  },
+  {
+   "name": "USFS trails and trailheads; NPS trails and points of interest",
+   "licence": "Public domain (US government works)",
+   "note": "Open; not wired in yet (national shapefiles: add as shapes entries of kind lines and points)."
+  },
+  {
+   "name": "US Census school districts (UNSD, ELSD, SCSD)",
+   "licence": "Public domain (US government works)",
+   "note": "Open; to add like the Census places (areas per state)."
+  },
+  {
+   "name": "Parks Canada places and the open data portals of large Canadian cities and provinces",
+   "licence": "OGL-Canada and OGL-type city licences (to confirm per portal)",
+   "note": "Add one by one once each licence is confirmed; their addresses already reach the ODA."
+  },
+  {
+   "name": "Microsoft Global ML Building Footprints as a third, optional part",
+   "licence": "ODbL-1.0",
+   "note": "Possible later as a separate download for inside/outside a building."
+  }
+ ]
+}

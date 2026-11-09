@@ -1,0 +1,4 @@
+# What the Windows build needs: the program's own needs, the tests and the PyInstaller packager.
+-r requirements.txt
+pytest>=8                 # MIT
+pyinstaller>=6.10,<7      # GPL-2.0 with the bootloader exception (programs built with it can use any licence)

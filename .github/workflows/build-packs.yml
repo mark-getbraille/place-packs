@@ -1,0 +1,240 @@
+# Builds and publishes the place packs (README "How the packs are built").
+#
+# - Every month (the 2nd, 04:17 UTC) it checks every region and rebuilds only those whose sources changed (their
+#   versions, ETags or Last-Modified dates differ from the ones recorded in packs.json). Started by hand (Actions,
+#   "Build place packs", Run workflow), it builds the regions typed (all when empty), with "force" to rebuild them
+#   even when nothing changed, and "seed_history" to seed the US address-range history from older TIGER years.
+# - plan: the regions to build. prepare: the national files (NAD, ZIP areas, school list, Canadian names), split
+#   into one slice per region. build: one job per region (two at a time, so Geofabrik and the other services get
+#   one download at a time from each), core then extra, each merged with the region's previous pack (history is
+#   never rewritten). publish: the new packs under dated names, then packs-previous.json (the list before), then
+#   packs.json last; then the files neither list names are deleted. Only the repository's own GITHUB_TOKEN is used.
+# - Keep-alive: GitHub turns off scheduled workflows in a repository with no activity for 60 days, so every run
+#   commits an updated sources-status.md.
+
+name: Build place packs
+
+on:
+  schedule:
+    - cron: "17 4 2 * *"
+  workflow_dispatch:
+    inputs:
+      regions:
+        description: "Region ids separated by spaces, for example us-vermont fr-ile-de-france (empty: all)"
+        required: false
+        default: ""
+      force:
+        description: "Rebuild even when no source changed"
+        type: boolean
+        default: false
+      seed_history:
+        description: "Seed the US address-range history from older TIGER years (slow; first build only)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-place-packs
+  cancel-in-progress: false
+
+env:
+  RELEASE_TAG: packs
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    outputs:
+      regions: ${{ steps.plan.outputs.regions }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Choose the regions whose sources changed
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REGIONS: ${{ inputs.regions }}
+          FORCE: ${{ inputs.force }}
+        run: |
+          mkdir -p current
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern packs.json --dir current 2>/dev/null || true
+          python -m placepacks.fetch --fingerprint-all "$REGIONS" --out prints.json
+          extra=""
+          if [ "$FORCE" = "true" ]; then extra="--force"; fi
+          python -m placepacks.manifest plan --manifest current/packs.json --fingerprints prints.json --regions "$REGIONS" $extra >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+
+  prepare:
+    needs: plan
+    if: ${{ needs.plan.outputs.regions != '[]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements.txt
+      - name: Make room on the disk
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+      - name: Download and split the national files
+        run: |
+          python -m placepacks.fetch --prepare --national national
+          python -m placepacks.split national --out national-split
+          # The files that are not split (read whole by their regions) go with the slices.
+          for d in national/*/; do
+            id=$(basename "$d")
+            if ! ls national-split/*/"$id" >/dev/null 2>&1; then mkdir -p national-whole; mv "$d" national-whole/; fi
+          done
+          rm -rf national
+          du -sh national-split national-whole 2>/dev/null || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: national-split
+          path: national-split/
+          retention-days: 3
+          if-no-files-found: ignore
+      - uses: actions/upload-artifact@v4
+        with:
+          name: national-whole
+          path: national-whole/
+          retention-days: 3
+          if-no-files-found: ignore
+
+  build:
+    needs: [plan, prepare]
+    if: ${{ always() && needs.plan.outputs.regions != '[]' && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 340
+    strategy:
+      fail-fast: false
+      max-parallel: 2
+      matrix:
+        region: ${{ fromJSON(needs.plan.outputs.regions) }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements.txt
+      - name: Make room on the disk
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+          df -h /
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: national-split
+          path: national-split
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: national-whole
+          path: national-whole
+      - name: Fetch the region's sources and its previous packs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REGION: ${{ matrix.region.id }}
+        run: |
+          mkdir -p national previous out
+          if [ -d "national-split/$REGION" ]; then cp -r "national-split/$REGION/." national/; fi
+          if [ -d national-whole ]; then cp -r national-whole/. national/; fi
+          rm -rf national-split national-whole
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern packs.json --dir previous 2>/dev/null || true
+          if [ -f previous/packs.json ]; then
+            for key in "$REGION" "$REGION-extra"; do
+              name=$(python -c "import json,sys; print(json.load(open('previous/packs.json')).get('packs',{}).get(sys.argv[1],{}).get('name',''))" "$key")
+              if [ -n "$name" ]; then
+                gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern "$name" --dir previous
+                mv "previous/$name" "previous/$key.osmpack"
+              fi
+            done
+          fi
+          python -m placepacks.fetch "$REGION" --dir "work/$REGION" --part all --national national
+      - name: Seed the address-range history (first build, when asked)
+        if: ${{ inputs.seed_history && startsWith(matrix.region.id, 'us-') }}
+        env:
+          REGION: ${{ matrix.region.id }}
+        run: |
+          prev=""
+          for year in $(python -c "import json; print(' '.join(json.load(open('sources.json'))['settings']['tiger_seed_years']))"); do
+            PLACEPACKS_SETTINGS="{\"tiger_year\": \"$year\"}" python -m placepacks.fetch "$REGION" --dir "seed/$year" --part extra --only tiger-addrfeat
+            python -m placepacks.build "$REGION" --part extra --inputs "seed/$year/fetched.json" --out "seed/$year.osmpack" --month "${year}01" --only tiger-addrfeat --previous "$prev"
+            prev="seed/$year.osmpack"
+            rm -rf "seed/$year"
+          done
+          if [ ! -f "previous/$REGION-extra.osmpack" ] && [ -n "$prev" ]; then cp "$prev" "previous/$REGION-extra.osmpack"; fi
+      - name: Build the core and extra packs
+        env:
+          REGION: ${{ matrix.region.id }}
+        run: |
+          python -m placepacks.build "$REGION" --part core --inputs "work/$REGION/fetched.json" --previous "previous/$REGION.osmpack" --out "out/$REGION.osmpack"
+          python -m placepacks.build "$REGION" --part extra --inputs "work/$REGION/fetched.json" --previous "previous/$REGION-extra.osmpack" --out "out/$REGION-extra.osmpack"
+          mkdir -p "out/fetched/$REGION"
+          cp "work/$REGION/fetched.json" "out/fetched/$REGION/"
+          rm -rf work national previous seed
+          ls -l out
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pack-${{ matrix.region.id }}
+          path: out/
+          retention-days: 7
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    if: ${{ always() && needs.build.result != 'cancelled' && needs.build.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python -m pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: pack-*
+          path: built
+          merge-multiple: true
+      - name: Publish the packs, then the lists
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p old dist
+          if ! gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --title "Place packs" --notes-file RELEASE_NOTES.md
+          fi
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern packs.json --dir old 2>/dev/null || true
+          python -m placepacks.manifest publish --old old/packs.json --built built --fetched-dir built/fetched --output packs.json --uploads uploads.txt
+          # 1. The new packs, under dated names (no file a program is downloading is replaced).
+          while IFS="$(printf '\t')" read -r path asset; do
+            cp "$path" "dist/$asset"
+            gh release upload "$RELEASE_TAG" "dist/$asset" --repo "$GITHUB_REPOSITORY" --clobber
+            rm "dist/$asset"
+          done < uploads.txt
+          # 2. The licences, then the list before (packs-previous.json), then the new list last.
+          gh release upload "$RELEASE_TAG" LICENSES/*.txt LICENSES.md NOTICE --repo "$GITHUB_REPOSITORY" --clobber
+          if [ -f old/packs.json ]; then
+            cp old/packs.json dist/packs-previous.json
+            gh release upload "$RELEASE_TAG" dist/packs-previous.json --repo "$GITHUB_REPOSITORY" --clobber
+          fi
+          gh release upload "$RELEASE_TAG" packs.json --repo "$GITHUB_REPOSITORY" --clobber
+          # 3. Packs neither list names are deleted (older months stay in packs-previous.json for a month).
+          python -c "import json,sys; sys.path.insert(0,'.'); from placepacks.manifest import referenced; ms=[json.load(open(p)) for p in ('packs.json','dist/packs-previous.json') if __import__('os').path.exists(p)]; print('\n'.join(sorted(referenced(*ms))))" > keep.txt
+          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep '\.osmpack$' | while read -r name; do
+            if ! grep -qxF "$name" keep.txt; then gh release delete-asset "$RELEASE_TAG" "$name" --repo "$GITHUB_REPOSITORY" -y; fi
+          done
+      - name: Keep the schedule alive (update sources-status.md)
+        run: |
+          python -m placepacks.status packs.json > sources-status.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add sources-status.md
+          git commit -m "Monthly place packs status" || echo "Nothing to commit"
+          git push || echo "The status could not be pushed (the packs are published)."

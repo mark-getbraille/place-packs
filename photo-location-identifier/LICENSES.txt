@@ -1,0 +1,79 @@
+Photo Location Identifier: licences
+===================================
+
+1. Photo Location Identifier itself
+-----------------------------------
+
+MIT License
+
+Copyright (c) 2026 Company Maker, LLC
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+documentation files (the "Software"), to deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
+Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+The placepacks package (the place-pack reader, lookup and download code of this same repository, bundled with the
+program) is under the same MIT licence.
+
+
+2. Parts bundled in the installer
+---------------------------------
+
+Python 3.12
+  Python Software Foundation License Version 2. https://docs.python.org/3/license.html
+
+wxPython (the windows)
+  wxWindows Library Licence, Version 3.1: the GNU Library General Public Licence with an exception that allows
+  programs built with it to be distributed under their own terms, in binary form.
+  https://wxpython.org/pages/license/  (the full text is in third-party-licences\wxPython in the program's folder)
+
+Pillow (reading the pictures' details)
+  MIT-CMU licence (the Historical Permission Notice and Disclaimer, HPND), Copyright Jeffrey A. Clark and
+  contributors; Copyright Secret Labs AB and Fredrik Lundh. Its Windows build includes libraries under their own
+  permissive licences (libjpeg-turbo, libpng, zlib, libtiff, libwebp, OpenJPEG, Little CMS, FreeType, HarfBuzz,
+  libavif and others), all listed in Pillow's LICENSE file.
+  https://github.com/python-pillow/Pillow/blob/main/LICENSE  (the full text is in third-party-licences\pillow)
+
+PyInstaller (packs the program into PhotoLocationIdentifier.exe)
+  GNU General Public License 2.0 with the bootloader exception, which allows programs built with it to use any
+  licence. Only its bootloader is in the installed program. https://pyinstaller.org/en/stable/license.html
+
+Inno Setup (the installer)
+  Inno Setup License (free, including for commercial use), Copyright Jordan Russell and Martijn Laan.
+  https://jrsoftware.org/files/is/license.txt
+
+Data bundled with placepacks (the water and air descriptions; no pack is bundled)
+  Natural Earth (land, marine area and lake names, populated places): public domain. https://www.naturalearthdata.com
+  OurAirports (airports): public domain. https://ourairports.com/data/
+
+
+3. Place packs (downloaded when you allow it, not part of the installer)
+------------------------------------------------------------------------
+
+The place packs are collective databases. Their OpenStreetMap layer is (c) OpenStreetMap contributors, available
+under the Open Database License (ODbL) 1.0 (https://www.openstreetmap.org/copyright). Every other layer is under its
+own open licence (such as US Census TIGER/Line, a US government work), listed with its attribution in SOURCES.md and
+LICENSES of the place-packs project (https://github.com/mark-getbraille/place-packs). Each sort's report names the
+sources of the place names it used.
+
+
+4. Not included
+---------------
+
+pillow-heif is not used. Its own code is BSD-3-Clause, but its Windows wheels bundle libheif and libde265 (LGPL-3.0)
+and the x265 encoder (GPL-2.0), and HEVC (the picture coding inside HEIC files) is covered by patent pools. This
+program only needs the details saved with a HEIC picture (its EXIF), so it reads them from the file's boxes itself,
+with no HEIC decoder: HEIC and HEIF photos are fully supported without pillow-heif.
+
+piexif is not used (Pillow writes and reads EXIF on its own).
+
+ffprobe (FFmpeg) is not included. If you install it yourself, the program uses it to read the location of videos.

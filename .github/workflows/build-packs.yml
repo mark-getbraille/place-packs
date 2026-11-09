@@ -4,8 +4,9 @@
 #   versions, ETags or Last-Modified dates differ from the ones recorded in packs.json). Started by hand (Actions,
 #   "Build place packs", Run workflow), it builds the regions typed (all when empty), with "force" to rebuild them
 #   even when nothing changed, and "seed_history" to seed the US address-range history from older TIGER years.
-# - plan: the regions to build. prepare: the national files (NAD, ZIP areas, school list, Canadian names), split
-#   into one slice per region. build: one job per region (two at a time, so Geofabrik and the other services get
+# - plan: the regions to build. prepare: the national files (NAD, ZIP areas, school list, Canadian names, and the
+#   Foursquare places of every covered country, read once), split into one slice per region; the NAD is kept in
+#   the Actions cache between runs. build: one job per region (two at a time, so Geofabrik and the other services get
 #   one download at a time from each), core then extra, each merged with the region's previous pack (history is
 #   never rewritten). publish: the new packs under dated names, then packs-previous.json (the list before), then
 #   packs.json last; then the files neither list names are deleted. Only the repository's own GITHUB_TOKEN is used.
@@ -82,10 +83,26 @@ jobs:
       - run: python -m pip install -r requirements.txt
       - name: Make room on the disk
         run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL || true
+      # The NAD (several GB) is kept in the Actions cache, so a busy or rate-limited host does not drop it: the
+      # cached copy is used unless the NAD's own version changed (fetch.prepare asks for it first).
+      - name: Restore the cached NAD download
+        uses: actions/cache/restore@v4
+        with:
+          path: national/nad
+          key: nad-${{ github.run_id }}
+          restore-keys: nad-
       - name: Download and split the national files
         run: |
           python -m placepacks.fetch --prepare --national national
           python -m placepacks.split national --out national-split
+      - name: Save the NAD download in the cache
+        if: ${{ hashFiles('national/nad/*.zip') != '' }}
+        uses: actions/cache/save@v4
+        with:
+          path: national/nad
+          key: nad-${{ github.run_id }}
+      - name: Keep the files that are not split
+        run: |
           # The files that are not split (read whole by their regions) go with the slices.
           for d in national/*/; do
             id=$(basename "$d")
@@ -173,8 +190,11 @@ jobs:
         env:
           REGION: ${{ matrix.region.id }}
         run: |
+          # Each source prints one line: "source: ok (version, rows)", "source: skipped (reason)" or "source: failed (error)".
+          echo "::group::Sources of $REGION"
           python -m placepacks.build "$REGION" --part core --inputs "work/$REGION/fetched.json" --previous "previous/$REGION.osmpack" --out "out/$REGION.osmpack"
           python -m placepacks.build "$REGION" --part extra --inputs "work/$REGION/fetched.json" --previous "previous/$REGION-extra.osmpack" --out "out/$REGION-extra.osmpack"
+          echo "::endgroup::"
           mkdir -p "out/fetched/$REGION"
           cp "work/$REGION/fetched.json" "out/fetched/$REGION/"
           rm -rf work national previous seed

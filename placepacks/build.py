@@ -45,7 +45,7 @@ def build(region_id, part, fetched, out, previous=None, month=None, only=None, c
         region["bbox"] = fetched["_bbox"]           # the extract's own box (fetch.extract_bbox)
     readers = load_all()
     writer = PackWriter(out, month)
-    used, missing = [], []
+    used, missing, status = [], [], {}
     for entry in catalogue.sources_for(region, part, cat, only):
         got = fetched.get(entry["id"]) or {}
         lic = cat["licences"][entry["licence"]]
@@ -55,9 +55,27 @@ def build(region_id, part, fetched, out, previous=None, month=None, only=None, c
                           date=got.get("date", ""), history_note=entry["history"])
         if not got.get("ok") or not got.get("path") or not os.path.exists(got["path"]):
             missing.append(entry["id"])
-            continue
-        count = readers[entry["reader"]](got["path"], entry, region, writer)
-        used.append(f"{entry['id']}={count if isinstance(count, int) else 'ok'}")
+            status[entry["id"]] = {"status": got.get("status", "skipped" if not got else "failed"),
+                                   "reason": got.get("reason") or got.get("error") or "not fetched",
+                                   "version": got.get("version", "")}
+        else:
+            try:
+                count = readers[entry["reader"]](got["path"], entry, region, writer)
+            except Exception as e:  # noqa: BLE001 - one source failing does not stop the pack
+                count, error = None, f"could not be read: {str(e)[:200]}"
+            else:
+                error = ""
+            used.append(f"{entry['id']}={count if isinstance(count, int) else 'ok'}")
+            if error:
+                status[entry["id"]] = {"status": "failed", "reason": error, "version": got.get("version", "")}
+            elif count == 0:
+                # Read, but nothing kept: the file's columns, its filter or the region's box did not match.
+                status[entry["id"]] = {"status": "failed", "reason": "read, but no rows matched (columns, filter "
+                                       "or box)", "version": got.get("version", "")}
+            else:
+                status[entry["id"]] = {"status": "ok", "rows": count, "version": got.get("version", "")}
+        from placepacks.fetch import status_line
+        print(status_line(entry["id"], status[entry["id"]], status[entry["id"]].get("rows")), flush=True)
     meta = {"region_id": region_id, "region_name": region["name"], "country": region["country"],
             "state": region["name"], "part": part, "sources_used": ",".join(used), "sources_missing": ",".join(missing),
             "licence": "collective (see sources)", "attribution": fmt.ATTRIBUTION,
@@ -65,7 +83,8 @@ def build(region_id, part, fetched, out, previous=None, month=None, only=None, c
                       "derived from OpenStreetMap, (c) OpenStreetMap contributors, made available under the Open "
                       "Database License (ODbL) 1.0. Every other layer is an independent database under its own "
                       "licence, listed in the sources table with its attribution.",
-            "tool": "place-packs (github.com/mark-getbraille/place-packs)"}
+            "tool": "place-packs (github.com/mark-getbraille/place-packs)",
+            "source_status": json.dumps(status, separators=(",", ":"))}
     counts = writer.finish(meta, previous=previous, removals=removal_list if removal_list is not None else removals())
     return {**meta, **{k: str(v) for k, v in counts.items()}}
 

@@ -11,9 +11,9 @@
   ],
   "nad_release": "20",
   "nad_seed_releases": [],
-  "overture_release": "2026-10-22.0",
+  "overture_release": "latest",
   "overture_seed_releases": [],
-  "fsq_release": "2026-10-08",
+  "fsq_release": "latest",
   "nces_year": "2324"
  },
  "licences": {
@@ -402,7 +402,13 @@
     "airport": "transit",
     "*": "business"
    },
-   "history": "From the first build on; earlier monthly releases are merged first (overture_seed_releases, for example one a quarter) while Overture still keeps them in its bucket. Keyed by the GERS id."
+   "history": "From the first build on; earlier monthly releases are merged first (overture_seed_releases) while Overture still keeps them in its bucket. Keyed by the GERS id. The newest release is found from the bucket's list.",
+   "release_setting": "overture_release",
+   "release_list": {
+    "bucket": "https://overturemaps-us-west-2.s3.us-west-2.amazonaws.com",
+    "prefix": "release/",
+    "pattern": "release/(\\d{4}-\\d{2}-\\d{2}\\.\\d+)/"
+   }
   },
   {
    "id": "fsq-places",
@@ -440,9 +446,8 @@
    "s3_region": "us-east-1",
    "remote": "s3://fsq-os-places-us-east-1/release/dt={fsq_release}/places/parquet/*.parquet",
    "fetch": {
-    "method": "duckdb",
-    "file": "fsq.slice.parquet",
-    "verify": true
+    "method": "duckdb_national",
+    "file": "fsq.slice.parquet"
    },
    "query": "SELECT fsq_place_id AS key, name, COALESCE(fsq_category_labels[1], '') AS cls, latitude AS lat, longitude AS lon, CAST(date_created AS VARCHAR) AS first, CAST(date_closed AS VARCHAR) AS last FROM read_parquet('{src}') WHERE longitude BETWEEN {west} AND {east} AND latitude BETWEEN {south} AND {north}",
    "class_map": {
@@ -454,7 +459,16 @@
     "arts and entertainment > museum": "landmark",
     "*": "business"
    },
-   "history": "The dates Foursquare records: when a place was created and when it closed (date_closed), so closed businesses are kept closed. Keyed by fsq_place_id."
+   "history": "The dates Foursquare records: when a place was created and when it closed (date_closed), so closed businesses are kept closed. Keyed by fsq_place_id.",
+   "release_setting": "fsq_release",
+   "release_list": {
+    "bucket": "https://fsq-os-places-us-east-1.s3.us-east-1.amazonaws.com",
+    "prefix": "release/",
+    "pattern": "release/dt=(\\d{4}-\\d{2}-\\d{2})/"
+   },
+   "prepare_query": "SELECT fsq_place_id, name, fsq_category_labels, latitude, longitude, date_created, date_closed FROM read_parquet('{src}') WHERE country IN ({countries})",
+   "local_query": "SELECT fsq_place_id AS key, name, COALESCE(fsq_category_labels[1], '') AS cls, latitude AS lat, longitude AS lon, CAST(date_created AS VARCHAR) AS first, CAST(date_closed AS VARCHAR) AS last FROM read_parquet('{src}') WHERE longitude BETWEEN {west} AND {east} AND latitude BETWEEN {south} AND {north}",
+   "notes": "Foursquare's files are not sorted by place, so the prepare job reads them once for every covered country and each region takes its box from that local copy (one download instead of one per region)."
   },
   {
    "id": "gnis",
@@ -515,7 +529,7 @@
    "licence": "US-Government-Work",
    "attribution": "School locations from the National Center for Education Statistics (EDGE), U.S. Department of Education (public domain).",
    "url": "https://nces.ed.gov/programs/edge/Geographic/SchoolLocations",
-   "reader": "tabular",
+   "reader": "shapes",
    "kind": "points",
    "cls": "campus",
    "fetch": {
@@ -523,18 +537,18 @@
     "url": "https://nces.ed.gov/programs/edge/data/EDGE_GEOCODE_PUBLICSCH_{nces_year}.zip",
     "verify": true
    },
-   "member": "*.csv",
-   "columns": {
-    "lat": "LAT",
-    "lon": "LON",
-    "name": "NAME",
-    "key": "NCESSCH"
+   "history": "School years from the first build on.",
+   "fields": {
+    "name": [
+     "NAME",
+     "SCH_NAME"
+    ],
+    "key": [
+     "NCESSCH",
+     "NCESSCH_ID"
+    ]
    },
-   "filter": {
-    "column": "STATE",
-    "equals": "{code}"
-   },
-   "history": "School years from the first build on."
+   "notes": "The EDGE geocode download holds a shapefile (no CSV): read as points, split per state by its box."
   },
   {
    "id": "imls-libraries",

@@ -6,7 +6,8 @@ publishes TIGER/Line address ranges per county).
   "kind": "areas"   named areas (Census places, county subdivisions, ZIP code tabulation areas, school districts)
   "kind": "lines"   named lines (trails)
   "kind": "points"  named points (trailheads)
-"fields": {"name": ..., "key": ..., and for ranges "lfrom", "lto", "rfrom", "rto", "zip"}; "cls": the class; "name_format":
+"fields": {"name": ..., "key": ..., and for ranges "lfrom", "lto", "rfrom", "rto", "zip"} (a name or a list of possible
+names, the first the file has); "cls": the class; "name_format":
 an optional pattern such as "the {} area" for ZIP areas. Only shapes touching the region's bounding box are read.
 """
 
@@ -36,6 +37,14 @@ def _number(text):
     return int(digits) if digits else None
 
 
+def _field(rec, names):
+    """A record's value of a field, or of the first of a list of possible field names that the file has ("")."""
+    for name in names if isinstance(names, list) else [names]:
+        if name in rec and rec[name] not in (None, ""):
+            return rec[name]
+    return ""
+
+
 def _parts(shape):
     """The parts of a shape as lists of (lat, lon)."""
     starts = list(shape.parts) + [len(shape.points)]
@@ -58,12 +67,12 @@ def read(path, entry, region, writer):
                 x1, y1, x2, y2 = shape.bbox if len(shape.points) > 1 else (*shape.points[0], *shape.points[0])
                 if x2 < west or x1 > east or y2 < south or y1 > north:
                     continue
-                name = smart_case(str(rec.get(fields["name"], "") or ""))
+                name = smart_case(str(_field(rec, fields["name"])))
                 if not name:
                     continue
                 if entry.get("name_format"):
                     name = entry["name_format"].format(name)
-                key = f"{source}:{rec.get(fields.get('key', ''), '')}" if fields.get("key") else None
+                key = f"{source}:{_field(rec, fields['key'])}" if fields.get("key") else None
                 if kind == "ranges":
                     nums = [_number(rec.get(fields[k])) for k in ("lfrom", "lto", "rfrom", "rto")]
                     if all(n is None for n in nums):

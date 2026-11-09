@@ -7,6 +7,7 @@ downloads only its own part (the NAD is several GB for the whole country).
     the region its filter value names, as national-split/<region id>/<source id>/<source id>.csv (with the header);
   - shapefile sources (ZIP code areas): each shape goes to the US states whose box it touches, as a zipped
     shapefile national-split/<region id>/<source id>/<source id>.zip;
+  - the Foursquare slice of every covered country (prepared once) goes to each region by its box, as Parquet;
   - sources without a filter (France's BAN) are not split: the region builds read the whole file, filtered by the
     extract's box.
 """
@@ -87,6 +88,26 @@ def split_shapes(entry, path, out, regions):
     return counts
 
 
+def split_parquet(entry, path, out, regions):
+    """Cut a prepared national Parquet slice (fetch.prepare_parquet) into one file per region of its countries, by
+    the region's box: national-split/<region id>/<source id>/<source id>.parquet. Returns {region id: rows}."""
+    from placepacks.readers.parquet import connect
+    con = connect()
+    counts = {}
+    for rid, r in regions.items():
+        if catalogue.country_code(r) not in entry["countries"]:
+            continue
+        west, south, east, north = r["bbox"]
+        folder = os.path.join(out, rid, entry["id"])
+        os.makedirs(folder, exist_ok=True)
+        target = os.path.join(folder, entry["id"] + ".parquet")
+        con.execute(f"COPY (SELECT * FROM read_parquet('{path}') WHERE longitude BETWEEN {west} AND {east} AND "
+                    f"latitude BETWEEN {south} AND {north}) TO '{target}' (FORMAT PARQUET)")
+        counts[rid] = con.execute(f"SELECT COUNT(*) FROM read_parquet('{target}')").fetchone()[0]
+    con.close()
+    return counts
+
+
 def main(argv=None):
     """The command line (see the module docstring)."""
     p = argparse.ArgumentParser()
@@ -95,7 +116,7 @@ def main(argv=None):
     a = p.parse_args(argv)
     cat, regions = catalogue.load(), catalogue.regions()
     for entry in cat["accepted"]:
-        if entry["fetch"]["method"] != "national":
+        if entry["fetch"]["method"] not in ("national", "duckdb_national"):
             continue
         folder = os.path.join(a.national, entry["id"])
         if not os.path.isdir(folder):
@@ -104,7 +125,9 @@ def main(argv=None):
             if name.endswith(".version"):
                 continue
             path = os.path.join(folder, name)
-            if entry["reader"] == "tabular" and entry.get("filter"):
+            if entry["fetch"]["method"] == "duckdb_national" and name.endswith(".parquet"):
+                counts = split_parquet(entry, path, a.out, regions)
+            elif entry["reader"] == "tabular" and entry.get("filter"):
                 counts = split_tabular(entry, path, a.out, regions)
             elif entry["reader"] == "shapes":
                 counts = split_shapes(entry, path, a.out, regions)

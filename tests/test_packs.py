@@ -274,3 +274,122 @@ def test_osm_reader_without_pyosmium(tmp_path):
     p = PackReader(str(tmp_path / "x.osmpack"))
     assert {r["key"] for r in p._rows("SELECT key FROM points")} >= {"n1", "n8", "n9", "n15"}
     assert [r["name"] for r in p.areas_at(*PARK)] == ["Riverside Park", "Outer Banks"]
+
+
+# ------------------------------------------------------------------------------------------- build diagnostics
+
+def test_every_source_gets_a_status_line(tmp_path, capsys):
+    """A build prints "source: ok (version, rows)", "source: skipped (reason)" or "source: failed (error)" for each
+    source, keeps them in the pack, and sources-status.md lists them; a source read with 0 rows is a failure."""
+    from placepacks import status as status_mod
+    from placepacks.fetch import status_line
+    nad = samples.nad_file(str(tmp_path), [("1", "A St", "X", "ME", 44.5, -69.5)])        # Maine only: 0 rows
+    inputs = {"osm": {"path": samples.osm_file(str(tmp_path)), "ok": True, "status": "ok", "version": "v1"},
+              "nad": {"path": nad, "ok": True, "status": "ok", "version": "r21"},
+              "openaddresses": {"ok": False, "status": "skipped",
+                                "reason": "needs a hand-supplied file in inputs/openaddresses/us-vermont"}}
+    build.build(VT, "core", inputs, str(tmp_path / "p.osmpack"), month=202611, removal_list=[])
+    out = capsys.readouterr().out
+    assert "osm: ok (v1, " in out and "rows)" in out
+    assert "nad: failed (read, but no rows matched" in out
+    assert "openaddresses: skipped (needs a hand-supplied file in inputs/openaddresses/us-vermont)" in out
+    p = PackReader(str(tmp_path / "p.osmpack"))
+    st = json.loads(p.meta["source_status"])
+    assert st["osm"]["status"] == "ok" and st["nad"]["status"] == "failed" and st["openaddresses"]["status"] == \
+        "skipped"
+    text = status_mod.status({"packs": {VT: {"size": 1, "built_month": 202611, "history_start": 202611,
+                                             "sources": {}, "status": st}}})
+    assert "| us-vermont | openaddresses | skipped | needs a hand-supplied file" in text
+    assert status_line("x", {"status": "failed", "reason": "HTTP Error 403"}) == "x: failed (HTTP Error 403)"
+
+
+def test_release_discovery_and_retries(monkeypatch):
+    """The newest Overture and Foursquare releases and NAD file come from the bucket listings; a busy host is tried
+    again (429, 5xx, Azure ServerBusy), a missing file (404) is not."""
+    import urllib.error
+    from placepacks import fetch
+    listing = (b'<?xml version="1.0"?><ListBucketResult xmlns="http://s3.amazonaws.com/doc/2006-03-01/">'
+               b'<CommonPrefixes><Prefix>release/2026-09-17.0/</Prefix></CommonPrefixes>'
+               b'<CommonPrefixes><Prefix>release/2026-10-22.0/</Prefix></CommonPrefixes></ListBucketResult>')
+    opener = lambda url: io.BytesIO(listing)  # noqa: E731
+    entry = next(e for e in catalogue.load()["accepted"] if e["id"] == "overture-places")
+    assert fetch.latest_release(entry, opener) == "2026-10-22.0"
+    keys = (b'<ListBucketResult><Contents><Key>NAD_r19_TXT.zip</Key></Contents><Contents><Key>NAD_r21_TXT.zip'
+            b'</Key></Contents><Contents><Key>NAD_r21_GDB.zip</Key></Contents></ListBucketResult>')
+    assert fetch.nad_url({}, lambda url: io.BytesIO(keys)).endswith("/NAD_r21_TXT.zip")
+
+    def refused(url):
+        raise urllib.error.HTTPError(url, 403, "Forbidden", {}, io.BytesIO(b""))
+    assert fetch.nad_url({"nad_release": "20"}, refused).endswith("/NAD_r20_TXT.zip")
+    busy = urllib.error.HTTPError("u", 503, "x", {}, io.BytesIO(b"<Code>ServerBusy</Code>"))
+    assert fetch.retryable(busy) and fetch.retryable(urllib.error.HTTPError("u", 429, "x", {}, io.BytesIO(b"")))
+    assert not fetch.retryable(urllib.error.HTTPError("u", 404, "x", {}, io.BytesIO(b"")))
+    calls, waits = [], []
+
+    class Answer(io.BytesIO):
+        headers = {"ETag": "e1"}
+
+    def flaky(url, *a, **k):
+        calls.append(url)
+        if len(calls) < 3:
+            raise urllib.error.HTTPError(url, 503, "busy", {}, io.BytesIO(b"Egress is over the account limit"))
+        return Answer(b"data")
+    monkeypatch.setattr(fetch, "request", flaky)
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        version, _ = fetch.download("https://x/y.zip", os.path.join(tmp, "y.zip"), sleep=waits.append)
+        assert version == "e1" and len(calls) == 3 and waits == [30, 60]
+
+
+def test_old_wikidata_dates_do_not_change_modern_lookups(tmp_path):
+    """A pack with Wikidata rows from 1717 and businesses from 2026: a 2005 photo at the business says "no older
+    record" (the business layer starts in 2026), a 2020 photo of the old building gets its name, and a building
+    Wikidata says was demolished in 1998 is not named for a 2020 photo."""
+    from placepacks.writer import PackWriter
+    w = PackWriter(str(tmp_path / "x.osmpack"), 202611)
+    w.add_point("wikidata:Q1", "wikidata", "Old Meeting House", "landmark", "t", 44.0, -72.0, 171701, None)
+    w.add_point("wikidata:Q2", "wikidata", "Gone Mill", "building", "t", 44.0100, -72.0, 192305, 199801)
+    w.add_point("overture-places:g1", "overture-places", "Tony's Pizza", "business", "pizza", 44.0200, -72.0)
+    w.finish({"region_id": VT})
+    f = Finder(packs=[PackReader(str(tmp_path / "x.osmpack"))], water=False)
+    pizza = f.lookup(44.0200, -72.0, when=200506)
+    assert pizza.name == "Tony's Pizza" and pizza.no_older_record and "no older record" in pizza.phrase()
+    assert f.lookup(44.0, -72.0, when=202006).name == "Old Meeting House"
+    assert f.lookup(44.0100, -72.0, when=202006).name == ""
+    assert f.lookup(44.0100, -72.0, when=195006).name == "Gone Mill"
+
+
+def test_address_range_history_is_in_the_extra_pack(tmp_path):
+    """Seeded TIGER years live in the extra pack (its builds start in 2011) while the core pack starts now; the
+    lookup over both packs uses the range valid in 2015 and today's street name with it."""
+    pytest.importorskip("shapefile")
+    seed = tmp_path / "seed.osmpack"
+    build.build(VT, "extra", fetched(**{"tiger-addrfeat": samples.addrfeat_folder(str(tmp_path / "t1"),
+                                                                                  name="Main St")}),
+                str(seed), month=201101, only={"tiger-addrfeat"}, removal_list=[])
+    extra = tmp_path / "x.osmpack"
+    build.build(VT, "extra", fetched(**{"tiger-addrfeat": samples.addrfeat_folder(
+        str(tmp_path / "t2"), name="Martin Luther King Jr. Blvd")}), str(extra), previous=str(seed), month=202611,
+        only={"tiger-addrfeat"}, removal_list=[])
+    corep = tmp_path / "c.osmpack"
+    core(tmp_path, corep, 202611, street="Martin Luther King Jr. Blvd")
+    packs = [PackReader(str(corep)), PackReader(str(extra))]
+    assert packs[1].meta["builds"] == "201101,202611" and packs[0].meta["history_start"] == "202611"
+    f = Finder(packs=packs, water=False)
+    old = f.lookup(*MAIN, when=201506, detail="address")
+    assert old.house_number == "162" and old.street == "Main St"
+    assert old.phrase("address") == "at about 162 Main St (now Martin Luther King Jr. Blvd), Testville"
+    assert f.lookup(*MAIN, when=202611, detail="address").street == "Martin Luther King Jr. Blvd"
+
+
+def test_foursquare_is_split_per_region(tmp_path):
+    """The prepared Foursquare slice is cut per region by its box."""
+    duckdb = pytest.importorskip("duckdb")
+    path = tmp_path / "fsq.parquet"
+    duckdb.connect().execute(f"COPY (SELECT * FROM (VALUES ('a', 'Cafe', 44.2, -72.5), ('b', 'Bar', 43.66, -70.26)) "
+                             f"t(fsq_place_id, name, latitude, longitude)) TO '{path}' (FORMAT PARQUET)")
+    from placepacks import split
+    entry = next(e for e in catalogue.load()["accepted"] if e["id"] == "fsq-places")
+    counts = split.split_parquet(entry, str(path), str(tmp_path / "out"),
+                                 {k: v for k, v in catalogue.regions().items() if k in (VT, "us-maine")})
+    assert counts == {VT: 1, "us-maine": 1}

@@ -142,7 +142,12 @@ def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
             bounds = [w_, s_, e_, n_]
         except ValueError:
             bounds = None
+        try:
+            source_status = json.loads(meta.get("source_status", "{}"))
+        except ValueError:
+            source_status = {}
         packs[key] = {"region": region, "part": part, "name": asset, "size": os.path.getsize(path), "bounds": bounds,
+                      "status": source_status,
                       "sha256": fmt_sha(path), "built_month": int(meta.get("built_month", "0")),
                       "history_start": int(meta.get("history_start", "0") or 0),
                       "sources": {s: {"version": str(v.get("version", "")), "date": str(v.get("date", ""))}

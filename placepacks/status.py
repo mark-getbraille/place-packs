@@ -22,6 +22,13 @@ def status(manifest, today=None):
         built, start = e.get("built_month", 0), e.get("history_start", 0)
         lines.append(f"| {key} | {built // 100}-{built % 100:02d} | {e.get('size', 0) / 1e6:.1f} | "
                      f"{start // 100}-{start % 100:02d} | {', '.join(sorted(e.get('sources', {})))} |")
+    lines += ["", "## Sources of each pack", "",
+              "Each source of the last build of each pack: ok (with its rows), skipped (why) or failed (why).", "",
+              "| Pack | Source | Status | Rows or reason |", "|---|---|---|---|"]
+    for key, e in sorted(packs.items()):
+        for sid, st in sorted((e.get("status") or {}).items()):
+            detail = str(st.get("rows", "")) if st.get("status") == "ok" else str(st.get("reason", ""))
+            lines.append(f"| {key} | {sid} | {st.get('status', '?')} | {detail.replace('|', '/')} |")
     return "\n".join(lines) + "\n"
 
 

@@ -171,9 +171,12 @@ def month_text(m):
 
 def until(row_last, latest, builds=()):
     """The last month a row counts for: up to the month before the next build after its last month (the builds
-    in between did not see it), else one month after it; the newest build's rows count on."""
+    in between did not see it), else one month after it; the newest build's rows count on; a last month that is
+    not a build month is the source's own end date and counts as it is."""
     if row_last >= latest:
         return 999912
+    if builds and row_last not in builds:
+        return row_last                 # the source's own end date (Wikidata's "demolished"), not a build month
     later = [b for b in builds if b > row_last]
     return fmt.add_months(min(later), -1) if later else fmt.add_months(row_last, 1)
 
@@ -275,6 +278,14 @@ class PackReader:
         except ValueError:
             self.bounds = ()
         self._lock = threading.Lock()
+        # Each source's own history start (Wikidata may start in 1717, the businesses in 2026): a picture is "older
+        # than the data" for a layer only when it is older than that layer's first month.
+        self.source_start = {}
+        for table in ("points", "areas", "lines", "ranges"):
+            for row in self._rows(f"SELECT source, MIN(first) AS m FROM {table} GROUP BY source"):
+                if row["m"]:
+                    old = self.source_start.get(row["source"])
+                    self.source_start[row["source"]] = row["m"] if old is None else min(old, row["m"])
         _open.add(self)
 
     def close(self):
@@ -491,6 +502,13 @@ class Finder:
         """The packs whose bounds hold the position."""
         return [p for p in self.packs if p.covers(lat, lon)]
 
+    def _start_for(self, rows, start):
+        """The history start of the rows' source (the oldest month of that source in any pack), else start."""
+        rows = rows if isinstance(rows, list) else [rows]
+        source = rows[0].get("source") if rows else None
+        found = [p.source_start[source] for p in self.packs if source in getattr(p, "source_start", {})]
+        return min(found) if found else start
+
     def _attribute(self, result, pack, source):
         """Add a source's names to a result."""
         row = pack.sources.get(source)
@@ -533,7 +551,7 @@ class Finder:
             near = [r for p in packs for r in p.points_near(lat, lon, PLACE_M, classes)]
             near.sort(key=lambda r: (r["d"] > 10, r["source"] != "osm", r["d"]))
             if near:
-                pack = next(p for p in packs if near[0]["source"] in p.sources)
+                pack = next((p for p in packs if near[0]["source"] in p.sources), packs[0])
                 group = [r for r in near if r["key"] == near[0]["key"] or fmt.metres(r["lat"], r["lon"],
                                                                                        near[0]["lat"], near[0]["lon"])
                          <= SAME_PLACE_M]
@@ -546,7 +564,7 @@ class Finder:
             near = [r for p in packs for r in p.points_near(lat, lon, FACILITY_M, FACILITY_CLASSES)]
             near.sort(key=lambda r: (r["source"] in BUSINESS_SOURCES, r["d"]))
             if near:
-                pack = next(p for p in packs if near[0]["source"] in p.sources)
+                pack = next((p for p in packs if near[0]["source"] in p.sources), packs[0])
                 self._take(result, pack, [near[0]] + [r for r in near[1:] if r["key"] == near[0]["key"]], when,
                            latest, start, "nearby")
         if result.kind == "none" and (result.street or result.neighbourhood or result.zip_area):
@@ -555,7 +573,7 @@ class Finder:
 
     def _take(self, result, pack, rows, when, latest, start, kind):
         """Put the row valid at when (of rows: one record and its history) into result as its name."""
-        chosen, flags = choose(rows, when, latest, start, self._b)
+        chosen, flags = choose(rows, when, latest, self._start_for(rows, start), self._b)
         if not chosen:
             return
         r = chosen[0]
@@ -578,7 +596,7 @@ class Finder:
             addresses.sort(key=lambda pr: pr[1]["d"])
             p0, near = addresses[0]
             same = [r for _, r in addresses if fmt.metres(r["lat"], r["lon"], near["lat"], near["lon"]) <= 5]
-            chosen, flags = choose(same, when, latest, start, self._b)
+            chosen, flags = choose(same, when, latest, self._start_for(same, start), self._b)
             now, _ = choose(same, When(), latest, start)
             if chosen:
                 a = chosen[0]
@@ -593,15 +611,19 @@ class Finder:
                     result.town = a["city"]
                 self._attribute(result, p0, a["source"])
                 return
+        street_undated = False
         lines = [(p, r) for p in packs for r in p.lines_near(lat, lon, STREET_M)]
         if lines:
             lines.sort(key=lambda pr: pr[1]["d"])
             p0, near = lines[0]
             same = [r for _, r in lines if r["key"] == near["key"]]
-            chosen, _ = choose(same, when, latest, start, self._b)
+            chosen, line_flags = choose(same, when, latest, self._start_for(same, start), self._b)
             now, _ = choose(same, When(), latest, start)
             if chosen:
                 result.street = chosen[0]["name"]
+                # The street's layer has no names that old (OpenStreetMap starts at the first build): an address
+                # range of that date, below, may give the name of the time instead.
+                street_undated = bool(line_flags.get("no_older_record"))
                 if now and now[0]["name"] != result.street:
                     result.street_now = now[0]["name"]
                 self._attribute(result, p0, chosen[0]["source"])
@@ -610,10 +632,14 @@ class Finder:
             ranges.sort(key=lambda pr: pr[1]["d"])
             p0, near = ranges[0]
             same = [r for _, r in ranges if r["key"] == near["key"]]
-            chosen, flags = choose(same, when, latest, start, self._b)
+            chosen, flags = choose(same, when, latest, self._start_for(same, start), self._b)
             now, _ = choose(same, When(), latest, start)
             if chosen and chosen[0]["number"] is not None:
                 r = chosen[0]
+                if result.street and street_undated and not flags.get("no_older_record") and \
+                        r["name"] != result.street:
+                    # The range knows the street's name at the picture's date; the street layer has today's.
+                    result.street_now, result.street = result.street, r["name"]
                 if not result.street:
                     result.street = r["name"]
                     if now and now[0]["name"] != r["name"]:
@@ -632,7 +658,7 @@ class Finder:
         for p in packs:
             for a in p.areas_at(lat, lon):
                 if a["cls"] == "town" and not result.town:
-                    chosen, _ = choose([a], when, latest, start, self._b)
+                    chosen, _ = choose([a], when, latest, self._start_for([a], start), self._b)
                     if chosen:
                         result.town = a["name"]
                 elif a["cls"] == "zip" and not result.zip_area:
@@ -682,7 +708,7 @@ class Finder:
         out, seen = [], set()
         for p in packs:
             for a in p.areas_at(lat, lon):
-                chosen, _ = choose([a], when, latest, start, self._b)
+                chosen, _ = choose([a], when, latest, self._start_for([a], start), self._b)
                 if chosen and (a["name"], a["cls"]) not in seen:
                     seen.add((a["name"], a["cls"]))
                     out.append((a["name"], a["cls"], a["size"], a["source"]))

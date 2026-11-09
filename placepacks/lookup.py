@@ -19,6 +19,11 @@ last seen in month L counts until L+1 (the packs are monthly). A date before the
 and says "no older record"; without a date the newest rows are used, "as listed now"; a span uses every row valid
 in it, "probably". When a name changed within a month after the date, the newer one is said too: "Tony's Pizza (now
 Sally's Ice Cream)". Street names work the same way: "120 Main St (now Martin Luther King Jr. Blvd)".
+Several businesses at one address (a strip mall, an office building, a food court): GPS is good to 5-15 m, so when
+two or more businesses valid at the picture's date are within TENANT_GAP_M of each other and none is clearly nearest,
+the lookup names the place holding them (a named mall, plaza, campus or building area), else the address, else the
+street; the candidates go to Result.others (never spoken). The same business from several sources (the same
+normalised name within SAME_BUSINESS_M) counts once, with the earliest first and the latest last month.
 Standard library only.
 """
 
@@ -50,6 +55,10 @@ LINE_M = 60                     # a trail, a river or a railway this near names 
 STREET_CLASSES = {"street"}     # the lines that are streets ("street" for OSM's highways); others: LINE_CLASSES
 LINE_CLASSES = {"trail": "on", "water": "beside", "rail": "beside", "byway": "on"}   # and their lead words
 SAME_PLACE_M = 15
+TENANT_GAP_M = 15               # a business is "clearly nearest" only when the next one is this much further away
+SAME_BUSINESS_M = 50            # the same normalised name this near is one business (OSM + Overture + ATP + licence)
+CONTAINER_CLASSES = {"business", "campus", "building", "landmark"}   # a mall, plaza, office park, campus holding tenants
+TENANT_CLASSES = {"business"}
 
 
 # ------------------------------------------------------------------------------------------- the result
@@ -64,7 +73,7 @@ class Result:
                   distance_m=None,
                   bearing="", over="", altitude_m=None, airport="", first=None, last=None, now_name="", listed=False,
                   probably=False, as_listed_now=False, no_older_record=False, when=None, latitude=None,
-                  longitude=None, type="", line="", line_cls="")
+                  longitude=None, type="", brand="", brand_wikidata="", line="", line_cls="")
 
     def __init__(self, **values):
         for k, v in self.FIELDS.items():
@@ -73,6 +82,9 @@ class Result:
         self.source_names = list(values.pop("source_names", []))
         self.attributions = list(values.pop("attributions", []))
         self.dates = list(values.pop("dates", []))       # [(name, first, last, source short name)] for details
+        # Every business near the point when no one of them was clearly the one (several tenants at one address):
+        # [{"name", "type", "brand", "distance_m"}]. Data for future programs only: never spoken or written.
+        self.others = list(values.pop("others", []))
         if values:
             raise TypeError(f"unknown fields: {', '.join(values)}")
 
@@ -315,6 +327,11 @@ class PackReader:
         self._typed = {"types", "point_types", "area_types"} <= tables
         if self._typed:
             self.types = {r["id"]: r["name"] for r in self._rows("SELECT id, name FROM types")}
+        # Brands of chain locations (data only, like the types): point id -> (name, Wikidata id).
+        self.brands, self._branded = {}, {"brands", "point_brands"} <= tables
+        if self._branded:
+            names = {r["id"]: (r["name"], r["wikidata"]) for r in self._rows("SELECT id, name, wikidata FROM brands")}
+            self.brands = {r["id"]: names.get(r["brand"]) for r in self._rows("SELECT id, brand FROM point_brands")}
         _open.add(self)
 
     def _select(self, table, where):
@@ -329,6 +346,8 @@ class PackReader:
                           f"WHERE {where}")
         for r in rows:
             r["type"] = self.types.get(r.pop("type_id"))
+            if table == "points":
+                r["brand"] = self.brands.get(r["id"])
         return rows
 
     def close(self):
@@ -518,6 +537,44 @@ def builds_of(packs):
     return sorted(out)
 
 
+def normal_name(name):
+    """A business name for comparing sources: lower case, without punctuation, "the", "&"/"and" and company
+    suffixes ("The Corner Café, LLC" -> "corner café")."""
+    import re
+    words = re.sub(r"[^\w\s]", " ", (name or "").lower().replace("&", " and ")).split()
+    drop = {"the", "and", "inc", "llc", "ltd", "co", "corp", "company", "incorporated", "limited"}
+    return " ".join(w for w in words if w not in drop)
+
+
+def _same_brand(a, b):
+    """True when two rows carry the same brand (its Wikidata id, else its name): one branch listed twice
+    ("Made-up Burgers" and "Made-up Burgers Main Street")."""
+    ba, bb = a.get("brand"), b.get("brand")
+    if not ba or not bb:
+        return False
+    if ba[1] and bb[1]:
+        return ba[1] == bb[1]
+    return normal_name(ba[0]) == normal_name(bb[0])
+
+
+def merge_same_business(rows):
+    """The rows grouped into businesses: rows of one key are one place (its history, even under another name), and
+    the same normalised name (or the same brand) within SAME_BUSINESS_M is one business from several sources. Returns
+    [(nearest row, [rows of that business])], nearest first; rows need "key", "d", "lat", "lon" and "name"."""
+    groups = []
+    for r in sorted(rows, key=lambda r: r["d"]):
+        n = normal_name(r["name"])
+        for head, members in groups:
+            near = fmt.metres(r["lat"], r["lon"], head["lat"], head["lon"]) <= SAME_BUSINESS_M
+            if any(m["key"] == r["key"] for m in members) or (near and (
+                    normal_name(head["name"]) == n or _same_brand(head, r))):
+                members.append(r)
+                break
+        else:
+            groups.append((r, [r]))
+    return groups
+
+
 class Finder:
     """Looks positions up in the packs (see the module docstring).
 
@@ -592,8 +649,9 @@ class Finder:
             if row.get("attribution"):
                 result.attributions.append(row["attribution"])
 
-    def lookup(self, lat, lon, when=None, detail="street", altitude=None):
-        """The Result for a position (kind "none" when nothing is known)."""
+    def lookup(self, lat, lon, when=None, detail="street", altitude=None, accuracy=None):
+        """The Result for a position (kind "none" when nothing is known). accuracy: the picture's GPS accuracy in
+        metres when it records one (a nearest business must be that much nearer than the next one)."""
         when = When.parse(when)
         water = self.water() if self._water is not False else None
         if water is not None:
@@ -617,13 +675,27 @@ class Finder:
                 a["lat"], a["lon"] = (a["minlat"] + a["maxlat"]) / 2e6, (a["minlon"] + a["maxlon"]) / 2e6
                 self._take(result, p, [a], when, latest, start, "place")
                 if result.name:
+                    if a["cls"] in CONTAINER_CLASSES and detail != "area":
+                        # A mall or plaza named: its tenants near the point, when none is clearly the one, are
+                        # kept in others (never spoken).
+                        tenants = [r for q in packs for r in q.points_near(lat, lon, PLACE_M, TENANT_CLASSES)]
+                        if tenants:
+                            scratch = Result(when=when)
+                            if self._tenants(scratch, packs, sorted(tenants, key=lambda r: r["d"]), lat, lon, when,
+                                             latest, start, accuracy, "place"):
+                                result.others = scratch.others
                     break
             if result.name:
                 break
+        tenants_unclear = False
         if not result.name:
             classes = (AREA_CLASSES - {"neighbourhood"}) if detail == "area" else POINT_CLASSES - {"street"}
             near = [r for p in packs for r in p.points_near(lat, lon, PLACE_M, classes)]
             near.sort(key=lambda r: (r["d"] > 10, r["source"] != "osm", r["d"]))
+            if near and near[0]["cls"] in TENANT_CLASSES:
+                tenants_unclear = self._tenants(result, packs, near, lat, lon, when, latest, start, accuracy,
+                                                "place")
+                near = [] if tenants_unclear or result.name else near
             if near:
                 pack = next((p for p in packs if near[0]["source"] in p.sources), packs[0])
                 group = [r for r in near if r["key"] == near[0]["key"] or fmt.metres(r["lat"], r["lon"],
@@ -636,8 +708,14 @@ class Finder:
         # 4. a facility nearby
         if not result.name and result.kind != "address":
             near = [r for p in packs for r in p.points_near(lat, lon, FACILITY_M, FACILITY_CLASSES)]
+            if tenants_unclear:
+                near = [r for r in near if r["cls"] not in TENANT_CLASSES]
             owner = {s: p for p in packs for s in p.sources}
             near.sort(key=lambda r: (is_business_source(owner.get(r["source"]), r["source"]), r["d"]))
+            if near and near[0]["cls"] in TENANT_CLASSES and not tenants_unclear:
+                tenants_unclear = self._tenants(result, packs, near, lat, lon, when, latest, start, accuracy,
+                                                "nearby")
+                near = [] if tenants_unclear or result.name else near
             if near:
                 pack = next((p for p in packs if near[0]["source"] in p.sources), packs[0])
                 self._take(result, pack, [near[0]] + [r for r in near[1:] if r["key"] == near[0]["key"]], when,
@@ -657,6 +735,61 @@ class Finder:
             result.kind = "area"
         return result
 
+    def _tenants(self, result, packs, near, lat, lon, when, latest, start, accuracy, kind):
+        """Several businesses at one address. near: the points found (nearest first). Only the businesses valid at
+        the picture's date count (past and future tenants are left out first); the same business from several
+        sources counts once. One clearly nearest (the next more than TENANT_GAP_M, or the GPS accuracy, further):
+        it is taken, with the dates of all its sources merged. Two or more within TENANT_GAP_M of each other and
+        none clearly nearest: the named mall, plaza, campus or building area holding them is taken, else nothing
+        (the address or the street names the place); the candidates go to result.others. Returns True when the
+        tenants were unclear."""
+        rows = [r for r in near if r["cls"] in TENANT_CLASSES]
+        by_key = {}
+        for r in rows:
+            by_key.setdefault(r["key"], []).append(r)
+        valid_rows = []
+        for group in by_key.values():
+            chosen, _ = choose(group, when, latest, self._start_for(group, start), self._b)
+            valid_rows += chosen
+        businesses = merge_same_business(valid_rows)
+        if not businesses:
+            return False
+        gap = max(TENANT_GAP_M, accuracy or 0)
+        first = businesses[0][0]
+        rivals = [h for h, _ in businesses[1:] if h["d"] - first["d"] <= gap and
+                  fmt.metres(h["lat"], h["lon"], first["lat"], first["lon"]) <= max(TENANT_GAP_M, gap)]
+        owner = {s: p for p in packs for s in p.sources}
+        if not rivals:
+            members = businesses[0][1]
+            history = [r for g in by_key.values() for r in g
+                       if any(r["key"] == m["key"] for m in members)]
+            self._take(result, owner.get(first["source"], packs[0]), history, when, latest, start, kind)
+            if result.name:
+                firsts = [m["first"] for m in members if m.get("first")]
+                lasts = [m["last"] for m in members]
+                result.first = min(firsts) if firsts else result.first
+                result.last = None if any(x is None for x in lasts) else max(lasts)
+                for m in members[1:]:
+                    self._attribute(result, owner.get(m["source"], packs[0]), m["source"])
+            return False
+        from placepacks.types import most_specific
+        result.others = [{"name": h["name"], "type": most_specific([m.get("type") for m in ms]) or "",
+                          "brand": next((m["brand"][0] for m in ms if m.get("brand")), ""),
+                          "distance_m": round(h["d"], 1)} for h, ms in businesses
+                         if h is first or h in rivals]
+        # The place holding them: a named mall, plaza, campus or building area at the point or at their middle.
+        heads = [first] + rivals
+        mid = (sum(h["lat"] for h in heads) / len(heads), sum(h["lon"] for h in heads) / len(heads))
+        for p in packs:
+            for at in ((lat, lon), mid):
+                for a in self._valid_areas(p.areas_at(*at), when, latest, start):
+                    if a["cls"] in CONTAINER_CLASSES:
+                        a["lat"], a["lon"] = (a["minlat"] + a["maxlat"]) / 2e6, (a["minlon"] + a["maxlon"]) / 2e6
+                        self._take(result, p, [a], when, latest, start, "place")
+                        if result.name:
+                            return True
+        return True
+
     def _take(self, result, pack, rows, when, latest, start, kind):
         """Put the row valid at when (of rows: one record and its history) into result as its name."""
         chosen, flags = choose(rows, when, latest, self._start_for(rows, start), self._b)
@@ -669,6 +802,8 @@ class Finder:
         from placepacks.types import most_specific
         same = [c for c in chosen if c.get("key") == r.get("key") or c.get("name") == r.get("name")]
         result.type = most_specific([r.get("type")] + [c.get("type") for c in same]) or ""
+        brand = next((c.get("brand") for c in [r] + same if c.get("brand")), None)
+        result.brand, result.brand_wikidata = (brand[0], brand[1] or "") if brand else ("", "")
         result.first, result.last = r["first"], r["last"]
         result.listed = is_business_source(pack, r["source"])
         result.now_name = successor(rows, r, when, latest)

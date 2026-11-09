@@ -1,4 +1,13 @@
-"""Wikidata (CC0): named landmarks, buildings, monuments and institutions with coordinates, and their dates.
+"""Wikidata (CC0): every named item with coordinates in the region (the "all" mode), or only the classes below, and
+their dates.
+
+The "all" mode (fetch "mode": "all") asks for every item with coordinates (P625) in the region's box, tile by tile:
+a tile that times out or answers ALL_LIMIT rows is split into four (fetch.py). Each item is typed by the English
+label of its class (P31); CLASSES give the pack class of the known classes and the rest are landmarks. Items of the
+classes in wikidata_exclude.json are left out (trees, survey points, census tracts, list and disambiguation pages,
+astronomical objects, taxa) and so are people (Q5) and private homes, unless a home has a heritage designation
+(P1435). The list is data: a class is added to the file, not to the code. With "skip_gnis_copies", an item that only
+copies a GNIS record (it has a GNIS id, P590, and no dates or heritage designation) is left to the GNIS layer.
 
 Only the item id, the English label, the coordinates, the class of the item and its dates are used, never any
 description text (Wikipedia's text is CC BY-SA and is not used). Dates: inception (P571) or start time (P580) start
@@ -65,7 +74,24 @@ CLASSES = {"Q41176": "building", "Q4989906": "landmark", "Q33506": "landmark", "
            # fire lookout towers, mountain passes, historic districts, and battles (with their dates).
            "Q786922": "business", "Q1226318": "business", "Q1259350": "business", "Q216212": "business",
            "Q27106471": "business", "Q5615133": "business", "Q11822917": "landmark", "Q748998": "landmark",
-           "Q133056": "nature", "Q15243209": "landmark", "Q178561": "landmark"}
+           "Q133056": "nature", "Q15243209": "landmark", "Q178561": "landmark",
+           # Places to eat and drink (restaurants and their kinds, cafés, bars, pubs, taverns, brewpubs, bakeries,
+           # inns, nightclubs); a chain's brand (restaurant chain, Q18534542) is not a place and is not asked for.
+           "Q11707": "business", "Q30022": "business", "Q187456": "business", "Q212198": "business",
+           "Q274393": "business", "Q3640372": "business", "Q1751429": "business", "Q81799": "business",
+           "Q1501212": "business", "Q154250": "business", "Q256020": "business", "Q622425": "business",
+           "Q8463304": "business", "Q1311064": "business", "Q19316447": "business", "Q3109696": "business",
+           "Q866742": "business", "Q4236467": "business", "Q3231410": "business", "Q17102985": "business",
+           "Q858012": "business", "Q24439113": "business", "Q1193068": "business",
+           # In the "all" mode: settlements and natural features, so they are not called landmarks.
+           "Q486972": "settlement", "Q532": "settlement", "Q3957": "settlement", "Q515": "settlement",
+           "Q17343829": "settlement", "Q15127012": "settlement", "Q1093829": "settlement", "Q123705": "settlement",
+           "Q8502": "nature", "Q54050": "nature", "Q39816": "nature", "Q46831": "nature", "Q23442": "nature",
+           "Q4022": "water", "Q23397": "water", "Q131681": "water", "Q47521": "water", "Q12284": "water",
+           "Q355304": "water", "Q166620": "water", "Q187223": "water", "Q39594": "water", "Q1322134": "water",
+           "Q39614": "cemetery", "Q2154459": "settlement", "Q498162": "settlement", "Q5084": "settlement",
+           "Q751708": "settlement", "Q4421": "nature", "Q166735": "nature", "Q185113": "nature", "Q740445": "nature",
+           "Q12719646": "water"}
 # Items with a heritage designation (P1435) kept whatever their class: World Heritage Sites (Wikidata's own
 # statements, CC0; UNESCO's list itself is CC BY-SA IGO and is not used).
 DESIGNATIONS = {"Q9259": "landmark"}
@@ -83,6 +109,63 @@ DESIGNATION_QUERY = """SELECT ?item ?itemLabel ?coord ?class ?classLabel ?start 
   BIND(COALESCE(?inception, ?started) AS ?start) BIND(COALESCE(?dissolved, ?ended) AS ?end)
   SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
 }}"""
+
+
+ALL_QUERY = """SELECT ?item ?itemLabel ?coord ?class ?classLabel ?start ?end ?heritage ?gnis WHERE {{
+  SERVICE wikibase:box {{ ?item wdt:P625 ?coord .
+    bd:serviceParam wikibase:cornerSouthWest "Point({west} {south})"^^geo:wktLiteral .
+    bd:serviceParam wikibase:cornerNorthEast "Point({east} {north})"^^geo:wktLiteral . }}
+  OPTIONAL {{ ?item wdt:P31 ?class . }}
+  OPTIONAL {{ ?item wdt:P571 ?start . }} OPTIONAL {{ ?item wdt:P576 ?end . }} OPTIONAL {{ ?item wdt:P1435 ?heritage . }}
+  OPTIONAL {{ ?item wdt:P590 ?gnis . }}
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}} LIMIT {limit}"""
+ALL_LIMIT = 50000               # rows per tile; a tile that fills it is split into four
+MIN_TILE = 0.02                 # degrees: a tile this small is not split again
+
+
+def all_query(box, limit=ALL_LIMIT):
+    """The "all" mode query of one tile (west, south, east, north)."""
+    west, south, east, north = box
+    return ALL_QUERY.format(west=west, south=south, east=east, north=north, limit=limit)
+
+
+ALL_TILE = 2.0                  # square degrees: the "all" mode starts with tiles this size (Vermont's 5 square
+                                # degrees can pass the 60-second limit)
+
+
+def first_tiles(region, most=ALL_TILE):
+    """The region's box in tiles of at most most square degrees (fetch.py splits a tile further when needed)."""
+    tiles, out = [tuple(region["bbox"])], []
+    while tiles:
+        w, s_, e, n = tiles.pop()
+        if (e - w) * (n - s_) > most:
+            tiles += split_tile((w, s_, e, n))
+        else:
+            out.append((w, s_, e, n))
+    return out
+
+
+def split_tile(box):
+    """A tile's four quarters."""
+    w, s_, e, n = box
+    mx, my = (w + e) / 2, (s_ + n) / 2
+    return [(w, s_, mx, my), (mx, s_, e, my), (w, my, mx, n), (mx, my, e, n)]
+
+
+_EXCLUDE = None
+
+
+def exclusions():
+    """(classes left out, home classes left out unless designated) from wikidata_exclude.json."""
+    global _EXCLUDE
+    if _EXCLUDE is None:
+        import os
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "wikidata_exclude.json"),
+                  encoding="utf-8") as f:
+            data = json.load(f)
+        _EXCLUDE = (set(data["exclude"]), set(data["homes"]))
+    return _EXCLUDE
 
 
 def queries_for(region):
@@ -109,30 +192,59 @@ def query_for(region):
     return "\n\n".join(queries_for(region))
 
 
+def _qid(b, field):
+    """The Q id of a binding's entity field ("" when none)."""
+    return b.get(field, {}).get("value", "").rsplit("/", 1)[-1]
+
+
 @reader("wikidata")
 def read(path, entry, region, writer):
-    """Add the items of a saved SPARQL JSON answer. Returns the number of items."""
+    """Add the items of a saved SPARQL JSON answer (an item may come in several rows, one per class). Returns the
+    number of items."""
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
-    count, seen = 0, set()
+    items = {}
     for b in data.get("results", {}).get("bindings", []):
-        item = b.get("item", {}).get("value", "").rsplit("/", 1)[-1]
+        item = _qid(b, "item")
+        if not item.startswith("Q"):
+            continue
+        it = items.setdefault(item, {"rows": [], "classes": set(), "heritage": False, "gnis": False, "dated": False})
+        it["rows"].append(b)
+        it["classes"].add(_qid(b, "class"))
+        it["heritage"] = it["heritage"] or bool(b.get("heritage"))
+        it["gnis"] = it["gnis"] or bool(b.get("gnis"))
+        it["dated"] = it["dated"] or bool(b.get("start") or b.get("end"))
+    excluded, homes = exclusions()
+    count = 0
+    for item, it in items.items():
+        if it["classes"] & excluded or (it["classes"] & homes and not it["heritage"]):
+            continue                    # people, trees, survey points, ...; homes without a heritage designation
+        if entry.get("skip_gnis_copies") and it["gnis"] and not it["dated"] and not it["heritage"]:
+            continue                    # a copy of a GNIS record (most streams, summits, cemeteries): GNIS has it
+        b = it["rows"][0]
         name = b.get("itemLabel", {}).get("value", "")
         coord = b.get("coord", {}).get("value", "")
-        if not item.startswith("Q") or not name or name == item or item in seen or not coord.startswith("Point("):
+        if not name or name == item or not coord.startswith("Point("):
             continue
         try:
             lon, lat = (float(v) for v in coord[6:-1].split())
         except ValueError:
             continue
-        qid = b.get("class", {}).get("value", "").rsplit("/", 1)[-1]
+        # The row of the most useful class: a known one first, then any with an English label.
+        known = [r for r in it["rows"] if _qid(r, "class") in CLASSES or _qid(r, "class") in DESIGNATIONS]
+        labelled = [r for r in it["rows"] if r.get("classLabel", {}).get("value", "") and
+                    not r["classLabel"]["value"].startswith("Q")]
+        best = (known or labelled or it["rows"])[0]
+        qid = _qid(best, "class")
         cls = CLASSES.get(qid) or DESIGNATIONS.get(qid) or "landmark"
-        first = fmt.parse_month(b.get("start", {}).get("value", ""))
-        last = fmt.parse_month(b.get("end", {}).get("value", ""))
-        seen.add(item)
+        first = min((m for m in (fmt.parse_month(r.get("start", {}).get("value", "")) for r in it["rows"]) if m),
+                    default=None)
+        last = max((m for m in (fmt.parse_month(r.get("end", {}).get("value", "")) for r in it["rows"]) if m),
+                   default=None)
         # The fine type: the English label of the class the item is an instance of ("lighthouse", "fort").
-        kind = types.humanise(b.get("classLabel", {}).get("value", "")) or None
+        label = best.get("classLabel", {}).get("value", "")
+        kind = types.humanise(label) if label and label != qid else None
         writer.add_point(f"wikidata:{item}", entry["id"], name, cls, f"wikidata={item}", lat, lon, first, last,
-                         type=kind)
+                         type=kind or None)
         count += 1
     return count

@@ -106,7 +106,8 @@ def _add(writer, source, key, tags, points=None, rings=None, point=None):
     if rings is not None:
         writer.add_area(key, source, name, found[2], tag, rings, type=kind)
     elif point is not None:
-        writer.add_point(key, source, name, found[2], tag, *point, type=kind)
+        brand = (tags.get("brand"), tags.get("brand:wikidata")) if tags.get("brand") else None
+        writer.add_point(key, source, name, found[2], tag, *point, type=kind, brand=brand)
 
 
 @reader("osm")

@@ -13,7 +13,10 @@ Areas and points may have dates: fields "first" and "last" (dates or text), and 
 which a last date means "still current" (the Newberry atlas of historical county boundaries ends in 2000, so its
 latest versions are today's counties). "encoding": the text encoding of the .dbf (default UTF-8; a byte that does not
 decode is replaced). The fine type: "type_field" through "type_map" (placepacks.types.of), else the entry's
-"type", else its "tag". "skip_names": a regular expression of names left out (the atlas's non-county areas). Only
+"type", else its "tag". "class_field" with "class_map": each record's class from a field (TIGER's MTFCC
+codes; tabular.class_of: an unmapped code or a code mapped to "" is left out). "name_replace" and "name_words":
+types.rename (TIGER's abbreviations written out: "Marlboro Colg" -> "Marlboro College"). "skip_names": a regular expression of names left out (the atlas's non-county areas). "projection": the
+shapes are in a projection (fmt.PROJECTIONS: Statistics Canada's Lambert for its boundary files) and are converted. Only
 shapes touching the region's bounding box are read.
 """
 
@@ -23,7 +26,7 @@ import re
 
 from placepacks import fmt, types
 from placepacks.readers import reader
-from placepacks.readers.tabular import smart_case
+from placepacks.readers.tabular import class_of, smart_case
 
 
 def _dates(entry, rec):
@@ -63,6 +66,16 @@ def _field(rec, names):
     return ""
 
 
+class _Projected:
+    """A shape whose points are converted from a projection (fmt.PROJECTIONS) to longitude and latitude."""
+
+    def __init__(self, shape, name):
+        self.points = [fmt.to_lonlat(name, x, y) for x, y in shape.points]
+        self.parts = list(shape.parts)
+        xs, ys = [p[0] for p in self.points], [p[1] for p in self.points]
+        self.bbox = (min(xs), min(ys), max(xs), max(ys))
+
+
 def _parts(shape):
     """The parts of a shape as lists of (lat, lon)."""
     starts = list(shape.parts) + [len(shape.points)]
@@ -83,6 +96,8 @@ def read(path, entry, region, writer):
                 shape, rec = sr.shape, dict(zip(names, sr.record))
                 if not shape.points:
                     continue
+                if entry.get("projection"):
+                    shape = _Projected(shape, entry["projection"])
                 x1, y1, x2, y2 = shape.bbox if len(shape.points) > 1 else (*shape.points[0], *shape.points[0])
                 if x2 < west or x1 > east or y2 < south or y1 > north:
                     continue
@@ -90,12 +105,18 @@ def read(path, entry, region, writer):
                     name = entry["name_template"].format(**{k: smart_case(str(v or "")) for k, v in rec.items()})
                 else:
                     name = smart_case(str(_field(rec, fields["name"])))
+                name = types.rename(entry, name)
                 if not name.strip() or (skip and skip.search(name)):
                     continue
+                cls, tag = entry.get("cls", ""), entry.get("tag", source)
+                if entry.get("class_field"):
+                    cls, mapped = class_of(entry, str(_field(rec, entry["class_field"])))
+                    if not cls:
+                        continue
+                    tag = mapped or tag
                 first, last = _dates(entry, rec)
                 phrase = (types.of(entry.get("type_map"), _field(rec, entry["type_field"])) if entry.get("type_field")
-                          else "") or entry.get("type") or (entry.get("tag") if entry.get("tag") not in (None, source)
-                                                            else None)
+                          else "") or entry.get("type") or (tag if tag not in (None, "", source) else None)
                 if entry.get("name_format"):
                     name = entry["name_format"].format(name)
                 key = f"{source}:{_field(rec, fields['key'])}" if fields.get("key") else None
@@ -107,15 +128,13 @@ def read(path, entry, region, writer):
                     for part in _parts(shape):
                         writer.add_range(key or f"{source}:{name}:{part[0]}", source, name, *nums, zip_code, part)
                 elif kind == "areas":
-                    writer.add_area(key or f"{source}:{name}", source, name, entry["cls"], entry.get("tag", source),
+                    writer.add_area(key or f"{source}:{name}", source, name, cls, tag,
                                     _parts(shape), first, last, type=phrase)
                 elif kind == "lines":
                     for i, part in enumerate(_parts(shape)):
-                        writer.add_line(f"{key or source + ':' + name}:{i}", source, name, entry["cls"],
-                                        entry.get("tag", source), part)
+                        writer.add_line(f"{key or source + ':' + name}:{i}", source, name, cls, tag, part)
                 else:
                     lon, lat = shape.points[0]
-                    writer.add_point(key or f"{source}:{name}:{lat:.4f}:{lon:.4f}", source, name, entry["cls"],
-                                     entry.get("tag", source), lat, lon, first, last, type=phrase)
+                    writer.add_point(key or f"{source}:{name}:{lat:.4f}:{lon:.4f}", source, name, cls, tag, lat, lon, first, last, type=phrase)
                 count += 1
     return count

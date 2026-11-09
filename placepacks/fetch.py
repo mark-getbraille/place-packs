@@ -218,6 +218,12 @@ def national_files(entry, values, opener=None):
                   f"address", flush=True)
             url = nad_url(values, opener) if entry["id"] == "nad" else f["url"].format(**values)
             return [(url, os.path.basename(urllib.parse.urlsplit(url).path), None)]
+    if f.get("json_url"):
+        # The address of the newest file, read from a small JSON document (All The Places' runs/latest.json).
+        meta = read_json(f["metadata"], opener)
+        url = meta[f["json_url"]]
+        return [(url, f.get("file") or os.path.basename(urllib.parse.urlsplit(url).path), str(meta.get(f.get(
+            "version_key", ""), "")) or None)]
     if f.get("urls"):
         # Several fixed files of one source (StatCan's facility databases).
         return [(u.format(**values), os.path.basename(urllib.parse.urlsplit(u).path), None) for u in f["urls"]]
@@ -241,25 +247,93 @@ def national_files(entry, values, opener=None):
         return [(urllib.parse.urljoin(f["listing"], n), os.path.basename(urllib.parse.urlsplit(n).path), None)
                 for n in names]
     url = nad_url(values, opener) if entry["id"] == "nad" else f["url"].format(**values)
-    return [(url, os.path.basename(urllib.parse.urlsplit(url).path), None)]
+    # "file": the local name when the address has none of its own (a Dataverse file id).
+    return [(url, f.get("file") or os.path.basename(urllib.parse.urlsplit(url).path), None)]
+
+
+def _json_documents(paths):
+    """The JSON documents of files: each file, or each .json/.geojson member of a .zip."""
+    import zipfile
+    for path in paths:
+        if str(path).lower().endswith(".zip"):
+            with zipfile.ZipFile(path) as z:
+                for name in z.namelist():
+                    if name.lower().endswith((".json", ".geojson")):
+                        yield json.loads(z.read(name).decode("utf-8"))
+        else:
+            with open(path, encoding="utf-8") as fh:
+                yield json.load(fh)
+
+
+def json_to_csv(paths, spec, target):
+    """Write the records of JSON files (or of the JSON files inside .zip files) as one CSV: spec = {"records": the key of the list of records (dotted for a
+    nested one), "fields": [the record's keys, dotted for nested ones, a number for a list's item:
+    "geometry.coordinates.0"]} (NOAA's station list, GeoJSON features). Returns the rows."""
+    rows = 0
+    with open(target, "w", newline="", encoding="utf-8") as out:
+        w = csv.writer(out)
+        w.writerow([k.replace(".", "_") for k in spec["fields"]])
+        for data in _json_documents(paths):
+            for part in spec["records"].split("."):
+                data = data.get(part, []) if isinstance(data, dict) else []
+            for rec in data:
+                values = []
+                for key in spec["fields"]:
+                    v = rec
+                    for part in key.split("."):
+                        if isinstance(v, list) and part.isdigit():
+                            v = v[int(part)] if int(part) < len(v) else ""
+                        else:
+                            v = v.get(part, "") if isinstance(v, dict) else ""
+                    values.append("" if v is None else v)
+                w.writerow(values)
+                rows += 1
+    return rows
+
+
+def _xml_streams(path):
+    """The XML streams of a file: the file itself, or each .xml member of a .zip."""
+    import zipfile
+    if str(path).lower().endswith(".zip"):
+        with zipfile.ZipFile(path) as z:
+            for name in z.namelist():
+                if name.lower().endswith(".xml"):
+                    with z.open(name) as fh:
+                        yield fh
+    else:
+        with open(path, "rb") as fh:
+            yield fh
 
 
 def xml_to_csv(paths, spec, target):
-    """Write the records of XML files as one CSV: spec = {"record": the element of one record, "fields": [child
-    element names, found at any depth inside the record]}. Returns the number of records."""
+    """Write the records of XML files (or of the .xml files inside .zip files) as one CSV: spec = {"record": the
+    element of one record, "fields": [child element names, found at any depth inside the record; a path
+    "Name/EN" for one child of another; "@attr" for an attribute of the record]}; a field written "column=path"
+    names its column. Returns the number of records."""
     import xml.etree.ElementTree as ET
-    fields, count = spec["fields"], 0
+    specs = [f.split("=", 1) if "=" in f else [f.replace("/", "_").lstrip("@"), f] for f in spec["fields"]]
+    count = 0
     with open(target, "w", newline="", encoding="utf-8") as out:
         w = csv.writer(out)
-        w.writerow(fields)
+        w.writerow([c for c, _ in specs])
         for path in paths:
-            for _, el in ET.iterparse(path, events=("end",)):
-                if el.tag != spec["record"]:
-                    continue
-                values = {c.tag: (c.text or "").strip() for c in el.iter()}
-                w.writerow([values.get(name, "") for name in fields])
-                count += 1
-                el.clear()
+            for stream in _xml_streams(path):
+                for _, el in ET.iterparse(stream, events=("end",)):
+                    if el.tag != spec["record"]:
+                        continue
+                    values = {c.tag: (c.text or "").strip() for c in el.iter()}
+                    row = []
+                    for _, f in specs:
+                        if f.startswith("@"):
+                            row.append(el.get(f[1:], ""))
+                        elif "/" in f:
+                            found = el.find(f)
+                            row.append((found.text or "").strip() if found is not None else "")
+                        else:
+                            row.append(values.get(f, ""))
+                    w.writerow(row)
+                    count += 1
+                    el.clear()
     return count
 
 
@@ -432,6 +506,85 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
     os.replace(target + ".partial", target)
     return {"ok": rows > 0, "version": version, "path": target, "date": datetime.date.today().isoformat(),
             **({} if rows else {"status": "skipped", "reason": "no record of the layer is in the region"})}
+
+
+# ------------------------------------------------------------------------------------------- Wikidata, all items
+
+
+def wikidata_tiles(ask, tiles, pause=0, limit=None):
+    """Every row of the "all" mode over tiles, splitting a tile into four when it times out (or is refused once the
+    retries are spent) or fills the row limit, down to wikidata.MIN_TILE degrees. ask(query) returns the rows."""
+    from placepacks.readers import wikidata as wd
+    limit = limit or wd.ALL_LIMIT
+    rows, todo = [], list(tiles)
+    while todo:
+        box = todo.pop()
+        small = box[2] - box[0] <= wd.MIN_TILE or box[3] - box[1] <= wd.MIN_TILE
+        try:
+            got = ask(wd.all_query(box, limit))
+        except Exception:  # noqa: BLE001 - a timeout: ask for the four quarters instead
+            if small:
+                raise
+            todo += wd.split_tile(box)
+            continue
+        finally:
+            time.sleep(pause)
+        if len(got) >= limit and not small:
+            todo += wd.split_tile(box)
+            continue
+        rows += got
+    return rows
+
+
+# ------------------------------------------------------------------------------------------- All The Places
+
+# Offices of individual people (an insurance agent's or an estate agent's own office, a financial adviser): left out.
+ATP_PERSONAL = {"office": {"insurance", "estate_agent", "financial_advisor", "financial", "lawyer", "tax_advisor",
+                           "accountant"}}
+_PERSON = re.compile(r"^[A-Z][a-z]+(?: [A-Z]\.?)?(?: [A-Z][a-z'-]+){1,2}(?:,? (?:Jr|Sr|II|III)\.?)?$")
+
+
+def atp_to_csv(zip_path, target, boxes):
+    """Write the chain locations of an All The Places run (a .zip of one GeoJSON FeatureCollection per spider) that
+    fall in any of boxes ([(west, south, east, north)]) as one CSV: key, spider, name, branch, brand, brand_wikidata,
+    the OSM-style tags that give the class and type, lat, lon. Offices of individuals and names that are a person's
+    are left out. Returns the number of rows."""
+    import zipfile
+    from placepacks import types as place_types
+    from placepacks.readers.osm import main_tag
+    count = 0
+    fields = ["key", "spider", "name", "branch", "brand", "brand_wikidata", "main_key", "main_value", "type", "lat",
+              "lon"]
+    with zipfile.ZipFile(zip_path) as z, open(target, "w", newline="", encoding="utf-8") as out:
+        w = csv.writer(out)
+        w.writerow(fields)
+        for info in z.infolist():
+            if not info.filename.endswith(".geojson"):
+                continue
+            try:
+                data = json.loads(z.read(info).decode("utf-8"))
+            except ValueError:
+                continue
+            for feat in data.get("features", []):
+                geom, tags = feat.get("geometry") or {}, feat.get("properties") or {}
+                if geom.get("type") != "Point":
+                    continue
+                lon, lat = geom["coordinates"][:2]
+                if not any(wb <= lon <= eb and sb <= lat <= nb for wb, sb, eb, nb in boxes):
+                    continue
+                if any(tags.get(k) in v for k, v in ATP_PERSONAL.items()):
+                    continue
+                name = (tags.get("name") or tags.get("brand") or "").strip()
+                if not name or _PERSON.match(name):
+                    continue
+                found = main_tag({k: str(v) for k, v in tags.items()})
+                spider = tags.get("@spider", "")
+                w.writerow([f"{spider}:{tags.get('ref') or feat.get('id', '')}", spider, name, tags.get("branch", ""),
+                            tags.get("brand", ""), tags.get("brand:wikidata", ""), found[0] if found else "",
+                            found[1] if found else "", place_types.osm({k: str(v) for k, v in tags.items()}),
+                            f"{lat:.6f}", f"{lon:.6f}"])
+                count += 1
+    return count
 
 
 # ------------------------------------------------------------------------------------------- the USCG Light List
@@ -735,26 +888,33 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         if fingerprint:
             out["ok"] = True
             return out
-        from placepacks.readers.wikidata import queries_for
+        from placepacks.readers import wikidata as wd
         target = os.path.join(folder, "wikidata.json")
         os.makedirs(folder, exist_ok=True)
-        bindings = []
-        for query in queries_for(region):
-            # One query per group of classes (each within the service's time limit); a busy service is tried again.
+
+        def ask(query, retries=RETRY_WAITS):
+            """One SPARQL query's rows; a busy service is tried again."""
             body = urllib.parse.urlencode({"query": query, "format": "json"}).encode()
-            answer = {}
-            for attempt in range(len(RETRY_WAITS) + 1):
+            for attempt in range(len(retries) + 1):
                 try:
                     with request(url, "POST", body, {"Accept": "application/sparql-results+json",
                                                       "Content-Type": "application/x-www-form-urlencoded"}) as r:
-                        answer = json.loads(r.read().decode("utf-8"))
-                    break
+                        return json.loads(r.read().decode("utf-8")).get("results", {}).get("bindings", [])
                 except Exception as e:  # noqa: BLE001 - tried again when it is temporary
-                    if attempt >= len(RETRY_WAITS) or not retryable(e):
+                    if attempt >= len(retries) or not retryable(e):
                         raise
-                    time.sleep(RETRY_WAITS[attempt])
-            bindings += answer.get("results", {}).get("bindings", [])
-            time.sleep(pause)
+                    time.sleep(retries[attempt])
+
+        bindings = []
+        if f.get("mode") == "all":
+            # A tile that times out is split at once rather than asked again and again.
+            bindings = wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), wd.first_tiles(region), pause,
+                                      f.get("limit", wd.ALL_LIMIT))
+        else:
+            for query in wd.queries_for(region):
+                # One query per group of classes (each within the service's time limit).
+                bindings += ask(query)
+                time.sleep(pause)
         with open(target, "w", encoding="utf-8") as fh:
             json.dump({"results": {"bindings": bindings}}, fh)
         out.update(ok=True, path=target, date=datetime.date.today().isoformat())
@@ -770,7 +930,7 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
             # The publisher's own version (blobId and rowsUpdatedAt), the same in the plan and in the build.
             url, name, version = national_files(entry, values)[0]
             path = os.path.join(folder, name)
-        elif f.get("per_country") or f.get("listing") or f.get("urls"):
+        elif f.get("per_country") or f.get("listing") or f.get("urls") or f.get("json_url"):
             path, version = folder, ""
         else:
             path, version = os.path.join(folder, os.path.basename(urllib.parse.urlsplit(url).path)), ""
@@ -982,6 +1142,23 @@ def prepare_national(entry, national, values):
         base = name[:-len(".version")] if name.endswith(".version") else name
         if base not in kept:
             os.remove(os.path.join(folder, name))       # an older release (NAD_r20_TXT.zip after NAD_TXT.zip)
+    if f.get("convert") == "json_records":
+        paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
+        count = json_to_csv(paths, f["json_records"], os.path.join(folder, entry["id"] + ".csv"))
+        for p in paths:
+            os.remove(p)
+            if os.path.exists(p + ".version"):
+                os.remove(p + ".version")
+        print(f"{entry['id']}: {count:,} records")
+    if f.get("convert") == "atp":
+        paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
+        regions = [r for r in catalogue.regions().values() if catalogue.country_code(r) in entry["countries"]]
+        count = atp_to_csv(paths[0], os.path.join(folder, entry["id"] + ".csv"), [tuple(r["bbox"]) for r in regions])
+        for p in paths:
+            os.remove(p)
+            if os.path.exists(p + ".version"):
+                os.remove(p + ".version")
+        print(f"{entry['id']}: {count:,} chain locations in the covered regions")
     if f.get("convert") == "light_list":
         paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
         count = light_list_to_csv(paths, os.path.join(folder, entry["id"] + ".csv"))

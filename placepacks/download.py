@@ -144,6 +144,15 @@ def merge_local(new_path, old_path):
                         con.execute("INSERT OR IGNORE INTO main.types (name) VALUES (?)", (row[0],))
                         tid = con.execute("SELECT id FROM main.types WHERE name = ?", (row[0],)).fetchone()[0]
                         con.execute(f"INSERT OR REPLACE INTO main.{links} VALUES (?, ?)", (start + i, tid))
+                    brand = (con.execute("SELECT b.name, b.wikidata FROM old.point_brands l JOIN old.brands b ON "
+                                         "b.id = l.brand WHERE l.id = ?", (old_id,)).fetchone()
+                             if table == "points" and {"brands", "point_brands"} <= have["old"] and
+                             {"brands", "point_brands"} <= have["main"] else None)
+                    if brand:
+                        con.execute("INSERT OR IGNORE INTO main.brands (name, wikidata) VALUES (?, ?)", brand)
+                        bid = con.execute("SELECT id FROM main.brands WHERE name = ? AND wikidata = ?",
+                                          brand).fetchone()[0]
+                        con.execute("INSERT OR REPLACE INTO main.point_brands VALUES (?, ?)", (start + i, bid))
         con.commit()
         con.execute("DETACH DATABASE old")
     finally:

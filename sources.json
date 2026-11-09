@@ -14,7 +14,13 @@
   "overture_release": "latest",
   "overture_seed_releases": [],
   "fsq_release": "latest",
-  "nces_year": "2324"
+  "nces_year": "2324",
+  "tiger_seed_sources": [
+   "tiger-addrfeat",
+   "tiger-pointlm",
+   "tiger-arealm",
+   "tiger-mil"
+  ]
  },
  "licences": {
   "ODbL-1.0": {
@@ -110,6 +116,31 @@
   "OGL-Ontario": {
    "name": "Open Government Licence - Ontario",
    "url": "https://www.ontario.ca/page/open-government-licence-ontario",
+   "file": ""
+  },
+  "OGL-Calgary": {
+   "name": "Open Government Licence - City of Calgary",
+   "url": "https://data.calgary.ca/stories/s/u45n-7awa/",
+   "file": ""
+  },
+  "Edmonton-Open-Data": {
+   "name": "City of Edmonton Open Data Terms of Use (v2.1: worldwide, royalty-free, commercial use allowed)",
+   "url": "https://www.edmonton.ca/sites/default/files/public-files/assets/Web-version2.1-OpenDataAgreement.pdf",
+   "file": ""
+  },
+  "OGL-Nova-Scotia": {
+   "name": "Open Government Licence - Nova Scotia",
+   "url": "https://novascotia.ca/opendata/licence.asp",
+   "file": ""
+  },
+  "OGL-Vancouver": {
+   "name": "Open Government Licence - Vancouver",
+   "url": "https://opendata.vancouver.ca/pages/licence/",
+   "file": ""
+  },
+  "OGL-NB": {
+   "name": "Open Government Licence - New Brunswick",
+   "url": "https://geonb.snb.ca/documents/license/geonb-odl_en.pdf",
    "file": ""
   }
  },
@@ -395,6 +426,244 @@
    "history": "Seeded from the yearly releases in tiger_seed_years (every 3 years from 2011, when ADDRFEAT starts), then every year: street renames, new streets and changed ranges. Keyed by TIGER's edge id (TLID)."
   },
   {
+   "id": "tiger-pointlm",
+   "name": "US Census Bureau TIGER/Line point landmarks",
+   "short": "the US Census Bureau's landmarks",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html",
+   "reader": "shapes",
+   "kind": "points",
+   "cls": "landmark",
+   "fetch": {
+    "method": "tiger_counties",
+    "url": "https://www2.census.gov/geo/tiger/TIGER{tiger_year}/POINTLM/",
+    "prefix": "tl_{tiger_year}_{fips}",
+    "suffix": "_pointlm.zip",
+    "pause": 1
+   },
+   "attribution": "US Census Bureau TIGER/Line point landmarks from the U.S. Census Bureau's TIGER/Line Shapefiles (public domain).",
+   "fields": {
+    "name": "FULLNAME",
+    "key": "POINTID"
+   },
+   "class_field": "MTFCC",
+   "class_map": {
+    "C3022": "nature",
+    "C3023": "nature",
+    "C3024": "landmark",
+    "C3026": "business",
+    "C3027": "landmark",
+    "C3067": "landmark",
+    "C3071": "landmark",
+    "C3074": "landmark",
+    "C3076": "landmark",
+    "C3077": "landmark",
+    "C3078": "landmark",
+    "C3081": "settlement",
+    "C3085": "settlement",
+    "K1227": "business",
+    "K1228": "park",
+    "K1231": "public",
+    "K1236": "public",
+    "K1237": "public",
+    "K1238": "public",
+    "K1239": "landmark",
+    "K2100": "public",
+    "K2110": "campus",
+    "K2146": "public",
+    "K2165": "public",
+    "K2167": "landmark",
+    "K2180": "park",
+    "K2181": "park",
+    "K2182": "park",
+    "K2183": "park",
+    "K2184": "park",
+    "K2185": "park",
+    "K2186": "park",
+    "K2187": "park",
+    "K2188": "park",
+    "K2189": "park",
+    "K2190": "park",
+    "K2191": "public",
+    "K2193": "public",
+    "K2194": "public",
+    "K2195": "public",
+    "K2196": "public",
+    "K2300": "business",
+    "K2361": "business",
+    "K2362": "business",
+    "K2363": "business",
+    "K2364": "business",
+    "K2366": "business",
+    "K2400": "transit",
+    "K2424": "landmark",
+    "K2432": "landmark",
+    "K2451": "transit",
+    "K2452": "transit",
+    "K2453": "transit",
+    "K2454": "transit",
+    "K2455": "transit",
+    "K2456": "transit",
+    "K2457": "transit",
+    "K2458": "transit",
+    "K2460": "transit",
+    "K2540": "campus",
+    "K2543": "campus",
+    "K2545": "landmark",
+    "K2561": "park",
+    "K2564": "park",
+    "K2582": "cemetery",
+    "K2586": "park",
+    "K3544": "landmark",
+    "*": ""
+   },
+   "type_field": "MTFCC",
+   "type_map": "mtfcc",
+   "notes": "Named point landmarks typed by their MTFCC code: summits, schools, churches, hospitals, cemeteries, airports, post offices, monuments, lookout towers and more. Homes (apartment buildings, trailer courts, dormitories, nursing homes), shelters, survey marks and road features are left out.",
+   "history": "Seeded from the yearly releases in tiger_seed_years (2011, the county files, then every 3 years to 2023), then every year: a landmark missing from a later release is closed at its last release.",
+   "name_words": "tiger_words"
+  },
+  {
+   "id": "tiger-arealm",
+   "name": "US Census Bureau TIGER/Line area landmarks",
+   "short": "the US Census Bureau's landmarks",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html",
+   "reader": "shapes",
+   "kind": "areas",
+   "cls": "landmark",
+   "fetch": {
+    "method": "tiger_counties",
+    "url": "https://www2.census.gov/geo/tiger/TIGER{tiger_year}/AREALM/",
+    "prefix": "tl_{tiger_year}_{fips}",
+    "suffix": "_arealm.zip",
+    "pause": 1
+   },
+   "attribution": "US Census Bureau TIGER/Line area landmarks from the U.S. Census Bureau's TIGER/Line Shapefiles (public domain).",
+   "fields": {
+    "name": "FULLNAME",
+    "key": [
+     "AREAID",
+     "ARID"
+    ]
+   },
+   "class_field": "MTFCC",
+   "class_map": {
+    "C3022": "nature",
+    "C3023": "nature",
+    "C3024": "landmark",
+    "C3026": "business",
+    "C3027": "landmark",
+    "C3067": "landmark",
+    "C3071": "landmark",
+    "C3074": "landmark",
+    "C3076": "landmark",
+    "C3077": "landmark",
+    "C3078": "landmark",
+    "C3081": "settlement",
+    "C3085": "settlement",
+    "K1227": "business",
+    "K1228": "park",
+    "K1231": "public",
+    "K1236": "public",
+    "K1237": "public",
+    "K1238": "public",
+    "K1239": "landmark",
+    "K2100": "public",
+    "K2110": "campus",
+    "K2146": "public",
+    "K2165": "public",
+    "K2167": "landmark",
+    "K2180": "park",
+    "K2181": "park",
+    "K2182": "park",
+    "K2183": "park",
+    "K2184": "park",
+    "K2185": "park",
+    "K2186": "park",
+    "K2187": "park",
+    "K2188": "park",
+    "K2189": "park",
+    "K2190": "park",
+    "K2191": "public",
+    "K2193": "public",
+    "K2194": "public",
+    "K2195": "public",
+    "K2196": "public",
+    "K2300": "business",
+    "K2361": "business",
+    "K2362": "business",
+    "K2363": "business",
+    "K2364": "business",
+    "K2366": "business",
+    "K2400": "transit",
+    "K2424": "landmark",
+    "K2432": "landmark",
+    "K2451": "transit",
+    "K2452": "transit",
+    "K2453": "transit",
+    "K2454": "transit",
+    "K2455": "transit",
+    "K2456": "transit",
+    "K2457": "transit",
+    "K2458": "transit",
+    "K2460": "transit",
+    "K2540": "campus",
+    "K2543": "campus",
+    "K2545": "landmark",
+    "K2561": "park",
+    "K2564": "park",
+    "K2582": "cemetery",
+    "K2586": "park",
+    "K3544": "landmark",
+    "*": ""
+   },
+   "type_field": "MTFCC",
+   "type_map": "mtfcc",
+   "notes": "Named area landmarks typed by their MTFCC code: parks of every level, national forests, cemeteries, golf courses, airports, colleges, shopping centres, campgrounds, zoos and more; homes and dormitories are left out.",
+   "history": "Seeded from the yearly releases in tiger_seed_years (2011, the county files, then every 3 years to 2023), then every year: a landmark missing from a later release is closed at its last release.",
+   "name_words": "tiger_words"
+  },
+  {
+   "id": "tiger-mil",
+   "name": "US Census Bureau TIGER/Line military installations",
+   "short": "the US Census Bureau",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html",
+   "reader": "shapes",
+   "kind": "areas",
+   "cls": "campus",
+   "fetch": {
+    "method": "tiger_counties",
+    "url": "https://www2.census.gov/geo/tiger/TIGER{tiger_year}/MIL/",
+    "prefix": "tl_{tiger_year}_us",
+    "suffix": "_mil.zip",
+    "pause": 1
+   },
+   "attribution": "US Census Bureau TIGER/Line military installations from the U.S. Census Bureau's TIGER/Line Shapefiles (public domain).",
+   "tag": "military",
+   "type": "military installation",
+   "fields": {
+    "name": "FULLNAME",
+    "key": "AREAID"
+   },
+   "notes": "Military installations, one national file each year (only those touching the region are read); with the seed years, a base closed since 2011 keeps its last-seen year.",
+   "history": "Seeded from the yearly releases in tiger_seed_years (2011, the county files, then every 3 years to 2023), then every year: a landmark missing from a later release is closed at its last release.",
+   "name_words": "tiger_words"
+  },
+  {
    "id": "overture-places",
    "name": "Overture Maps Foundation places",
    "short": "Overture Maps",
@@ -433,7 +702,7 @@
     "method": "duckdb",
     "file": "overture.slice.parquet"
    },
-   "query": "SELECT id AS key, names.primary AS name, {cls} AS cls, bbox.ymin AS lat, bbox.xmin AS lon FROM read_parquet('{src}', hive_partitioning = 1) WHERE bbox.xmin BETWEEN {west} AND {east} AND bbox.ymin BETWEEN {south} AND {north} AND confidence >= 0.6 AND COALESCE(CAST({status} AS VARCHAR), '') <> 'permanently_closed'",
+   "query": "SELECT id AS key, names.primary AS name, {cls} AS cls, bbox.ymin AS lat, bbox.xmin AS lon, {brand} AS brand, {brand_qid} AS brand_qid FROM read_parquet('{src}', hive_partitioning = 1) WHERE bbox.xmin BETWEEN {west} AND {east} AND bbox.ymin BETWEEN {south} AND {north} AND confidence >= 0.6 AND COALESCE(CAST({status} AS VARCHAR), '') <> 'permanently_closed'",
    "class_map": {
     "parking": "business",
     "park": "park",
@@ -475,6 +744,12 @@
     ],
     "status": [
      "operating_status"
+    ],
+    "brand": [
+     "brand.names.primary"
+    ],
+    "brand_qid": [
+     "brand.wikidata"
     ]
    },
    "notes": "Overture renamed its category columns in 2026 (\"categories\" became \"taxonomy\" and \"basic_category\"): the build reads the release's columns first and uses taxonomy.primary, else basic_category, else the old categories.primary. Places whose operating_status is \"permanently_closed\" are left out of the month's data, so their earlier record stays, closed at the last build that listed them open."
@@ -839,7 +1114,7 @@
   },
   {
    "id": "wikidata",
-   "name": "Wikidata",
+   "name": "Wikidata (every item with coordinates)",
    "short": "Wikidata",
    "part": "extra",
    "countries": [
@@ -873,10 +1148,12 @@
    "fetch": {
     "method": "wikidata",
     "url": "https://query.wikidata.org/sparql",
-    "pause": 10
+    "pause": 10,
+    "mode": "all"
    },
    "history": "Wikidata's own start and end dates (inception P571, start P580, dissolved or demolished P576, end P582), often decades back.",
-   "notes": "Classes kept include lighthouses and light stations, forts and fortifications, military, air, naval and Coast Guard bases and stations, national cemeteries, state parks, current and former railway stations, ski areas, amusement parks, theatres, cinemas, hotels, shopping centres, department stores, factories, mills, mines, breweries, trading posts and ghost towns, each with its inception and closing dates when Wikidata has them. The fine type is the English label of the item's class."
+   "notes": "Every Wikidata item with coordinates in the region, asked tile by tile (a tile that times out or fills 50,000 rows is split into four), typed by the English label of its class (\"covered bridge\", \"brewpub\"). Left out by placepacks/wikidata_exclude.json: people, families, trees, survey points, list and disambiguation pages, astronomical objects, taxa, electoral districts, graves and benches; private homes unless they have a heritage designation (P1435). Items that only copy a GNIS record (a GNIS id and no dates or designation) are left to GNIS. Only the id, English label, coordinates, class and dates are used, never Wikipedia text.",
+   "skip_gnis_copies": true
   },
   {
    "id": "cgndb",
@@ -926,7 +1203,7 @@
   },
   {
    "id": "statcan-facilities",
-   "name": "Statistics Canada open databases of educational, healthcare and cultural and art facilities",
+   "name": "Statistics Canada open databases of educational and cultural and art facilities",
    "short": "Statistics Canada",
    "part": "extra",
    "countries": [
@@ -942,7 +1219,6 @@
     "method": "national",
     "urls": [
      "https://www150.statcan.gc.ca/n1/en/pub/37-26-0001/2022001/ODEF_v2.1.zip",
-     "https://www150.statcan.gc.ca/n1/en/pub/13-26-0001/2020001/ODHF_v1.1.zip",
      "https://www150.statcan.gc.ca/n1/en/pub/21-26-0001/2020001/ODCAF_V1.0.zip"
     ],
     "pause": 2
@@ -994,7 +1270,7 @@
     ]
    },
    "type_map": "humanise",
-   "notes": "Downloaded from Statistics Canada's Linkable Open Data Environment (ODEF 2.1, ODHF 1.1, ODCAF 1.0) at each build (no hand step); split by province."
+   "notes": "Downloaded from Statistics Canada's Linkable Open Data Environment (ODEF 2.1, ODCAF 1.0) at each build (no hand step); split by province. Healthcare facilities come from ODHF version 2 (statcan-odhf2)."
   },
   {
    "id": "ban",
@@ -2277,6 +2553,92 @@
    "notes": "A fallback for the countries outside North America (the US and Canada have GNIS and the Canadian names): lakes, bays, mountains, islands, parks, quarters of towns, churches, castles, monuments, museums, schools, hospitals, stations and airports, from the per-country files (no login)."
   },
   {
+   "id": "geonames-na",
+   "name": "GeoNames (United States and Canada: kinds of places GNIS and the CGNDB lack)",
+   "short": "GeoNames",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Place names from GeoNames (geonames.org), CC BY 4.0.",
+   "url": "https://www.geonames.org",
+   "reader": "tabular",
+   "kind": "points",
+   "fetch": {
+    "method": "national",
+    "per_country": true,
+    "url": "https://download.geonames.org/export/dump/{cc}.zip",
+    "pause": 5
+   },
+   "member": "[A-Z][A-Z].txt",
+   "split_file": "GN.txt",
+   "delimiter": "\t",
+   "no_quotes": true,
+   "fieldnames": [
+    "geonameid",
+    "name",
+    "asciiname",
+    "alternatenames",
+    "latitude",
+    "longitude",
+    "feature_class",
+    "feature_code",
+    "country_code",
+    "cc2",
+    "admin1",
+    "admin2",
+    "admin3",
+    "admin4",
+    "population",
+    "elevation",
+    "dem",
+    "timezone",
+    "modified"
+   ],
+   "split_box": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "country": "country_code"
+   },
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "name",
+    "key": "geonameid",
+    "class_column": [
+     "feature_class",
+     "feature_code"
+    ]
+   },
+   "class_map": {
+    "S HTL": "business:hotel",
+    "S RSRT": "business:resort",
+    "S MALL": "business:shopping mall",
+    "S CSNO": "business:casino",
+    "S REST": "business:restaurant",
+    "S MKT": "business:market",
+    "S AMUS": "park:amusement park",
+    "S ZOO": "park:zoo",
+    "S GDN": "park:garden",
+    "S OBS": "landmark:observatory",
+    "S MUS": "landmark:museum",
+    "S THTR": "landmark:theater",
+    "S STDM": "landmark:stadium",
+    "S RECG": "park:golf course",
+    "S RECR": "park:racetrack",
+    "S SPA": "business:spa",
+    "S MTRO": "transit:metro station",
+    "L AREA": "region:area",
+    "L RGN": "region:region",
+    "L PRT": "transit:port",
+    "*": ""
+   },
+   "history": "The current names, from the first build on (GeoNames keeps no dates).",
+   "notes": "Only the kinds of places that GNIS and the Canadian Geographical Names Database do not hold: hotels, resorts, malls, casinos, restaurants, markets, amusement parks, zoos, gardens, observatories, museums, theatres, stadiums, golf courses, racetracks, metro stations, ports and named areas and regions. Localities, summits, streams, lakes and the rest are left to GNIS and the CGNDB, which GeoNames copied them from, so nothing is doubled."
+  },
+  {
    "id": "ntad-ferry-terminals",
    "name": "BTS National Transportation Atlas: ferry terminals",
    "short": "the Bureau of Transportation Statistics",
@@ -3206,83 +3568,6 @@
    "notes": "Each beach's monitoring locations, named by the beach (\"- Location 1\" removed); a beach with several locations has a point at each."
   },
   {
-   "id": "bc-parks",
-   "name": "British Columbia parks, ecological reserves and protected areas",
-   "short": "the Province of British Columbia",
-   "part": "extra",
-   "countries": [
-    "CA"
-   ],
-   "regions": [
-    "ca-british-columbia"
-   ],
-   "licence": "OGL-BC",
-   "attribution": "Contains information licensed under the Open Government Licence - British Columbia (BC Parks, Ecological Reserves and Protected Areas).",
-   "url": "https://catalogue.data.gov.bc.ca/dataset/bc-parks-ecological-reserves-and-protected-areas",
-   "reader": "tabular",
-   "kind": "areas",
-   "cls": "park",
-   "fetch": {
-    "method": "arcgis",
-    "url": "https://services6.arcgis.com/ubm4tcTYICKBpist/arcgis/rest/services/British_Columbia_Parks_Ecological_Reserves_and_Protected_Areas/FeatureServer/0",
-    "fields": "PROTECTED_LANDS_CODE,PROTECTED_LANDS_NAME,PROTECTED_LANDS_DESIGNATION",
-    "simplify": 0.0005,
-    "page": 100,
-    "pause": 0.5
-   },
-   "member": "*.csv",
-   "columns": {
-    "lat": "_lat",
-    "lon": "_lon",
-    "rings": "_rings",
-    "name": "PROTECTED_LANDS_NAME",
-    "key": "PROTECTED_LANDS_CODE"
-   },
-   "type_column": "PROTECTED_LANDS_DESIGNATION",
-   "type_map": "humanise",
-   "history": "From the first build on.",
-   "notes": "About 930 provincial parks, ecological reserves, protected areas and recreation areas, as areas."
-  },
-  {
-   "id": "ontario-parks",
-   "name": "Ontario provincial parks (regulated)",
-   "short": "the Province of Ontario",
-   "part": "extra",
-   "countries": [
-    "CA"
-   ],
-   "regions": [
-    "ca-ontario"
-   ],
-   "licence": "OGL-Ontario",
-   "attribution": "Contains information licensed under the Open Government Licence - Ontario (Provincial Park Regulated, Land Information Ontario).",
-   "url": "https://geohub.lio.gov.on.ca/datasets/provincial-park-regulated",
-   "reader": "tabular",
-   "kind": "areas",
-   "cls": "park",
-   "type": "provincial park",
-   "fetch": {
-    "method": "arcgis",
-    "url": "https://ws.lioservices.lrc.gov.on.ca/arcgis2/rest/services/LIO_OPEN_DATA/LIO_Open03/MapServer/4",
-    "fields": "OGF_ID,PROTECTED_AREA_NAME_ENG,PROTDATE",
-    "simplify": 0.0005,
-    "page": 50,
-    "pause": 0.5
-   },
-   "member": "*.csv",
-   "columns": {
-    "lat": "_lat",
-    "lon": "_lon",
-    "rings": "_rings",
-    "name": "PROTECTED_AREA_NAME_ENG",
-    "key": "OGF_ID",
-    "first": "PROTDATE"
-   },
-   "name_strip": "\\s*\\([^)]*CLASS\\)\\s*$",
-   "history": "Each park from its protection date when given.",
-   "notes": "347 regulated provincial parks, as areas."
-  },
-  {
    "id": "usfs-trails",
    "name": "US Forest Service trails",
    "short": "the US Forest Service",
@@ -3533,6 +3818,3221 @@
    "query": "SELECT n.feature_id || '-' || n.fid AS key, n.feature_name AS name, 'variant' AS cls, f.prim_lat_dec AS lat, f.prim_long_dec AS lon, 'variant name of ' || (SELECT o.feature_name FROM Gaz_Names o WHERE o.feature_id = n.feature_id AND o.feature_name_official = 1 LIMIT 1) AS type FROM Gaz_Names n JOIN Gaz_Features f ON f.feature_id = n.feature_id WHERE n.feature_name_official = 2 UNION ALL SELECT 'h' || feature_id AS key, feature_name AS name, 'landmark' AS cls, prim_lat_dec AS lat, prim_long_dec AS lon, 'historical ' || lower(feature_class) AS type FROM HistoricalFeatures",
    "history": "Variant and former names have no dates in GNIS; historical features keep their \"(historical)\" names.",
    "notes": "Variant names (former names, other spellings: \"Namagonac\" for Seymour Lake) have their own class, variant: a name search finds the place by an old name, but a lookup never says a variant as the place's name. Historical features (places that no longer exist, \"Village of Perkinsville (historical)\") are landmarks with their GNIS names."
+  },
+  {
+   "id": "alltheplaces",
+   "name": "All The Places (chain store locations)",
+   "short": "All The Places",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA",
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Chain locations from All The Places (alltheplaces.xyz), CC0.",
+   "url": "https://www.alltheplaces.xyz",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "national",
+    "metadata": "https://data.alltheplaces.xyz/runs/latest.json",
+    "json_url": "output_url",
+    "version_key": "run_id",
+    "file": "atp-output.zip",
+    "convert": "atp",
+    "pause": 2
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "class_column": "main_value"
+   },
+   "class_map": {
+    "*": "business"
+   },
+   "type_column": "type",
+   "type_map": "humanise",
+   "brand_column": "brand",
+   "brand_wikidata_column": "brand_wikidata",
+   "history": "The latest weekly run, then month by month from the first build (a store that leaves the chains' locators is closed at its last build).",
+   "notes": "About 40 million locations worldwide from 5,800 spiders over chains' own store locators, kept by the covered regions' boxes. Offices of individuals (insurance and estate agents, financial advisers, lawyers) and names that are a person's are left out. The brand and its Wikidata id are kept beside each location (data only). Past runs back to 2017 are archived and could seed earlier dates (one a quarter: 55 MB in 2020, 2.4 GB in 2026)."
+  },
+  {
+   "id": "ny-thruway-travel-plazas",
+   "name": "New York State Thruway travel plazas",
+   "short": "the New York State Thruway Authority",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "Travel plazas of the New York State Thruway Authority (data.ny.gov, dataset mj5h-8ei4), open data under the New York State open data terms.",
+   "url": "https://data.ny.gov/d/mj5h-8ei4",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "transit",
+   "tag": "travel plaza",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ny.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "mj5h-8ei4",
+      "select": "title AS name, latitude, longitude",
+      "where": "latitude > 1"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "name"
+   },
+   "name_template": "{name} Travel Plaza",
+   "history": "From the first build on (a place dropped from the list is closed at its last build).",
+   "notes": "Service plazas on the Thruway.",
+   "skip_names": "^Parking"
+  },
+  {
+   "id": "ny-thruway-park-and-ride",
+   "name": "New York State Thruway park-and-ride lots",
+   "short": "the New York State Thruway Authority",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "Park-and-ride lots of the New York State Thruway Authority (data.ny.gov, dataset nvxe-b625), open data under the New York State open data terms.",
+   "url": "https://data.ny.gov/d/nvxe-b625",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "transit",
+   "tag": "park and ride",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ny.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "nvxe-b625",
+      "select": "title AS name, latitude, longitude",
+      "where": "latitude > 1"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "name"
+   },
+   "name_template": "{name} Park and Ride",
+   "history": "From the first build on (a place dropped from the list is closed at its last build).",
+   "notes": "Commuter lots along the Thruway."
+  },
+  {
+   "id": "ny-farmers-markets",
+   "name": "New York State farmers' markets and farm stands",
+   "short": "the New York State Department of Agriculture and Markets",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "Farmers' markets of the New York State Department of Agriculture and Markets (data.ny.gov, dataset qq4h-8p86), open data under the New York State open data terms.",
+   "url": "https://data.ny.gov/d/qq4h-8p86",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "tag": "farmers market",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ny.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "qq4h-8p86",
+      "select": "market_name AS name, latitude, longitude",
+      "where": "latitude > 1"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "name"
+   },
+   "name_template": "{name}",
+   "history": "From the first build on (a place dropped from the list is closed at its last build).",
+   "notes": "Farmers' markets and farm stands. Only the market's name and point are used (never the contact person or phone)."
+  },
+  {
+   "id": "pa-park-and-ride",
+   "name": "PennDOT park-and-ride lots",
+   "short": "the Pennsylvania Department of Transportation",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-pennsylvania"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Park-and-ride lots of the Pennsylvania Department of Transportation (data.pa.gov, dataset b55e-zfp9), public domain.",
+   "url": "https://data.pa.gov/d/b55e-zfp9",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "transit",
+   "tag": "park and ride",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.pa.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "b55e-zfp9",
+      "select": "description AS name, latitude, longitude",
+      "where": "latitude > 1"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "name"
+   },
+   "name_template": "{name} Park and Ride",
+   "history": "From the first build on (a place dropped from the list is closed at its last build).",
+   "notes": "PennDOT's park-and-ride lots, named by their place (\"Erie Area Lincoln Avenue at Interstate 79\")."
+  },
+  {
+   "id": "fws-fish-hatcheries",
+   "name": "US Fish and Wildlife Service national fish hatcheries",
+   "short": "the US Fish and Wildlife Service",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "National fish hatcheries from the U.S. Fish and Wildlife Service's National Realty Tracts, a work of the United States government (public domain).",
+   "url": "https://services.arcgis.com/QVENGdaPbd4LUkLV/arcgis/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "landmark",
+   "tag": "fish hatchery",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/QVENGdaPbd4LUkLV/arcgis/rest/services/FWSInterest_Simplified_Authoritative/FeatureServer/0",
+    "where": "RSL_TYPE IN ('NFH','FTC') AND INTTYPE1 IN ('O','S')",
+    "fields": "OBJECTID,ORGNAME,RSL_TYPE",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "ORGNAME",
+    "key": "OBJECTID",
+    "class_column": "RSL_TYPE",
+    "rings": "_rings"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "National fish hatcheries and fish technology centres, as the land the Service owns (FWS National Realty Tracts). Easements (private land) are left out. Refuges come from PAD-US.",
+   "class_map": {
+    "NFH": "landmark:fish hatchery",
+    "FTC": "landmark:fish technology center",
+    "*": ""
+   }
+  },
+  {
+   "id": "usfs-offices",
+   "name": "USDA Forest Service offices and ranger stations",
+   "short": "the USDA Forest Service",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Forest Service office locations from the USDA Forest Service's Enterprise Data Warehouse, a work of the United States government (public domain).",
+   "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_FSOfficeLocations_01/MapServer",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "ranger station",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_FSOfficeLocations_01/MapServer/0",
+    "where": "equipment_only = 'false'",
+    "fields": "objectid,name,district_name,forest_name",
+    "page": 200,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "name",
+    "key": "objectid"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "Forest supervisors' offices, ranger district offices, work centres and fire stations. Fire lookouts come from the recreation sites (rentals), TIGER point landmarks (lookout towers) and Wikidata."
+  },
+  {
+   "id": "noaa-nerrs",
+   "name": "NOAA National Estuarine Research Reserves",
+   "short": "NOAA",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "National Estuarine Research Reserve boundaries from NOAA's NERRS Centralized Data Management Office, a work of the United States government (public domain).",
+   "url": "https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Reserve_Boundaries/FeatureServer",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "park",
+   "tag": "national estuarine research reserve",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services2.arcgis.com/C8EMgrsFcRFL6LrL/arcgis/rest/services/Reserve_Boundaries/FeatureServer/0",
+    "where": "1=1",
+    "fields": "FID,FULL_NAME",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "FULL_NAME",
+    "key": "FID",
+    "rings": "_rings"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "The 30 reserves' boundaries (2023).",
+   "name_template": "{FULL_NAME} National Estuarine Research Reserve",
+   "name_replace": [
+    [
+     "(National Estuarine Research Reserve)\\s+National Estuarine Research Reserve$",
+     "\\1"
+    ]
+   ]
+  },
+  {
+   "id": "usace-principal-ports",
+   "name": "US Army Corps of Engineers principal ports",
+   "short": "the US Army Corps of Engineers",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Principal ports from the U.S. Army Corps of Engineers' Waterborne Commerce Statistics Center, a work of the United States government (public domain).",
+   "url": "https://services7.arcgis.com/n1YM8pTrFmm7L4hs/ArcGIS/rest/services/Principal_Ports/FeatureServer",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "transit",
+   "tag": "port",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services7.arcgis.com/n1YM8pTrFmm7L4hs/ArcGIS/rest/services/Principal_Ports/FeatureServer/0",
+    "where": "1=1",
+    "fields": "OBJECTID,PORTNAME",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "PORTNAME",
+    "key": "OBJECTID",
+    "rings": "_rings"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "The 150 principal ports of the United States by tonnage, as port areas.",
+   "name_replace": [
+    [
+     "^(.*?),\\s*[A-Z]{2},\\s*Port of$",
+     "Port of \\1"
+    ],
+    [
+     "^(.*?),\\s*[A-Z]{2}(,.*)?$",
+     "\\1"
+    ],
+    [
+     "^(?!.*\\bPorts?\\b)(.+)$",
+     "\\1 Port"
+    ]
+   ]
+  },
+  {
+   "id": "bc-rec-sites",
+   "name": "Recreation Sites and Trails BC: recreation sites",
+   "short": "Recreation Sites and Trails BC",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-british-columbia"
+   ],
+   "licence": "OGL-BC",
+   "attribution": "Contains information licensed under the Open Government Licence - British Columbia (Recreation Sites Subset, Ministry of Forests).",
+   "url": "https://catalogue.data.gov.bc.ca/dataset/recreation-sites-subset-information-purposes-only",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "park",
+   "tag": "recreation site",
+   "fetch": {
+    "method": "wfs",
+    "url": "https://openmaps.gov.bc.ca/geo/pub/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=pub:WHSE_FOREST_TENURE.FTEN_REC_SITE_POINTS_SVW",
+    "properties": "GEOMETRY,FOREST_FILE_ID,PROJECT_NAME,PROJECT_ESTABLISHED_DATE",
+    "sort": "FOREST_FILE_ID",
+    "page": 5000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "GEOMETRY",
+    "name": "PROJECT_NAME",
+    "key": "FOREST_FILE_ID",
+    "first": "PROJECT_ESTABLISHED_DATE"
+   },
+   "name_template": "{PROJECT_NAME} Recreation Site",
+   "history": "Each site from its establishment date (back to the 1970s).",
+   "notes": "About 1,500 forest recreation sites (campgrounds, lake access) with their establishment dates. Only the site's name, point and date are used (never the operator's name or phone)."
+  },
+  {
+   "id": "natural-earth-regions",
+   "name": "Natural Earth physical regions (1:10m)",
+   "short": "Natural Earth",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA",
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Physical regions from Natural Earth (naturalearthdata.com), public domain.",
+   "url": "https://www.naturalearthdata.com/downloads/10m-physical-vectors/10m-physical-labels/",
+   "reader": "shapes",
+   "kind": "areas",
+   "cls": "region",
+   "fetch": {
+    "method": "http",
+    "url": "https://naciscdn.org/naturalearth/10m/physical/ne_10m_geography_regions_polys.zip"
+   },
+   "fields": {
+    "name": [
+     "NAME_EN",
+     "NAME"
+    ],
+    "key": [
+     "WIKIDATAID",
+     "NAME"
+    ]
+   },
+   "class_field": "FEATURECLA",
+   "class_map": {
+    "Island": "region:island",
+    "Island group": "region:island group",
+    "Range/mtn": "region:mountain range",
+    "Plateau": "region:plateau",
+    "Desert": "region:desert",
+    "Pen/cape": "region:peninsula",
+    "Peninsula": "region:peninsula",
+    "Geoarea": "region:geographic region",
+    "Coast": "region:coast",
+    "Plain": "region:plain",
+    "Delta": "region:delta",
+    "Basin": "region:basin",
+    "Valley": "region:valley",
+    "Lowland": "region:lowland",
+    "Gorge": "region:gorge",
+    "Tundra": "region:tundra",
+    "Wetlands": "region:wetland",
+    "Isthmus": "region:isthmus",
+    "Foothills": "region:foothills",
+    "Depression": "region:depression",
+    "Continent": "",
+    "*": "region"
+   },
+   "history": "From the first build on (Natural Earth changes rarely).",
+   "notes": "About 1,000 named physical regions worldwide (deserts, mountain ranges, plateaus, plains, peninsulas, island groups, deltas), small scale; only those touching the region are read. Continents are left out. Class region (named areas, not towns)."
+  },
+  {
+   "id": "natural-earth-lines",
+   "name": "Natural Earth geographic lines (1:50m)",
+   "short": "Natural Earth",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA",
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Geographic lines from Natural Earth (naturalearthdata.com), public domain.",
+   "url": "https://www.naturalearthdata.com/downloads/50m-physical-vectors/50m-geographic-lines/",
+   "reader": "shapes",
+   "kind": "lines",
+   "cls": "geoline",
+   "tag": "geographic line",
+   "fetch": {
+    "method": "http",
+    "url": "https://naciscdn.org/naturalearth/50m/physical/ne_50m_geographic_lines.zip"
+   },
+   "fields": {
+    "name": [
+     "name",
+     "NAME"
+    ],
+    "key": [
+     "name",
+     "NAME"
+    ]
+   },
+   "history": "Fixed lines.",
+   "notes": "The Equator, the tropics, the polar circles and the International Date Line where they cross a region (Hawaii, Alaska, northern Canada). Data only: the class geoline is not a line class of the lookup, so it is never spoken."
+  },
+  {
+   "id": "usgs-structures",
+   "name": "USGS National Structures Dataset",
+   "short": "the U.S. Geological Survey",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Structures from the U.S. Geological Survey's National Structures Dataset (The National Map), a work of the United States government (public domain).",
+   "url": "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/3",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "structure",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "Post offices (31,000), fire and EMS stations (52,000), police stations (18,000), hospitals, prisons, city and town halls, courthouses, state capitols, colleges, schools, campgrounds, trailheads, cabins, picnic areas, visitor centres and ranger stations, typed by their feature code. It replaces the HIFLD layers that are gone.",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "permanent_identifier,name,fcode",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/3",
+    "urls": [
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/3",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/4",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/5",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/6",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/7",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/11",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/14",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/15",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/16",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/18",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/19",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/21",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/22",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/23",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/25",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/26",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/27",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/29",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/30",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/31",
+     "https://carto.nationalmap.gov/arcgis/rest/services/structures/MapServer/32"
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "name",
+    "key": "permanent_identifier",
+    "class_column": "fcode"
+   },
+   "class_map": {
+    "78006": "public:post office",
+    "83044": "public:city or town hall",
+    "83011": "public:courthouse",
+    "83006": "public:state capitol",
+    "83010": "public:state supreme court",
+    "82018": "landmark:historic site",
+    "80012": "public:hospital",
+    "74001": "public:ambulance station",
+    "74026": "public:fire station",
+    "74034": "public:police station",
+    "74036": "public:prison",
+    "73006": "campus:college or university",
+    "73007": "campus:technical school",
+    "73002": "campus:school",
+    "73003": "campus:school",
+    "73004": "campus:school",
+    "73005": "campus:school",
+    "82008": "park:campground",
+    "82047": "park:trailhead",
+    "82007": "park:cabin",
+    "82040": "park:picnic area",
+    "83023": "public:headquarters",
+    "82048": "landmark:visitor center",
+    "83033": "public:ranger station",
+    "*": ""
+   }
+  },
+  {
+   "id": "us-post-offices",
+   "name": "US Post Offices 1639-2000 (Helbock and Blevins)",
+   "short": "Blevins and Helbock's US Post Offices",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "US Post Offices, 1639-2000, by Cameron Blevins and Richard W. Helbock (Harvard Dataverse, doi:10.7910/DVN/NUKCNA), CC0.",
+   "url": "https://doi.org/10.7910/DVN/NUKCNA",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "settlement",
+   "tag": "post office",
+   "history": "Each office from the year it opened to the year it closed (from 1639; open offices have no end).",
+   "notes": "About 166,000 post offices with the years they opened and closed (166,140; those not located are left out), so the names of hamlets, ghost towns and renamed towns get their dates. Class settlement: the office names its place.",
+   "fetch": {
+    "method": "national",
+    "url": "https://dataverse.harvard.edu/api/access/datafile/4491713?format=original",
+    "pause": 2,
+    "file": "us-post-offices.csv"
+   },
+   "columns": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "name": "Name",
+    "key": "ID",
+    "first": "Established",
+    "last": "Discontinued"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "Latitude",
+    "lon": "Longitude"
+   },
+   "type": "post office"
+  },
+  {
+   "id": "statcan-odbus",
+   "name": "Statistics Canada Open Database of Businesses",
+   "short": "Statistics Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Statistics Canada: The Open Database of Businesses, 2023).",
+   "url": "https://www150.statcan.gc.ca/n1/pub/21-26-0003/212600032023001-eng.htm",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "history": "The 2023 release, from the first build on.",
+   "notes": "About 312,000 located businesses from 68 municipal and provincial licence lists (Toronto, York, Mississauga, Brampton, Durham, Ottawa, Halifax, Surrey, Burnaby, Kelowna...). Home-based trades, contractors, drivers, rentals, residences and care homes are left out by their category; Calgary, Edmonton and Vancouver come from their own dated lists instead.",
+   "fetch": {
+    "method": "national",
+    "url": "https://www150.statcan.gc.ca/n1/pub/21-26-0003/2023001/ODBus_2023.zip",
+    "pause": 2
+   },
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "business_name",
+    "key": "idx"
+   },
+   "member": "*ODBus_v1.csv",
+   "split_file": "ODBus_v1.csv",
+   "split_box": {
+    "lat": "latitude",
+    "lon": "longitude"
+   },
+   "blank_values": [
+    ".."
+   ],
+   "type_column": "business_sector",
+   "type_map": "humanise",
+   "exclude": {
+    "column": "provider",
+    "values": [
+     "City of Calgary",
+     "City of Edmonton",
+     "City of Vancouver"
+    ]
+   },
+   "exclude_pattern": [
+    {
+     "column": "business_sector",
+     "pattern": "home|contractor|renovat|tow truck|apartment|strata|taxi|driver|landlord|residen|short.term|rooming|rental unit|bed and breakfast|trades|plumb|roof|painter|carpent|mason|vehicle for hire|limousine|chauffeur|peddler|vendor|solicitor|door.to.door|itinerant|secondary suite|dwelling|boarding|foster|day home|nanny|cleaning|landscap|snow|mobile|lodging house|multiple unit|condo|tenant|caterer|group home|care home"
+    },
+    {
+     "column": "licence_type",
+     "pattern": "home|residential|rental|contractor"
+    }
+   ],
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "cpcad",
+   "name": "Canadian Protected and Conserved Areas Database (CPCAD)",
+   "short": "Environment and Climate Change Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Environment and Climate Change Canada: Canadian Protected and Conserved Areas Database).",
+   "url": "https://maps-cartes.ec.gc.ca/arcgis/rest/services/CWS_SCF/CPCAD/MapServer/0",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "park",
+   "history": "Each area from its year of establishment.",
+   "notes": "About 22,400 protected and conserved areas in every province and territory: national, provincial and territorial parks, ecological reserves, migratory bird sanctuaries, conservation areas and Indigenous protected areas, each from its year of establishment. It replaces the separate BC, Ontario and Parks Canada park layers.",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,NAME_E,TYPE_E,ESTYEAR",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://maps-cartes.ec.gc.ca/arcgis/rest/services/CWS_SCF/CPCAD/MapServer/0",
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "NAME_E",
+    "key": "OBJECTID",
+    "first": "ESTYEAR",
+    "rings": "_rings"
+   },
+   "type_column": "TYPE_E",
+   "type_map": "humanise"
+  },
+  {
+   "id": "ourairports",
+   "name": "OurAirports",
+   "short": "OurAirports",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA",
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Airports from OurAirports (ourairports.com), public domain.",
+   "url": "https://ourairports.com/data/",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "transit",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "Airports, airfields, heliports, seaplane bases and balloonports worldwide, with closed airfields (class landmark, type closed airfield). The data page and the repository say \"All data is released to the Public Domain\". Downloaded from the publisher's GitHub mirror (the site's own certificate had expired).",
+   "fetch": {
+    "method": "national",
+    "url": "https://davidmegginson.github.io/ourairports-data/airports.csv",
+    "pause": 2
+   },
+   "columns": {
+    "lat": "latitude_deg",
+    "lon": "longitude_deg",
+    "name": "name",
+    "key": "ident",
+    "class_column": "type"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "latitude_deg",
+    "lon": "longitude_deg",
+    "country": "iso_country"
+   },
+   "class_map": {
+    "large_airport": "transit:airport",
+    "medium_airport": "transit:airport",
+    "small_airport": "transit:airfield",
+    "heliport": "transit:heliport",
+    "seaplane_base": "transit:seaplane base",
+    "balloonport": "transit:balloonport",
+    "closed": "landmark:closed airfield",
+    "*": ""
+   }
+  },
+  {
+   "id": "ntad-passenger-terminals",
+   "name": "NTAD Intermodal Passenger Connectivity Database",
+   "short": "the Bureau of Transportation Statistics",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Passenger terminals from the Bureau of Transportation Statistics' National Transportation Atlas Database, a work of the United States government (public domain).",
+   "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Intermodal_Passenger_Connectivity_Database/FeatureServer/0",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "transit",
+   "tag": "passenger terminal",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "About 15,500 named passenger terminals: airports, intercity rail and bus stations, ferry terminals and transit hubs.",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,FAC_ID,FAC_NAME",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Intermodal_Passenger_Connectivity_Database/FeatureServer/0"
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "FAC_NAME",
+    "key": "FAC_ID"
+   }
+  },
+  {
+   "id": "statcan-csd",
+   "name": "Statistics Canada 2021 census census subdivisions (municipalities)",
+   "short": "Statistics Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Statistics Canada: 2021 Census cartographic boundary files).",
+   "url": "https://geo.statcan.gc.ca/geo_wa/rest/services/2021/Cartographic_boundary_files/MapServer/9",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "town",
+   "history": "The 2021 census boundaries from the first build on.",
+   "notes": "Every municipality of Canada (5,161) as an area, the Canadian counterpart of the Census places and county subdivisions. From Statistics Canada's own map service; the older census vintages (2001-2016) are only on www12.statcan.gc.ca, which answers automated downloads with a security check (not worked around).",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "CSDUID,CSDNAME,CSDTYPE",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://geo.statcan.gc.ca/geo_wa/rest/services/2021/Cartographic_boundary_files/MapServer/9",
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "CSDNAME",
+    "key": "CSDUID",
+    "rings": "_rings"
+   },
+   "type_column": "CSDTYPE",
+   "type_map": "statcan_csd"
+  },
+  {
+   "id": "statcan-dpl",
+   "name": "Statistics Canada 2021 census designated places (small communities)",
+   "short": "Statistics Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Statistics Canada: 2021 Census cartographic boundary files).",
+   "url": "https://geo.statcan.gc.ca/geo_wa/rest/services/2021/Cartographic_boundary_files/MapServer/8",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "town",
+   "history": "The 2021 census boundaries from the first build on.",
+   "notes": "1,685 designated places: small unincorporated communities. From Statistics Canada's own map service; the older census vintages (2001-2016) are only on www12.statcan.gc.ca, which answers automated downloads with a security check (not worked around).",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "DPLUID,DPLNAME,DPLTYPE",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://geo.statcan.gc.ca/geo_wa/rest/services/2021/Cartographic_boundary_files/MapServer/8",
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "DPLNAME",
+    "key": "DPLUID",
+    "rings": "_rings"
+   }
+  },
+  {
+   "id": "statcan-fsa",
+   "name": "Statistics Canada 2021 census forward sortation areas (postal areas)",
+   "short": "Statistics Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Statistics Canada: 2021 Census cartographic boundary files).",
+   "url": "https://geo.statcan.gc.ca/geo_wa/rest/services/2021/Cartographic_boundary_files/MapServer/14",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "zip",
+   "history": "The 2021 census boundaries from the first build on.",
+   "notes": "1,643 forward sortation areas (the first three characters of a postal code), the Canadian counterpart of ZIP code areas. From Statistics Canada's own map service; the older census vintages (2001-2016) are only on www12.statcan.gc.ca, which answers automated downloads with a security check (not worked around).",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "CFSAUID,PRUID",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://geo.statcan.gc.ca/geo_wa/rest/services/2021/Cartographic_boundary_files/MapServer/14",
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "CFSAUID",
+    "key": "CFSAUID",
+    "rings": "_rings"
+   },
+   "name_format": "the {} area",
+   "keep_case": true
+  },
+  {
+   "id": "ntad-rest-areas",
+   "name": "NTAD Truck Stop Parking (public rest areas and welcome centres)",
+   "short": "the Bureau of Transportation Statistics",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Public rest areas from the Bureau of Transportation Statistics' National Transportation Atlas Database (Jason's Law truck parking survey), a work of the United States government (public domain).",
+   "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Truck_Stop_Parking/FeatureServer/0",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "transit",
+   "tag": "rest area",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "1,915 named public rest areas and welcome centres on the National Highway System, for every state in one service (in place of state-by-state rest-area lists).",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,nhs_rest_stop",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Truck_Stop_Parking/FeatureServer/0"
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "nhs_rest_stop",
+    "key": "OBJECTID"
+   }
+  },
+  {
+   "id": "ntad-rail-yards",
+   "name": "NTAD Rail Yards",
+   "short": "the Bureau of Transportation Statistics",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Rail yards from the Bureau of Transportation Statistics' National Transportation Atlas Database, a work of the United States government (public domain).",
+   "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Rail_Yards/FeatureServer/0",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "transit",
+   "tag": "rail yard",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "2,679 named rail yards (each at a point of its tracks).",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,YARDNAME",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Rail_Yards/FeatureServer/0"
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "YARDNAME",
+    "key": "OBJECTID"
+   },
+   "name_template": "{YARDNAME} Yard",
+   "name_replace": [
+    [
+     "(?i)\\b(Yard|Yards)\\s+Yard$",
+     "\\1"
+    ]
+   ]
+  },
+  {
+   "id": "ntad-tunnels",
+   "name": "NTAD National Tunnel Inventory",
+   "short": "the Federal Highway Administration",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Road tunnels from the Federal Highway Administration's National Tunnel Inventory (via the National Transportation Atlas Database), a work of the United States government (public domain).",
+   "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_National_Tunnel_Inventory/FeatureServer/0",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "tunnel",
+   "history": "Each tunnel from the year it was built.",
+   "notes": "580 road tunnels at their portals, each from the year it was built.",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,tunnel_number_i1,tunnel_name_i2,year_built_a1",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_National_Tunnel_Inventory/FeatureServer/0"
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "tunnel_name_i2",
+    "key": "tunnel_number_i1",
+    "first": "year_built_a1"
+   }
+  },
+  {
+   "id": "dfo-small-craft-harbours",
+   "name": "Fisheries and Oceans Canada small craft harbours",
+   "short": "Fisheries and Oceans Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Fisheries and Oceans Canada: Small Craft Harbours).",
+   "url": "https://egisp.dfo-mpo.gc.ca/arcgis/rest/services/open_data_donnees_ouvertes/small_craft_harbours_en/MapServer/0",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "harbour",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "Fishing and recreational harbours on the coasts and inland waters (about 1,000).",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,Harbour_number,Harbour_Name",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://egisp.dfo-mpo.gc.ca/arcgis/rest/services/open_data_donnees_ouvertes/small_craft_harbours_en/MapServer/0",
+    "urls": [
+     "https://egisp.dfo-mpo.gc.ca/arcgis/rest/services/open_data_donnees_ouvertes/small_craft_harbours_en/MapServer/0",
+     "https://egisp.dfo-mpo.gc.ca/arcgis/rest/services/open_data_donnees_ouvertes/small_craft_harbours_en/MapServer/1",
+     "https://egisp.dfo-mpo.gc.ca/arcgis/rest/services/open_data_donnees_ouvertes/small_craft_harbours_en/MapServer/2"
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "Harbour_Name",
+    "key": "Harbour_number"
+   }
+  },
+  {
+   "id": "isc-first-nations",
+   "name": "Indigenous Services Canada First Nations locations",
+   "short": "Indigenous Services Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Indigenous Services Canada: First Nations Location).",
+   "url": "https://open.canada.ca/data/en/dataset/b6567c5c-8339-4055-99fa-63f92114d9e4",
+   "reader": "shapes",
+   "kind": "points",
+   "cls": "settlement",
+   "tag": "First Nation",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "The 638 First Nations at their community or band office location (their reserve lands come from the Canada Lands Survey System layer).",
+   "fetch": {
+    "method": "http",
+    "url": "https://data.sac-isc.gc.ca/geomatics/rest/directories/arcgisoutput/DonneesOuvertes_OpenData/Premiere_Nation_First_Nation/Premiere_Nation_First_Nation_SHP.zip"
+   },
+   "fields": {
+    "name": "BAND_NAME",
+    "key": "BAND_NBR"
+   },
+   "type": "First Nation"
+  },
+  {
+   "id": "quebec-sites-patrimoniaux",
+   "name": "Québec heritage sites declared by the government (Répertoire du patrimoine culturel)",
+   "short": "the Government of Québec",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-quebec"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Sites patrimoniaux déclarés, Répertoire du patrimoine culturel du Québec, Ministère de la Culture et des Communications (Données Québec), CC BY 4.0.",
+   "url": "https://www.donneesquebec.ca/recherche/dataset/sites-patrimoniaux-declares-par-le-gouvernement-du-quebec",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "heritage site",
+   "history": "Each site from the date of its legal status.",
+   "notes": "The 14 heritage sites declared by the government (Old Québec, Beauport, Charlesbourg, Arvida...). The other RPCQ datasets were not checked one by one.",
+   "fetch": {
+    "method": "http",
+    "url": "https://www.donneesquebec.ca/recherche/dataset/b35078ae-f1a6-4f9a-a9d2-b00244ae1e84/resource/064a52e2-ab03-4068-949f-3bcd0c6ee3be/download/spdc2_xsl.csv"
+   },
+   "member": "*.csv",
+   "delimiter": ";",
+   "columns": {
+    "point": "Wkt_Multipoint_XY",
+    "name": "nom_bien",
+    "key": "bien_id",
+    "first": "date_attri_stat_jurid_princ"
+   }
+  },
+  {
+   "id": "ns-civic-addresses",
+   "name": "Nova Scotia Civic Address File (civic points)",
+   "short": "the Province of Nova Scotia",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-nova-scotia"
+   ],
+   "licence": "OGL-Nova-Scotia",
+   "attribution": "Contains information licensed under the Open Government Licence - Nova Scotia (Nova Scotia Civic Address File) (data.novascotia.ca, dataset tntn-er5g).",
+   "url": "https://data.novascotia.ca/d/tntn-er5g",
+   "reader": "tabular",
+   "kind": "addresses",
+   "cls": "",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "About 486,000 civic address points (newer than the 2021 ODA for Nova Scotia).",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.novascotia.ca",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "tntn-er5g",
+      "select": "pntid, civicnum, civsuffix, strprefix, strname, strsuffix, strdir, comm, lat, long",
+      "order": "pntid"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "lat",
+    "lon": "long",
+    "number": [
+     "civicnum",
+     "civsuffix"
+    ],
+    "street": [
+     "strprefix",
+     "strname",
+     "strsuffix",
+     "strdir"
+    ],
+    "city": [
+     "comm"
+    ]
+   }
+  },
+  {
+   "id": "vancouver-business-licences",
+   "name": "Vancouver business licences (1997 to now)",
+   "short": "the City of Vancouver",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-british-columbia"
+   ],
+   "licence": "OGL-Vancouver",
+   "attribution": "Contains information licensed under the Open Government Licence - Vancouver (business licences).",
+   "url": "https://opendata.vancouver.ca/explore/dataset/business-licences/",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "history": "Each business from its first licence (1997 on) to its last; a licence still current is open.",
+   "notes": "About 207,000 yearly licences since 1997, one place per licence (aggregated over the years: from its first issue to its last). Home-based businesses, contractors, rentals and other non-premises licences are left out by type. From the sandbox, the export download was cut off by the network path (the tunnel closed mid-transfer); not worked around. If the build runner cannot reach it either, the build lists it as failed.",
+   "fetch": {
+    "method": "http",
+    "url": "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C",
+    "file": "business-licences.csv"
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "geo_point_2d",
+    "name": {
+     "first_of": [
+      "businesstradename",
+      "businessname"
+     ]
+    },
+    "key": "licencersn",
+    "first": "issueddate",
+    "last": "expireddate"
+   },
+   "aggregate": true,
+   "still_open_months": 13,
+   "type_column": "businesstype",
+   "type_map": "humanise",
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "exclude_pattern": [
+    {
+     "column": "businesstype",
+     "pattern": "home|contractor|rental|apartment|strata|residen|short.term|rooming|secondary suite|dwelling|peddler|vendor|mobile|dog walk|trades|plumb|electric|gas contractor|painter|roof|janitor|cleaning|landscap|taxi|limousine|driver"
+    }
+   ]
+  },
+  {
+   "id": "calgary-business-licences",
+   "name": "Calgary business licences",
+   "short": "the City of Calgary",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-alberta"
+   ],
+   "licence": "OGL-Calgary",
+   "attribution": "Contains information licensed under the Open Government Licence - City of Calgary (business licences) (data.calgary.ca, dataset vdjc-pybd).",
+   "url": "https://data.calgary.ca/d/vdjc-pybd",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "history": "Each business from its first licence.",
+   "notes": "About 23,000 current licences with their first issue dates; home occupations are left out by the city's own flag and by licence type.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.calgary.ca",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "vdjc-pybd",
+      "select": "getbusid AS key, tradename AS name, licencetypes, first_iss_dt AS first, point",
+      "where": "homeoccind != 'Y'"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "first": "first"
+   },
+   "type_column": "licencetypes",
+   "type_map": "humanise",
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "exclude_pattern": [
+    {
+     "column": "licencetypes",
+     "pattern": "home|contractor|rental|residen|peddler|vendor|mobile|taxi|limousine|driver|door.to.door|apartment|property management|strata"
+    }
+   ]
+  },
+  {
+   "id": "edmonton-business-licences",
+   "name": "Edmonton business licences",
+   "short": "the City of Edmonton",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-alberta"
+   ],
+   "licence": "Edmonton-Open-Data",
+   "attribution": "Contains data from the City of Edmonton's Open Data portal (business licences), used under the City of Edmonton Open Data Terms of Use (data.edmonton.ca, dataset qhi4-bdpu).",
+   "url": "https://data.edmonton.ca/d/qhi4-bdpu",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "history": "Each business from its original licence.",
+   "notes": "About 44,000 licences with their original issue dates. Construction and contracting, rentals, delivery and home-based practitioners are left out by category.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.edmonton.ca",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "qhi4-bdpu",
+      "select": "externalid AS key, business_name AS name, business_licence_category, originalissuedate AS first, latitude, longitude",
+      "where": "latitude IS NOT NULL"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "name",
+    "key": "key",
+    "first": "first"
+   },
+   "type_column": "business_licence_category",
+   "type_map": "humanise",
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "exclude_pattern": [
+    {
+     "column": "business_licence_category",
+     "pattern": "construction|contracting|residential rental|delivery|home|practitioner|mobile|peddler"
+    }
+   ]
+  },
+  {
+   "id": "winnipeg-historical-resources",
+   "name": "Winnipeg historical resources",
+   "short": "the City of Winnipeg",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-manitoba"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (City of Winnipeg: Historical Resources) (data.winnipeg.ca, dataset ptpx-kgiu).",
+   "url": "https://data.winnipeg.ca/d/ptpx-kgiu",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "historic building",
+   "history": "Each building from the date it was listed.",
+   "notes": "728 listed historic buildings by their historical names.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.winnipeg.ca",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "ptpx-kgiu",
+      "select": "historical_name AS name, date_listed AS first, point"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "first": "first"
+   }
+  },
+  {
+   "id": "ns-tourism-operators",
+   "name": "Tourism Nova Scotia listed operators",
+   "short": "the Province of Nova Scotia",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-nova-scotia"
+   ],
+   "licence": "OGL-Nova-Scotia",
+   "attribution": "Contains information licensed under the Open Government Licence - Nova Scotia (Tourism Nova Scotia listed operators) (data.novascotia.ca, dataset 2h2s-6bg4).",
+   "url": "https://data.novascotia.ca/d/2h2s-6bg4",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "tag": "tourism operator",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "2,619 accommodations, attractions and tourism businesses.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.novascotia.ca",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "2h2s-6bg4",
+      "select": "name, type, latitude, longitude"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "name"
+   },
+   "type_column": "type",
+   "type_map": "humanise"
+  },
+  {
+   "id": "ns-museums",
+   "name": "Nova Scotia Museum sites",
+   "short": "the Province of Nova Scotia",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-nova-scotia"
+   ],
+   "licence": "OGL-Nova-Scotia",
+   "attribution": "Contains information licensed under the Open Government Licence - Nova Scotia (Nova Scotia Museum sites) (data.novascotia.ca, dataset f84a-3hfv).",
+   "url": "https://data.novascotia.ca/d/f84a-3hfv",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "museum",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "The 16 sites of the Nova Scotia Museum.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.novascotia.ca",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "f84a-3hfv",
+      "select": "site AS name, geolocation"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "geolocation",
+    "name": "name"
+   }
+  },
+  {
+   "id": "ns-heritage-properties",
+   "name": "Nova Scotia registered heritage properties",
+   "short": "the Province of Nova Scotia",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-nova-scotia"
+   ],
+   "licence": "OGL-Nova-Scotia",
+   "attribution": "Contains information licensed under the Open Government Licence - Nova Scotia (Nova Scotia registered heritage properties) (data.novascotia.ca, dataset 7pnv-7sdm).",
+   "url": "https://data.novascotia.ca/d/7pnv-7sdm",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "heritage property",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "327 provincially registered heritage properties (designated; a private house is kept only because of its designation, as with Wikidata).",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.novascotia.ca",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "7pnv-7sdm",
+      "select": "unique_identifier_file_no AS key, property_name AS name, latitude, longitude, notice_of_registration_date AS first"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "name",
+    "key": "key",
+    "first": "first"
+   }
+  },
+  {
+   "id": "ns-gaelic-placenames",
+   "name": "Gaelic placenames in Nova Scotia",
+   "short": "the Province of Nova Scotia",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-nova-scotia"
+   ],
+   "licence": "OGL-Nova-Scotia",
+   "attribution": "Contains information licensed under the Open Government Licence - Nova Scotia (Gaelic placenames in Nova Scotia) (data.novascotia.ca, dataset wwaq-2akq).",
+   "url": "https://data.novascotia.ca/d/wwaq-2akq",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "variant",
+   "tag": "Gaelic name",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "227 Gaelic names of Nova Scotia places (class variant: found by name search, never spoken as a place's name).",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.novascotia.ca",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "wwaq-2akq",
+      "select": "english_placename, inm_aite_s_a_gh_idhlig AS name, lat, long"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "lat",
+    "lon": "long",
+    "name": "name"
+   },
+   "name_template": "{name}",
+   "type": "Gaelic name"
+  },
+  {
+   "id": "ns-liquor-licences",
+   "name": "Nova Scotia permanent liquor licences",
+   "short": "the Province of Nova Scotia",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-nova-scotia"
+   ],
+   "licence": "OGL-Nova-Scotia",
+   "attribution": "Contains information licensed under the Open Government Licence - Nova Scotia (Nova Scotia permanent liquor licences) (data.novascotia.ca, dataset en23-iwca).",
+   "url": "https://data.novascotia.ca/d/en23-iwca",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "tag": "licensed premises",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "2,474 licensed restaurants, bars and stores.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.novascotia.ca",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "en23-iwca",
+      "select": "license_number AS key, establishment AS name, license_type, location"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "location",
+    "name": "name",
+    "key": "key"
+   },
+   "type_column": "license_type",
+   "type_map": "humanise"
+  },
+  {
+   "id": "ns-hospitals",
+   "name": "Nova Scotia hospitals",
+   "short": "the Province of Nova Scotia",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-nova-scotia"
+   ],
+   "licence": "OGL-Nova-Scotia",
+   "attribution": "Contains information licensed under the Open Government Licence - Nova Scotia (Nova Scotia hospitals) (data.novascotia.ca, dataset tmfr-3h8a).",
+   "url": "https://data.novascotia.ca/d/tmfr-3h8a",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "hospital",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "48 hospitals.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.novascotia.ca",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "tmfr-3h8a",
+      "select": "facility AS name, the_geom"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "the_geom",
+    "name": "name"
+   }
+  },
+  {
+   "id": "ns-long-term-care",
+   "name": "Nova Scotia long-term care and residential care facilities",
+   "short": "the Province of Nova Scotia",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-nova-scotia"
+   ],
+   "licence": "OGL-Nova-Scotia",
+   "attribution": "Contains information licensed under the Open Government Licence - Nova Scotia (Nova Scotia long-term care and residential care facilities) (data.novascotia.ca, dataset x76a-axw2).",
+   "url": "https://data.novascotia.ca/d/x76a-axw2",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "care facility",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "146 licensed nursing homes and residential care facilities (institutions, not private homes).",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.novascotia.ca",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "x76a-axw2",
+      "select": "facility_id AS key, facility_name AS name, x_coordinate, y_coordinate"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "y_coordinate",
+    "lon": "x_coordinate",
+    "name": "name",
+    "key": "key"
+   }
+  },
+  {
+   "id": "ns-public-schools",
+   "name": "Nova Scotia public schools",
+   "short": "the Province of Nova Scotia",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-nova-scotia"
+   ],
+   "licence": "OGL-Nova-Scotia",
+   "attribution": "Contains information licensed under the Open Government Licence - Nova Scotia (Nova Scotia public schools) (data.novascotia.ca, dataset iyap-ttn5).",
+   "url": "https://data.novascotia.ca/d/iyap-ttn5",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "campus",
+   "tag": "school",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "372 public schools.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.novascotia.ca",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "iyap-ttn5",
+      "select": "school_code AS key, school_name AS name, georeference"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "georeference",
+    "name": "name",
+    "key": "key"
+   }
+  },
+  {
+   "id": "columbus-food-inspections",
+   "name": "Columbus Public Health food facilities",
+   "short": "Columbus Public Health",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-ohio"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Food facilities of Columbus Public Health (City of Columbus, Ohio), dedicated to the public domain (CC0).",
+   "url": "https://maps2.columbus.gov/arcgis/rest/services/Schemas/Health/MapServer/3",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "About 5,200 permitted restaurants, bars, groceries, bakeries and hotels with the date they entered the programme. Day care, apartments, catering, vending and concessions are left out.",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,FACILITY_ID,FACILITY_NAME,BUS_TYPE_DESCR,PROGRAM_ENTERED_DATE",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://maps2.columbus.gov/arcgis/rest/services/Schemas/Health/MapServer/3"
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "FACILITY_NAME",
+    "key": "FACILITY_ID",
+    "first": "PROGRAM_ENTERED_DATE"
+   },
+   "type_column": "BUS_TYPE_DESCR",
+   "type_map": "humanise",
+   "exclude_pattern": [
+    {
+     "column": "BUS_TYPE_DESCR",
+     "pattern": "day care|apartment|condo|catering|vending|concession|kiosk|mobile|temporary"
+    }
+   ]
+  },
+  {
+   "id": "isc-historic-treaties",
+   "name": "Historic treaties of Canada",
+   "short": "Indigenous Services Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Indigenous Services Canada: Historic treaties of Canada).",
+   "url": "https://geo.sac-isc.gc.ca/geomatics/rest/services/Donnees_Ouvertes-Open_Data/Historic_Treaty_E/MapServer/0",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "region",
+   "tag": "treaty area",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "Treaty areas as named regions (class region: named areas, not towns).",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,TAG_ID,ENAME",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://geo.sac-isc.gc.ca/geomatics/rest/services/Donnees_Ouvertes-Open_Data/Historic_Treaty_E/MapServer/0",
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "ENAME",
+    "key": "TAG_ID",
+    "rings": "_rings"
+   }
+  },
+  {
+   "id": "isc-modern-treaties",
+   "name": "Modern treaties of Canada",
+   "short": "Indigenous Services Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Indigenous Services Canada: Modern treaties of Canada).",
+   "url": "https://geo.sac-isc.gc.ca/geomatics/rest/services/Donnees_Ouvertes-Open_Data/Modern_Treaty_E/MapServer/0",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "region",
+   "tag": "treaty area",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "Treaty areas as named regions (class region: named areas, not towns).",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,TAG_ID,ENAME",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://geo.sac-isc.gc.ca/geomatics/rest/services/Donnees_Ouvertes-Open_Data/Modern_Treaty_E/MapServer/0",
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "ENAME",
+    "key": "TAG_ID",
+    "rings": "_rings"
+   }
+  },
+  {
+   "id": "msha-mines",
+   "name": "MSHA mines",
+   "short": "the Mine Safety and Health Administration",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Mines from the Mine Safety and Health Administration's open government data (Department of Labor), a work of the United States government (public domain).",
+   "url": "https://arlweb.msha.gov/OpenGovernmentData/OGIMSHA.asp",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "tag": "mine",
+   "history": "Active mines from the first build on; an abandoned or sealed mine is closed at its status date.",
+   "notes": "About 90,000 coal and metal/non-metal mines, quarries and sand and gravel pits; an abandoned mine closes at its status date.",
+   "fetch": {
+    "method": "national",
+    "url": "https://arlweb.msha.gov/OpenGovernmentData/DataSets/Mines.zip",
+    "pause": 2
+   },
+   "columns": {
+    "lat": "LATITUDE",
+    "lon": "LONGITUDE",
+    "name": "CURRENT_MINE_NAME",
+    "key": "MINE_ID",
+    "last": "CURRENT_STATUS_DT"
+   },
+   "member": "*.txt",
+   "delimiter": "|",
+   "encoding": "latin-1",
+   "split_box": {
+    "lat": "LATITUDE",
+    "lon": "LONGITUDE"
+   },
+   "split_file": "Mines.txt",
+   "open_when": {
+    "column": "CURRENT_MINE_STATUS",
+    "values": [
+     "Active",
+     "Intermittent",
+     "New Mine",
+     "NonProducing",
+     "Temporarily Idled"
+    ]
+   },
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+|^[A-Za-z]{2,4}[- #]?\\d+[A-Za-z]?$",
+   "type": "mine"
+  },
+  {
+   "id": "statcan-odhf2",
+   "name": "Statistics Canada Open Database of Healthcare Facilities v2 (2026)",
+   "short": "Statistics Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Statistics Canada: The Open Database of Healthcare Facilities, version 2).",
+   "url": "https://www150.statcan.gc.ca/n1/pub/13-26-0001/132600012020001-eng.htm",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "About 22,000 hospitals, clinics, nursing and residential care facilities (version 2, September 2026; it replaces version 1.1 in the facilities entry). Positions are in Statistics Canada's Lambert projection and are converted.",
+   "fetch": {
+    "method": "national",
+    "url": "https://www150.statcan.gc.ca/n1/pub/13-26-0001/2020001/zip/odhf_v2_geojson.zip",
+    "pause": 2,
+    "convert": "json_records",
+    "json_records": {
+     "records": "features",
+     "fields": [
+      "properties.id",
+      "properties.name",
+      "properties.type",
+      "properties.prov_terr",
+      "geometry.coordinates.0",
+      "geometry.coordinates.1"
+     ]
+    }
+   },
+   "columns": {
+    "lat": "geometry_coordinates_1",
+    "lon": "geometry_coordinates_0",
+    "projection": "statcan_lambert",
+    "name": "properties_name",
+    "key": "properties_id"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "geometry_coordinates_1",
+    "lon": "geometry_coordinates_0",
+    "projection": "statcan_lambert"
+   },
+   "type_column": "properties_type",
+   "type_map": "humanise"
+  },
+  {
+   "id": "usgs-mrds",
+   "name": "USGS Mineral Resources Data System (producers)",
+   "short": "the U.S. Geological Survey",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Mines from the U.S. Geological Survey's Mineral Resources Data System, a work of the United States government (public domain).",
+   "url": "https://mrdata.usgs.gov/mrds/",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "tag": "mine",
+   "history": "Each mine from its first production year to its last, where MRDS has them.",
+   "notes": "Named mines that produced or once produced (development status Producer or Past Producer; prospects and occurrences are left out), with their first and last production years where known. MRDS is no longer updated.",
+   "fetch": {
+    "method": "national",
+    "url": "https://mrdata.usgs.gov/mrds/mrds-csv.zip",
+    "pause": 2
+   },
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "site_name",
+    "key": "dep_id",
+    "first": "yr_fst_prd",
+    "last": "yr_lst_prd"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "latitude",
+    "lon": "longitude"
+   },
+   "split_file": "mrds.csv",
+   "exclude_pattern": [
+    {
+     "column": "dev_stat",
+     "pattern": "^(?!(Producer|Past Producer)$)"
+    }
+   ],
+   "type_column": "commod1",
+   "type_map": "{} mine",
+   "skip_names": "^(Unidentified|Unnamed|Unknown|No name)\\b|^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "hrsa-health-centers",
+   "name": "HRSA health center service delivery sites",
+   "short": "the Health Resources and Services Administration",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Health center sites from the Health Resources and Services Administration (data.hrsa.gov), a work of the United States government (public domain).",
+   "url": "https://data.hrsa.gov/data/download",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "health center",
+   "history": "Each site from the date it was added to a health center's scope.",
+   "notes": "Active community health centre sites with the date each was added. Mobile vans and sites in shelters, domestic-violence settings, homes and correctional facilities are left out.",
+   "fetch": {
+    "method": "national",
+    "url": "https://data.hrsa.gov/DataDownload/DD_Files/Health_Center_Service_Delivery_and_LookAlike_Sites.csv",
+    "pause": 2
+   },
+   "columns": {
+    "lat": "Geocoding Artifact Address Primary Y Coordinate",
+    "lon": "Geocoding Artifact Address Primary X Coordinate",
+    "name": "Site Name",
+    "key": "BPHC Assigned Number",
+    "first": "Site Added to Scope this Date"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "Geocoding Artifact Address Primary Y Coordinate",
+    "lon": "Geocoding Artifact Address Primary X Coordinate"
+   },
+   "exclude_pattern": [
+    {
+     "column": "Site Status Description",
+     "pattern": "^(?!Active)"
+    },
+    {
+     "column": "Health Center Location Type Description",
+     "pattern": "mobile"
+    },
+    {
+     "column": "Health Center Service Delivery Site Location Setting Description",
+     "pattern": "domestic violence|homeless|shelter|correctional|home|migrant"
+    }
+   ]
+  },
+  {
+   "id": "nrhp-districts",
+   "name": "National Register of Historic Places districts (boundaries)",
+   "short": "the National Park Service",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Historic district boundaries from the National Park Service's National Register of Historic Places, a work of the United States government (public domain).",
+   "url": "https://mapservices.nps.gov/arcgis/rest/services/cultural_resources/nrhp_locations/MapServer/1",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "landmark",
+   "tag": "historic district",
+   "history": "Each district from the date it was listed.",
+   "notes": "About 14,600 historic district boundaries, each from its listing date (the points layer already gives every listed property).",
+   "fetch": {
+    "method": "arcgis",
+    "where": "ResType = 'district'",
+    "fields": "OBJECTID,NRIS_Refnum,RESNAME,CertDate",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://mapservices.nps.gov/arcgis/rest/services/cultural_resources/nrhp_locations/MapServer/1",
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "RESNAME",
+    "key": "NRIS_Refnum",
+    "first": "CertDate",
+    "rings": "_rings"
+   }
+  },
+  {
+   "id": "census-school-districts-unsd",
+   "name": "US Census Bureau TIGER/Line unified school districts",
+   "short": "the US Census Bureau",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "School districts from the U.S. Census Bureau's TIGER/Line Shapefiles (public domain).",
+   "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html",
+   "reader": "shapes",
+   "kind": "areas",
+   "cls": "region",
+   "tag": "school district",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "Unified school districts as named areas (class region).",
+   "fetch": {
+    "method": "tiger_counties",
+    "url": "https://www2.census.gov/geo/tiger/TIGER{tiger_year}/UNSD/",
+    "prefix": "tl_{tiger_year}_{fips}",
+    "suffix": "_unsd.zip",
+    "pause": 1
+   },
+   "fields": {
+    "name": "NAME",
+    "key": "GEOID"
+   },
+   "skip_names": "not defined"
+  },
+  {
+   "id": "census-school-districts-elsd",
+   "name": "US Census Bureau TIGER/Line elementary school districts",
+   "short": "the US Census Bureau",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "School districts from the U.S. Census Bureau's TIGER/Line Shapefiles (public domain).",
+   "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html",
+   "reader": "shapes",
+   "kind": "areas",
+   "cls": "region",
+   "tag": "school district",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "Elementary school districts as named areas (class region).",
+   "fetch": {
+    "method": "tiger_counties",
+    "url": "https://www2.census.gov/geo/tiger/TIGER{tiger_year}/ELSD/",
+    "prefix": "tl_{tiger_year}_{fips}",
+    "suffix": "_elsd.zip",
+    "pause": 1
+   },
+   "fields": {
+    "name": "NAME",
+    "key": "GEOID"
+   },
+   "skip_names": "not defined"
+  },
+  {
+   "id": "census-school-districts-scsd",
+   "name": "US Census Bureau TIGER/Line secondary school districts",
+   "short": "the US Census Bureau",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "School districts from the U.S. Census Bureau's TIGER/Line Shapefiles (public domain).",
+   "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html",
+   "reader": "shapes",
+   "kind": "areas",
+   "cls": "region",
+   "tag": "school district",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "Secondary school districts as named areas (class region).",
+   "fetch": {
+    "method": "tiger_counties",
+    "url": "https://www2.census.gov/geo/tiger/TIGER{tiger_year}/SCSD/",
+    "prefix": "tl_{tiger_year}_{fips}",
+    "suffix": "_scsd.zip",
+    "pause": 1
+   },
+   "fields": {
+    "name": "NAME",
+    "key": "GEOID"
+   },
+   "skip_names": "not defined"
+  },
+  {
+   "id": "nyc-landmarks",
+   "name": "New York City individual landmarks",
+   "short": "the New York City Landmarks Preservation Commission",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "NYC-Open-Data",
+   "attribution": "Individual landmark sites of the New York City Landmarks Preservation Commission (NYC Open Data) (data.cityofnewyork.us, dataset buis-pvji).",
+   "url": "https://data.cityofnewyork.us/d/buis-pvji",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "city landmark",
+   "history": "Each landmark from its designation date.",
+   "notes": "1,532 individual landmarks, each from its designation date.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.cityofnewyork.us",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "buis-pvji",
+      "select": "lpc_lpnumb AS key, lpc_name AS name, desdate AS first, latitude, longitude",
+      "where": "latitude IS NOT NULL"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "name",
+    "key": "key",
+    "first": "first"
+   }
+  },
+  {
+   "id": "uswtdb-wind-farms",
+   "name": "US Wind Turbine Database (projects)",
+   "short": "the U.S. Geological Survey, Lawrence Berkeley National Laboratory and American Clean Power",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Wind projects from the United States Wind Turbine Database (USGS, LBNL, ACP), public domain.",
+   "url": "https://energy.usgs.gov/uswtdb/",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "wind farm",
+   "history": "Each project from the year it came online.",
+   "notes": "Wind projects, one point per project (its first turbine), each from the year it came online.",
+   "fetch": {
+    "method": "national",
+    "url": "https://energy.usgs.gov/uswtdb/assets/data/uswtdbCSV.zip",
+    "pause": 2
+   },
+   "columns": {
+    "lat": "ylat",
+    "lon": "xlong",
+    "name": "p_name",
+    "key": "p_name",
+    "first": "p_year"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "ylat",
+    "lon": "xlong"
+   },
+   "split_file": "uswtdb.csv",
+   "aggregate": true,
+   "name_replace": [
+    [
+     "^(?!.*\\b[Ww]ind\\b)(.+)$",
+     "\\1 Wind Farm"
+    ]
+   ]
+  },
+  {
+   "id": "nola-landmarks",
+   "name": "New Orleans HDLC landmarks",
+   "short": "the New Orleans Historic District Landmarks Commission",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-louisiana"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Landmarks of the New Orleans Historic District Landmarks Commission (data.nola.gov), CC0 (data.nola.gov, dataset 25e8-s5xx).",
+   "url": "https://data.nola.gov/d/25e8-s5xx",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "historic landmark",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "350 designated landmarks.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.nola.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "25e8-s5xx",
+      "select": "objectid AS key, name, the_geom"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "the_geom",
+    "name": "name",
+    "key": "key"
+   }
+  },
+  {
+   "id": "kc-food-permits",
+   "name": "Kansas City food permits",
+   "short": "the Kansas City Health Department",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-missouri"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Food permits of Kansas City, Missouri (data.kcmo.org), public domain (data.kcmo.org, dataset sz9c-c5ux).",
+   "url": "https://data.kcmo.org/d/sz9c-c5ux",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "About 3,700 permitted restaurants, bars, bakeries and markets; mobile units, pushcarts and catering permits are left out.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.kcmo.org",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "sz9c-c5ux",
+      "select": "facility_permit AS key, facility_name AS name, facility_type, location_1"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "location_1",
+    "name": "name",
+    "key": "key"
+   },
+   "name_replace": [
+    [
+     "\\s+\\d.*$",
+     ""
+    ]
+   ],
+   "exclude_pattern": [
+    {
+     "column": "facility_type",
+     "pattern": "mobile|moblie|pushcart|catering|fee exempt|temporary"
+    }
+   ]
+  },
+  {
+   "id": "montgomery-md-alcohol-licensees",
+   "name": "Montgomery County (Maryland) alcohol beverage licensees",
+   "short": "Montgomery County, Maryland",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-maryland"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Alcohol Beverage Services licensees of Montgomery County, Maryland (dataMontgomery), public domain (data.montgomerycountymd.gov, dataset c6rw-fazn).",
+   "url": "https://data.montgomerycountymd.gov/d/c6rw-fazn",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "tag": "licensed premises",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "About 1,100 licensed restaurants, bars and stores by trade name.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.montgomerycountymd.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "c6rw-fazn",
+      "select": "licensee_number AS key, licensee_name AS name, location"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "location",
+    "name": "name",
+    "key": "key"
+   },
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "baton-rouge-historic-markers",
+   "name": "Baton Rouge historic markers",
+   "short": "the City of Baton Rouge and Parish of East Baton Rouge",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-louisiana"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Historic markers of Baton Rouge (Open Data BR), public domain (data.brla.gov, dataset jpvf-a4mn).",
+   "url": "https://data.brla.gov/d/jpvf-a4mn",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "historical marker",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "279 historic markers (the local and national landmark layers are polygons only and are not read).",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.brla.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "jpvf-a4mn",
+      "select": "marker_name AS name, the_geom"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "the_geom",
+    "name": "name"
+   }
+  },
+  {
+   "id": "faa-special-use-airspace",
+   "name": "FAA special use airspace",
+   "short": "the Federal Aviation Administration",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Special use airspace from the Federal Aviation Administration's Aeronautical Information Services, a work of the United States government (public domain).",
+   "url": "https://services6.arcgis.com/ssFJjBXIUyZDrSYZ/arcgis/rest/services/Special_Use_Airspace/FeatureServer/0",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "airspace",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "1,545 military operations areas and restricted, warning, alert and prohibited areas, for pictures taken from the air. Data only: the class airspace is not an area class of the lookup, so it is never spoken.",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,GLOBAL_ID,NAME,TYPE_CODE",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://services6.arcgis.com/ssFJjBXIUyZDrSYZ/arcgis/rest/services/Special_Use_Airspace/FeatureServer/0",
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "NAME",
+    "key": "GLOBAL_ID",
+    "class_column": "TYPE_CODE",
+    "rings": "_rings"
+   },
+   "class_map": {
+    "MOA": "airspace:military operations area",
+    "R": "airspace:restricted area",
+    "W": "airspace:warning area",
+    "A": "airspace:alert area",
+    "P": "airspace:prohibited area",
+    "D": "airspace:danger area",
+    "*": "airspace"
+   }
+  },
+  {
+   "id": "canada-federal-property",
+   "name": "Directory of Federal Real Property (Canada)",
+   "short": "the Treasury Board of Canada Secretariat",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Treasury Board of Canada Secretariat: Directory of Federal Real Property).",
+   "url": "https://www.tbs-sct.gc.ca/dfrp-rbif/home-accueil-eng.aspx",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "federal property",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "Named federal properties: wharves, lighthouses, RCMP detachments, border crossings, research stations, offices. Housing and residential properties and names that are only codes are left out.",
+   "fetch": {
+    "method": "national",
+    "url": "https://map-carte.tbs-sct.gc.ca/dfrp-rbif/oddo/dfrp-rbif.zip",
+    "pause": 2,
+    "xml_records": {
+     "record": "Property",
+     "fields": [
+      "Property_Number",
+      "Property_Name_E",
+      "Primary_Use_E",
+      "Latitude",
+      "Longitude"
+     ]
+    }
+   },
+   "columns": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "name": "Property_Name_E",
+    "key": "Property_Number"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "Latitude",
+    "lon": "Longitude"
+   },
+   "type_column": "Primary_Use_E",
+   "type_map": "humanise",
+   "skip_names": "^[A-Z0-9 \\-/]{1,12}$",
+   "exclude_pattern": [
+    {
+     "column": "Primary_Use_E",
+     "pattern": "residential|housing|dwelling"
+    }
+   ]
+  },
+  {
+   "id": "canada-contaminated-sites",
+   "name": "Federal Contaminated Sites Inventory (Canada)",
+   "short": "the Treasury Board of Canada Secretariat",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Treasury Board of Canada Secretariat: Federal Contaminated Sites Inventory).",
+   "url": "https://www.tbs-sct.gc.ca/fcsi-rscf/home-accueil-eng.aspx",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "federal site",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "Federal sites by name, many of them former military, radar and DEW Line stations, airfields and mines.",
+   "fetch": {
+    "method": "national",
+    "url": "https://map-carte.tbs-sct.gc.ca/fcsi-rscf/oddo/fcsi-rscf.zip",
+    "pause": 2,
+    "xml_records": {
+     "record": "Site",
+     "fields": [
+      "FederalSiteIdentifier=@FederalSiteIdentifier",
+      "Name_EN=Name/EN",
+      "Latitude=Location/Latitude",
+      "Longitude=Location/Longitude"
+     ]
+    }
+   },
+   "columns": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "name": "Name_EN",
+    "key": "FederalSiteIdentifier"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "Latitude",
+    "lon": "Longitude"
+   }
+  },
+  {
+   "id": "fhwa-scenic-byways",
+   "name": "FHWA National Scenic Byways and All-American Roads",
+   "short": "the Federal Highway Administration",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "National Scenic Byways from the Federal Highway Administration, a work of the United States government (public domain).",
+   "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/FHWA_ScenicByways_03122026_gdb/FeatureServer/0",
+   "reader": "tabular",
+   "kind": "lines",
+   "cls": "byway",
+   "tag": "scenic byway",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "230 designated byways as named lines (a picture on one is \"on the X\"). The service refuses box queries, so all 230 are asked for and each region keeps those that touch it.",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,BywayID,NAME,NSB_Year",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/FHWA_ScenicByways_03122026_gdb/FeatureServer/0",
+    "box": false
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "NAME",
+    "key": "BywayID",
+    "paths": "_paths"
+   }
+  },
+  {
+   "id": "noaa-tide-stations",
+   "name": "NOAA tide and water-level stations",
+   "short": "NOAA",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Tide stations from NOAA's Center for Operational Oceanographic Products and Services, a work of the United States government (public domain).",
+   "url": "https://tidesandcurrents.noaa.gov/",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "water",
+   "tag": "tide station",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "About 3,500 tide prediction and water-level stations named for their place (\"Nonopapa, Niihau Island\").",
+   "fetch": {
+    "method": "national",
+    "url": "https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions",
+    "pause": 2,
+    "file": "stations.json",
+    "convert": "json_records",
+    "json_records": {
+     "records": "stations",
+     "fields": [
+      "id",
+      "name",
+      "lat",
+      "lng",
+      "state"
+     ]
+    }
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lng",
+    "name": "name",
+    "key": "id"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lng"
+   },
+   "name_template": "{name}",
+   "name_replace": [
+    [
+     ",\\s*[A-Z]{2}$",
+     ""
+    ]
+   ]
+  },
+  {
+   "id": "noaa-marine-sanctuaries",
+   "name": "NOAA National Marine Sanctuaries",
+   "short": "NOAA",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "National Marine Sanctuaries from NOAA's Office of National Marine Sanctuaries (coast.noaa.gov), a work of the United States government; identified here as U.S. government material (17 U.S.C. 403).",
+   "url": "https://coast.noaa.gov/arcgis/rest/services/Hosted/NationalMarineSanctuaries/FeatureServer/0",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "water",
+   "tag": "national marine sanctuary",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "The sanctuaries and marine national monuments (47 areas) as named water areas.",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "objectid,sitename,unitname",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://coast.noaa.gov/arcgis/rest/services/Hosted/NationalMarineSanctuaries/FeatureServer/0",
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "sitename",
+    "key": "objectid",
+    "rings": "_rings"
+   }
+  },
+  {
+   "id": "bia-land-areas",
+   "name": "BIA Land Area Representation",
+   "short": "the Bureau of Indian Affairs",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Land areas from the Bureau of Indian Affairs' Land Area Representation, a work of the United States government (public domain) (for reference, not a legal boundary).",
+   "url": "https://biamaps.geoplatform.gov/server/rest/services/DivLTR/BIA_AIAN_National_LAR/FeatureServer/0",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "region",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "335 trust and reservation land areas, including trust lands that TIGER's American Indian areas lack (class region).",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,LARID,LARNAME,CLASSIFICATION",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://biamaps.geoplatform.gov/server/rest/services/DivLTR/BIA_AIAN_National_LAR/FeatureServer/0",
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "LARNAME",
+    "key": "LARID",
+    "rings": "_rings"
+   },
+   "type_column": "CLASSIFICATION",
+   "type_map": "humanise"
+  },
+  {
+   "id": "ontario-fishing-access",
+   "name": "Ontario fishing access points",
+   "short": "the Ontario Ministry of Natural Resources",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-ontario"
+   ],
+   "licence": "OGL-Ontario",
+   "attribution": "Contains information licensed under the Open Government Licence - Ontario (Fishing Access Point, Land Information Ontario).",
+   "url": "https://ws.lioservices.lrc.gov.on.ca/arcgis2/rest/services/LIO_OPEN_DATA/LIO_Open07/MapServer/15",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "park",
+   "tag": "fishing access point",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "About 3,700 boat launches and shore fishing access points.",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OGF_ID,SITE_NAME,FISHING_ACCESS_POINT_TYPE",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://ws.lioservices.lrc.gov.on.ca/arcgis2/rest/services/LIO_OPEN_DATA/LIO_Open07/MapServer/15"
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "SITE_NAME",
+    "key": "OGF_ID"
+   },
+   "type_column": "FISHING_ACCESS_POINT_TYPE",
+   "type_map": "humanise"
+  },
+  {
+   "id": "bc-ferry-terminals",
+   "name": "British Columbia ferry terminals",
+   "short": "the Province of British Columbia",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-british-columbia"
+   ],
+   "licence": "OGL-BC",
+   "attribution": "Contains information licensed under the Open Government Licence - British Columbia (Ferry Terminals, GeoBC).",
+   "url": "https://catalogue.data.gov.bc.ca/dataset/ferry-terminals",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "transit",
+   "tag": "ferry terminal",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "BC Ferries and inland ferry terminals.",
+   "fetch": {
+    "method": "wfs",
+    "url": "https://openmaps.gov.bc.ca/geo/pub/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=pub:WHSE_IMAGERY_AND_BASE_MAPS.GSR_FERRY_TERMINALS_SV",
+    "properties": "SEQUENCE_ID,TERMINAL_NAME,LATITUDE,LONGITUDE",
+    "sort": "SEQUENCE_ID",
+    "page": 5000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "LATITUDE",
+    "lon": "LONGITUDE",
+    "name": "TERMINAL_NAME",
+    "key": "SEQUENCE_ID"
+   }
+  },
+  {
+   "id": "nb-public-schools",
+   "name": "New Brunswick public schools",
+   "short": "the Province of New Brunswick",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-new-brunswick"
+   ],
+   "licence": "OGL-NB",
+   "attribution": "Contains information licensed under the Open Government Licence - New Brunswick (Public Schools) (gnb.socrata.com, dataset keju-34p8).",
+   "url": "https://gnb.socrata.com/d/keju-34p8",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "campus",
+   "tag": "school",
+   "history": "Each school from the year it was built.",
+   "notes": "294 public schools, each from the year it was built.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "gnb.socrata.com",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "keju-34p8",
+      "select": "strid AS key, strnm AS name, intbuilt AS first, point"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "first": "first"
+   }
+  },
+  {
+   "id": "nrcan-producing-mines",
+   "name": "NRCan principal producing mines (Map 900A)",
+   "short": "Natural Resources Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Natural Resources Canada: Principal Mineral Areas, Producing Mines, and Oil and Gas Fields, Map 900A).",
+   "url": "https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/900A_and_top_100_en/MapServer/3",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "tag": "mine",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "Producing metal, non-metal and coal mines and oil sands operations.",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,operation_name_en,product_group_en_spelt",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/900A_and_top_100_en/MapServer/3",
+    "urls": [
+     "https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/900A_and_top_100_en/MapServer/3",
+     "https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/900A_and_top_100_en/MapServer/4",
+     "https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/900A_and_top_100_en/MapServer/5",
+     "https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/900A_and_top_100_en/MapServer/6"
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "operation_name_en",
+    "key": "OBJECTID"
+   }
+  },
+  {
+   "id": "nrcan-oil-gas-fields",
+   "name": "NRCan oil and gas fields (Map 900A)",
+   "short": "Natural Resources Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Natural Resources Canada: Map 900A oil and gas fields).",
+   "url": "https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/900A_and_top_100_en/MapServer/13",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "tag": "oil or gas field",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "275 named oil and gas fields.",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,operation_en,type_en",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/900A_and_top_100_en/MapServer/13"
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "operation_en",
+    "key": "OBJECTID"
+   },
+   "type_column": "type_en",
+   "type_map": "{} field"
+  },
+  {
+   "id": "ny-state-historic-sites",
+   "name": "New York State historic sites",
+   "short": "the New York State Office of Parks, Recreation and Historic Preservation",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "New York State historic sites (data.ny.gov), open data under the New York State open data terms (data.ny.gov, dataset m384-u5q6).",
+   "url": "https://data.ny.gov/d/m384-u5q6",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "state historic site",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "41 State Historic Sites.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ny.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "m384-u5q6",
+      "select": "name, category, georeference"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "georeference",
+    "name": "name"
+   }
+  },
+  {
+   "id": "ny-state-park-facilities",
+   "name": "New York State park facilities",
+   "short": "the New York State Office of Parks, Recreation and Historic Preservation",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "New York State park facilities (data.ny.gov), open data under the New York State open data terms (data.ny.gov, dataset 9uuk-x7vh).",
+   "url": "https://data.ny.gov/d/9uuk-x7vh",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "park",
+   "tag": "state park",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "254 state parks and facilities.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ny.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "9uuk-x7vh",
+      "select": "name, category, georeference"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "georeference",
+    "name": "name"
+   }
+  },
+  {
+   "id": "ny-boat-launches",
+   "name": "New York State boat launch sites",
+   "short": "the New York State Office of Parks, Recreation and Historic Preservation",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "New York State boat launch sites (data.ny.gov), open data under the New York State open data terms (data.ny.gov, dataset icvg-v8xr).",
+   "url": "https://data.ny.gov/d/icvg-v8xr",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "park",
+   "tag": "boat launch",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "298 boat launches by waterbody.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ny.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "icvg-v8xr",
+      "select": "name_icon AS name, waterbody, georeference"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "georeference",
+    "name": "name"
+   }
+  },
+  {
+   "id": "ntad-spaceports",
+   "name": "NTAD spaceports",
+   "short": "the Bureau of Transportation Statistics",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Spaceports from the Bureau of Transportation Statistics' National Transportation Atlas Database, a work of the United States government (public domain).",
+   "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Spaceports/FeatureServer/0",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "transit",
+   "tag": "spaceport",
+   "history": "From the first build on (a place dropped from the source is closed at its last build).",
+   "notes": "About 20 licensed and federal launch and reentry sites.",
+   "fetch": {
+    "method": "arcgis",
+    "where": "1=1",
+    "fields": "OBJECTID,Name",
+    "page": 200,
+    "pause": 0.5,
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Spaceports/FeatureServer/0"
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "Name",
+    "key": "OBJECTID"
+   }
+  },
+  {
+   "id": "ct-deep-boat-launches",
+   "name": "Connecticut DEEP boat launches",
+   "short": "the Connecticut Department of Energy and Environmental Protection",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-connecticut"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Boat launches of the Connecticut Department of Energy and Environmental Protection, CC0.",
+   "url": "https://services1.arcgis.com/FjPcSmEFuDYlIdKC/arcgis/rest/services/Connecticut_DEEP_Boat_Launches/FeatureServer",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "park",
+   "tag": "boat launch",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services1.arcgis.com/FjPcSmEFuDYlIdKC/arcgis/rest/services/Connecticut_DEEP_Boat_Launches/FeatureServer/0",
+    "where": "1=1",
+    "fields": "OBJECTID,ACCESS_ID,LAUNCHNAME",
+    "page": 200,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "LAUNCHNAME",
+    "key": "ACCESS_ID"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "117 state boat launches."
+  },
+  {
+   "id": "atlanta-historic-markers",
+   "name": "Historic markers in the Atlanta region",
+   "short": "the Atlanta Regional Commission",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-georgia"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Historic markers in the Atlanta Region, Atlanta Regional Commission, CC BY 4.0.",
+   "url": "https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/Historic_Markers/FeatureServer",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "historical marker",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services1.arcgis.com/Ug5xGQbHsD8zuZzM/arcgis/rest/services/Historic_Markers/FeatureServer/0",
+    "where": "1=1",
+    "fields": "OBJECTID,DCA_ID,TITLE",
+    "page": 200,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "TITLE",
+    "key": "OBJECTID"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "490 historic markers in the Atlanta region."
+  },
+  {
+   "id": "hampton-roads-water-access",
+   "name": "Hampton Roads public water access sites",
+   "short": "the Hampton Roads Planning District Commission",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-virginia"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Public access water recreation sites, Hampton Roads Planning District Commission (\"free of known copyright restrictions\").",
+   "url": "https://geo.hrsd.com/hrgeo/rest/services/regionalgis/PublicAccessSites/MapServer",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "park",
+   "tag": "water access",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://geo.hrsd.com/hrgeo/rest/services/regionalgis/PublicAccessSites/MapServer/0",
+    "where": "1=1",
+    "fields": "OBJECTID,HRID,SITENAME",
+    "page": 200,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "SITENAME",
+    "key": "HRID"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "208 boat ramps, kayak launches, fishing piers and beaches in the Hampton Roads region."
+  },
+  {
+   "id": "pa-trailheads",
+   "name": "Pennsylvania trailheads (DCNR)",
+   "short": "the Pennsylvania Department of Conservation and Natural Resources",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-pennsylvania"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Trailheads from Recreation & History Related Locations Statewide (data.pa.gov, dataset 8p7f-3pj5), public domain.",
+   "url": "https://data.pa.gov/d/8p7f-3pj5",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "park",
+   "tag": "trailhead",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.pa.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "8p7f-3pj5",
+      "select": "name, latitude, longitude",
+      "where": "layername = 'Trail Head' AND latitude > 1"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "name"
+   },
+   "history": "From the first build on.",
+   "notes": "318 trailheads (the same dataset's historical markers are already in pa-historical-markers)."
   }
  ],
  "rejected": [
@@ -3554,7 +7054,7 @@
   {
    "name": "HIFLD Open",
    "licence": "Public domain (per layer)",
-   "reason": "DHS shut HIFLD Open down in August 2025; its layers come from the original agencies, which are used directly (NCES, IMLS, FAA, BTS, NPS)."
+   "reason": "DHS shut HIFLD Open down in August 2025; its layers come from the original agencies, which are used directly (NCES, IMLS, FAA, BTS, NPS). The USGS National Structures Dataset now supplies post offices, fire, police, hospitals, prisons and courthouses."
   },
   {
    "name": "CMS Hospital General Information",
@@ -3615,11 +7115,6 @@
    "name": "UK: OS AddressBase and Royal Mail PAF",
    "licence": "Commercial licence",
    "reason": "Not open; OS Open UPRN is open but has no address text, so it adds nothing to names."
-  },
-  {
-   "name": "Marine Regions IHO Sea Areas v3",
-   "licence": "CC BY-NC-SA 4.0",
-   "reason": "Non-commercial and share-alike; the program uses Natural Earth's public-domain marine names."
   },
   {
    "name": "Chicago food inspections, business licences and other City of Chicago data",
@@ -3724,7 +7219,7 @@
   {
    "name": "USPS post office locations",
    "licence": "Public domain",
-   "reason": "No current official download with coordinates (the HIFLD layer is gone); post offices come from GNIS, OpenStreetMap, Overture and Foursquare."
+   "reason": "No official USPS download with coordinates; current post offices come from the USGS National Structures Dataset and historical ones (1639-2000) from Blevins and Helbock's dataset."
   },
   {
    "name": "Denver business, liquor and other City and County of Denver data",
@@ -3824,12 +7319,12 @@
   {
    "name": "National Heritage Areas, BLM recreation sites and Bureau of Reclamation lakes",
    "licence": "Not found",
-   "reason": "No official open service or download was found (only third-party copies); their lands are in PAD-US."
+   "reason": "No official open service or download was found (only third-party copies); their lands are in PAD-US. The Recreation Information Database (RIDB) export was checked in November 2026 and rejected (see its own line)."
   },
   {
    "name": "Indigenous Services Canada reserve and land layers (data.sac-isc.gc.ca)",
    "licence": "Not stated on the layers",
-   "reason": "The same lands come from the Canada Lands Survey System layer, which states the Open Government Licence - Canada."
+   "reason": "The same lands come from the Canada Lands Survey System layer, which states the Open Government Licence - Canada. The First Nations locations and the historic and modern treaty layers of the same site are accepted: open.canada.ca lists them under the Open Government Licence - Canada."
   },
   {
    "name": "NPS National Historic Landmarks as a separate layer",
@@ -3895,6 +7390,211 @@
    "name": "US Courts locations",
    "licence": "Not found",
    "reason": "No open download; federal courthouses come with the GSA inventory and Wikidata's courthouses."
+  },
+  {
+   "name": "Ontario Heritage Trust provincial plaques",
+   "licence": "Ontario Provincial Plaque Program Data - Terms of Use",
+   "reason": "The terms say the data is for non-commercial use."
+  },
+  {
+   "name": "BC Recreation Trails and Trail Heads subsets",
+   "licence": "Access Only",
+   "reason": "Licensed 'Access Only' in the BC Data Catalogue, not the Open Government Licence (the recreation sites subset is open and is used)."
+  },
+  {
+   "name": "National Hydro Network (NHN) names",
+   "licence": "OGL-Canada-2.0",
+   "reason": "Open, but the names come only inside the full hydrography (about 1,300 work units, tens of gigabytes); every named lake and river is already in the CGNDB as a point, so it would add size without names."
+  },
+  {
+   "name": "Maryland, Missouri and Illinois state open-data lists (wineries, breweries, farmers' markets, welcome centres, park-and-rides, rest areas)",
+   "licence": "No licence stated",
+   "reason": "These datasets on opendata.maryland.gov, data.mo.gov and the Illinois portal state no licence (the New York and Pennsylvania lists, which do, are used)."
+  },
+  {
+   "name": "Ontario Parks campgrounds",
+   "licence": "None found",
+   "reason": "No openly licensed campground layer was found; the parks themselves come from Ontario's regulated provincial parks layer (OGL-Ontario). The ArcGIS copies found are under 'fair use for education' or a university's end-user licence."
+  },
+  {
+   "name": "FWS facility property points",
+   "licence": "US-Government-Work",
+   "reason": "Open, but almost all rows are assets such as parking lots and roads; hatcheries are taken from the FWS realty tracts instead and refuges from PAD-US."
+  },
+  {
+   "name": "NOAA weather forecast offices",
+   "licence": "US-Government-Work",
+   "reason": "Open but trivial (about 120 offices, mostly already in OpenStreetMap and Wikidata); skipped as the owner suggested."
+  },
+  {
+   "name": "DBpedia",
+   "licence": "CC-BY-SA-3.0",
+   "reason": "Share-alike (made from Wikipedia text); Wikidata covers the same places under CC0."
+  },
+  {
+   "name": "Wikimapia",
+   "licence": "CC-BY-SA-3.0",
+   "reason": "Share-alike, and its API needs a key."
+  },
+  {
+   "name": "British Columbia parks, ecological reserves and protected areas",
+   "licence": "OGL-BC",
+   "reason": "Open, but superseded: CPCAD (Environment and Climate Change Canada) holds the same BC parks, protected areas and ecological reserves with their establishment years."
+  },
+  {
+   "name": "Ontario provincial parks (regulated)",
+   "licence": "OGL-Ontario",
+   "reason": "Open, but superseded: CPCAD holds the same Ontario provincial parks with their establishment years."
+  },
+  {
+   "name": "New York State DOT rest areas",
+   "licence": "OPEN-NY",
+   "reason": "Open, but superseded: The national NTAD Truck Stop Parking layer has the public rest areas of every state, New York's included."
+  },
+  {
+   "name": "National Parks and National Park Reserves of Canada Legislative Boundaries",
+   "licence": "OGL-Canada-2.0",
+   "reason": "Open, but superseded: CPCAD holds the national parks and park reserves with their establishment years."
+  },
+  {
+   "name": "NTAD Intercity Bus Atlas stops",
+   "licence": "CC-BY-NC-4.0",
+   "reason": "The service's own licence text is Creative Commons Attribution-NonCommercial 4.0 (not a public-domain government work, as the research note assumed)."
+  },
+  {
+   "name": "Recreation Information Database (RIDB) full export",
+   "licence": "RIDB API agreement",
+   "reason": "Recreation.gov's own terms are an API agreement under which the API vendor keeps all rights in its materials; no CC BY statement is on recreation.gov itself (the CC BY tag appears only on the data.gov record)."
+  },
+  {
+   "name": "IPUMS NHGIS historical boundaries",
+   "licence": "IPUMS terms",
+   "reason": "The terms forbid redistribution without permission."
+  },
+  {
+   "name": "BC Register of Historic Places; BC MINFILE",
+   "licence": "Access Only",
+   "reason": "Licensed 'Access Only' in the BC Data Catalogue."
+  },
+  {
+   "name": "Ontario Abandoned Mines Information System (AMIS)",
+   "licence": "King's Printer for Ontario",
+   "reason": "Not under the Open Government Licence - Ontario."
+  },
+  {
+   "name": "Canadian Register of Historic Places (open.canada.ca extract)",
+   "licence": "OGL-Canada-2.0",
+   "reason": "Open, but federal designations only and no coordinates (street, municipality and postal area)."
+  },
+  {
+   "name": "Toronto Heritage Register",
+   "licence": "OGL-Toronto",
+   "reason": "Open, but it has no name field (names are inside free-text descriptions) and most entries are private houses known only by their address; the 'formerly listed' layer has 5 rows."
+  },
+  {
+   "name": "Toronto business licences",
+   "licence": "OGL-Toronto",
+   "reason": "Addresses only; Toronto's businesses come from Statistics Canada's ODBus, which located them."
+  },
+  {
+   "name": "Washington State Liquor and Cannabis Board licence renewals",
+   "licence": "public-domain-marked",
+   "reason": "No coordinates, and it lists designated signees (people) and their phone numbers."
+  },
+  {
+   "name": "Florida FWC boat ramp inventory",
+   "licence": "No licence stated",
+   "reason": "The licence field only asks for acknowledgement of FWC-FWRI; no licence grants redistribution."
+  },
+  {
+   "name": "Michigan DNR boating access sites",
+   "licence": "No licence stated",
+   "reason": "The licence field is an accessibility disclaimer only."
+  },
+  {
+   "name": "Philadelphia GIS data",
+   "licence": "All rights reserved",
+   "reason": "The City's metadata says it reserves all rights."
+  },
+  {
+   "name": "Dallas restaurant inspections and historical markers",
+   "licence": "No licence stated",
+   "reason": "No licence on the datasets; the terms grant no intellectual-property rights."
+  },
+  {
+   "name": "Denver datasets reposted on data.colorado.gov",
+   "licence": "Denver terms",
+   "reason": "Marked public domain on the state portal, but the source is Denver, whose terms are rejected."
+  },
+  {
+   "name": "Texas Historical Commission markers",
+   "licence": "No licence stated",
+   "reason": "Only regional copies that ask for credit, with no licence from the Commission itself."
+  },
+  {
+   "name": "Wisconsin historical markers",
+   "licence": "No licence stated",
+   "reason": "Neither WisDOT nor the Wisconsin Historical Society states a licence."
+  },
+  {
+   "name": "Detroit business licences, restaurants and liquor licences",
+   "licence": "No licence stated",
+   "reason": "No licence on the City's ArcGIS layers."
+  },
+  {
+   "name": "Fort Worth health data",
+   "licence": "No licence stated",
+   "reason": "No licence field and no terms found."
+  },
+  {
+   "name": "NY child care regulated programs; New Brunswick child care sites",
+   "licence": "Various",
+   "reason": "Many are home addresses (privacy)."
+  },
+  {
+   "name": "Marin County and Washington DOL business licences",
+   "licence": "ODbL-1.0",
+   "reason": "Share-alike (ODbL), allowed only for OpenStreetMap's own layer."
+  },
+  {
+   "name": "Canadian lighthouses (open.canada.ca)",
+   "licence": "OGL-Canada-2.0",
+   "reason": "Only atlas raster maps; no point data."
+  },
+  {
+   "name": "Library and Archives Canada post offices and postmasters",
+   "licence": "None found",
+   "reason": "No open dataset was found."
+  },
+  {
+   "name": "Indian Land Cessions (Royce areas)",
+   "licence": "None found",
+   "reason": "Only third-party or university copies; no official open layer."
+  },
+  {
+   "name": "OSHA inspection establishments (DOL enforcement data)",
+   "licence": "US-Government-Work",
+   "reason": "Public domain, but the keyless bulk files of enforcedata.dol.gov now redirect to data.dol.gov, whose data API (apiprod.dol.gov) answers only with a registered API key; no keyless download was found (November 2026)."
+  },
+  {
+   "name": "DOL Wage and Hour Division (WHD) compliance actions",
+   "licence": "US-Government-Work",
+   "reason": "Same as OSHA: only through the DOL data API with a registered key."
+  },
+  {
+   "name": "Census County Business Patterns, ZIP Code Business Patterns, Nonemployer Statistics and other aggregated business statistics",
+   "licence": "US-Government-Work",
+   "reason": "Counts by area and industry only: no place names."
+  },
+  {
+   "name": "State boat-access and historical-marker layers without a licence (state pass, November 2026)",
+   "licence": "No licence stated",
+   "reason": "Searched for all 45 remaining states: most official layers carry only a disclaimer ('as is', 'public use', 'for informational purposes') and no licence, or are copies by students and third parties: Alabama ADCNR launches and AHC markers, Alaska ADF&G, Arizona AZGFD, California State Lands, Delaware markers, Georgia DNR ramps, Idaho, Kentucky, Louisiana LDWF, Maine GeoLibrary, Maryland DNR and MDOT markers, Massachusetts MassGIS and CZM, Minnesota DNR, Montana FWP and MDT markers, New Jersey DEP, North Carolina WRC and markers, Ohio ODNR, Oregon OSMB, Rhode Island RIGIS, South Carolina DNR, Tennessee TWRA, Utah markers (UGRC), Vermont markers, Virginia DWR and VDOT markers, Washington State Parks and WDFW, West Virginia DNR, Wyoming SHPO. Vermont's fishing access areas are CC BY-SA (share-alike) and a Tahoe boating layer is CC BY-NC. Used: Connecticut DEEP launches (CC0), Atlanta Regional Commission markers (CC BY 4.0), Hampton Roads water access (no known copyright restrictions), Pennsylvania trailheads (public domain)."
+  },
+  {
+   "name": "Utah monuments and markers (UGRC)",
+   "licence": "No licence stated",
+   "reason": "The item has a disclaimer only ('as is', 'informational purposes'); no licence."
   }
  ],
  "candidates": [
@@ -3989,11 +7689,6 @@
    "note": "Line layers on the same services as the recreation sites and points of interest; the arcgis method would need line output."
   },
   {
-   "name": "Vancouver business licences 1997-2012 and current",
-   "licence": "Open Government Licence - Vancouver",
-   "note": "About 959,000 dated licence records with positions; the portal's grouped export (one row per licence) could not be tested from the build sandbox (connection resets). Add as an opendatasoft export entry once tested; use trade names and storefront business types only."
-  },
-  {
    "name": "Allegheny County (WPRDC) food facilities; Philadelphia business licences and inspections",
    "licence": "CC0 (WPRDC); OpenDataPhilly terms to confirm",
    "note": "WPRDC's food facility list has no queryable table (a grouped SQL query is needed to keep it small); OpenDataPhilly's catalogue API was not reachable from the sandbox."
@@ -4042,11 +7737,6 @@
    "name": "NOAA ENC named features and wrecks (AWOIS, ENC)",
    "licence": "Public domain",
    "note": "The OceanReports wrecks service address answered \"service not found\"; ENC cells need an S-57 reader. Candidates for boat photos."
-  },
-  {
-   "name": "NOAA National Marine Sanctuaries",
-   "licence": "Public domain",
-   "note": "No official service was found (only copies); the boundary downloads at sanctuaries.noaa.gov can be added as shapes."
   },
   {
    "name": "GEBCO undersea feature names; NGA GEOnet names; Canadian Hydrographic Service names",
@@ -4112,6 +7802,116 @@
    "name": "BTS NTAD rail lines (active and abandoned); OHM historic railway lines; America's Byways; NHD rivers; NRN and CanVec lines",
    "licence": "Public domain / OGL-Canada",
    "note": "Line support is in; these need names (rail lines carry owner codes, not names) or are large (NHD, NRN)."
+  },
+  {
+   "name": "NTAD National Transit Map stops",
+   "licence": "CC-BY-3.0-US",
+   "note": "673,251 stops under CC BY 3.0 US (the service's own licence). Decided to wait: the stop names come from each agency's GTFS feed, so most would duplicate the GTFS layer's stops one for one; it would fill the agencies whose own feeds have no open licence (Rhode Island). Needs a per-feed filter (feed_id against the GTFS layer's feeds) before it is added."
+  },
+  {
+   "name": "Statistics Canada Canadian Public Transit Network Database (2025)",
+   "licence": "OGL-Canada-2.0",
+   "note": "444 MB; the inner columns were not read. Would give every Canadian stop without checking each GTFS licence."
+  },
+  {
+   "name": "Statistics Canada Open Database of Infrastructure (ODI) v2",
+   "licence": "OGL-Canada-2.0",
+   "note": "GeoPackages per theme (ports and marinas, bridges and tunnels, railways, water works); the ports theme has only 4 providers. Needs reading of the GPKG layers and their projection."
+  },
+  {
+   "name": "Adresses Québec (AQréseau)",
+   "licence": "CC-BY-4.0",
+   "note": "80 MB GeoPackage of address ranges on roads, newer than the 2021 ODA for Québec. Needs a range reader for its layout."
+  },
+  {
+   "name": "Census 2000 and 1990 places and county subdivisions",
+   "licence": "US-Government-Work",
+   "note": "Open; their files (TIGER2010/PLACE/2000, PREVGENZ) have other field names and paths than the yearly releases, so they need their own seed settings before they can date the 2000 and 1990 names."
+  },
+  {
+   "name": "Canadian Wind Turbine Database",
+   "licence": "OGL-Canada-2.0",
+   "note": "Only xlsx and a file geodatabase; no reader for either yet."
+  },
+  {
+   "name": "NRCan National Railway Network (NRWN)",
+   "licence": "OGL-Canada-2.0",
+   "note": "Whether stations and junctions carry names was not confirmed."
+  },
+  {
+   "name": "Montréal open data (food establishments, historical toponyms)",
+   "licence": "CC-BY-4.0",
+   "note": "Its file downloads answered 'RBAC: access denied' from the sandbox; to be tried from the build runner."
+  },
+  {
+   "name": "NOAA ENC Direct named features",
+   "licence": "US-Government-Work",
+   "note": "Counts answer, attribute queries fail ('service not found'); to be tried again."
+  },
+  {
+   "name": "StatCan Canadian Cycling and Pedestrian Network Databases",
+   "licence": "OGL-Canada-2.0",
+   "note": "Low value for naming photos."
+  },
+  {
+   "name": "NPRI (Canada) and EPA TRI (US) facilities",
+   "licence": "OGL-Canada-2.0 / US-Government-Work",
+   "note": "Open, with reporting years 1987/1993 on; one row per facility from many yearly files: a later round."
+  },
+  {
+   "name": "Statistics Canada Open Database of Greenhouses",
+   "licence": "OGL-Canada-2.0",
+   "note": "Columns not read."
+  },
+  {
+   "name": "New Brunswick community boundaries; Cambridge MA historical landmarks",
+   "licence": "OGL-NB / PDDL-1.0",
+   "note": "Open, but published only as Socrata polygons, which the tabular reader does not read."
+  },
+  {
+   "name": "StatCan census boundary vintages 2001-2016",
+   "licence": "OGL-Canada-2.0",
+   "note": "Open, but www12.statcan.gc.ca answers automated downloads with a security check (not worked around); the 2021 boundaries come from StatCan's map service."
+  },
+  {
+   "name": "OpenStreetMap name-suggestion-index (brand normalisation)",
+   "licence": "BSD-3-Clause",
+   "note": "Code and data under BSD-3; would map brand spellings to one name and Wikidata id. Not added yet: OSM, Overture and All The Places already carry brand:wikidata for most chain locations, and matching NSI's per-category rules needs its own step."
+  },
+  {
+   "name": "Wikidata brand ownership (P1830 owner of, P749 parent organization)",
+   "licence": "CC0-1.0",
+   "note": "Open; would link brands to their parent companies. Left for a later round (brands are data only today)."
+  },
+  {
+   "name": "Wikidata labels in French, Spanish, German, Italian, Dutch, Japanese and Chinese",
+   "licence": "CC0-1.0",
+   "note": "Open, but a side table of 7 languages would add roughly 0.5-1 MB per state (about 40% of a state's Wikidata items have at least one of them); skipped for size, as allowed."
+  },
+  {
+   "name": "QLever Wikidata endpoint (qlever.dev)",
+   "licence": "CC0-1.0 (data)",
+   "note": "Answers fast but stops at about 30 seconds on a box query with English labels and rate-limits (429); no usage policy found. The Wikidata Query Service (wikibase:box tiles) is used instead."
+  },
+  {
+   "name": "Prince Edward Island civic addresses",
+   "licence": "Unconfirmed",
+   "note": "82,938 civic address points on the Province's own ArcGIS server, but the layer states no licence and the Province's licence page refused automated access (403)."
+  },
+  {
+   "name": "Newfoundland and Labrador provincial historic sites",
+   "licence": "OGL-NL (stated by the copy)",
+   "note": "23 sites, found only as a copy republished by the Canada-Newfoundland and Labrador Offshore Petroleum Board; to use the Province's own layer once found (the NL licence itself is open)."
+  },
+  {
+   "name": "Indigenous Services Canada Inuit Communities",
+   "licence": "OGL-Canada-2.0",
+   "note": "Open (open.canada.ca lists Inuit communities under OGL-Canada); the map service did not answer a layer query from the sandbox."
+  },
+  {
+   "name": "Northwest Territories and Nunavut open data portals",
+   "licence": "Unchecked",
+   "note": "opendata.gov.nt.ca returned 502 and gov.nu.ca 403 to automated access; nothing evaluated. Their communities are in the CGNDB, CPCAD and StatCan's census subdivisions."
   }
  ]
 }

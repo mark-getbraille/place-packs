@@ -45,6 +45,15 @@ def needed_columns(entry):
     for part in ("filter", "exclude"):
         if entry.get(part):
             add(entry[part]["column"])
+    for rule in entry.get("exclude_pattern", []):
+        add(rule["column"])
+    if entry.get("open_when"):
+        add(entry["open_when"]["column"])
+    for part in ("brand_column", "brand_wikidata_column"):
+        add(entry.get(part, ""))
+    if entry.get("name_template"):
+        import re
+        names.update(re.findall(r"{([^}]+)}", entry["name_template"]))
     for spec in (entry.get("split_box") or {}).values():
         add(spec)
     return names or None
@@ -62,6 +71,10 @@ def _targets(entry, row, by_value, boxes):
             at = float(_get(row, spec["lat"])), float(_get(row, spec["lon"]))
         except (KeyError, ValueError):
             return []
+        if spec.get("projection"):
+            from placepacks import fmt
+            lon, lat = fmt.to_lonlat(spec["projection"], at[1], at[0])
+            at = lat, lon
     lat, lon = at
     cc = _get(row, spec["country"]).upper() if spec.get("country") else None
     return [rid for rid, (rcc, (w, s, e, n)) in boxes.items() if (cc is None or cc == rcc) and

@@ -12,15 +12,22 @@ The catalogue entry says how to read it:
   "filter": {"column": ..., "equals": "{code}"}: only rows of the region ("{code}" is its postal code, "{fips}",
             "{pruid}", "{name}"); without a filter, only rows inside the region's bounding box
   "exclude": {"column": ..., "values": [...]}: rows left out (the NAD states whose data may not be public domain)
+  "exclude_pattern": [{"column": ..., "pattern": a regular expression}, ...]: rows whose column matches are left
+            out (home-based trades and residences in a business list whose categories are free text)
   "fieldnames": [...]: the column names of a file without a header line (GeoNames)
   "blank_values": [...]: values read as empty ("Not stated" in the NAD's city columns)
 Points may also have:
+  columns "projection": "lat" and "lon" are y and x in metres of a projection (fmt.PROJECTIONS: Statistics
+                   Canada's Lambert)
   columns "point": one column holding the position, as "POINT (lon lat)" or "... (lat, lon)" (Socrata), in place
                    of "lat" and "lon"
   class_map keys ending in "*" match the start of the value ("722*" for every NAICS restaurant code), the longest
             first; a value "business:restaurant" gives the class "business" and the tag "restaurant"
   "name_strip": a regular expression removed from names ("/Inactive" after New York health permit names)
   "skip_names": a regular expression of names left out (licensee names that look like a person's: "Surname, Given")
+  "keep_case": true: names are kept as written (postal codes such as "C0A"), not put in ordinary capitals
+  "name_replace": [[pattern, replacement], ...] and "name_words" (a word table of types.json): types.rename
+               ("South Louisiana, LA, Port of" -> "Port of South Louisiana")
   "skip_points": [[lat, lon], ...]: placeholder positions to leave out (a city's centre used for unknown places)
   "aggregate": true: one record per key and name, from its earliest "first" to its latest "last" (inspections,
                directory years)
@@ -32,13 +39,16 @@ Points may also have:
                record's tag (from class_map or the entry, when it is not the source id) is its type
   "geocode": {"street", "city", "zip": columns, "from": "nad"}: an address-only source, located by the offline
                geocoder against the region's address points (placepacks.geocode; a home is put on its street)
+  "brand_column", "brand_wikidata_column": a chain location's brand and its Wikidata id (data only)
   "kind": "lines" with columns "paths": a column of JSON paths [[[lat, lon], ...], ...] (the arcgis fetch's
                "_paths"): written as named lines (trails, rivers), each path a line of the record
   "kind": "areas" with columns "rings": a column of JSON rings [[[lat, lon], ...], ...] (the arcgis fetch's
                "_rings"): written as named areas (PAD-US, military installations)
   "still_open_months": N: a record whose last date is within N months of the build is still open (its last month
                is the build's); "closed_column": a column that is not empty for records the source says are closed
-               (they keep their own last date)
+               (they keep their own last date); "open_when": {"column", "values"}: records whose column has one
+               of the values are still open, the others close at their last date (a mine "Active" since its status
+               date, or "Abandoned" at it)
 Dates after the build month are the build month (writer.PackWriter). Rows without a position, or outside the
 region's bounding box, are left out. Text that is all capitals is written in ordinary capitals ("MAIN ST" ->
 "Main St")."""
@@ -116,13 +126,14 @@ def _get(row, spec):
     return (row.get(spec, "") or "").strip() if spec else ""
 
 
-_WKT = re.compile(r"POINT\s*\(\s*(-?[\d.]+)\s+(-?[\d.]+)\s*\)", re.I)
+_WKT = re.compile(r"POINT\s*\(\s*\(?\s*(-?[\d.]+)\s+(-?[\d.]+)\s*\)", re.I)
 _LATLON = re.compile(r"\(\s*(-?[\d.]+)\s*,\s*(-?[\d.]+)\s*\)")
+_PLAIN = re.compile(r"^\s*(-?\d{1,2}\.\d+)\s*,\s*(-?\d{1,3}\.\d+)\s*$")
 
 
 def parse_point(text):
-    """(lat, lon) from "POINT (lon lat)" or from text ending in "(lat, lon)" (Socrata's location columns); None
-    when there is no position."""
+    """(lat, lon) from "POINT (lon lat)", from text ending in "(lat, lon)" (Socrata's location columns) or from a
+    plain "lat, lon" (Opendatasoft's geo_point_2d); None when there is no position."""
     text = text or ""
     m = _WKT.search(text)
     if m:
@@ -130,17 +141,24 @@ def parse_point(text):
     m = _LATLON.search(text)
     if m:
         return float(m.group(1)), float(m.group(2))
+    m = _PLAIN.match(text)
+    if m:
+        return float(m.group(1)), float(m.group(2))
     return None
 
 
 def position(row, cols):
-    """(lat, lon) of a row (the "point" column, or "lat" and "lon"); None when it has none."""
+    """(lat, lon) of a row (the "point" column, or "lat" and "lon"); None when it has none. With columns
+    "projection" (a name in fmt.PROJECTIONS), "lat" and "lon" hold the projected y and x in metres."""
     if cols.get("point"):
         return parse_point(_get(row, cols["point"]))
     try:
-        return float(_get(row, cols["lat"])), float(_get(row, cols["lon"]))
+        lat, lon = float(_get(row, cols["lat"])), float(_get(row, cols["lon"]))
     except ValueError:
         return None
+    if cols.get("projection"):
+        lon, lat = fmt.to_lonlat(cols["projection"], lon, lat)
+    return lat, lon
 
 
 def dict_rows(text, entry):
@@ -162,13 +180,13 @@ def geocoded_rows(path, entry, region):
     Each located row gets "_lat", "_lon" and "_how" ("address" or "street" for a home); the match rate is printed."""
     from placepacks import catalogue, geocode
     spec = entry["geocode"]
-    flt, exclude, values = entry.get("filter"), entry.get("exclude"), region_values(region)
+    flt, values = entry.get("filter"), region_values(region)
     rows = []
     for text in open_texts(path, entry.get("member", "*"), entry.get("encoding", "utf-8-sig")):
         for row in dict_rows(text, entry):
             if flt and _get(row, flt["column"]).upper() != flt["equals"].format(**values).upper():
                 continue
-            if exclude and _get(row, exclude["column"]).upper() in {v.upper() for v in exclude["values"]}:
+            if excluded(row, entry):
                 continue
             rows.append(row)
     source = spec.get("from", "nad")
@@ -184,20 +202,31 @@ def geocoded_rows(path, entry, region):
         yield row
 
 
+def excluded(row, entry):
+    """True when the row is left out by the entry's "exclude" or "exclude_pattern"."""
+    exclude = entry.get("exclude")
+    if exclude and _get(row, exclude["column"]).upper() in {v.upper() for v in exclude["values"]}:
+        return True
+    for rule in entry.get("exclude_pattern", []):
+        if re.search(rule["pattern"], _get(row, rule["column"]), re.I):
+            return True
+    return False
+
+
 def rows_of(path, entry, region):
     """The dict rows of a source in the region (filter, exclude, bounding box), with "_lat" and "_lon" added."""
     if entry.get("geocode"):
         yield from geocoded_rows(path, entry, region)
         return
     cols, values = entry["columns"], region_values(region)
-    flt, exclude = entry.get("filter"), entry.get("exclude")
+    flt = entry.get("filter")
     skip = {(round(a, 4), round(b, 4)) for a, b in entry.get("skip_points", [])}
     west, south, east, north = region["bbox"]
     for text in open_texts(path, entry.get("member", "*"), entry.get("encoding", "utf-8-sig")):
         for row in dict_rows(text, entry):
             if flt and _get(row, flt["column"]).upper() != flt["equals"].format(**values).upper():
                 continue
-            if exclude and _get(row, exclude["column"]).upper() in {v.upper() for v in exclude["values"]}:
+            if excluded(row, entry):
                 continue
             at = position(row, cols)
             if at is None or (round(at[0], 4), round(at[1], 4)) in skip:
@@ -254,6 +283,10 @@ def _open_until(entry, row, last, month):
     closed = entry["columns"].get("closed_column")
     if closed and _get(row, closed):
         return last
+    when = entry.get("open_when")
+    if when:
+        # Records whose status column has one of these values are still open; the others close at their date.
+        return None if _get(row, when["column"]).upper() in {v.upper() for v in when["values"]} else last
     keep = entry.get("still_open_months")
     if keep is not None and last >= fmt.add_months(month, -int(keep)):
         return None
@@ -284,7 +317,7 @@ def read(path, entry, region, writer):
             name = strip.sub("", name)
         if skip_name and skip_name.search(name.strip()):
             continue
-        name = smart_case(name)
+        name = types.rename(entry, name.strip() if entry.get("keep_case") else smart_case(name))
         if not name:
             continue
         cls, tag = entry.get("cls", ""), entry.get("tag", source)
@@ -336,9 +369,15 @@ def read(path, entry, region, writer):
                 g[5] = None if still_open else max(x for x in (g[5], last) if x) if (g[5] or last) else None
                 g[6] = still_open
             continue
-        writer.add_point(key, source, name, cls, tag, lat, lon, first, last, type=kind)
+        brand = None
+        if entry.get("brand_column") and _get(row, entry["brand_column"]):
+            brand = (_get(row, entry["brand_column"]), _get(row, entry.get("brand_wikidata_column", "")))
+        writer.add_point(key, source, name, cls, tag, lat, lon, first, last, type=kind, brand=brand)
         count += 1
     for (key, _), (cls, tag, lat, lon, first, last, _, name, kind) in (grouped or {}).items():
-        writer.add_point(key, source, name, cls, tag, lat, lon, first, last, type=kind)
+        brand = None
+        if entry.get("brand_column") and _get(row, entry["brand_column"]):
+            brand = (_get(row, entry["brand_column"]), _get(row, entry.get("brand_wikidata_column", "")))
+        writer.add_point(key, source, name, cls, tag, lat, lon, first, last, type=kind, brand=brand)
         count += 1
     return count

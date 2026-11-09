@@ -25,7 +25,7 @@ from placepacks import fmt
 
 TABLES = {
     "points": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, name TEXT, cls TEXT, tag TEXT, lat INTEGER, "
-              "lon INTEGER, cell INTEGER, ccell INTEGER, first INTEGER, last INTEGER, type",
+              "lon INTEGER, cell INTEGER, ccell INTEGER, first INTEGER, last INTEGER, type, brand",
     "areas": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, name TEXT, cls TEXT, tag TEXT, minlat INTEGER, "
              "minlon INTEGER, maxlat INTEGER, maxlon INTEGER, size REAL, rings BLOB, first INTEGER, last INTEGER, type",
     "lines": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, name TEXT, cls TEXT, tag TEXT, minlat INTEGER, "
@@ -48,7 +48,8 @@ SAME = {
     "addr": "p.name IS f.name AND p.street IS f.street AND abs(p.lat - f.lat) <= 100 AND abs(p.lon - f.lon) <= 100",
 }
 NEAR = 50                       # microdegrees (about 5 m): the second pass for records without a stable id
-# Points and areas have a "type" phrase while a pack is built; finish() moves the phrases to the "types" table and
+# Points and areas have a "type" phrase (and points a "brand") while a pack is built; finish() moves the phrases to
+# the "types" table (and the brands to "brands") and
 # the links to "point_types" and "area_types" (FORMAT.md), so the tables themselves keep the version 2 columns and
 # readers and merges made before types existed read new packs unchanged.
 TYPED = {"points": "point_types", "areas": "area_types"}
@@ -105,14 +106,18 @@ class PackWriter:
         """The description of a source used in this pack (SOURCE_COLUMNS)."""
         self.sources[fields["id"]] = {c: str(fields.get(c, "") or "") for c in SOURCE_COLUMNS}
 
-    def add_point(self, key, source, name, cls, tag, lat, lon, first=None, last=None, type=None):
-        """A named point; type: its fine type phrase ("pizza restaurant"), if known."""
+    def add_point(self, key, source, name, cls, tag, lat, lon, first=None, last=None, type=None, brand=None):
+        """A named point; type: its fine type phrase ("pizza restaurant"), if known; brand: (brand name, Wikidata id
+        or "") of a chain's location (data only, like the type)."""
         first, last = self._span(first, last)
         self._extend(lat, lon)
-        self.db.execute("INSERT INTO points (key, source, name, cls, tag, lat, lon, cell, ccell, first, last, type) "
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        brand_text = None
+        if brand and (brand[0] or "").strip():
+            brand_text = f"{brand[0].strip()}|{(brand[1] or '').strip()}"
+        self.db.execute("INSERT INTO points (key, source, name, cls, tag, lat, lon, cell, ccell, first, last, type, "
+                        "brand) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         (key, source, name, cls, tag, int(round(lat * fmt.SCALE)), int(round(lon * fmt.SCALE)),
-                         fmt.fine_cell(lat, lon), fmt.coarse_cell(lat, lon), first, last, type or None))
+                         fmt.fine_cell(lat, lon), fmt.coarse_cell(lat, lon), first, last, type or None, brand_text))
         self._count(source, "points")
 
     def add_area(self, key, source, name, cls, tag, rings, first=None, last=None, type=None):
@@ -244,6 +249,14 @@ class PackWriter:
             db.execute(f"CREATE TABLE {links} (id INTEGER PRIMARY KEY, type INTEGER)")
             db.execute(f"INSERT INTO {links} SELECT r.id, t.id FROM {table} r JOIN types t ON t.name = r.type")
             db.execute(f"ALTER TABLE {table} DROP COLUMN type")
+        # Brands of chain locations, the same way: each brand once (name and Wikidata id), points link to it.
+        db.execute("CREATE TABLE brands (id INTEGER PRIMARY KEY, name TEXT, wikidata TEXT, UNIQUE (name, wikidata))")
+        db.execute("INSERT INTO brands (name, wikidata) SELECT DISTINCT substr(brand, 1, instr(brand, '|') - 1), "
+                   "substr(brand, instr(brand, '|') + 1) FROM points WHERE brand IS NOT NULL ORDER BY 1")
+        db.execute("CREATE TABLE point_brands (id INTEGER PRIMARY KEY, brand INTEGER)")
+        db.execute("INSERT INTO point_brands SELECT p.id, b.id FROM points p JOIN brands b ON b.name || '|' || "
+                   "b.wikidata = p.brand")
+        db.execute("ALTER TABLE points DROP COLUMN brand")
 
     def _write_addresses(self):
         """Pack the address rows into one compressed record list per fine cell (address_cells). The cell's street list
@@ -337,7 +350,12 @@ def merge_history(db, previous, month):
                       f"{old}.id)")
         else:
             phrase = "NULL"
-        picks = ", ".join(phrase if c == "type" else c for c in columns)
+        if table == "points" and "point_brands" in typed and "brands" in typed:
+            brand = (f"(SELECT b.name || '|' || b.wikidata FROM prev.point_brands l JOIN prev.brands b ON b.id = "
+                     f"l.brand WHERE l.id = {old}.id)")
+        else:
+            brand = "NULL"
+        picks = ", ".join(phrase if c == "type" else brand if c == "brand" else c for c in columns)
         db.execute(f"INSERT INTO {table} ({cols}) SELECT {picks} FROM {old} WHERE id NOT IN (SELECT pid FROM m)")
         db.execute("DROP TABLE m")
     db.execute("DROP TABLE temp.old_addr")

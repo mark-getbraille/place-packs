@@ -29,12 +29,14 @@ church" or "lighthouse" (`type` in a lookup's result; `search_names(..., type="b
 - "near 120 Main Street, Springfield", from an address point
 - "at about 120 Main Street", estimated from the street's address range
 - "next to Riverside Library", or "next to a business listed as Tony's Pizza (now Sally's Ice Cream)"
+- "at Riverside Plaza" or "near 123 Main St" when several shops share one spot and the phone's position cannot
+  tell which (the shops are kept in `Result.others`, never spoken)
 - "on Vineyard Sound, about 3 miles south of Edgartown", "on Lake Champlain"
 - "in the air, about 35,000 feet (10,700 m) over the Pacific Ocean, about 400 miles northeast of Hilo"
 - "near Boston Logan International Airport", in the air shortly after take-off
 
 Water, coastlines and the air work without any pack, from the small global layer in `placepacks/data/`
-(Natural Earth and OurAirports, both public domain).
+(Natural Earth and OurAirports, both public domain; Marine Regions' bays and gulfs, CC BY 4.0).
 
 ## History: names as they were
 

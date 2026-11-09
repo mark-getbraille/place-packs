@@ -177,15 +177,16 @@ jobs:
             done
           fi
           python -m placepacks.fetch "$REGION" --dir "work/$REGION" --part all --national national
-      - name: Seed the address-range history (first build, when asked)
+      - name: Seed the TIGER history (address ranges, landmarks, military installations; first build, when asked)
         if: ${{ inputs.seed_history && startsWith(matrix.region.id, 'us-') }}
         env:
           REGION: ${{ matrix.region.id }}
         run: |
           prev=""
+          SEED=$(python -c "import json; print(','.join(json.load(open('sources.json'))['settings']['tiger_seed_sources']))")
           for year in $(python -c "import json; print(' '.join(json.load(open('sources.json'))['settings']['tiger_seed_years']))"); do
-            PLACEPACKS_SETTINGS="{\"tiger_year\": \"$year\"}" python -m placepacks.fetch "$REGION" --dir "seed/$year" --part extra --only tiger-addrfeat
-            python -m placepacks.build "$REGION" --part extra --inputs "seed/$year/fetched.json" --out "seed/$year.osmpack" --month "${year}01" --only tiger-addrfeat --previous "$prev"
+            PLACEPACKS_SETTINGS="{\"tiger_year\": \"$year\"}" python -m placepacks.fetch "$REGION" --dir "seed/$year" --part extra --only "$SEED"
+            python -m placepacks.build "$REGION" --part extra --inputs "seed/$year/fetched.json" --out "seed/$year.osmpack" --month "${year}01" --only "$SEED" --previous "$prev"
             prev="seed/$year.osmpack"
             rm -rf "seed/$year"
           done

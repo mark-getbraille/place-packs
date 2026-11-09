@@ -72,10 +72,11 @@ def test_licence_rows_get_their_naics_phrase(tmp_path):
 
 
 def pack(path, month, rows, previous=None):
-    """A pack of points [(key, name, cls, type)] at SPOT, built at month on previous."""
+    """A pack of points [(key, name, cls, type)] from SPOT northwards, about 22 m apart (so the first is clearly
+    the nearest business; see the several-tenants rule), built at month on previous."""
     w = PackWriter(str(path), month)
     for i, (key, name, cls, kind) in enumerate(rows):
-        w.add_point(key, "osm", name, cls, "t", SPOT[0] + i * 1e-5, SPOT[1], type=kind)
+        w.add_point(key, "osm", name, cls, "t", SPOT[0] + i * 2e-4, SPOT[1], type=kind)
     w.finish({"region_id": VT, "state": "Vermont", "country": "United States"}, previous=previous)
     return str(path)
 
@@ -262,6 +263,6 @@ def test_museum_disciplines_and_tourism_classes():
     beach = entry_of("epa-beaches")
     import re
     assert re.sub(beach["name_strip"], "", "Madeup Town Beach - Location 2", flags=re.I) == "Madeup Town Beach"
-    parks = entry_of("ontario-parks")
-    assert re.sub(parks["name_strip"], "", "INVENTED LAKE PROVINCIAL PARK (RECREATIONAL CLASS)",
-                  flags=re.I) == "INVENTED LAKE PROVINCIAL PARK"
+    # The Ontario and BC park layers were superseded by CPCAD (every province, with establishment years).
+    assert entry_of("cpcad")["columns"]["first"] == "ESTYEAR"
+    assert "ontario-parks" not in {e["id"] for e in catalogue.load()["accepted"]}

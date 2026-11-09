@@ -13,10 +13,13 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # ODbL is share-alike, so only OpenStreetMap's own layer has it (see LICENSES.md: each pack is a collective database).
 # NYC-Open-Data and OPEN-NY are the terms of New York City's and New York State's portals: by law (NYC Admin. Code
 # 23-502(d)) and by their terms, the data is free to use and redistribute without licence, attribution or share-alike
-# requirements (see sources.json "licences").
+# requirements (see sources.json "licences"). The Canadian provincial and city licences (Calgary, Edmonton, Nova
+# Scotia, Vancouver, New Brunswick) each grant a worldwide, royalty-free licence to copy, modify and redistribute,
+# commercial use included, with attribution (read November 2026).
 ALLOWED = {"ODbL-1.0", "CDLA-Permissive-2.0", "Apache-2.0", "OGL-Canada-2.0", "OGL-UK-3.0", "CC0-1.0", "CC-BY-4.0",
            "US-Government-Work", "etalab-2.0", "per-feed-open", "per-source-open", "PDDL-1.0", "ODC-By-1.0",
-           "NYC-Open-Data", "OPEN-NY", "public-domain-marked", "Newberry-open", "OGL-Toronto", "OGL-BC", "OGL-Ontario"}
+           "NYC-Open-Data", "OPEN-NY", "public-domain-marked", "Newberry-open", "OGL-Toronto", "OGL-BC", "OGL-Ontario",
+           "OGL-Calgary", "Edmonton-Open-Data", "OGL-Nova-Scotia", "OGL-Vancouver", "OGL-NB"}
 SHARE_ALIKE = {"ODbL-1.0"}
 
 

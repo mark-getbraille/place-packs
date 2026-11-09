@@ -3,10 +3,13 @@
     python tools/build_water.py NE_FOLDER airports.csv
 
 NE_FOLDER holds Natural Earth's GeoJSON files (public domain, github.com/nvkelso/natural-earth-vector):
-ne_50m_land, ne_10m_geography_marine_polys, ne_50m_lakes and ne_10m_populated_places_simple. airports.csv is
+ne_50m_land, ne_10m_geography_marine_polys, ne_50m_lakes and ne_10m_populated_places_simple, and Marine Regions' bays and gulfs as mr_world_bay_gulf.geojson (CC BY 4.0, VLIZ:
+the WFS layer MarineRegions:world_bay_gulf as GeoJSON in EPSG:4326; optional). airports.csv is
 OurAirports' file (public domain, github.com/davidmegginson/ourairports-data). The output keeps:
   land     the land polygons (simplified to about 1 km)
-  marine   named oceans, seas, bays, sounds, straits... (class and English name)
+  marine   named oceans, seas, bays, sounds, straits... (class and English name); Marine Regions adds the bays,
+           gulfs, inlets, fjords and lagoons whose names Natural Earth does not have (the smallest area holding a
+           position names it, so a bay inside a sea is found first)
   lakes    named large lakes
   places   populated places (name, region, country, position)
   airports large and medium airports with an IATA code (name, code, position, elevation in feet)
@@ -62,6 +65,20 @@ def main(ne, airports_csv, out):
             a = area(name, p.get("featurecla", "sea").lower(), f["geometry"], 2000)
             if a:
                 marine.append(a)
+    mr_file = os.path.join(ne, "mr_world_bay_gulf.geojson")
+    added = 0
+    if os.path.exists(mr_file):
+        known = {a["n"].lower() for a in marine}
+        for f in json.load(open(mr_file, encoding="utf-8"))["features"]:
+            p = f["properties"]
+            name = (p.get("geoname") or "").strip()
+            if not name or name.lower() in known or not f.get("geometry"):
+                continue
+            a = area(name, (p.get("placetype") or "bay").lower(), f["geometry"], 500)
+            if a:
+                marine.append(a)
+                known.add(name.lower())
+                added += 1
     lakes = []
     for f in load("ne_50m_lakes")["features"]:
         p = f["properties"]
@@ -82,13 +99,14 @@ def main(ne, airports_csv, out):
             if r["type"] in ("large_airport", "medium_airport") and r["iata_code"]:
                 airports.append([r["name"], r["iata_code"], int(round(float(r["latitude_deg"]) * S)),
                                  int(round(float(r["longitude_deg"]) * S)), int(float(r["elevation_ft"] or 0))])
-    doc = {"note": "Natural Earth (public domain) land, marine names, lakes and populated places; OurAirports "
-                   "(public domain) airports. Built by tools/build_water.py.",
+    doc = {"note": "Natural Earth (public domain) land, marine names, lakes and populated places; Marine Regions "
+                   "(VLIZ, CC BY 4.0) bays and gulfs; OurAirports (public domain) airports. Built by "
+                   "tools/build_water.py.",
            "scale": S, "land": land, "marine": marine, "lakes": lakes, "places": places, "airports": airports}
     with gzip.open(out, "wt", encoding="utf-8") as f:
         json.dump(doc, f, separators=(",", ":"), ensure_ascii=False)
     print(f"{out}: {os.path.getsize(out):,} bytes; land {len(land)}, marine {len(marine)}, lakes {len(lakes)}, "
-          f"places {len(places)}, airports {len(airports)}")
+          f"places {len(places)}, airports {len(airports)}; {added} marine areas from Marine Regions")
 
 
 if __name__ == "__main__":

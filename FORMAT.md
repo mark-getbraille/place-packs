@@ -17,13 +17,17 @@ A pack is one SQLite file. Coordinates are whole microdegrees. Months are YYYYMM
 | types | id, name | the fine type phrases of the pack, each once ("pizza restaurant", "hardware store", "catholic church", "lighthouse"); since November 2026, absent in older packs |
 | point_types | id, type | a point's fine type: points.id -> types.id (only typed points have a row) |
 | area_types | id, type | an area's fine type: areas.id -> types.id |
+| brands | id, name, wikidata | the chain brands of the pack, each once ("Made-up Burgers", "Q9999901"; wikidata may be ""); since November 2026, absent in older packs |
+| point_brands | id, brand | a chain location's brand: points.id -> brands.id |
 
 Fine cell: `floor((lat + 90) * 100) * 36000 + floor((lon + 180) * 100)`. Coarse cell: the same with 10 and 3600.
 Classes (`cls`): park, cemetery, landmark, campus, water, nature, neighbourhood, region, admin, town, county, zip,
-street, building, business, public, transit, settlement, variant. (cemetery since November 2026: cemeteries were park
+street, building, business, public, transit, settlement, variant, airspace. (airspace: FAA special use airspace,
+data only, never spoken; cemetery since November 2026: cemeteries were park
 before; county: the Newberry atlas's dated county versions; variant: a former or other name of a feature (GNIS),
 kept for name search and never said as a place's name.) Lines have the class street (streets), trail, water
-(rivers) or rail; a lookup names a trail, river or railway within 60 m ("on the Appalachian Trail", "beside the
+(rivers), rail, byway (National Scenic Byways) or geoline (the Equator, tropics, polar circles and date line: data
+only, never spoken); a lookup names a trail, river or railway within 60 m ("on the Appalachian Trail", "beside the
 Deerfield River") only when nothing nearer names the place.
 
 ## Fine types (added November 2026, still version 2)
@@ -45,3 +49,20 @@ t.id = l.type`); a pack without the tables has no types.
 Each dated row keeps its own type: a spot that was "Tony's Pizza" (pizza restaurant) in 2005 and "Sally's Ice
 Cream" (ice cream shop) in 2020 has two rows, each with its type. Where several sources describe the same place, a
 lookup gives the most specific of their types ("pizza restaurant" over "restaurant").
+
+## Brands (added November 2026, still version 2)
+
+A chain's location may carry its brand: the brand's name and its Wikidata id (from OpenStreetMap's `brand` and
+`brand:wikidata` tags, Overture's brand fields, All The Places and the licence lists that give one). As with types,
+each brand is stored once in `brands` and linked from `point_brands`, so the points table keeps its version 2
+columns and older readers and merges are unaffected. The brand is data for future programs: no phrase or
+description uses it (a lookup says the store's own name, "Made-up Burgers Main Street").
+
+## Several businesses at one address (lookup rule, November 2026)
+
+No pack change: the lookup counts only the businesses valid at the picture's date, treats the same normalised name
+(or the same brand) within 50 m as one business from several sources (with the earliest first and latest last
+month), and, when two or more are within 15 m of each other with none clearly nearest (or within the picture's GPS
+accuracy), names the mall, plaza, campus or building area holding them, else the address, else the street. The
+candidates are in `Result.others` (name, type, brand, distance), data only, never spoken.
+

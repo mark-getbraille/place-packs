@@ -22,6 +22,11 @@ def text(cat):
            "individual licences) are left out by each source's class map, only trade names are used where the "
            "source separates them from the owner's name, and licensee names that look like a person's are left "
            "out. The notes below say how for each source.", "",
+           "US businesses: there is no federal database of businesses with positions (the counterpart of Statistics "
+           "Canada's Open Database of Businesses). The US business backbone is Overture Maps places, All The Places "
+           "(chains' own store locators), OpenStreetMap and the city and state licence and inspection lists below; "
+           "the IRS exempt-organization file adds non-profits. Aggregated statistics (County Business Patterns and "
+           "the like) have no place names and are not used.", "",
            "## Used", "", "| Source | Part | Countries | Licence | Attribution | History |", "|---|---|---|---|---|---|"]
     for e in cat["accepted"]:
         out.append(f"| [{e['name']}]({e['url']}) | {e['part']} | {', '.join(e['countries'])} | "

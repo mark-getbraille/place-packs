@@ -277,3 +277,52 @@ def classify(category, kind):
     if category in ("amenity", "shop", "office", "craft", "leisure", "aeroway", "railway", "public_transport"):
         return "business"
     return ""
+
+
+# ------------------------------------------------------------------------------------------- projections
+
+# Lambert Conformal Conic projections some publishers use instead of longitude and latitude, as their parameters:
+# (latitude of origin, central meridian, standard parallel 1, standard parallel 2, false easting, false northing),
+# on the GRS 1980 ellipsoid (NAD83). Statistics Canada's Lambert (EPSG:3347) is used by its boundary files and its
+# open databases (ODHF v2).
+PROJECTIONS = {"statcan_lambert": (63.390675, -91.86666666666666, 49.0, 77.0, 6200000.0, 3000000.0)}
+_A, _F = 6378137.0, 1 / 298.257222101
+_E = math.sqrt(2 * _F - _F * _F)
+
+
+def _lcc_constants(name):
+    """(n, F, rho0, lon0, false easting, false northing) of a Lambert Conformal Conic projection (Snyder 15-1...)."""
+    lat0, lon0, p1, p2, fe, fn = PROJECTIONS[name]
+
+    def m(phi):
+        return math.cos(phi) / math.sqrt(1 - (_E * math.sin(phi)) ** 2)
+
+    def t(phi):
+        es = _E * math.sin(phi)
+        return math.tan(math.pi / 4 - phi / 2) / ((1 - es) / (1 + es)) ** (_E / 2)
+    r0, r1, r2 = (math.radians(v) for v in (lat0, p1, p2))
+    n = (math.log(m(r1)) - math.log(m(r2))) / (math.log(t(r1)) - math.log(t(r2)))
+    big_f = m(r1) / (n * t(r1) ** n)
+    return n, big_f, _A * big_f * t(r0) ** n, math.radians(lon0), fe, fn, t
+
+
+def to_lonlat(name, x, y):
+    """(lon, lat) in degrees of a point (x, y) in metres of a named projection (PROJECTIONS)."""
+    n, big_f, rho0, lon0, fe, fn, _ = _lcc_constants(name)
+    dx, dy = x - fe, rho0 - (y - fn)
+    rho = math.copysign(math.hypot(dx, dy), n)
+    theta = math.atan2(dx, dy) if n > 0 else math.atan2(-dx, -dy)
+    tt = (rho / (_A * big_f)) ** (1 / n)
+    phi = math.pi / 2 - 2 * math.atan(tt)
+    for _ in range(15):
+        es = _E * math.sin(phi)
+        phi = math.pi / 2 - 2 * math.atan(tt * ((1 - es) / (1 + es)) ** (_E / 2))
+    return math.degrees(theta / n + lon0), math.degrees(phi)
+
+
+def from_lonlat(name, lon, lat):
+    """(x, y) in metres of a point in degrees in a named projection (the inverse of to_lonlat; for tests)."""
+    n, big_f, rho0, lon0, fe, fn, t = _lcc_constants(name)
+    rho = _A * big_f * t(math.radians(lat)) ** n
+    theta = n * (math.radians(lon) - lon0)
+    return fe + rho * math.sin(theta), fn + rho0 - rho * math.cos(theta)

@@ -37,6 +37,7 @@ def has_column(columns, path):
     top, _, field = path.partition(".")
     if top not in columns:
         return False
+    field = field.split(".")[0]                 # brand.names.primary: the struct has "names"
     return not field or f'{field} ' in columns[top].replace('"', "") or f"{field}," in columns[top]
 
 
@@ -99,8 +100,9 @@ def read(path, entry, region, writer):
             rings = [[(y, x) for x, y in ring] for poly in polys for ring in poly]
             writer.add_area(key, source, name, cls, entry.get("tag", source), rings, first, last, type=kind)
         else:
+            brand = (row.get("brand"), row.get("brand_qid")) if row.get("brand") else None
             writer.add_point(key, source, name, cls, entry.get("tag", source), float(row["lat"]), float(row["lon"]),
-                             first, last, type=kind)
+                             first, last, type=kind, brand=brand)
         count += 1
     con.close()
     return count

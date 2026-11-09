@@ -60,6 +60,15 @@ texts in `LICENSES/`.
   Licence - Toronto".
 - **Open Government Licences of British Columbia and Ontario (provincial parks):** "Contains information licensed
   under the Open Government Licence - British Columbia" / "- Ontario".
+- **Marine Regions (VLIZ), CC BY 4.0:** the global water layer (`placepacks/data/water.json.gz`) adds Marine
+  Regions' bays and gulfs; credit "Marine Regions (VLIZ), CC BY 4.0" wherever the water layer's names are shown.
+- **Canadian provincial and city licences (Calgary, Edmonton, Nova Scotia, Vancouver, New Brunswick, Saskatchewan,
+  Manitoba, Newfoundland and Labrador):** each grants a worldwide, royalty-free licence to copy, modify and
+  redistribute, commercial use included; the packs carry each one's "Contains information licensed under ..." line.
+- **Québec (Données Québec), Atlanta Regional Commission, GeoNames, Marine Regions:** CC BY 4.0, credited as in
+  `SOURCES.md`.
+- **US Post Offices 1639-2000 (Blevins and Helbock), Columbus Public Health, New Orleans, Connecticut DEEP:** CC0.
+- **NOAA National Marine Sanctuaries:** U.S. government material, identified as such (17 U.S.C. 403).
 - **IRS exempt organizations:** only names and located points are kept, never the "in care of" (people's) names; an
   organization at a home address is placed on its street.
 - **OpenHistoricalMap:** CC0, except features with their own `license` tag, which the packs leave out.

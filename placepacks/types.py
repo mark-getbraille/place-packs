@@ -29,6 +29,27 @@ def tables():
     return _TABLES
 
 
+def expand_words(name, table_name):
+    """A name with its abbreviated words written out by a word table of types.json ("tiger_words": "Rutland Hosp" ->
+    "Rutland Hospital"; whole words only, the longest phrases first)."""
+    import re
+    table = tables().get(table_name, {})
+    for short in sorted(table, key=len, reverse=True):
+        name = re.sub(rf"(?<![\w'])({re.escape(short)})(?![\w'])\.?", table[short], name)
+    return name
+
+
+def rename(entry, name):
+    """A name after the entry's "name_replace" ([[pattern, replacement], ...], applied in order) and "name_words" (a
+    word table: expand_words)."""
+    import re
+    for pattern, replacement in entry.get("name_replace", []):
+        name = re.sub(pattern, replacement, name)
+    if entry.get("name_words"):
+        name = expand_words(name, entry["name_words"])
+    return " ".join(name.split())
+
+
 def humanise(text):
     """A phrase from a category as a source writes it: the last part of "A > B > C", underscores and runs of
     spaces made single spaces, lower case, at most 60 characters; "" for nothing useful."""

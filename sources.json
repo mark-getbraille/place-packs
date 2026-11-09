@@ -101,6 +101,16 @@
    "name": "Open Government Licence - Toronto",
    "url": "https://open.toronto.ca/open-data-license/",
    "file": ""
+  },
+  "OGL-BC": {
+   "name": "Open Government Licence - British Columbia",
+   "url": "https://www2.gov.bc.ca/gov/content/data/open-data/open-government-licence-bc",
+   "file": ""
+  },
+  "OGL-Ontario": {
+   "name": "Open Government Licence - Ontario",
+   "url": "https://www.ontario.ca/page/open-government-licence-ontario",
+   "file": ""
   }
  },
  "accepted": [
@@ -181,7 +191,9 @@
       "Post_City",
       "Inc_Muni"
      ]
-    }
+    },
+    "zip": "Zip_Code",
+    "kind": "Addr_Type"
    },
    "filter": {
     "column": "State",
@@ -3104,6 +3116,423 @@
     "key": "GEOID"
    },
    "history": "The current year's areas (seed years possible like the other TIGER layers)."
+  },
+  {
+   "id": "imls-museums",
+   "name": "IMLS Museum Universe Data File",
+   "short": "the Institute of Museum and Library Services",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Museums, zoos, aquariums, botanical gardens and science centers from the Institute of Museum and Library Services' Museum Universe Data File (public domain).",
+   "url": "https://www.imls.gov/research-evaluation/data/museum-data-files",
+   "reader": "tabular",
+   "kind": "points",
+   "fetch": {
+    "method": "national",
+    "listing": "https://www.imls.gov/research-evaluation/data/museum-data-files",
+    "pattern": "[^\"'\\s>]*\\d{4}_csv_museum_data_files\\.zip",
+    "latest": "(\\d{4})_csv",
+    "pause": 2
+   },
+   "member": "MuseumFile*.csv",
+   "split_file": "MuseumFile_split.csv",
+   "encoding": "latin-1",
+   "columns": {
+    "lat": "LATITUDE",
+    "lon": "LONGITUDE",
+    "name": "COMMONNAME",
+    "key": "MID",
+    "class_column": {
+     "first_of": [
+      "DISCIPL",
+      "DISCIPLINE"
+     ]
+    }
+   },
+   "class_map": {
+    "ZAW": "park:zoo",
+    "BOT": "park:botanical garden",
+    "HSC": "",
+    "*": "landmark:museum"
+   },
+   "type_column": {
+    "first_of": [
+     "DISCIPL",
+     "DISCIPLINE"
+    ]
+   },
+   "type_map": "mudf",
+   "filter": {
+    "column": "ADSTATE",
+    "equals": "{code}"
+   },
+   "history": "The newest file (FY2018, the last IMLS released) from the first build on.",
+   "notes": "About 15,000 museums, zoos, aquariums, botanical gardens, science and nature centers (the type is the IMLS discipline: art museum, history museum, zoo...). Historical societies (about 14,800) are left out: many are run from a member's home or a post office box."
+  },
+  {
+   "id": "epa-beaches",
+   "name": "EPA BEACON beach monitoring locations",
+   "short": "the U.S. Environmental Protection Agency",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Beaches from the U.S. Environmental Protection Agency's BEACON beach monitoring locations (Water Quality Portal), public domain.",
+   "url": "https://www.epa.gov/beach-tech/beacon-20-beach-advisory-and-closing-online-notification",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "water",
+   "tag": "beach",
+   "type": "beach",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/cJ9YHowT8TU7DUyn/arcgis/rest/services/WQP_Beaches/FeatureServer/0",
+    "fields": "mloc_id,mloc_name",
+    "page": 1000,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "mloc_name"
+   },
+   "name_strip": "\\s*[-,]?\\s*(Location|Station|Site|Sample Point)\\s*\\w*\\s*$",
+   "history": "From the first build on.",
+   "notes": "Each beach's monitoring locations, named by the beach (\"- Location 1\" removed); a beach with several locations has a point at each."
+  },
+  {
+   "id": "bc-parks",
+   "name": "British Columbia parks, ecological reserves and protected areas",
+   "short": "the Province of British Columbia",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-british-columbia"
+   ],
+   "licence": "OGL-BC",
+   "attribution": "Contains information licensed under the Open Government Licence - British Columbia (BC Parks, Ecological Reserves and Protected Areas).",
+   "url": "https://catalogue.data.gov.bc.ca/dataset/bc-parks-ecological-reserves-and-protected-areas",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "park",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services6.arcgis.com/ubm4tcTYICKBpist/arcgis/rest/services/British_Columbia_Parks_Ecological_Reserves_and_Protected_Areas/FeatureServer/0",
+    "fields": "PROTECTED_LANDS_CODE,PROTECTED_LANDS_NAME,PROTECTED_LANDS_DESIGNATION",
+    "simplify": 0.0005,
+    "page": 100,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "rings": "_rings",
+    "name": "PROTECTED_LANDS_NAME",
+    "key": "PROTECTED_LANDS_CODE"
+   },
+   "type_column": "PROTECTED_LANDS_DESIGNATION",
+   "type_map": "humanise",
+   "history": "From the first build on.",
+   "notes": "About 930 provincial parks, ecological reserves, protected areas and recreation areas, as areas."
+  },
+  {
+   "id": "ontario-parks",
+   "name": "Ontario provincial parks (regulated)",
+   "short": "the Province of Ontario",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-ontario"
+   ],
+   "licence": "OGL-Ontario",
+   "attribution": "Contains information licensed under the Open Government Licence - Ontario (Provincial Park Regulated, Land Information Ontario).",
+   "url": "https://geohub.lio.gov.on.ca/datasets/provincial-park-regulated",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "park",
+   "type": "provincial park",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://ws.lioservices.lrc.gov.on.ca/arcgis2/rest/services/LIO_OPEN_DATA/LIO_Open03/MapServer/4",
+    "fields": "OGF_ID,PROTECTED_AREA_NAME_ENG,PROTDATE",
+    "simplify": 0.0005,
+    "page": 50,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "rings": "_rings",
+    "name": "PROTECTED_AREA_NAME_ENG",
+    "key": "OGF_ID",
+    "first": "PROTDATE"
+   },
+   "name_strip": "\\s*\\([^)]*CLASS\\)\\s*$",
+   "history": "Each park from its protection date when given.",
+   "notes": "347 regulated provincial parks, as areas."
+  },
+  {
+   "id": "usfs-trails",
+   "name": "US Forest Service trails",
+   "short": "the US Forest Service",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Trails of the National Forest System from the US Forest Service's Enterprise Data Warehouse (public domain).",
+   "url": "https://data.fs.usda.gov/geodata/edw/datasets.php",
+   "reader": "tabular",
+   "kind": "lines",
+   "cls": "trail",
+   "tag": "trail",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_TrailNFSPublish_01/MapServer/0",
+    "fields": "trail_cn,trail_name",
+    "where": "trail_name IS NOT NULL AND trail_name <> ''",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0001
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "paths": "_paths",
+    "name": "trail_name",
+    "key": "trail_cn"
+   },
+   "history": "From the first build on.",
+   "notes": "Named trails as lines (about 86,000 segments nationally), simplified to about 10 m: a photo on one is \"on the X Trail\" when nothing nearer names it."
+  },
+  {
+   "id": "nps-trails",
+   "name": "National Park Service trails",
+   "short": "the National Park Service",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Trails from the National Park Service's public datasets (public domain).",
+   "url": "https://public-nps.opendata.arcgis.com",
+   "reader": "tabular",
+   "kind": "lines",
+   "cls": "trail",
+   "tag": "trail",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://mapservices.nps.gov/arcgis/rest/services/NationalDatasets/NPS_Public_Trails_Geographic/MapServer/0",
+    "fields": "FEATUREID,TRLNAME",
+    "where": "TRLNAME IS NOT NULL AND PUBLICDISPLAY = 'Public Map Display'",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0001
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "paths": "_paths",
+    "name": "TRLNAME",
+    "key": "FEATUREID"
+   },
+   "history": "From the first build on.",
+   "notes": "Named, publicly displayed park trails as lines (about 31,000 segments nationally)."
+  },
+  {
+   "id": "wild-scenic-rivers",
+   "name": "National Wild and Scenic Rivers",
+   "short": "the US Forest Service",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "National Wild and Scenic Rivers from the US Forest Service's Enterprise Data Warehouse (public domain).",
+   "url": "https://www.rivers.gov",
+   "reader": "tabular",
+   "kind": "lines",
+   "cls": "water",
+   "tag": "wild and scenic river",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_WildScenicRiverSegments_01/MapServer/0",
+    "fields": "river_id,wsr_river_name,enacted_date",
+    "where": "1=1",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0001
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "paths": "_paths",
+    "name": "wsr_river_name",
+    "key": "river_id",
+    "first": "enacted_date"
+   },
+   "history": "Each river from the date its designation was enacted.",
+   "notes": "249 designated rivers as lines: a photo beside one is \"beside the X River\" when nothing nearer names it."
+  },
+  {
+   "id": "irs-exempt-organizations",
+   "name": "IRS Exempt Organizations Business Master File",
+   "short": "the IRS",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Exempt organizations from the Internal Revenue Service's Exempt Organizations Business Master File (public domain), located by their addresses.",
+   "url": "https://www.irs.gov/charities-non-profits/exempt-organizations-business-master-file-extract-eo-bmf",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "fetch": {
+    "method": "http",
+    "url": "https://www.irs.gov/pub/irs-soi/eo_{code_lower}.csv",
+    "file": "eo.csv",
+    "pause": 2
+   },
+   "member": "*.csv",
+   "geocode": {
+    "street": "STREET",
+    "city": "CITY",
+    "zip": "ZIP",
+    "from": "nad"
+   },
+   "columns": {
+    "name": "NAME",
+    "key": "EIN",
+    "first": "RULING",
+    "class_column": "NTEE_CD"
+   },
+   "class_map": {
+    "X*": "landmark",
+    "A5*": "landmark",
+    "B2*": "campus",
+    "B4*": "campus",
+    "B70": "public",
+    "E2*": "campus",
+    "N*": "park",
+    "*": "public"
+   },
+   "type_column": "NTEE_CD",
+   "type_map": "ntee",
+   "type": "nonprofit organization",
+   "history": "Each organization from its IRS ruling date; one that leaves the file is closed at the last build that listed it.",
+   "notes": "Every exempt organization of the state (churches, schools, museums, clubs, foundations...), typed by its NTEE code. Only the organization's name and its located point are kept: the \"in care of\" names (people) and the financial columns are never read. Addresses are located offline against the state's NAD address points; post office boxes cannot be located and are left out; an address the NAD marks residential (often an officer's home) is put at the middle of the street's points in its ZIP, not at the house. The states the NAD leaves out have no address points, so their organizations are not located."
+  },
+  {
+   "id": "gsa-federal-buildings",
+   "name": "GSA Inventory of Owned and Leased Properties (federal buildings)",
+   "short": "the General Services Administration",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Federal buildings from the General Services Administration's Inventory of Owned and Leased Properties (public domain).",
+   "url": "https://www.gsa.gov/tools-and-resources/real-estate-tools/inventory-of-owned-and-leased-properties",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "federal building",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services1.arcgis.com/eBupDfPlEJK3mdAm/arcgis/rest/services/IOLP_NEW/FeatureServer/0",
+    "fields": "LOCATION_CODE,Real_Property_Asset_Name,Occupancy_Right_Desc,YEAR_BUILT",
+    "where": "BUILDING_STATUS = 'ACTIVE'",
+    "page": 1000,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "Real_Property_Asset_Name",
+    "key": "LOCATION_CODE"
+   },
+   "skip_names": "^(NA|N/A)$",
+   "history": "From the first build on (the year built is kept in the source, not used as a date: a leased building's year is the building's, not the lease's).",
+   "notes": "Active federally owned and leased buildings (courthouses, federal buildings, offices) with their own names. The contact people's names and e-mail addresses in the layer are never read."
+  },
+  {
+   "id": "abpp-battlefields",
+   "name": "NPS American Battlefield Protection Program battlefields",
+   "short": "the National Park Service",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Battlefield core areas of the Civil War, the Revolutionary War and the War of 1812 from the National Park Service's American Battlefield Protection Program (public domain).",
+   "url": "https://www.nps.gov/orgs/2287/index.htm",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "landmark",
+   "tag": "battlefield",
+   "fetch": {
+    "method": "arcgis",
+    "urls": [
+     "https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/ABPP_Battlefield_Boundaries/FeatureServer/1",
+     "https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/ABPP_Battlefield_Boundaries/FeatureServer/6",
+     "https://services1.arcgis.com/fBc8EJBxQRMcHlei/arcgis/rest/services/ABPP_Battlefield_Boundaries/FeatureServer/9"
+    ],
+    "fields": "SITE,NAME,WAR",
+    "simplify": 0.0002,
+    "page": 100,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "rings": "_rings",
+    "name": "NAME",
+    "key": "SITE"
+   },
+   "name_template": "{NAME} Battlefield",
+   "type": "battlefield",
+   "history": "From the first build on (the battles' own dates come from Wikidata's battles).",
+   "notes": "The core area of each surveyed battlefield (the fighting itself, not the wider study area), as areas: \"Shepherdstown Battlefield\"."
+  },
+  {
+   "id": "gnis-variant-names",
+   "name": "USGS GNIS variant names and historical features",
+   "short": "the USGS Geographic Names Information System",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Variant names and historical features from the U.S. Geological Survey's Geographic Names Information System gazetteer (public domain).",
+   "url": "https://www.usgs.gov/tools/geographic-names-information-system-gnis",
+   "reader": "sqlite",
+   "cls": "variant",
+   "fetch": {
+    "method": "http",
+    "url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/GeographicNames/FullModel/Gazetteer_{code}_GPKG.zip",
+    "verify": true
+   },
+   "member": ".gpkg",
+   "query": "SELECT n.feature_id || '-' || n.fid AS key, n.feature_name AS name, 'variant' AS cls, f.prim_lat_dec AS lat, f.prim_long_dec AS lon, 'variant name of ' || (SELECT o.feature_name FROM Gaz_Names o WHERE o.feature_id = n.feature_id AND o.feature_name_official = 1 LIMIT 1) AS type FROM Gaz_Names n JOIN Gaz_Features f ON f.feature_id = n.feature_id WHERE n.feature_name_official = 2 UNION ALL SELECT 'h' || feature_id AS key, feature_name AS name, 'landmark' AS cls, prim_lat_dec AS lat, prim_long_dec AS lon, 'historical ' || lower(feature_class) AS type FROM HistoricalFeatures",
+   "history": "Variant and former names have no dates in GNIS; historical features keep their \"(historical)\" names.",
+   "notes": "Variant names (former names, other spellings: \"Namagonac\" for Seymour Lake) have their own class, variant: a name search finds the place by an old name, but a lookup never says a variant as the place's name. Historical features (places that no longer exist, \"Village of Perkinsville (historical)\") are landmarks with their GNIS names."
   }
  ],
  "rejected": [
@@ -3406,6 +3835,66 @@
    "name": "NPS National Historic Landmarks as a separate layer",
    "licence": "Public domain",
    "reason": "Already in the National Register layer (its Is_NHL flag); not a separate source."
+  },
+  {
+   "name": "Wikivoyage",
+   "licence": "CC BY-SA",
+   "reason": "Share-alike."
+  },
+  {
+   "name": "UNESCO World Heritage List (UNESCO's own data)",
+   "licence": "CC BY-SA 3.0 IGO",
+   "reason": "Share-alike; World Heritage Sites come from Wikidata's own CC0 statements (P1435)."
+  },
+  {
+   "name": "TripAdvisor",
+   "licence": "Terms of service",
+   "reason": "No redistribution allowed."
+  },
+  {
+   "name": "eBird hotspots",
+   "licence": "eBird terms of use",
+   "reason": "Not an open licence."
+  },
+  {
+   "name": "Native Land Digital",
+   "licence": "Its own terms",
+   "reason": "Not an open licence."
+  },
+  {
+   "name": "Zillow neighbourhood boundaries",
+   "licence": "CC BY-SA",
+   "reason": "Share-alike."
+  },
+  {
+   "name": "Abandoned & Little-Known Airfields; the lost ski areas project",
+   "licence": "Copyright",
+   "reason": "Not open."
+  },
+  {
+   "name": "USPS Postmaster Finder",
+   "licence": "Not stated",
+   "reason": "Not clearly open; post offices come from Wikidata, GNIS and OpenStreetMap."
+  },
+  {
+   "name": "State business-entity registries (NY DOS corporations, Colorado, Oregon, Iowa, Washington, Connecticut) and Florida Sunbiz",
+   "licence": "Varies (mostly public domain)",
+   "reason": "Their addresses are registered-agent or principal addresses (very often homes or agents' offices) and they carry no NAICS code or storefront type to tell a shop from a home business; under the no-home-data rule they are left out."
+  },
+  {
+   "name": "ICSC and other proprietary shopping-centre directories",
+   "licence": "Commercial",
+   "reason": "Not open; malls come from OpenStreetMap, Wikidata (with opening and closing dates) and Overture."
+  },
+  {
+   "name": "A separate NARA presidential libraries list",
+   "licence": "Public domain",
+   "reason": "Wikidata's museum, library and archive classes already carry them; no class \"presidential library\" exists to ask for."
+  },
+  {
+   "name": "US Courts locations",
+   "licence": "Not found",
+   "reason": "No open download; federal courthouses come with the GSA inventory and Wikidata's courthouses."
   }
  ],
  "candidates": [
@@ -3533,6 +4022,96 @@
    "name": "Canadian Register of Historic Places, Quebec Répertoire du patrimoine culturel, Ontario AGCO liquor licences",
    "licence": "To confirm",
    "note": "Check each licence and whether it has coordinates."
+  },
+  {
+   "name": "TTB permittees (wineries, breweries, distilleries)",
+   "licence": "Public domain",
+   "note": "The geocoder is ready, but the TTB permittee page linked no machine-readable list from the sandbox; add when the list's address is confirmed."
+  },
+  {
+   "name": "CMS Provider of Services file (hospitals, nursing homes; home health excluded)",
+   "licence": "Public domain",
+   "note": "The geocoder is ready; the file is large (one national CSV); add with the certification and termination dates."
+  },
+  {
+   "name": "TIGER address-range interpolation in the geocoder",
+   "licence": "Public domain",
+   "note": "The geocoder matches NAD points only; interpolating TIGER ranges would locate the addresses of the states the NAD leaves out."
+  },
+  {
+   "name": "NOAA ENC named features and wrecks (AWOIS, ENC)",
+   "licence": "Public domain",
+   "note": "The OceanReports wrecks service address answered \"service not found\"; ENC cells need an S-57 reader. Candidates for boat photos."
+  },
+  {
+   "name": "NOAA National Marine Sanctuaries",
+   "licence": "Public domain",
+   "note": "No official service was found (only copies); the boundary downloads at sanctuaries.noaa.gov can be added as shapes."
+  },
+  {
+   "name": "GEBCO undersea feature names; NGA GEOnet names; Canadian Hydrographic Service names",
+   "licence": "To check",
+   "note": "Licences and formats to confirm."
+  },
+  {
+   "name": "NYPL city directories and \"Navigating the Green Book\"",
+   "licence": "To confirm (often CC0)",
+   "note": "No downloadable data with a stated licence was found yet."
+  },
+  {
+   "name": "Who's On First",
+   "licence": "CC0 / CC BY per source (share-alike sources to skip)",
+   "note": "Large per-country SQLite bundles with per-record licences; add with a licence filter."
+  },
+  {
+   "name": "Wikimedia Commons \"depicts\" clusters",
+   "licence": "CC0 (structured data)",
+   "note": "Too heavy for the monthly build as it is (millions of files); a candidate for a separate, prepared layer."
+  },
+  {
+   "name": "Wikidata filming locations (P915)",
+   "licence": "CC0",
+   "note": "An inverse property (film -> place); needs its own query shape."
+  },
+  {
+   "name": "NCES older school years (CCD back to the 1990s) and IPEDS closed colleges; Census place vintages 1990/2000/2010",
+   "licence": "Public domain",
+   "note": "Seed years like the TIGER address ranges, so closed schools and old town names get their years."
+  },
+  {
+   "name": "NRHP historic district areas (the NPS polygons layer); city neighbourhood and landmark-district boundaries",
+   "licence": "Public domain / city licences",
+   "note": "The NRHP polygons are in the same NPS service as the points; city layers one by one."
+  },
+  {
+   "name": "State boat ramps, fishing access sites and wildlife management areas (NY DEC, PA Fish & Boat, Florida FWC, Minnesota DNR)",
+   "licence": "State terms (to confirm)",
+   "note": "Most are ArcGIS layers the arcgis method reads; add state by state once each licence is confirmed."
+  },
+  {
+   "name": "City street-renaming histories (Chicago, NYC co-named streets, DC)",
+   "licence": "City licences",
+   "note": "Dated street names: add as dated lines once each dataset is confirmed."
+  },
+  {
+   "name": "Alberta parks (geospatial.alberta.ca), Quebec SEPAQ, Parks Canada visitor sites",
+   "licence": "To confirm",
+   "note": "Alberta's service states no licence; SEPAQ's terms not checked; Parks Canada's open data has designations without coordinates."
+  },
+  {
+   "name": "CGNDB rescinded or former names; Canadian Register of Historic Places; Ontario and BC heritage registers",
+   "licence": "To confirm",
+   "note": "Check each licence and whether former names are published."
+  },
+  {
+   "name": "State capitol and state building inventories (NY OGS, California DGS, Texas, Washington); state tourism-board attraction lists",
+   "licence": "State terms",
+   "note": "None found with an open licence and coordinates yet; Wikidata's capitols and tourist attractions cover many."
+  },
+  {
+   "name": "BTS NTAD rail lines (active and abandoned); OHM historic railway lines; America's Byways; NHD rivers; NRN and CanVec lines",
+   "licence": "Public domain / OGL-Canada",
+   "note": "Line support is in; these need names (rail lines carry owner codes, not names) or are large (NHD, NRN)."
   }
  ]
 }

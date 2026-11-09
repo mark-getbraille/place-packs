@@ -85,11 +85,24 @@ def naics(code):
     return ""
 
 
+def ntee(code):
+    """The phrase of an IRS NTEE code ("X22" -> "catholic church"; the longest prefix in the table, else the major
+    group's letter), or ""."""
+    code = re.sub(r"[^A-Z0-9]", "", str(code or "").upper())
+    t = tables()["ntee"]
+    for n in range(len(code), 0, -1):
+        if code[:n] in t:
+            return t[code[:n]]
+    return ""
+
+
 def table(name, value):
     """A value's phrase in one of the tables ("gnis", "fsa", "naics", "cuisine"): the value as it is, else in lower
     case with underscores (the table's "*" pattern for any other value, where it has one), or ""."""
     if name == "naics":
         return naics(value)
+    if name == "ntee":
+        return ntee(value)
     t = tables().get(name, {})
     value = str(value or "").strip()
     return t.get(value) or _lookup(t, value.lower().replace(" ", "_")) if value else ""

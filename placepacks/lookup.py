@@ -46,6 +46,9 @@ def is_business_source(pack, source):
     return source in BUSINESS_SOURCES or (pack is not None and
                                           (pack.sources.get(source) or {}).get("kind") == "businesses")
 PLACE_M, ADDRESS_M, RANGE_M, FACILITY_M, STREET_M = 40, 40, 40, 60, 60
+LINE_M = 60                     # a trail, a river or a railway this near names the place when nothing nearer does
+STREET_CLASSES = {"street"}     # the lines that are streets ("street" for OSM's highways); others: LINE_CLASSES
+LINE_CLASSES = {"trail": "on", "water": "beside", "rail": "beside", "byway": "on"}   # and their lead words
 SAME_PLACE_M = 15
 
 
@@ -61,7 +64,7 @@ class Result:
                   distance_m=None,
                   bearing="", over="", altitude_m=None, airport="", first=None, last=None, now_name="", listed=False,
                   probably=False, as_listed_now=False, no_older_record=False, when=None, latitude=None,
-                  longitude=None, type="")
+                  longitude=None, type="", line="", line_cls="")
 
     def __init__(self, **values):
         for k, v in self.FIELDS.items():
@@ -120,6 +123,11 @@ class Result:
         street = self._street(detail)
         if street and street not in parts:
             parts.append(street)
+        if not parts and self.line:
+            # A trail, river or railway nearby: "on the Appalachian Trail", "beside the Deerfield River".
+            name = self.line if self.line.lower().startswith("the ") else f"the {self.line}"
+            parts.append(name)
+            lead = LINE_CLASSES.get(self.line_cls, "near")
         if not parts and self.neighbourhood:
             parts.append(self.neighbourhood)
             lead = "in"
@@ -144,7 +152,7 @@ class Result:
         if self.street and detail != "area":
             return f"{self.house_number} {self.street}" if detail == "address" and self.house_number and \
                 self.kind == "address" else self.street
-        return self.neighbourhood or self.zip_area or ""
+        return self.neighbourhood or self.line or self.zip_area or ""
 
     def source_text(self):
         """"OpenStreetMap and the National Address Database"."""
@@ -420,9 +428,11 @@ class PackReader:
                 out.append(r)
         return sorted(out, key=lambda r: r["d"])
 
-    def lines_near(self, lat, lon, within):
-        """Named streets within `within` metres, nearest first."""
-        return self._near_lines("lines", "l", lat, lon, within)
+    def lines_near(self, lat, lon, within, classes=None):
+        """Named lines within `within` metres, nearest first (only those of classes when given: "street" for
+        streets; "trail", "water", "rail" for trails, rivers and railways)."""
+        rows = self._near_lines("lines", "l", lat, lon, within)
+        return rows if classes is None else [r for r in rows if r["cls"] in classes]
 
     def ranges_near(self, lat, lon, within):
         """Address ranges within `within` metres, nearest first, each with "number": the house number interpolated
@@ -632,7 +642,18 @@ class Finder:
                 pack = next((p for p in packs if near[0]["source"] in p.sources), packs[0])
                 self._take(result, pack, [near[0]] + [r for r in near[1:] if r["key"] == near[0]["key"]], when,
                            latest, start, "nearby")
-        if result.kind == "none" and (result.street or result.neighbourhood or result.zip_area):
+        # 5. a trail, a river or a railway nearby (when nothing nearer named the place)
+        if not result.name and not result.street:
+            near = [(p, r) for p in packs for r in p.lines_near(lat, lon, LINE_M, set(LINE_CLASSES))]
+            if near:
+                near.sort(key=lambda pr: pr[1]["d"])
+                p0, r0 = near[0]
+                same = [r for _, r in near if r["key"].rsplit(":", 1)[0] == r0["key"].rsplit(":", 1)[0]]
+                chosen, _ = choose(same, when, latest, self._start_for(same, start), self._b)
+                if chosen:
+                    result.line, result.line_cls = chosen[0]["name"], chosen[0]["cls"]
+                    self._attribute(result, p0, chosen[0]["source"])
+        if result.kind == "none" and (result.street or result.neighbourhood or result.zip_area or result.line):
             result.kind = "area"
         return result
 
@@ -682,7 +703,7 @@ class Finder:
                 self._attribute(result, p0, a["source"])
                 return
         street_undated = False
-        lines = [(p, r) for p in packs for r in p.lines_near(lat, lon, STREET_M)]
+        lines = [(p, r) for p in packs for r in p.lines_near(lat, lon, STREET_M, STREET_CLASSES)]
         if lines:
             lines.sort(key=lambda pr: pr[1]["d"])
             p0, near = lines[0]

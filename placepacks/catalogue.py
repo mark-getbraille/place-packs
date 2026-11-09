@@ -16,7 +16,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # requirements (see sources.json "licences").
 ALLOWED = {"ODbL-1.0", "CDLA-Permissive-2.0", "Apache-2.0", "OGL-Canada-2.0", "OGL-UK-3.0", "CC0-1.0", "CC-BY-4.0",
            "US-Government-Work", "etalab-2.0", "per-feed-open", "per-source-open", "PDDL-1.0", "ODC-By-1.0",
-           "NYC-Open-Data", "OPEN-NY", "public-domain-marked", "Newberry-open", "OGL-Toronto"}
+           "NYC-Open-Data", "OPEN-NY", "public-domain-marked", "Newberry-open", "OGL-Toronto", "OGL-BC", "OGL-Ontario"}
 SHARE_ALIKE = {"ODbL-1.0"}
 
 
@@ -81,6 +81,7 @@ def settings_for(cat, region, extra=None):
     if os.environ.get("PLACEPACKS_SETTINGS"):
         values.update(json.loads(os.environ["PLACEPACKS_SETTINGS"]))
     values.update({k: v for k, v in region.items() if isinstance(v, str)})
+    values["code_lower"] = str(region.get("code", "")).lower()       # the IRS's eo_vt.csv
     values.update(extra or {})
     return values
 

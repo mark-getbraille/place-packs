@@ -228,3 +228,40 @@ def test_several_files_of_one_source_are_split_with_their_columns(tmp_path):
                         dict(catalogue.regions()["ca-ontario"]), w) == 2
     assert sorted(w.db.execute("SELECT name, type FROM points").fetchall()) == [("Invented Clinic", "hospitals"),
                                                                                 ("Madeup School", "public")]
+
+
+# ------------------------------------------------------------------------------------------- round 5
+
+
+def test_types_are_never_spoken(tmp_path):
+    """The type is kept for future programs only: no phrase or description includes it."""
+    p = pack(tmp_path / "s.osmpack", 202611, [("n1", "Made-up Pizza", "business", "pizza restaurant")])
+    r = Finder(packs=[PackReader(p)], water=False).lookup(*SPOT)
+    assert r.type == "pizza restaurant"
+    for detail in ("area", "street", "address"):
+        assert "pizza restaurant" not in r.phrase(detail)
+    import inspect
+    from placepacks.lookup import Result
+    for name, fn in inspect.getmembers(Result, inspect.isfunction):
+        assert "self.type" not in inspect.getsource(fn), name
+
+
+def test_museum_disciplines_and_tourism_classes():
+    """IMLS museum disciplines become types; historical societies (often a home) are left out; Wikidata's tourism
+    classes are asked for in groups small enough for the service's time limit, with World Heritage Sites by their
+    designation."""
+    assert [types.table("mudf", d) for d in ("ART", "ZAW", "SCI", "BOT")] == [
+        "art museum", "zoo", "science center", "botanical garden"]
+    from placepacks.readers.tabular import class_of
+    museums = entry_of("imls-museums")
+    assert class_of(museums, "HSC") == ("", "") and class_of(museums, "ZAW") == ("park", "zoo")
+    queries = wikidata.queries_for(catalogue.regions()[VT])
+    assert all(q.count("wd:Q") <= wikidata.GROUP for q in queries) and "wdt:P1435" in queries[-1]
+    for q in ("Q207694", "Q43501", "Q1825472", "Q34038", "Q40080", "Q156362", "Q18411786"):
+        assert q in wikidata.CLASSES
+    beach = entry_of("epa-beaches")
+    import re
+    assert re.sub(beach["name_strip"], "", "Madeup Town Beach - Location 2", flags=re.I) == "Madeup Town Beach"
+    parks = entry_of("ontario-parks")
+    assert re.sub(parks["name_strip"], "", "INVENTED LAKE PROVINCIAL PARK (RECREATIONAL CLASS)",
+                  flags=re.I) == "INVENTED LAKE PROVINCIAL PARK"

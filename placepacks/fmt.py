@@ -37,15 +37,15 @@ def month_of(date=None):
 
 def parse_month(text):
     """YYYYMM from "2026-11", "2026-11-03", "2026-11-03T10:00:00Z", "+1923-05-00T00:00:00Z" (Wikidata), "2026",
-    "11/03/2026" (US month/day/year, as FDIC and some city portals write it) or "20261103"; None when it is not a
-    date."""
+    "11/03/2026" (US month/day/year, as FDIC and some city portals write it), "20261103" or "202611"; None when it
+    is not a date."""
     text = (text or "").strip().lstrip("+")
     us = re.fullmatch(r"(\d{1,2})/\d{1,2}/(\d{4})(?:\s.*)?", text)
     if us:
         month, year = int(us.group(1)), int(us.group(2))
         return year * 100 + month if 1 <= month <= 12 and 1 <= year <= 9999 else None
-    if re.fullmatch(r"\d{8}", text):
-        text = f"{text[:4]}-{text[4:6]}"
+    if re.fullmatch(r"\d{8}", text) or re.fullmatch(r"(1[6-9]|20)\d{2}(0[1-9]|1[0-2])", text):
+        text = f"{text[:4]}-{text[4:6]}"            # 20261103 or 202611 (the IRS's ruling month)
     try:
         year = int(text[:4])
     except ValueError:
@@ -247,6 +247,13 @@ def classify(category, kind):
         return "business" if kind in ("hotel", "motel", "guest_house", "hostel") else "landmark"
     if category == "amenity" and kind == "grave_yard":
         return "cemetery"
+    if category == "amenity" and kind in ("townhall", "courthouse", "police", "fire_station", "post_office",
+                                          "library", "community_centre", "ranger_station"):
+        return "public"
+    if category == "office" and kind == "government":
+        return "public"
+    if category == "landuse" and kind == "retail":
+        return "business"                       # a named retail area: a mall, a shopping centre
     if category == "amenity" and kind in ("university", "college", "school", "hospital"):
         return "campus"
     if category == "landuse" and kind == "cemetery":

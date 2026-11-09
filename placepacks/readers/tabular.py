@@ -30,6 +30,10 @@ Points may also have:
   "type_column" and "type_map": the record's fine type ("pizza restaurant") from a column, through a table of
                types.json ("naics", "gnis", "fsa"), "humanise", or a template ("{} restaurant"); without them the
                record's tag (from class_map or the entry, when it is not the source id) is its type
+  "geocode": {"street", "city", "zip": columns, "from": "nad"}: an address-only source, located by the offline
+               geocoder against the region's address points (placepacks.geocode; a home is put on its street)
+  "kind": "lines" with columns "paths": a column of JSON paths [[[lat, lon], ...], ...] (the arcgis fetch's
+               "_paths"): written as named lines (trails, rivers), each path a line of the record
   "kind": "areas" with columns "rings": a column of JSON rings [[[lat, lon], ...], ...] (the arcgis fetch's
                "_rings"): written as named areas (PAD-US, military installations)
   "still_open_months": N: a record whose last date is within N months of the build is still open (its last month
@@ -152,8 +156,39 @@ def dict_rows(text, entry):
         yield row
 
 
+def geocoded_rows(path, entry, region):
+    """The rows of an address-only source located by the offline geocoder (placepacks.geocode) against the
+    region's NAD slice: entry "geocode" = {"street", "city", "zip": columns, "from": the address source (nad)}.
+    Each located row gets "_lat", "_lon" and "_how" ("address" or "street" for a home); the match rate is printed."""
+    from placepacks import catalogue, geocode
+    spec = entry["geocode"]
+    flt, exclude, values = entry.get("filter"), entry.get("exclude"), region_values(region)
+    rows = []
+    for text in open_texts(path, entry.get("member", "*"), entry.get("encoding", "utf-8-sig")):
+        for row in dict_rows(text, entry):
+            if flt and _get(row, flt["column"]).upper() != flt["equals"].format(**values).upper():
+                continue
+            if exclude and _get(row, exclude["column"]).upper() in {v.upper() for v in exclude["values"]}:
+                continue
+            rows.append(row)
+    source = spec.get("from", "nad")
+    nad_path = (region.get("_inputs") or {}).get(source)
+    nad_entry = next((e for e in catalogue.load()["accepted"] if e["id"] == source), None)
+    found = geocode.locate([(_get(r, spec["street"]), _get(r, spec.get("city", "")), _get(r, spec.get("zip", "")))
+                            for r in rows], nad_path, nad_entry) if nad_entry else {}
+    print(f"  {entry['id']}: {geocode.stats(found, len(rows))}" + ("" if nad_path else " (no address points for "
+                                                                    "this region)"), flush=True)
+    for i, (lat, lon, how) in sorted(found.items()):
+        row = rows[i]
+        row["_lat"], row["_lon"], row["_how"] = lat, lon, how
+        yield row
+
+
 def rows_of(path, entry, region):
     """The dict rows of a source in the region (filter, exclude, bounding box), with "_lat" and "_lon" added."""
+    if entry.get("geocode"):
+        yield from geocoded_rows(path, entry, region)
+        return
     cols, values = entry["columns"], region_values(region)
     flt, exclude = entry.get("filter"), entry.get("exclude")
     skip = {(round(a, 4), round(b, 4)) for a, b in entry.get("skip_points", [])}
@@ -271,6 +306,15 @@ def read(path, entry, region, writer):
         first = fmt.parse_month(_get(row, cols["first"])) if cols.get("first") else None
         last = fmt.parse_month(_get(row, cols["last"])) if cols.get("last") else None
         last = _open_until(entry, row, last, month) if cols.get("last") else None
+        if entry["kind"] == "lines":
+            try:
+                paths = [[(float(a), float(b)) for a, b in path] for path in json.loads(_get(row, cols["paths"]))]
+            except (ValueError, TypeError):
+                continue
+            for i, path in enumerate(paths):
+                writer.add_line(f"{key}:{i}", source, name, cls, tag, path, first, last)
+            count += 1
+            continue
         if entry["kind"] == "areas":
             try:
                 rings = [[(float(a), float(b)) for a, b in ring] for ring in json.loads(_get(row, cols["rings"]))]

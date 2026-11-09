@@ -42,14 +42,71 @@ CLASSES = {"Q41176": "building", "Q4989906": "landmark", "Q33506": "landmark", "
            "Q27686": "business", "Q11315": "business", "Q31374404": "business", "Q216107": "business",
            "Q83405": "building", "Q44494": "landmark", "Q623605": "landmark", "Q505213": "landmark",
            "Q185187": "landmark", "Q820477": "landmark", "Q131734": "business", "Q39463": "landmark",
-           "Q74047": "settlement"}
+           "Q74047": "settlement",
+           # Museums of every kind, galleries, zoos, aquariums, gardens, observatories, memorials and statues,
+           # viewpoints, covered bridges, historic houses, castles, national monuments, waterfalls, caves, hot springs,
+           # beaches, piers, boardwalks, carousels, roller coasters, water parks, racetracks, arenas, convention centres,
+           # casinos, wineries and vineyards, visitor and nature centres, academic libraries.
+           "Q207694": "landmark", "Q16735822": "landmark", "Q588140": "landmark", "Q842478": "landmark",
+           "Q1007870": "landmark", "Q43501": "park", "Q2281788": "landmark", "Q167346": "park", "Q272231": "park",
+           "Q148319": "landmark", "Q1254933": "landmark", "Q5003624": "landmark", "Q179700": "landmark",
+           "Q177305": "landmark", "Q6017969": "nature", "Q1825472": "landmark", "Q2087181": "landmark",
+           "Q23413": "landmark", "Q893745": "landmark", "Q34038": "nature", "Q35509": "nature", "Q2232001": "nature",
+           "Q177380": "nature", "Q40080": "water", "Q863454": "landmark", "Q11111030": "landmark",
+           "Q208322": "landmark", "Q204832": "landmark", "Q740326": "park", "Q2338524": "landmark",
+           "Q641226": "landmark", "Q1378975": "landmark", "Q133215": "business", "Q156362": "business",
+           "Q22715": "business", "Q18411786": "public", "Q1970365": "landmark", "Q1863818": "landmark",
+           "Q18704634": "landmark", "Q756102": "landmark", "Q16761700": "park", "Q856234": "public",
+           # City halls, courthouses (county courthouses), police and fire stations, post offices, capitols, dead
+           # malls (shopping centres and malls are above).
+           "Q25550691": "public", "Q1137809": "public", "Q64037785": "public", "Q861951": "public",
+           "Q1195942": "public", "Q35054": "public", "Q3284499": "public", "Q1028645": "business",
+           # Drive-in theatres, diners, drive-in restaurants, motels, bowling alleys, dude ranches, horse racing venues,
+           # fire lookout towers, mountain passes, historic districts, and battles (with their dates).
+           "Q786922": "business", "Q1226318": "business", "Q1259350": "business", "Q216212": "business",
+           "Q27106471": "business", "Q5615133": "business", "Q11822917": "landmark", "Q748998": "landmark",
+           "Q133056": "nature", "Q15243209": "landmark", "Q178561": "landmark"}
+# Items with a heritage designation (P1435) kept whatever their class: World Heritage Sites (Wikidata's own
+# statements, CC0; UNESCO's list itself is CC BY-SA IGO and is not used).
+DESIGNATIONS = {"Q9259": "landmark"}
+GROUP = 12                      # classes per query, so each query stays well within the 60-second limit
+BIG_BOX = 40.0                  # square degrees: a larger region (Texas, Alaska, the Prairie provinces) is asked in
+                                # four tiles
+DESIGNATION_QUERY = """SELECT ?item ?itemLabel ?coord ?class ?classLabel ?start ?end WHERE {{
+  SERVICE wikibase:box {{ ?item wdt:P625 ?coord .
+    bd:serviceParam wikibase:cornerSouthWest "Point({west} {south})"^^geo:wktLiteral .
+    bd:serviceParam wikibase:cornerNorthEast "Point({east} {north})"^^geo:wktLiteral . }}
+  ?item wdt:P1435 ?class .
+  VALUES ?class {{ {classes} }}
+  OPTIONAL {{ ?item wdt:P571 ?inception . }} OPTIONAL {{ ?item wdt:P580 ?started . }}
+  OPTIONAL {{ ?item wdt:P576 ?dissolved . }} OPTIONAL {{ ?item wdt:P582 ?ended . }}
+  BIND(COALESCE(?inception, ?started) AS ?start) BIND(COALESCE(?dissolved, ?ended) AS ?end)
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}}"""
+
+
+def queries_for(region):
+    """The SPARQL queries for a region's bounding box (four tiles for a box larger than BIG_BOX): one per group of
+    GROUP classes, and one for the designations (World Heritage Sites). fetch.py sends them one after the other and
+    saves their answers together (an item found twice is kept once)."""
+    west, south, east, north = region["bbox"]
+    boxes = [(west, south, east, north)]
+    if (east - west) * (north - south) > BIG_BOX:
+        mx, my = (west + east) / 2, (south + north) / 2
+        boxes = [(west, south, mx, my), (mx, south, east, my), (west, my, mx, north), (mx, my, east, north)]
+    ids = list(CLASSES)
+    out = []
+    for w, s_, e, n in boxes:
+        out += [QUERY.format(west=w, south=s_, east=e, north=n, classes=" ".join(f"wd:{q}" for q in ids[i:i + GROUP]))
+                for i in range(0, len(ids), GROUP)]
+        out.append(DESIGNATION_QUERY.format(west=w, south=s_, east=e, north=n,
+                                            classes=" ".join(f"wd:{q}" for q in DESIGNATIONS)))
+    return out
 
 
 def query_for(region):
-    """The SPARQL query for a region's bounding box (Alaska's box spans the 180th meridian: the whole width)."""
-    west, south, east, north = region["bbox"]
-    classes = " ".join(f"wd:{q}" for q in CLASSES)
-    return QUERY.format(west=west, south=south, east=east, north=north, classes=classes)
+    """All the region's queries as one text (for reading and the tests)."""
+    return "\n\n".join(queries_for(region))
 
 
 @reader("wikidata")
@@ -68,7 +125,8 @@ def read(path, entry, region, writer):
             lon, lat = (float(v) for v in coord[6:-1].split())
         except ValueError:
             continue
-        cls = CLASSES.get(b.get("class", {}).get("value", "").rsplit("/", 1)[-1], "landmark")
+        qid = b.get("class", {}).get("value", "").rsplit("/", 1)[-1]
+        cls = CLASSES.get(qid) or DESIGNATIONS.get(qid) or "landmark"
         first = fmt.parse_month(b.get("start", {}).get("value", ""))
         last = fmt.parse_month(b.get("end", {}).get("value", ""))
         seen.add(item)

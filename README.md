@@ -15,6 +15,11 @@ listed with its licence in [SOURCES.md](SOURCES.md). The packs are made for the
 [Digital Accessibility Toolkit](https://getbraille.com)'s picture describer and the Photo Location Identifier
 (`photo-location-identifier/`), and anyone may use them under their licences.
 
+A photo on a trail or beside a river with nothing nearer named gets the line: "on the Long Trail", "beside the
+Missisquoi River" (Forest Service and park trails, Wild and Scenic Rivers). Address-only lists (the IRS's exempt
+organizations) are placed by an offline geocoder at build time, against the state's own address points; an
+organization at a home address is placed on its street, never at the house.
+
 Every place can also carry a fine type beside its class, such as "pizza restaurant", "hardware store", "catholic
 church" or "lighthouse" (`type` in a lookup's result; `search_names(..., type="bakery")`). See FORMAT.md.
 
@@ -66,6 +71,8 @@ How far back each layer goes:
 | Lighthouses (USCG Light List), former military sites (FUDS), VA national cemeteries | The lights and sites listed now, from the first build; lighthouses, forts, military and Coast Guard bases and national cemeteries also come from Wikidata with their founding and closing dates, so a 1960 picture at a base closed in 1995 gets the base. Cemeteries have their own class (cemetery). |
 | OpenHistoricalMap (US and Canada) | Each feature's own start and end dates (old businesses, buildings, stations, forts, mills), often a century or more back. |
 | Toronto food premises (DineSafe), Boston food licences, StatCan facilities, Aboriginal lands of Canada, US tribal areas | Inspection and licence dates where the source has them; otherwise from the first build. |
+| IRS exempt organizations (churches, schools, museums, clubs, foundations) | Each organization from its IRS ruling date; closed when it leaves the file. |
+| Museums (IMLS), battlefields (NPS), federal buildings (GSA), beaches (EPA), BC and Ontario provincial parks, trails, Wild and Scenic Rivers, GNIS variant names | From the first build (Ontario parks from their protection date, rivers from their designation); variant names are kept for search only. |
 | Washington DC business licences, Minneapolis food inspections | Licence issue and end dates; first and last inspections. |
 | Overture places | From the first build. Past monthly releases (for example one a quarter) can be merged first while Overture still keeps them. |
 | Foursquare Open Source Places | Foursquare's own creation and closing dates. |

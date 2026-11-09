@@ -21,7 +21,7 @@ Each source's catalogue "fetch" says how:
   arcgis          an ArcGIS REST layer (FeatureServer or MapServer, no token): the ids inside the region's box (and
                   the entry's "where"), then the records in chunks of ids, as CSV with "_lat" and "_lon" (and
                   "_rings" for polygons, read as areas); dates become YYYY-MM-DD; the version is the layer's last edit
-                  date and the number of records
+                  date and the number of records; polylines come with "_paths" (read as named lines)
   manual          a folder someone filled (inputs/...): used when it exists
 A national source's file may be named by the publisher's metadata instead of a fixed address ("socrata_blob": the
 NAD's file on data.transportation.gov, whose version is its blobId and rowsUpdatedAt), one file per country
@@ -323,13 +323,25 @@ def _arcgis_value(value, is_date):
     return str(value).strip()
 
 
+def _arcgis_paths(geom):
+    """The paths of an ArcGIS polyline as [[[lat, lon], ...], ...] (None for other shapes or none)."""
+    if not geom or not geom.get("paths"):
+        return None
+    paths = [[[round(y, 6), round(x, 6)] for x, y in path] for path in geom["paths"] if len(path) >= 2]
+    return paths or None
+
+
 def _arcgis_geometry(geom):
     """(lat, lon, rings) of an ArcGIS JSON geometry in longitude/latitude: a point's position, or a polygon's rings
-    [[[lat, lon], ...], ...] with the middle of its box as its position; (None, None, None) without one."""
+    [[[lat, lon], ...], ...] with the middle of its box as its position (a polyline: its first point); (None, None,
+    None) without one."""
     if not geom:
         return None, None, None
     if "x" in geom:
         return geom.get("y"), geom.get("x"), None
+    if geom.get("paths"):
+        x, y = geom["paths"][0][0]
+        return y, x, None
     if geom.get("rings"):
         rings = [[[round(y, 6), round(x, 6)] for x, y in ring] for ring in geom["rings"] if len(ring) >= 4]
         if not rings:
@@ -348,6 +360,34 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
     "where": an SQL filter, "fields": the attributes to keep ("A,B,C"), "box": false for a table without shapes
     (filtered by "where" only), "page": ids per request, "simplify": degrees for polygons (maxAllowableOffset)}."""
     f = entry["fetch"]
+    if f.get("urls"):
+        # Several layers of the same kind (the NPS battlefields of three wars): fetched one after the other into one
+        # CSV, each with its own ids.
+        got = None
+        parts, version, rows = [], [], 0
+        for i, url in enumerate(f["urls"]):
+            sub = dict(entry, id=f"{entry['id']}-{i}", fetch=dict(f, url=url, urls=None))
+            got = fetch_arcgis(sub, region, folder, fingerprint, sleep)
+            version.append(got["version"])
+            if not fingerprint and got.get("path"):
+                parts.append(got["path"])
+        version = " ".join(version)
+        if fingerprint:
+            return {"ok": True, "version": version, "path": "", "date": ""}
+        target = os.path.join(folder, entry["id"] + ".csv")
+        with open(target, "w", newline="", encoding="utf-8") as out:
+            writer = None
+            for path in parts:
+                with open(path, newline="", encoding="utf-8") as fh:
+                    for row in csv.DictReader(fh):
+                        if writer is None:
+                            writer = csv.DictWriter(out, fieldnames=list(row), extrasaction="ignore")
+                            writer.writeheader()
+                        writer.writerow(row)
+                        rows += 1
+                os.remove(path)
+        return {"ok": rows > 0, "version": version, "path": target, "date": datetime.date.today().isoformat(),
+                **({} if rows else {"status": "skipped", "reason": "no record of the layers is in the region"})}
     url = f["url"].rstrip("/")
     meta = post_json(url, {"f": "json"}, sleep=sleep)
     dates = {fd["name"] for fd in meta.get("fields", []) if fd.get("type") == "esriFieldTypeDate"}
@@ -365,7 +405,8 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
     target = os.path.join(folder, entry["id"] + ".csv")
     fields = [x.strip() for x in f["fields"].split(",") if x.strip()]
     polygons = meta.get("geometryType") == "esriGeometryPolygon"
-    header = fields + ["_lat", "_lon"] + (["_rings"] if polygons else [])
+    polylines = meta.get("geometryType") == "esriGeometryPolyline"
+    header = fields + ["_lat", "_lon"] + (["_rings"] if polygons else []) + (["_paths"] if polylines else [])
     page, rows = int(f.get("page", 500)), 0
     with open(target + ".partial", "w", newline="", encoding="utf-8") as out:
         w = csv.writer(out)
@@ -374,7 +415,7 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
             params = {"f": "json", "objectIds": ",".join(str(x) for x in ids[i:i + page]),
                       "outFields": ",".join(fields), "returnGeometry": "true" if meta.get("geometryType") else
                       "false", "outSR": "4326"}
-            if polygons and f.get("simplify"):
+            if (polygons or polylines) and f.get("simplify"):
                 params["maxAllowableOffset"] = f["simplify"]
             for feat in post_json(url + "/query", params, sleep=sleep, pause=f.get("pause", 0.5)).get("features", []):
                 attrs = feat.get("attributes") or {}
@@ -383,6 +424,9 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
                 row += ["" if lat is None else f"{lat:.6f}", "" if lon is None else f"{lon:.6f}"]
                 if polygons:
                     row.append(json.dumps(rings, separators=(",", ":")) if rings else "")
+                if polylines:
+                    paths = _arcgis_paths(feat.get("geometry"))
+                    row.append(json.dumps(paths, separators=(",", ":")) if paths else "")
                 w.writerow(row)
                 rows += 1
     os.replace(target + ".partial", target)
@@ -691,15 +735,28 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         if fingerprint:
             out["ok"] = True
             return out
-        from placepacks.readers.wikidata import query_for
+        from placepacks.readers.wikidata import queries_for
         target = os.path.join(folder, "wikidata.json")
         os.makedirs(folder, exist_ok=True)
-        body = urllib.parse.urlencode({"query": query_for(region), "format": "json"}).encode()
-        with request(url, "POST", body, {"Accept": "application/sparql-results+json",
-                                          "Content-Type": "application/x-www-form-urlencoded"}) as r, \
-                open(target, "wb") as fh:
-            fh.write(r.read())
-        time.sleep(pause)
+        bindings = []
+        for query in queries_for(region):
+            # One query per group of classes (each within the service's time limit); a busy service is tried again.
+            body = urllib.parse.urlencode({"query": query, "format": "json"}).encode()
+            answer = {}
+            for attempt in range(len(RETRY_WAITS) + 1):
+                try:
+                    with request(url, "POST", body, {"Accept": "application/sparql-results+json",
+                                                      "Content-Type": "application/x-www-form-urlencoded"}) as r:
+                        answer = json.loads(r.read().decode("utf-8"))
+                    break
+                except Exception as e:  # noqa: BLE001 - tried again when it is temporary
+                    if attempt >= len(RETRY_WAITS) or not retryable(e):
+                        raise
+                    time.sleep(RETRY_WAITS[attempt])
+            bindings += answer.get("results", {}).get("bindings", [])
+            time.sleep(pause)
+        with open(target, "w", encoding="utf-8") as fh:
+            json.dump({"results": {"bindings": bindings}}, fh)
         out.update(ok=True, path=target, date=datetime.date.today().isoformat())
         return out
     if method == "national":

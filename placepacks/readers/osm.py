@@ -43,7 +43,7 @@ def main_tag(tags):
             return key, value, "settlement"
         if key == "building":
             return key, value, "building"
-        if key == "landuse" and value not in ("cemetery", "recreation_ground", "village_green"):
+        if key == "landuse" and value not in ("cemetery", "recreation_ground", "village_green", "retail"):
             continue
         if key == "highway" and value != "bus_stop":
             continue

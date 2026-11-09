@@ -58,6 +58,10 @@ texts in `LICENSES/`.
 - **CC BY 4.0 city data (Washington DC):** credit the District of Columbia as in `SOURCES.md`.
 - **Open Government Licence - Toronto (DineSafe):** "Contains information licensed under the Open Government
   Licence - Toronto".
+- **Open Government Licences of British Columbia and Ontario (provincial parks):** "Contains information licensed
+  under the Open Government Licence - British Columbia" / "- Ontario".
+- **IRS exempt organizations:** only names and located points are kept, never the "in care of" (people's) names; an
+  organization at a home address is placed on its street.
 - **OpenHistoricalMap:** CC0, except features with their own `license` tag, which the packs leave out.
 - **Personal data:** the business sources keep only a business's trade name, class, position and dates. Records
   that may be someone's home (home-based businesses, contractors, mobile caterers, childminders, short-term rentals,

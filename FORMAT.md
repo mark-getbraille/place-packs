@@ -20,8 +20,11 @@ A pack is one SQLite file. Coordinates are whole microdegrees. Months are YYYYMM
 
 Fine cell: `floor((lat + 90) * 100) * 36000 + floor((lon + 180) * 100)`. Coarse cell: the same with 10 and 3600.
 Classes (`cls`): park, cemetery, landmark, campus, water, nature, neighbourhood, region, admin, town, county, zip,
-street, building, business, public, transit, settlement. (cemetery since November 2026: cemeteries were park before;
-county: the Newberry atlas's dated county versions.)
+street, building, business, public, transit, settlement, variant. (cemetery since November 2026: cemeteries were park
+before; county: the Newberry atlas's dated county versions; variant: a former or other name of a feature (GNIS),
+kept for name search and never said as a place's name.) Lines have the class street (streets), trail, water
+(rivers) or rail; a lookup names a trail, river or railway within 60 m ("on the Appalachian Trail", "beside the
+Deerfield River") only when nothing nearer names the place.
 
 ## Fine types (added November 2026, still version 2)
 

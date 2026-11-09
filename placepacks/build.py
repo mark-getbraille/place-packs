@@ -44,6 +44,8 @@ def build(region_id, part, fetched, out, previous=None, month=None, only=None, c
     if fetched.get("_bbox"):
         region["bbox"] = fetched["_bbox"]           # the extract's own box (fetch.extract_bbox)
     readers = load_all()
+    # The local inputs of every source, for readers that use another source (the geocoder reads the NAD slice).
+    region["_inputs"] = {sid: got.get("path") for sid, got in fetched.items() if isinstance(got, dict) and got.get("ok")}
     writer = PackWriter(out, month)
     used, missing, status = [], [], {}
     for entry in catalogue.sources_for(region, part, cat, only):

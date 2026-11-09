@@ -134,7 +134,7 @@ jobs:
     timeout-minutes: 340
     strategy:
       fail-fast: false
-      max-parallel: 8   # the account shares 20 runners with the other projects; 8 builds every region in about 8 hours
+      max-parallel: 6   # gentle on the source servers and leaves runners for other projects; every region in about 11 hours
       matrix:
         region: ${{ fromJSON(needs.plan.outputs.regions) }}
     steps:

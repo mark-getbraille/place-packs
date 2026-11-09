@@ -105,3 +105,11 @@ def test_sources_md_is_up_to_date():
     with open(os.path.join(ROOT, "sources.json"), encoding="utf-8") as f:
         expected = write_sources_md.text(json.load(f))
     assert open(os.path.join(ROOT, "SOURCES.md"), encoding="utf-8").read() == expected
+
+
+def test_fetched_json_with_its_bounding_box_entry():
+    """fetched.json carries "_bbox" (a list) beside the sources: the rebuild check and the publish step skip it (the
+    first real build stopped on it)."""
+    from placepacks import manifest
+    fetched = {"osm": {"ok": True, "version": "2026-11-09"}, "nad": {"ok": False}, "_bbox": [-73.4, 42.7, -71.5, 45.0]}
+    assert manifest.fingerprint(fetched) == {"osm": "2026-11-09"}

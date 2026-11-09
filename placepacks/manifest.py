@@ -101,7 +101,7 @@ def parse(data, regions=None):
 
 def fingerprint(fetched):
     """{source id: version text} of a fetched.json (what decides whether a region must be rebuilt)."""
-    return {sid: str(v.get("version", "")) for sid, v in fetched.items() if v.get("ok")}
+    return {sid: str(v.get("version", "")) for sid, v in fetched.items() if isinstance(v, dict) and v.get("ok")}
 
 
 def changed(old_entry_sources, new_prints):
@@ -146,7 +146,7 @@ def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
                       "sha256": fmt_sha(path), "built_month": int(meta.get("built_month", "0")),
                       "history_start": int(meta.get("history_start", "0") or 0),
                       "sources": {s: {"version": str(v.get("version", "")), "date": str(v.get("date", ""))}
-                                  for s, v in fetched.items() if v.get("ok")}}
+                                  for s, v in fetched.items() if isinstance(v, dict) and v.get("ok")}}
         uploads.append((path, asset))
     manifest = {"format": FORMAT, "version": 2, "made": today.isoformat(), "release": "packs",
                 "sources": {e["id"]: {"name": e["name"], "licence": e["licence"],

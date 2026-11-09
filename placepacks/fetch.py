@@ -55,6 +55,7 @@ import urllib.request
 from placepacks import catalogue
 
 USER_AGENT = "place-packs-builder/1 (+https://github.com/mark-getbraille/place-packs)"
+FAILED = "_not_downloaded.txt"      # national/<id>/: why the prepare job could not download a source
 
 
 def request(url, method="GET", data=None, headers=None, timeout=300):
@@ -224,6 +225,8 @@ def national_files(entry, values, opener=None):
         with (opener or request)(f["listing"]) as r:
             page = r.read().decode("utf-8", "replace")
         names = sorted(set(re.findall(f["pattern"], page)))
+        if not names and f.get("fallback_pattern"):
+            names = sorted(set(re.findall(f["fallback_pattern"], page)))     # the Light List's PDFs, without XML
         if f.get("latest") and names:
             def year(n):
                 m = re.search(f["latest"], os.path.basename(n))
@@ -379,6 +382,111 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
     os.replace(target + ".partial", target)
     return {"ok": rows > 0, "version": version, "path": target, "date": datetime.date.today().isoformat(),
             **({} if rows else {"status": "skipped", "reason": "no record of the layer is in the region"})}
+
+
+# ------------------------------------------------------------------------------------------- the USCG Light List
+
+# Positions as the Light List prints them: degrees-minutes-seconds ("41-04-15.534N") or degrees and minutes
+# ("41 04.3 N"); longitudes have up to three degree digits.
+_DMS = r"(\d{1,3})-(\d{1,2})-(\d{1,2}(?:\.\d+)?)\s*([NSEW])"
+_DM = r"(\d{1,3})\s+(\d{1,2}(?:\.\d+)?)\s*([NSEW])\b"
+_ENTRY = re.compile(r"^\s*(\d{1,5}(?:\.\d{1,3})?)\s+(\S.*)$")
+# A lighthouse or major light: its structure is a tower or a house (not a skeleton tower, pole, post, dolphin or
+# spindle), and it is not a buoy or a daybeacon.
+_KEEP = re.compile(r"\b(tower|lighthouse|house|dwelling|light station)\b", re.I)
+_SKIP = re.compile(r"\b(skeleton|pole|post|dolphin|spindle|buoy|daybeacon|daymark)\b", re.I)
+
+
+def _degrees(match):
+    """Signed decimal degrees of a _DMS or _DM match."""
+    parts = match.groups()
+    if len(parts) == 4:
+        value = int(parts[0]) + int(parts[1]) / 60 + float(parts[2]) / 3600
+    else:
+        value = int(parts[0]) + float(parts[1]) / 60
+    return -value if parts[-1] in "SW" else value
+
+
+def light_position(text):
+    """(lat, lon) of the first latitude and longitude in text (either format), or None."""
+    for pattern in (_DMS, _DM):
+        found = [m for m in re.finditer(pattern, text)]
+        lat = next((m for m in found if m.group(len(m.groups())) in "NS"), None)
+        lon = next((m for m in found if m.group(len(m.groups())) in "EW"), None)
+        if lat and lon:
+            return round(_degrees(lat), 6), round(_degrees(lon), 6)
+    return None
+
+
+def is_lighthouse(name, block):
+    """True for a lighthouse or major light: named "... Light", its entry describes a tower or house, and it is not
+    a skeleton tower, pole, buoy or daybeacon."""
+    return bool(re.search(r"\blight\b", name, re.I)) and not re.search(r"\b(buoy|daybeacon|range)\b", name, re.I) \
+        and bool(_KEEP.search(block)) and not _SKIP.search(block)
+
+
+def light_list_text(text, volume):
+    """The lighthouses of one Light List volume's text (the PDF's columns, read line by line: No., Name and Location,
+    Position, Characteristic, Height, Range, Structure, Remarks). Returns [(volume, number, name, lat, lon,
+    structure text)]."""
+    lines = text.splitlines()
+    starts = [i for i, line in enumerate(lines) if _ENTRY.match(line) and
+              light_position(" ".join(lines[i:i + 3]))]
+    out = []
+    for n, i in enumerate(starts):
+        end = starts[n + 1] if n + 1 < len(starts) else min(len(lines), i + 8)
+        block = " ".join(x.strip() for x in lines[i:end])
+        number, rest = _ENTRY.match(lines[i]).groups()
+        at = re.search(_DMS, rest) or re.search(_DM, rest)
+        name = " ".join((rest[:at.start()] if at else rest).split()).strip(" .,")
+        position = light_position(block)
+        if position and name and is_lighthouse(name, block):
+            out.append((volume, number, name, *position, block[:200]))
+    return out
+
+
+def light_list_xml(path, volume):
+    """The lighthouses of a Light List XML file: every element with a child whose tag holds "name" and one whose
+    text holds a position (the documented fields: LLNR, Aid Name, Position, Characteristic, Height, Range,
+    Structure, Remarks)."""
+    import xml.etree.ElementTree as ET
+    out = []
+    for _, el in ET.iterparse(path, events=("end",)):
+        kids = {c.tag.split("}")[-1].lower(): " ".join((c.text or "").split()) for c in el}
+        name = next((v for k, v in kids.items() if "name" in k), "")
+        position = light_position(" ".join(v for k, v in kids.items() if "pos" in k or "lat" in k or "lon" in k))
+        if not name or not position:
+            continue
+        number = next((v for k, v in kids.items() if "llnr" in k or k in ("number", "no")), "")
+        block = " ".join(kids.values())
+        if is_lighthouse(name, block):
+            out.append((volume, number, name, *position, kids.get("structure", "")[:200]))
+        el.clear()
+    return out
+
+
+def light_list_to_csv(paths, target):
+    """Write the lighthouses of the downloaded Light List volumes (XML preferred, else text PDFs read with pypdf) as
+    one CSV. A volume whose PDF has no text layer (scanned) is reported and left out. Returns the number kept."""
+    rows = []
+    for path in sorted(paths):
+        volume = (re.search(r"V(?:ol(?:ume)?)?[ _%20-]*([IVX]+|\d)", os.path.basename(path), re.I) or
+                  re.search(r"(\d)", os.path.basename(path)))
+        volume = volume.group(1) if volume else os.path.basename(path)
+        if path.lower().endswith(".xml"):
+            rows += light_list_xml(path, volume)
+            continue
+        from pypdf import PdfReader
+        text = "\n".join(page.extract_text() or "" for page in PdfReader(path).pages)
+        if len(text.strip()) < 1000:
+            print(f"  {os.path.basename(path)}: no text layer (a scanned volume); not read")
+            continue
+        rows += light_list_text(text, volume)
+    with open(target, "w", newline="", encoding="utf-8") as out:
+        w = csv.writer(out)
+        w.writerow(["volume", "llnr", "name", "lat", "lon", "structure"])
+        w.writerows(rows)
+    return len(rows)
 
 
 def get_page(url, folder, pause, sleep=time.sleep):
@@ -557,6 +665,11 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         return out
     if method == "national":
         folder = os.path.join(national or "national", entry["id"])
+        failed = os.path.join(folder, FAILED)
+        if os.path.exists(failed) and not fingerprint:
+            out.update(status="skipped", reason="could not be downloaded: " +
+                       open(failed, encoding="utf-8").read().strip())
+            return out
         if f.get("socrata_blob"):
             # The publisher's own version (blobId and rowsUpdatedAt), the same in the plan and in the build.
             url, name, version = national_files(entry, values)[0]
@@ -704,6 +817,11 @@ def prepare(national, cat=None):
             prepare_national(entry, national, catalogue.settings_for(cat, any_region))
         except Exception as e:  # noqa: BLE001 - that layer is left out this time
             print(f"{entry['id']}: not downloaded ({e})")
+            # The region builds say why ("skipped (could not be downloaded: ...)"), from this note.
+            folder = os.path.join(national, entry["id"])
+            os.makedirs(folder, exist_ok=True)
+            with open(os.path.join(folder, FAILED), "w", encoding="utf-8") as fh:
+                fh.write(str(e)[:300])
 
 
 def prepare_national(entry, national, values):
@@ -749,6 +867,16 @@ def prepare_national(entry, national, values):
         base = name[:-len(".version")] if name.endswith(".version") else name
         if base not in kept:
             os.remove(os.path.join(folder, name))       # an older release (NAD_r20_TXT.zip after NAD_TXT.zip)
+    if f.get("convert") == "light_list":
+        paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
+        count = light_list_to_csv(paths, os.path.join(folder, entry["id"] + ".csv"))
+        for p in paths:
+            os.remove(p)
+            if os.path.exists(p + ".version"):
+                os.remove(p + ".version")
+        if not count:
+            raise ValueError("no lighthouse was found in the Light List files")
+        print(f"{entry['id']}: {count:,} lighthouses from {len(paths)} files")
     if f.get("xml_records"):
         paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
         count = xml_to_csv(paths, f["xml_records"], os.path.join(folder, entry["id"] + ".csv"))

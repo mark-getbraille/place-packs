@@ -16,5 +16,6 @@ A pack is one SQLite file. Coordinates are whole microdegrees. Months are YYYYMM
 | removals | key, reason, date | records removed for a licence problem or a takedown |
 
 Fine cell: `floor((lat + 90) * 100) * 36000 + floor((lon + 180) * 100)`. Coarse cell: the same with 10 and 3600.
-Classes (`cls`): park, landmark, campus, water, nature, neighbourhood, region, admin, town, zip, street, building,
-business, public, transit, settlement.
+Classes (`cls`): park, cemetery, landmark, campus, water, nature, neighbourhood, region, admin, town, county, zip,
+street, building, business, public, transit, settlement. (cemetery since November 2026: cemeteries were park before;
+county: the Newberry atlas's dated county versions.)

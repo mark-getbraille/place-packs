@@ -27,7 +27,13 @@ QUERY = """SELECT ?item ?itemLabel ?coord ?class ?start ?end WHERE {{
 CLASSES = {"Q41176": "building", "Q4989906": "landmark", "Q33506": "landmark", "Q570116": "landmark",
            "Q16970": "landmark", "Q22698": "park", "Q3918": "campus", "Q16917": "campus", "Q7075": "landmark",
            "Q1248784": "business", "Q55488": "transit", "Q12280": "landmark", "Q839954": "landmark",
-           "Q483110": "landmark", "Q24398318": "landmark"}
+           "Q483110": "landmark", "Q24398318": "landmark",
+           # Lighthouses and light stations; forts, fortifications and military, air, naval and Coast Guard bases and
+           # stations (with their inception and closing dates, so a 1960 picture at a base closed in 1995 gets it);
+           # national cemeteries (other cemeteries come from GNIS and OpenStreetMap); state parks.
+           "Q39715": "landmark", "Q27193297": "landmark", "Q1785071": "landmark", "Q57821": "landmark",
+           "Q245016": "campus", "Q18691599": "campus", "Q695850": "campus", "Q1324633": "campus",
+           "Q31407679": "landmark", "Q12585720": "cemetery", "Q1761072": "park"}
 
 
 def query_for(region):

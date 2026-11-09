@@ -193,7 +193,7 @@ def main(argv=None):
             print(f"{entry['id']}: {sum(counts.values()):,} records in {len(counts)} regions")
             continue
         for name in os.listdir(folder):
-            if name.endswith(".version"):
+            if name.endswith(".version") or name.startswith("_"):
                 continue
             path = os.path.join(folder, name)
             # One source that cannot be split is reported and left out; the others are still split.

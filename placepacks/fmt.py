@@ -234,7 +234,8 @@ def ring_area_m2(ring):
 
 def classify(category, kind):
     """The class of a named thing from its main tag (OpenStreetMap key=value, or a source's own category mapped
-    to one): park, landmark, campus, water, nature, neighbourhood, street, building, business, transit, or ""."""
+    to one): park, cemetery, landmark, campus, water, nature, neighbourhood, street, building, business, transit,
+    or ""."""
     category, kind = (category or "").lower(), (kind or "").lower()
     if category == "leisure" and kind in ("park", "garden", "nature_reserve", "playground", "dog_park",
                                           "recreation_ground", "golf_course", "stadium", "marina", "common"):
@@ -244,9 +245,13 @@ def classify(category, kind):
     if category in ("tourism", "historic") or (category == "man_made" and kind in ("lighthouse", "tower", "pier",
                                                                                   "bridge")):
         return "business" if kind in ("hotel", "motel", "guest_house", "hostel") else "landmark"
-    if category == "amenity" and kind in ("university", "college", "school", "hospital", "grave_yard"):
+    if category == "amenity" and kind == "grave_yard":
+        return "cemetery"
+    if category == "amenity" and kind in ("university", "college", "school", "hospital"):
         return "campus"
-    if category == "landuse" and kind in ("cemetery", "recreation_ground", "village_green"):
+    if category == "landuse" and kind == "cemetery":
+        return "cemetery"
+    if category == "landuse" and kind in ("recreation_ground", "village_green"):
         return "park"
     if category == "natural" and kind in ("water", "bay", "beach"):
         return "water"

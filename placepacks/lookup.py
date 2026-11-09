@@ -33,9 +33,9 @@ import weakref
 from placepacks import fmt
 from placepacks.when import When
 
-AREA_CLASSES = {"park", "landmark", "neighbourhood", "campus", "water", "nature"}
+AREA_CLASSES = {"park", "cemetery", "landmark", "neighbourhood", "campus", "water", "nature"}
 POINT_CLASSES = AREA_CLASSES | {"building", "business", "street", "public", "transit"}
-FACILITY_CLASSES = {"public", "campus", "landmark", "transit", "business", "park"}
+FACILITY_CLASSES = {"public", "campus", "landmark", "transit", "business", "park", "cemetery"}
 NOT_A_NAME = {"settlement", "town", "zip", "admin", "region", "range", "address", "county"}
 BUSINESS_SOURCES = {"overture-places", "fsq-places"}
 
@@ -181,8 +181,9 @@ def until(row_last, latest, builds=()):
     """The last month a row counts for: up to the month before the next build after its last month (the builds
     in between did not see it), else one month after it; the newest build's rows count on; a last month that is
     not a build month is the source's own end date and counts as it is."""
-    if row_last >= latest:
-        return 999912
+    builds = builds or ()
+    if row_last is None or row_last >= latest:
+        return 999912                   # None: a row stored without a last month is still current
     if builds and row_last not in builds:
         return row_last                 # the source's own end date (Wikidata's "demolished"), not a build month
     later = [b for b in builds if b > row_last]
@@ -191,7 +192,12 @@ def until(row_last, latest, builds=()):
 
 def valid(row_first, row_last, when, latest, builds=()):
     """True when a row (first, last months) was valid at when (a When with a date); see until."""
-    return row_first <= when.end and until(row_last, latest, builds) >= when.start
+    return (row_first or 0) <= when.end and until(row_last, latest, builds) >= when.start
+
+
+def _last(row, latest):
+    """A row's last month; a row stored without one (None) is current: latest."""
+    return latest if row.get("last") is None else row["last"]
 
 
 def choose(rows, when, latest, start, builds=()):
@@ -200,12 +206,13 @@ def choose(rows, when, latest, start, builds=()):
     newest month (as listed now)."""
     if not rows:
         return [], {}
+    builds = builds or ()
     if not when.known:
-        now = [r for r in rows if r["last"] >= latest]
-        return (now or sorted(rows, key=lambda r: -r["last"])[:1]), {"as_listed_now": True}
+        now = [r for r in rows if _last(r, latest) >= latest]
+        return (now or sorted(rows, key=lambda r: -_last(r, latest))[:1]), {"as_listed_now": True}
     if when.end < start:
-        oldest = min(r["first"] for r in rows)
-        return [r for r in rows if r["first"] == oldest], {"no_older_record": True}
+        oldest = min(r["first"] or 0 for r in rows)
+        return [r for r in rows if (r["first"] or 0) == oldest], {"no_older_record": True}
     ok = [r for r in rows if valid(r["first"], r["last"], when, latest, builds)]
     return ok, ({"probably": True} if when.is_range else {})
 
@@ -510,6 +517,28 @@ class Finder:
         """The packs whose bounds hold the position."""
         return [p for p in self.packs if p.covers(lat, lon)]
 
+    def _valid_areas(self, rows, when, latest, start):
+        """The areas of rows valid at when, choosing among the versions of each source and class together (so an
+        old version is never kept beside the current one): without a date, the versions of the newest build (or,
+        when a source has none, its most recent ones), as lookup() does for undated pictures; with a date, the
+        versions valid then (or, before the source's history starts, its oldest ones). Order is kept."""
+        groups = {}
+        for r in rows:
+            groups.setdefault((r.get("source"), r.get("cls")), []).append(r)
+        keep = set()
+        for group in groups.values():
+            if not when.known:
+                now = [r for r in group if _last(r, latest) >= latest]
+                newest = max(_last(r, latest) for r in group)
+                chosen = now or [r for r in group if _last(r, latest) == newest]
+            else:
+                chosen = [r for r in group if valid(r["first"], r["last"], when, latest, self._b)]
+                if not chosen and when.end < self._start_for(group, start):
+                    oldest = min(r["first"] or 0 for r in group)
+                    chosen = [r for r in group if (r["first"] or 0) == oldest]
+            keep |= {id(r) for r in chosen}
+        return [r for r in rows if id(r) in keep]
+
     def _start_for(self, rows, start):
         """The history start of the rows' source (the oldest month of that source in any pack), else start."""
         rows = rows if isinstance(rows, list) else [rows]
@@ -545,7 +574,7 @@ class Finder:
         self._town(result, packs, lat, lon, when, latest, start)
         # 1. a named area or place
         for p in packs:
-            for a in p.areas_at(lat, lon):
+            for a in self._valid_areas(p.areas_at(lat, lon), when, latest, start):
                 if a["cls"] in NOT_A_NAME or (detail == "area" and a["cls"] not in AREA_CLASSES):
                     continue
                 a["lat"], a["lon"] = (a["minlat"] + a["maxlat"]) / 2e6, (a["minlon"] + a["maxlon"]) / 2e6
@@ -665,21 +694,14 @@ class Finder:
         """The neighbourhood, the town (a Census place or county subdivision, else the nearest settlement) and the
         ZIP area, and the county as it was on the picture's date (the Newberry atlas: boundaries since the 1600s,
         each version of a county with its own dates)."""
-        counties = []
         for p in packs:
-            for a in p.areas_at(lat, lon):
+            for a in self._valid_areas(p.areas_at(lat, lon), when, latest, start):
                 if a["cls"] == "town" and not result.town:
-                    chosen, _ = choose([a], when, latest, self._start_for([a], start), self._b)
-                    if chosen:
-                        result.town = a["name"]
+                    result.town = a["name"]
                 elif a["cls"] == "zip" and not result.zip_area:
                     result.zip_area = a["name"]
-                elif a["cls"] == "county":
-                    counties.append(a)
-        if counties:
-            chosen, _ = choose(counties, when, latest, self._start_for(counties, start), self._b)
-            if chosen:
-                result.county = chosen[0]["name"]
+                elif a["cls"] == "county" and not result.county:
+                    result.county = a["name"]
         hood = [r for p in packs for r in p.points_near(lat, lon, 1500, {"neighbourhood"})]
         if hood:
             result.neighbourhood = hood[0]["name"]
@@ -724,9 +746,10 @@ class Finder:
         self._b = builds_of(packs)
         out, seen = [], set()
         for p in packs:
-            for a in p.areas_at(lat, lon):
-                chosen, _ = choose([a], when, latest, self._start_for([a], start), self._b)
-                if chosen and (a["name"], a["cls"]) not in seen:
+            # The versions valid at when only (an undated picture: those of the newest build), chosen per source
+            # and class together, as lookup() does: never an 1800s county beside today's.
+            for a in self._valid_areas(p.areas_at(lat, lon), when, latest, start):
+                if (a["name"], a["cls"]) not in seen:
                     seen.add((a["name"], a["cls"]))
                     out.append((a["name"], a["cls"], a["size"], a["source"]))
         return sorted(out, key=lambda t: t[2])

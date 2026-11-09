@@ -60,6 +60,7 @@ How far back each layer goes:
 | US counties (Newberry Library's Atlas of Historical County Boundaries) | Every version of every county since the 1600s with its exact dates: a lookup gives the county as it was on the picture's date (`county` in the result). |
 | National Register of Historic Places, bridges (FHWA), dams (USACE), public airports (FAA), PA historical markers | From the listing date, the year built or completed, the activation date or the dedication date. |
 | PAD-US parks and protected areas, NPS points of interest, Forest Service recreation sites, ferry terminals, Amtrak stations, military installations, libraries, private schools and colleges | From the first build (PAD-US also from the year an area was established). All read from the agencies' own public services and files each month, with no hand step. |
+| Lighthouses (USCG Light List), former military sites (FUDS), VA national cemeteries | The lights and sites listed now, from the first build; lighthouses, forts, military and Coast Guard bases and national cemeteries also come from Wikidata with their founding and closing dates, so a 1960 picture at a base closed in 1995 gets the base. Cemeteries have their own class (cemetery). |
 | Washington DC business licences, Minneapolis food inspections | Licence issue and end dates; first and last inspections. |
 | Overture places | From the first build. Past monthly releases (for example one a quarter) can be merged first while Overture still keeps them. |
 | Foursquare Open Source Places | Foursquare's own creation and closing dates. |

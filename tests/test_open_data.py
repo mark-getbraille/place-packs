@@ -199,7 +199,9 @@ def test_every_new_source_has_its_licence_and_status_reason():
         if e["fetch"]["method"] == "socrata":
             for q in e["fetch"]["queries"]:
                 assert q["dataset"] in e["attribution"], (e["id"], q["dataset"])
-            assert e.get("regions"), e["id"]
+            # A city's or state's dataset names its regions; a small national one (the VA's ~150 cemeteries) is
+            # read by every US region and kept by its box.
+            assert e.get("regions") or e["id"] in {"va-national-cemeteries"}, e["id"]
     names = " ".join(r["name"] for r in cat["rejected"])
     for rejected in ("Chicago", "Kitchener", "Sanborn", "Pleiades", "World Historical Gazetteer", "KVK", "KBO"):
         assert rejected in names, rejected

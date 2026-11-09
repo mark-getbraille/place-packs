@@ -182,3 +182,48 @@ def test_the_hand_supplied_us_sources_are_automatic_now():
     """NRHP, PAD-US, FAA airports, Amtrak stations and IMLS libraries no longer need a hand-supplied file."""
     for sid in ("nrhp", "padus", "faa-airports", "ntad-amtrak", "imls-libraries"):
         assert entry_of(sid)["fetch"]["method"] != "manual", sid
+
+
+# ------------------------------------------------------------------------------------------- dated areas
+
+
+def county_pack(path):
+    """A pack with two versions of a made-up county over one square: Old County 1790-01 to 1850-12, New County
+    from 1851-01 on (still current), and a town that kept its name."""
+    square = [(43.9, -72.1), (43.9, -71.9), (44.1, -71.9), (44.1, -72.1), (43.9, -72.1)]
+    w = PackWriter(str(path), 202611)
+    w.add_area("newberry-counties:1", "newberry-counties", "Old County", "county", "county", [square], 179001, 185012)
+    w.add_area("newberry-counties:2", "newberry-counties", "New County", "county", "county", [square], 185101, None)
+    w.add_area("census-places:1", "census-places", "Madeupton", "town", "census-places",
+               [[(43.99, -72.01), (43.99, -71.99), (44.01, -71.99), (44.01, -72.01), (43.99, -72.01)]])
+    w.finish({"region_id": VT, "state": "Vermont", "country": "United States"})
+    return str(path)
+
+
+def test_areas_at_and_lookup_keep_only_the_county_of_the_date(tmp_path):
+    """An undated picture gets only the current county (as lookup() does for undated pictures); 1820 the old one;
+    2005 the new one; the writer never stores an open end as None."""
+    pack = county_pack(tmp_path / "c.osmpack")
+    reader = PackReader(pack)
+    assert all(r["last"] is not None for r in reader._rows("SELECT last FROM areas"))
+    f = Finder(packs=[reader], water=False)
+    names = lambda when: [a[0] for a in f.areas_at(44.0, -72.0, when=when) if a[1] == "county"]  # noqa: E731
+    assert names(None) == ["New County"]
+    assert names("1820-05-01") == ["Old County"]
+    assert names("2005-07-04") == ["New County"]
+    assert f.lookup(44.0, -72.0).county == "New County"
+    assert f.lookup(44.0, -72.0, when="1820-05-01").county == "Old County"
+    assert f.lookup(44.0, -72.0, when="2005-07-04").county == "New County"
+    assert f.lookup(44.0, -72.0, when="1820-05-01").town == "Madeupton"     # no older record: the oldest is kept
+
+
+def test_choose_is_safe_without_builds_and_with_an_open_end():
+    """choose, valid and until accept builds=None, and a row without a last month (None) counts as current."""
+    from placepacks.lookup import choose, until, valid
+    from placepacks.when import When
+    row = {"name": "Old County", "first": 179001, "last": 185012}
+    assert choose([row], When.parse("1820-05-01"), 202611, 162901, None)[0] == [row]
+    assert choose([row], When.parse("1900-05-01"), 202611, 162901, None)[0] == []
+    still = {"name": "New County", "first": 185101, "last": None}
+    assert choose([row, still], When.parse(None), 202611, 162901, None)[0] == [still]
+    assert valid(185101, None, When.parse("2005-07-04"), 202611, None) and until(None, 202611, None) == 999912

@@ -212,8 +212,12 @@ def test_long_places_are_shortened_and_paths_stay_short(tmp_path):
     assert len(stem) + len(".JPG.xmp") <= naming.FILE_NAME_LIMIT
     assert stem.startswith("2005-07-14 Grand Old Pelican") and stem.endswith(" (IMG_1234)")
     assert not stem.endswith(" ") and "  " not in stem
-    deep = os.path.join(str(tmp_path), *(["Gullwing Coast summer pictures"] * 4))
+    # A folder deep enough that the long place must be shortened, measured from the temporary folder (whose own
+    # length differs: Windows' is much longer).
+    room = naming.PATH_LIMIT - 80 - len(os.path.abspath(str(tmp_path))) - 1
+    deep = os.path.join(str(tmp_path), "y" * max(room, 1))
     stem = naming.wanted_stem(p, "Gullwing Coast 2005", "date-place-name", deep)
+    assert stem is not None and stem.endswith(" (IMG_1234)")
     assert len(os.path.join(os.path.abspath(deep), stem + ".jpg")) + naming.NUMBER_ROOM <= naming.PATH_LIMIT
     deeper = os.path.join(str(tmp_path), "x" * (naming.PATH_LIMIT - 30))
     assert naming.wanted_stem(p, "Gullwing Coast 2005", "date-place-name", deeper) is None

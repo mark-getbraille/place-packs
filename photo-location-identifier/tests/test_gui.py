@@ -342,7 +342,7 @@ def test_review_shows_old_and_new_names(app, tmp_path):
     plan = plan_of(week(tmp_path / "a"), finder, detail="town")
     review = dialogs.ReviewWindow(None, plan)
     assert_accessible(review)
-    assert "will get a new name with the exact place" in review.intro.GetLabel()
+    assert "will get a new name with the exact place" in " ".join(review.intro.GetLabel().split())
     row = review.folders.GetString(0)
     assert row.startswith("Pelican Point 2005") and "with a new name" in row
     details = review.details.GetValue()

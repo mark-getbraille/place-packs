@@ -56,6 +56,9 @@ texts in `LICENSES/`.
   commercial or non-commercial, without licensing or permission fees"; credit the Atlas and the Newberry Library.
   The Creative Commons note inside the older download is superseded by those terms.
 - **CC BY 4.0 city data (Washington DC):** credit the District of Columbia as in `SOURCES.md`.
+- **Open Government Licence - Toronto (DineSafe):** "Contains information licensed under the Open Government
+  Licence - Toronto".
+- **OpenHistoricalMap:** CC0, except features with their own `license` tag, which the packs leave out.
 - **Personal data:** the business sources keep only a business's trade name, class, position and dates. Records
   that may be someone's home (home-based businesses, contractors, mobile caterers, childminders, short-term rentals,
   individual licences) and licensee names that look like a person's are left out; see `SOURCES.md`. A takedown

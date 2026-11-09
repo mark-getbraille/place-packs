@@ -10,11 +10,14 @@ Each source's catalogue "fetch" says how:
   tiger_counties  the TIGER/Line files of the region's counties (listed from the Census directory page)
   duckdb          the region's slice of remote Parquet (Overture, Foursquare), by bounding box (range reads)
   wikidata        one query to the Wikidata Query Service, by bounding box
+  overpass        one query to an Overpass API (OpenHistoricalMap), by bounding box
   gtfs            the region's feeds of the Mobility Database catalogue whose licence allows redistribution
   socrata         a Socrata open-data portal's dataset(s), through its SODA API without an app token: each query's
                   $select/$where/$group (one row per permit or licence and name, with its first and last date),
                   paged with $limit/$offset into one CSV; the version is each dataset's rowsUpdatedAt
   wfs             a WFS layer (GeoServer) as CSV, paged with startIndex/count; the version is its feature count
+  ckan_sql        a CKAN portal's datastore SQL (datastore_search_sql): each query grouped to one row per licence
+                  and name, paged with LIMIT/OFFSET into one CSV (Boston); the version is the month
   arcgis          an ArcGIS REST layer (FeatureServer or MapServer, no token): the ids inside the region's box (and
                   the entry's "where"), then the records in chunks of ids, as CSV with "_lat" and "_lon" (and
                   "_rings" for polygons, read as areas); dates become YYYY-MM-DD; the version is the layer's last edit
@@ -215,6 +218,9 @@ def national_files(entry, values, opener=None):
                   f"address", flush=True)
             url = nad_url(values, opener) if entry["id"] == "nad" else f["url"].format(**values)
             return [(url, os.path.basename(urllib.parse.urlsplit(url).path), None)]
+    if f.get("urls"):
+        # Several fixed files of one source (StatCan's facility databases).
+        return [(u.format(**values), os.path.basename(urllib.parse.urlsplit(u).path), None) for u in f["urls"]]
     if f.get("per_country"):
         out = []
         for cc in entry["countries"]:
@@ -551,6 +557,39 @@ def fetch_socrata(entry, folder, fingerprint, opener=None, sleep=time.sleep):
             **({} if rows else {"status": "failed", "reason": "the portal returned no rows"})}
 
 
+def fetch_ckan_sql(entry, folder, fingerprint, opener=None):
+    """A CKAN datastore SQL source (see the module docstring): fetch = {"url": the portal's datastore_search_sql
+    address, "queries": [SQL without LIMIT, with an ORDER BY], "page": rows per request}. Returns the fetched.json
+    entry."""
+    f = entry["fetch"]
+    version = datetime.date.today().strftime("%Y-%m")
+    if fingerprint:
+        return {"ok": True, "version": version, "path": "", "date": ""}
+    os.makedirs(folder, exist_ok=True)
+    target = os.path.join(folder, entry["id"] + ".csv")
+    page, rows, fields = int(f.get("page", 5000)), 0, None
+    with open(target + ".partial", "w", newline="", encoding="utf-8") as out:
+        w = None
+        for sql in f["queries"]:
+            offset = 0
+            while True:
+                url = f["url"] + "?" + urllib.parse.urlencode({"sql": f"{sql} LIMIT {page} OFFSET {offset}"})
+                records = read_json(url, opener).get("result", {}).get("records", [])
+                for rec in records:
+                    if w is None:
+                        fields = [k for k in rec if not k.startswith("_")]
+                        w = csv.DictWriter(out, fieldnames=fields, extrasaction="ignore")
+                        w.writeheader()
+                    w.writerow({k: "" if rec.get(k) is None else rec.get(k) for k in fields})
+                rows += len(records)
+                if len(records) < page:
+                    break
+                offset += page
+                time.sleep(f.get("pause", 1))
+    os.replace(target + ".partial", target)
+    return {"ok": rows > 0, "version": version, "path": target, "date": datetime.date.today().isoformat()}
+
+
 def fetch_wfs(entry, folder, fingerprint, opener=None, sleep=time.sleep):
     """A WFS layer as CSV (see the module docstring): fetch = {"url": GetFeature address with the layer,
     "properties": the columns, "sort": a column for stable paging, "page": features per request}."""
@@ -674,7 +713,7 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
             # The publisher's own version (blobId and rowsUpdatedAt), the same in the plan and in the build.
             url, name, version = national_files(entry, values)[0]
             path = os.path.join(folder, name)
-        elif f.get("per_country") or f.get("listing"):
+        elif f.get("per_country") or f.get("listing") or f.get("urls"):
             path, version = folder, ""
         else:
             path, version = os.path.join(folder, os.path.basename(urllib.parse.urlsplit(url).path)), ""
@@ -699,6 +738,23 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
             download(url + name, os.path.join(folder, name), pause)
         out.update(ok=bool(names), path=folder, date=datetime.date.today().isoformat())
         return out
+    if method == "overpass":
+        # One Overpass query for the region's box ({south},{west},{north},{east} in the entry's "query").
+        out["version"] = datetime.date.today().strftime("%Y-%m")
+        if fingerprint:
+            out["ok"] = True
+            return out
+        west, south, east, north = region["bbox"]
+        body = urllib.parse.urlencode({"data": f["query"].format(south=south, west=west, north=north,
+                                                                  east=east)}).encode()
+        target = os.path.join(folder, entry["id"] + ".json")
+        os.makedirs(folder, exist_ok=True)
+        with request(url, "POST", body, {"Content-Type": "application/x-www-form-urlencoded"}, timeout=400) as r, \
+                open(target, "wb") as fh:
+            fh.write(r.read())
+        time.sleep(pause)
+        out.update(ok=True, path=target, date=datetime.date.today().isoformat())
+        return out
     if method == "gtfs":
         return fetch_gtfs(entry, region, url, folder, pause, fingerprint)
     if method == "socrata":
@@ -707,6 +763,8 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         return fetch_wfs(entry, folder, fingerprint)
     if method == "arcgis":
         return fetch_arcgis(entry, region, folder, fingerprint)
+    if method == "ckan_sql":
+        return fetch_ckan_sql(entry, folder, fingerprint)
     # http
     if fingerprint:
         if f.get("no_head"):

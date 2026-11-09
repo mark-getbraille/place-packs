@@ -118,12 +118,32 @@ def merge_local(new_path, old_path):
     try:
         con.execute("ATTACH DATABASE ? AS old", (old_path,))
         removed = "(SELECT key FROM main.removals)"
+        have = {s: {r[0] for r in con.execute(f"SELECT name FROM {s}.sqlite_master WHERE type = 'table'")}
+                for s in ("main", "old")}
+        typed = {"types", "point_types", "area_types"}
         for table in ("points", "areas", "lines", "ranges"):
-            cols = [r[1] for r in con.execute(f"PRAGMA main.table_info({table})") if r[1] != "id"]
+            # The columns both packs have (an older pack may lack one a newer pack has).
+            old_cols = {r[1] for r in con.execute(f"PRAGMA old.table_info({table})")}
+            cols = [r[1] for r in con.execute(f"PRAGMA main.table_info({table})") if r[1] != "id" and r[1] in old_cols]
             c = ", ".join(cols)
+            start = con.execute(f"SELECT COALESCE(MAX(id), 0) FROM main.{table}").fetchone()[0]
             con.execute(f"INSERT INTO main.{table} ({c}) SELECT {c} FROM old.{table} o WHERE o.key NOT IN {removed} "
                         f"AND NOT EXISTS (SELECT 1 FROM main.{table} m WHERE m.key = o.key AND m.first = o.first "
-                        f"AND m.name IS o.name)")
+                        f"AND m.name IS o.name) ORDER BY o.id")
+            links = {"points": "point_types", "areas": "area_types"}.get(table)
+            if links and typed <= have["main"] and typed <= have["old"]:
+                # The kept rows' type phrases: the same rows in the same order, so the i-th old row is start + i.
+                kept = [r[0] for r in con.execute(
+                    f"SELECT o.id FROM old.{table} o WHERE o.key NOT IN {removed} AND EXISTS (SELECT 1 FROM main."
+                    f"{table} m WHERE m.id > ? AND m.key = o.key AND m.first = o.first AND m.name IS o.name) "
+                    f"ORDER BY o.id", (start,))]
+                for i, old_id in enumerate(kept, start=1):
+                    row = con.execute(f"SELECT t.name FROM old.{links} l JOIN old.types t ON t.id = l.type WHERE "
+                                      f"l.id = ?", (old_id,)).fetchone()
+                    if row:
+                        con.execute("INSERT OR IGNORE INTO main.types (name) VALUES (?)", (row[0],))
+                        tid = con.execute("SELECT id FROM main.types WHERE name = ?", (row[0],)).fetchone()[0]
+                        con.execute(f"INSERT OR REPLACE INTO main.{links} VALUES (?, ?)", (start + i, tid))
         con.commit()
         con.execute("DETACH DATABASE old")
     finally:

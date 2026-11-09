@@ -9,10 +9,10 @@ User-Agent that names the project, and saves the answer (SPARQL JSON); this read
 
 import json
 
-from placepacks import fmt
+from placepacks import fmt, types
 from placepacks.readers import reader
 
-QUERY = """SELECT ?item ?itemLabel ?coord ?class ?start ?end WHERE {{
+QUERY = """SELECT ?item ?itemLabel ?coord ?class ?classLabel ?start ?end WHERE {{
   SERVICE wikibase:box {{ ?item wdt:P625 ?coord .
     bd:serviceParam wikibase:cornerSouthWest "Point({west} {south})"^^geo:wktLiteral .
     bd:serviceParam wikibase:cornerNorthEast "Point({east} {north})"^^geo:wktLiteral . }}
@@ -33,7 +33,16 @@ CLASSES = {"Q41176": "building", "Q4989906": "landmark", "Q33506": "landmark", "
            # national cemeteries (other cemeteries come from GNIS and OpenStreetMap); state parks.
            "Q39715": "landmark", "Q27193297": "landmark", "Q1785071": "landmark", "Q57821": "landmark",
            "Q245016": "campus", "Q18691599": "campus", "Q695850": "campus", "Q1324633": "campus",
-           "Q31407679": "landmark", "Q12585720": "cemetery", "Q1761072": "park"}
+           "Q31407679": "landmark", "Q12585720": "cemetery", "Q1761072": "park",
+           # Current and former railway stations; ski areas, amusement parks, theatres, cinemas, concert halls, hotels,
+           # shopping centres and malls, department stores; factories, mills (grist, saw, water), mines, breweries,
+           # trading posts and ghost towns: each with its opening and closing dates when Wikidata has them.
+           "Q4663385": "transit", "Q106772341": "transit", "Q130003": "park", "Q3034650": "park",
+           "Q194195": "park", "Q24354": "landmark", "Q41253": "business", "Q1060829": "landmark",
+           "Q27686": "business", "Q11315": "business", "Q31374404": "business", "Q216107": "business",
+           "Q83405": "building", "Q44494": "landmark", "Q623605": "landmark", "Q505213": "landmark",
+           "Q185187": "landmark", "Q820477": "landmark", "Q131734": "business", "Q39463": "landmark",
+           "Q74047": "settlement"}
 
 
 def query_for(region):
@@ -63,6 +72,9 @@ def read(path, entry, region, writer):
         first = fmt.parse_month(b.get("start", {}).get("value", ""))
         last = fmt.parse_month(b.get("end", {}).get("value", ""))
         seen.add(item)
-        writer.add_point(f"wikidata:{item}", entry["id"], name, cls, f"wikidata={item}", lat, lon, first, last)
+        # The fine type: the English label of the class the item is an instance of ("lighthouse", "fort").
+        kind = types.humanise(b.get("classLabel", {}).get("value", "")) or None
+        writer.add_point(f"wikidata:{item}", entry["id"], name, cls, f"wikidata={item}", lat, lon, first, last,
+                         type=kind)
         count += 1
     return count

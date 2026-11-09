@@ -1,10 +1,12 @@
 """OpenStreetMap extracts (ODbL): named points, named areas (closed ways and multipolygons, with holes) and named
 streets. Keys are OpenStreetMap's own ids ("n123", "w45", "r6"), so a renamed shop keeps its id and gets a new row.
-No house numbers and no tags except the main one are kept."""
+No house numbers and no tags except the main one are kept; the fine type ("pizza restaurant", from amenity, shop,
+cuisine, craft, tourism, leisure, healthcare, man_made, historic, religion and denomination) is kept beside the
+class (placepacks.types)."""
 
 import xml.etree.ElementTree as ET
 
-from placepacks import fmt
+from placepacks import fmt, types
 from placepacks.readers import reader
 
 ROAD_KINDS = {"motorway", "trunk", "primary", "secondary", "tertiary", "unclassified", "residential",
@@ -100,10 +102,11 @@ def _add(writer, source, key, tags, points=None, rings=None, point=None):
     if not found:
         return
     tag = f"{found[0]}={found[1]}"
+    kind = types.osm(tags) or None          # the fine type: "pizza restaurant", "catholic church", "hardware store"
     if rings is not None:
-        writer.add_area(key, source, name, found[2], tag, rings)
+        writer.add_area(key, source, name, found[2], tag, rings, type=kind)
     elif point is not None:
-        writer.add_point(key, source, name, found[2], tag, *point)
+        writer.add_point(key, source, name, found[2], tag, *point, type=kind)
 
 
 @reader("osm")

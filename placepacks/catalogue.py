@@ -16,7 +16,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # requirements (see sources.json "licences").
 ALLOWED = {"ODbL-1.0", "CDLA-Permissive-2.0", "Apache-2.0", "OGL-Canada-2.0", "OGL-UK-3.0", "CC0-1.0", "CC-BY-4.0",
            "US-Government-Work", "etalab-2.0", "per-feed-open", "per-source-open", "PDDL-1.0", "ODC-By-1.0",
-           "NYC-Open-Data", "OPEN-NY", "public-domain-marked", "Newberry-open"}
+           "NYC-Open-Data", "OPEN-NY", "public-domain-marked", "Newberry-open", "OGL-Toronto"}
 SHARE_ALIKE = {"ODbL-1.0"}
 
 

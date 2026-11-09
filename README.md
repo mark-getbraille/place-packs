@@ -15,6 +15,9 @@ listed with its licence in [SOURCES.md](SOURCES.md). The packs are made for the
 [Digital Accessibility Toolkit](https://getbraille.com)'s picture describer and the Photo Location Identifier
 (`photo-location-identifier/`), and anyone may use them under their licences.
 
+Every place can also carry a fine type beside its class, such as "pizza restaurant", "hardware store", "catholic
+church" or "lighthouse" (`type` in a lookup's result; `search_names(..., type="bakery")`). See FORMAT.md.
+
 ## What a lookup says
 
 - "at Riverside Park, West 120th Street, New York"
@@ -61,6 +64,8 @@ How far back each layer goes:
 | National Register of Historic Places, bridges (FHWA), dams (USACE), public airports (FAA), PA historical markers | From the listing date, the year built or completed, the activation date or the dedication date. |
 | PAD-US parks and protected areas, NPS points of interest, Forest Service recreation sites, ferry terminals, Amtrak stations, military installations, libraries, private schools and colleges | From the first build (PAD-US also from the year an area was established). All read from the agencies' own public services and files each month, with no hand step. |
 | Lighthouses (USCG Light List), former military sites (FUDS), VA national cemeteries | The lights and sites listed now, from the first build; lighthouses, forts, military and Coast Guard bases and national cemeteries also come from Wikidata with their founding and closing dates, so a 1960 picture at a base closed in 1995 gets the base. Cemeteries have their own class (cemetery). |
+| OpenHistoricalMap (US and Canada) | Each feature's own start and end dates (old businesses, buildings, stations, forts, mills), often a century or more back. |
+| Toronto food premises (DineSafe), Boston food licences, StatCan facilities, Aboriginal lands of Canada, US tribal areas | Inspection and licence dates where the source has them; otherwise from the first build. |
 | Washington DC business licences, Minneapolis food inspections | Licence issue and end dates; first and last inspections. |
 | Overture places | From the first build. Past monthly releases (for example one a quarter) can be merged first while Overture still keeps them. |
 | Foursquare Open Source Places | Foursquare's own creation and closing dates. |

@@ -96,6 +96,11 @@
    "name": "The Newberry Library's open terms: available for any lawful purpose, commercial or non-commercial, without licensing or permission fees",
    "url": "https://www.newberry.org/rights-and-reproductions",
    "file": ""
+  },
+  "OGL-Toronto": {
+   "name": "Open Government Licence - Toronto",
+   "url": "https://open.toronto.ca/open-data-license/",
+   "file": ""
   }
  },
  "accepted": [
@@ -570,7 +575,9 @@
     "Military": "landmark"
    },
    "history": "The current names, and older names as they change.",
-   "notes": "Cemeteries have their own class (cemetery). Military features (forts, camps, bases, many of them gone) are kept as landmarks; GNIS marks a feature that no longer exists with \"(historical)\" in its name, and that name is kept as it is, so a lookup says \"Fort Example (historical)\"."
+   "notes": "Cemeteries have their own class (cemetery). Military features (forts, camps, bases, many of them gone) are kept as landmarks; GNIS marks a feature that no longer exists with \"(historical)\" in its name, and that name is kept as it is, so a lookup says \"Fort Example (historical)\".",
+   "type_column": "feature_class",
+   "type_map": "gnis"
   },
   {
    "id": "nces-schools",
@@ -794,7 +801,8 @@
     "key": "Code"
    },
    "name_template": "{City} Amtrak station",
-   "notes": "Train stations only (Amtrak's bus stops are left out)."
+   "notes": "Train stations only (Amtrak's bus stops are left out).",
+   "type": "railway station"
   },
   {
    "id": "gtfs",
@@ -856,7 +864,7 @@
     "pause": 10
    },
    "history": "Wikidata's own start and end dates (inception P571, start P580, dissolved or demolished P576, end P582), often decades back.",
-   "notes": "Classes kept include lighthouses and light stations, forts and fortifications, military, air, naval and Coast Guard bases and stations, national cemeteries and state parks, each with its inception and closing dates when Wikidata has them."
+   "notes": "Classes kept include lighthouses and light stations, forts and fortifications, military, air, naval and Coast Guard bases and stations, national cemeteries, state parks, current and former railway stations, ski areas, amusement parks, theatres, cinemas, hotels, shopping centres, department stores, factories, mills, mines, breweries, trading posts and ghost towns, each with its inception and closing dates when Wikidata has them. The fine type is the English label of the item's class."
   },
   {
    "id": "cgndb",
@@ -919,25 +927,38 @@
    "kind": "points",
    "cls": "public",
    "fetch": {
-    "method": "manual",
-    "folder": "inputs/statcan",
-    "note": "Put the ODEF, ODHF and ODCAF CSV files in inputs/statcan/."
+    "method": "national",
+    "urls": [
+     "https://www150.statcan.gc.ca/n1/en/pub/37-26-0001/2022001/ODEF_v2.1.zip",
+     "https://www150.statcan.gc.ca/n1/en/pub/13-26-0001/2020001/ODHF_v1.1.zip",
+     "https://www150.statcan.gc.ca/n1/en/pub/21-26-0001/2020001/ODCAF_V1.0.zip"
+    ],
+    "pause": 2
    },
-   "member": "*.csv",
+   "member": "[Oo][Dd]*_[vV]*.csv",
    "columns": {
-    "lat": "Latitude",
-    "lon": "Longitude",
+    "lat": {
+     "first_of": [
+      "Latitude",
+      "latitude"
+     ]
+    },
+    "lon": {
+     "first_of": [
+      "Longitude",
+      "longitude"
+     ]
+    },
     "name": {
      "first_of": [
       "Facility_Name",
-      "facility_name",
-      "Name"
+      "facility_name"
      ]
     },
     "key": {
      "first_of": [
-      "index",
-      "Index"
+      "Index",
+      "index"
      ]
     }
    },
@@ -945,13 +966,23 @@
     "column": {
      "first_of": [
       "Prov_Terr",
-      "province",
-      "Province"
+      "province"
      ]
     },
     "equals": "{code}"
    },
-   "history": "Releases as published."
+   "history": "Releases as published.",
+   "split_file": "ODXX_v1.csv",
+   "encoding": "latin-1",
+   "type_column": {
+    "first_of": [
+     "Facility_Type",
+     "odhf_facility_type",
+     "ODCAF_Facility_Type"
+    ]
+   },
+   "type_map": "humanise",
+   "notes": "Downloaded from Statistics Canada's Linkable Open Data Environment (ODEF 2.1, ODHF 1.1, ODCAF 1.0) at each build (no hand step); split by province."
   },
   {
    "id": "ban",
@@ -1213,7 +1244,7 @@
     "queries": [
      {
       "dataset": "43nn-pn8j",
-      "select": "camis AS key, dba AS name, max(latitude) AS lat, max(longitude) AS lon, min(inspection_date) AS first, max(inspection_date) AS last",
+      "select": "camis AS key, dba AS name, max(cuisine_description) AS cuisine, max(latitude) AS lat, max(longitude) AS lon, min(inspection_date) AS first, max(inspection_date) AS last",
       "where": "inspection_date > '1901-01-01' AND latitude > 1",
       "group": "camis, dba"
      }
@@ -1233,7 +1264,9 @@
    "aggregate": true,
    "still_open_months": 24,
    "history": "Each establishment's earliest and latest inspection dates (one record per permit and name, so a renamed business keeps its old name with its own dates); one inspected within the last two years is taken as still open. DOHMH keeps about three years of inspections.",
-   "notes": "New establishments not yet inspected carry the date 1900-01-01 and are left out until their first inspection."
+   "notes": "New establishments not yet inspected carry the date 1900-01-01 and are left out until their first inspection.",
+   "type_column": "cuisine",
+   "type_map": "cuisine"
   },
   {
    "id": "nys-food-service-inspections",
@@ -1685,7 +1718,9 @@
    },
    "skip_names": "^(?!.*\\b(LLC|L\\.L\\.C|INC|CORP|CORPORATION|CO|COMPANY|LTD|LP|LLP|PC|PLLC|THE|CLUB|ASSOCIATION|ASSN|CHURCH|LODGE|POST|SOCIETY|FOUNDATION|TRUST|GROUP|ENTERPRISES?|HOLDINGS|DBA)\\b)[A-Za-z'\\-]+,\\s*[A-Za-z'\\-\\. ]+$",
    "history": "Each licence from its original issue date; an inactive licence ends at its expiry. Keyed by the licence number, so a new licence at the same address is a separate dated record.",
-   "notes": "Only premises open to the public (restaurants, bars, shops, hotels, wineries and breweries); additional bars, wholesalers, importers, direct shippers and temporary permits are left out. The trade name is used, or the licensee's name when there is none; a licensee name that looks like a person's (\"Surname, Given\") is left out."
+   "notes": "Only premises open to the public (restaurants, bars, shops, hotels, wineries and breweries); additional bars, wholesalers, importers, direct shippers and temporary permits are left out. The trade name is used, or the licensee's name when there is none; a licensee name that looks like a person's (\"Surname, Given\") is left out.",
+   "type_column": "kind",
+   "type_map": "humanise"
   },
   {
    "id": "colorado-liquor-licences",
@@ -1823,7 +1858,9 @@
     "*": ""
    },
    "history": "Each business location's own start and end dates, back to the 1960s; keyed by the location's id, so a business that moved or was renamed keeps its old record with its dates.",
-   "notes": "Only storefront business types (restaurants, bars, shops, hotels and motels (not short-term rentals or bed and breakfasts), petrol stations, garages, salons, laundries, banks, cinemas, gyms; by NAICS code) and only the business's trade name (dba_name): offices, contractors and home services, which are often registered at a home address, and owners' names are left out."
+   "notes": "Only storefront business types (restaurants, bars, shops, hotels and motels (not short-term rentals or bed and breakfasts), petrol stations, garages, salons, laundries, banks, cinemas, gyms; by NAICS code) and only the business's trade name (dba_name): offices, contractors and home services, which are often registered at a home address, and owners' names are left out.",
+   "type_column": "naics",
+   "type_map": "naics"
   },
   {
    "id": "la-businesses",
@@ -1897,7 +1934,9 @@
     ]
    ],
    "history": "Each business location's own start and end dates; keyed by the location account, so a renamed or moved business keeps its old record with its dates.",
-   "notes": "Only storefront business types (by NAICS code) and only the trade name (dba_name), as for San Francisco; the placeholder position 34.0, -118.0 is left out."
+   "notes": "Only storefront business types (by NAICS code) and only the trade name (dba_name), as for San Francisco; the placeholder position 34.0, -118.0 is left out.",
+   "type_column": "naics",
+   "type_map": "naics"
   },
   {
    "id": "nyc-dcwp-licences",
@@ -1958,7 +1997,9 @@
     "*": ""
    },
    "history": "Each licence from its creation date to its expiry or closing; keyed by the licence number.",
-   "notes": "Only premises licences of storefront businesses, and only their trade names: home improvement contractors, individual licences (vendors, drivers, guides) and licences without a trade name, which would show a person's name or home address, are left out."
+   "notes": "Only premises licences of storefront businesses, and only their trade names: home improvement contractors, individual licences (vendors, drivers, guides) and licences without a trade name, which would show a person's name or home address, are left out.",
+   "type_column": "kind",
+   "type_map": "humanise"
   },
   {
    "id": "fdic-branches",
@@ -2052,7 +2093,9 @@
     "*": ""
    },
    "history": "The establishments rated now, each from its latest rating date (they are listed while they trade), then month by month from the first build; keyed by the FHRS id. England, Wales, Northern Ireland and Scotland (FHIS).",
-   "notes": "Read from the FSA's open data files (one XML file per local authority, no key or login). Only restaurants, pubs, takeaways, shops and hotels: mobile caterers, home caterers, childminders and care premises, which may be private homes, are left out. No ratings or scores are kept."
+   "notes": "Read from the FSA's open data files (one XML file per local authority, no key or login). Only restaurants, pubs, takeaways, shops and hotels: mobile caterers, home caterers, childminders and care premises, which may be private homes, are left out. No ratings or scores are kept.",
+   "type_column": "BusinessType",
+   "type_map": "fsa"
   },
   {
    "id": "vic-sands-mcdougall",
@@ -2419,7 +2462,9 @@
    },
    "history": "From the first build on.",
    "notes": "Read from the NPS public datasets service (no API key). Each name carries its park (\"Visitor Center (Saint-Gaudens National Historical Park)\"), since many are generic. Only named places a photo can show: trailheads, campgrounds, visitor centres, overlooks, peaks, waterfalls, historic buildings and sites, monuments; parking lots, restrooms, mile markers and benches are left out.",
-   "name_template": "{POINAME} ({UNITNAME})"
+   "name_template": "{POINAME} ({UNITNAME})",
+   "type_column": "POITYPE",
+   "type_map": "humanise"
   },
   {
    "id": "usfs-recreation-sites",
@@ -2472,7 +2517,9 @@
     "*": ""
    },
    "history": "From the first build on.",
-   "notes": "Read from the Forest Service's EDW map service (no RIDB key). Existing developed sites only; recreation residences (private cabins), dispersed camping spots and single camp units are left out."
+   "notes": "Read from the Forest Service's EDW map service (no RIDB key). Existing developed sites only; recreation residences (private cabins), dispersed camping spots and single camp units are left out.",
+   "type_column": "site_subtype",
+   "type_map": "humanise"
   },
   {
    "id": "nces-private-schools",
@@ -2693,7 +2740,9 @@
    },
    "aggregate": true,
    "history": "Each licence from its first issue date to its end (an expired one ends there); keyed by the customer number, so a renamed business keeps its old name with its dates.",
-   "notes": "Only premises in DC of storefront activities, under their trade names: rentals (one- and two-family, short-term and vacation rentals, rooming houses), contractors, salespeople and owners' and agents' names are left out."
+   "notes": "Only premises in DC of storefront activities, under their trade names: rentals (one- and two-family, short-term and vacation rentals, rooming houses), contractors, salespeople and owners' and agents' names are left out.",
+   "type_column": "BUSINESSACTIVITY",
+   "type_map": "humanise"
   },
   {
    "id": "minneapolis-food-inspections",
@@ -2846,6 +2895,215 @@
    },
    "history": "From the first build on (Wikidata gives the national cemeteries' founding dates).",
    "notes": "Cemetery sites only (about 150): never burial or gravesite records."
+  },
+  {
+   "id": "ohm",
+   "name": "OpenHistoricalMap",
+   "short": "OpenHistoricalMap",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Historical places from OpenHistoricalMap contributors (openhistoricalmap.org), CC0; features with their own licence tag are left out.",
+   "url": "https://www.openhistoricalmap.org",
+   "reader": "ohm",
+   "fetch": {
+    "method": "overpass",
+    "url": "https://overpass-api.openhistoricalmap.org/api/interpreter",
+    "query": "[out:json][timeout:300];nw[\"name\"][~\"^(start_date|end_date)$\"~\".\"]({south},{west},{north},{east});out center tags;",
+    "pause": 10
+   },
+   "history": "Each feature's own start and end dates as mapped in OpenHistoricalMap (old businesses, buildings, stations, forts, mills), often a century back or more.",
+   "notes": "Read from OHM's Overpass API, one query per region (OHM's planet files are archived and cannot be downloaded). Named nodes and ways with a start or end date, as points (a way at its centre); lines (streets, railway lines, rivers), boundaries and relations are left out. OHM's data is CC0 except features carrying their own licence tag, which are left out. About 1,900 features in Vermont's box and 34,000 in Ohio's."
+  },
+  {
+   "id": "statcan-odrsf",
+   "name": "Statistics Canada Open Database of Recreational and Sport Facilities",
+   "short": "Statistics Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Statistics Canada, The Open Database of Recreational and Sport Facilities) and the municipal open data listed in its sources.",
+   "url": "https://www.statcan.gc.ca/en/lode/databases/odrsf",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "park",
+   "fetch": {
+    "method": "national",
+    "url": "https://www150.statcan.gc.ca/n1/en/pub/21-26-0002/2021001/ODRSF_v1.0.zip",
+    "pause": 2
+   },
+   "member": "ODRSF_v1.0.csv",
+   "encoding": "latin-1",
+   "columns": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "name": "Facility_Name",
+    "key": "Index",
+    "class_column": "ODRSF_facility_type"
+   },
+   "class_map": {
+    "multi-use path": "",
+    "pathways": "",
+    "pathway": "",
+    "trail": "",
+    "trails": "",
+    "*": "park"
+   },
+   "type_column": "ODRSF_facility_type",
+   "type_map": "humanise",
+   "skip_names": "^\\.\\.$",
+   "filter": {
+    "column": "Prov_Terr",
+    "equals": "{code}"
+   },
+   "history": "The 2021 release (one edition so far).",
+   "notes": "Named facilities only (parks, arenas, pools, fields, playgrounds); paths and trails, which are lines, are left out. About 114,000 records in Ontario and 22,000 in British Columbia before that.",
+   "split_file": "ODRSF_v1.0.csv"
+  },
+  {
+   "id": "clss-aboriginal-lands",
+   "name": "Aboriginal Lands of Canada Legislative Boundaries (Canada Lands Survey System)",
+   "short": "Natural Resources Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Natural Resources Canada, Canada Lands Survey System: Aboriginal Lands of Canada Legislative Boundaries).",
+   "url": "https://open.canada.ca/data/en/dataset/522b07b9-78e2-4819-b736-ad9208eb1067",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "region",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://proxyinternet.nrcan-rncan.gc.ca/arcgis/rest/services/CLSS-SATC/CLSS_Administrative_Boundaries/MapServer/0",
+    "fields": "adminAreaId,adminAreaNameEng,distributionTypeEng",
+    "simplify": 0.0005,
+    "page": 100,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "rings": "_rings",
+    "name": "adminAreaNameEng",
+    "key": "adminAreaId"
+   },
+   "type_column": "distributionTypeEng",
+   "type_map": "humanise",
+   "history": "From the first build on.",
+   "notes": "About 3,400 Indian reserves, settlements and other Aboriginal lands, as areas (class region: named areas, not towns)."
+  },
+  {
+   "id": "toronto-dinesafe",
+   "name": "Toronto DineSafe food premises inspections",
+   "short": "the City of Toronto",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-ontario"
+   ],
+   "licence": "OGL-Toronto",
+   "attribution": "Contains information licensed under the Open Government Licence - Toronto (DineSafe, Toronto Public Health).",
+   "url": "https://open.toronto.ca/dataset/dinesafe/",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "restaurant",
+   "fetch": {
+    "method": "http",
+    "url": "https://ckan0.cf.opendata.inter.prod-toronto.ca/datastore/dump/75dbb3ff-8281-4f03-9de2-bd1214761302?fields=estId,estName,inspectionDate,latitude,longitude",
+    "file": "toronto-dinesafe.csv",
+    "no_head": true,
+    "pause": 2
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "estName",
+    "key": "estId",
+    "first": "inspectionDate",
+    "last": "inspectionDate"
+   },
+   "aggregate": true,
+   "still_open_months": 24,
+   "history": "Each food premises' first and last inspection in the current file (about two years), one record per establishment and name.",
+   "notes": "Only the establishment's name, position and inspection dates are read (no infractions or fines)."
+  },
+  {
+   "id": "boston-food-establishments",
+   "name": "Boston food establishment licences and inspections",
+   "short": "the City of Boston",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-massachusetts"
+   ],
+   "licence": "PDDL-1.0",
+   "attribution": "Food establishment inspections from the City of Boston (data.boston.gov), Open Data Commons PDDL.",
+   "url": "https://data.boston.gov/dataset/food-establishment-inspections",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "restaurant",
+   "fetch": {
+    "method": "ckan_sql",
+    "url": "https://data.boston.gov/api/3/action/datastore_search_sql",
+    "page": 5000,
+    "pause": 1,
+    "queries": [
+     "SELECT licenseno AS key, businessname AS name, max(descript) AS kind, min(issdttm) AS first, max(expdttm) AS last, max(location) AS point FROM \"4582bec6-2b4f-4f9e-bc55-cbaa73117f4c\" WHERE location IS NOT NULL AND businessname IS NOT NULL GROUP BY licenseno, businessname ORDER BY licenseno, businessname"
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last"
+   },
+   "type_column": "kind",
+   "type_map": "humanise",
+   "aggregate": true,
+   "history": "Each food licence from its issue date to its expiry (about 9,900 licences since 2006), one record per licence and name.",
+   "notes": "The inspection file is grouped by the portal itself to one row per licence and name; the owners' names and the violations are never read."
+  },
+  {
+   "id": "tiger-aiannh",
+   "name": "US Census Bureau TIGER/Line American Indian, Alaska Native and Native Hawaiian areas",
+   "short": "the US Census Bureau",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "American Indian, Alaska Native and Native Hawaiian areas from the U.S. Census Bureau's TIGER/Line Shapefiles (public domain).",
+   "url": "https://www.census.gov/geographies/mapping-files/time-series/geo/tiger-line-file.html",
+   "reader": "shapes",
+   "kind": "areas",
+   "cls": "region",
+   "type": "american indian area",
+   "fetch": {
+    "method": "national",
+    "url": "https://www2.census.gov/geo/tiger/TIGER{tiger_year}/AIANNH/tl_{tiger_year}_us_aiannh.zip"
+   },
+   "fields": {
+    "name": "NAMELSAD",
+    "key": "GEOID"
+   },
+   "history": "The current year's areas (seed years possible like the other TIGER layers)."
   }
  ],
  "rejected": [
@@ -3118,6 +3376,36 @@
    "name": "State and local cemetery inventories",
    "licence": "Varies",
    "reason": "None with an open licence and a simple download was found yet; GNIS and OpenStreetMap carry most named cemeteries."
+  },
+  {
+   "name": "OpenHistoricalMap planet files",
+   "licence": "CC0",
+   "reason": "The newest planet file (February 2025) is archived in S3 Glacier and cannot be downloaded (InvalidObjectState); OHM is read through its Overpass API instead."
+  },
+  {
+   "name": "Parks Canada Federal Heritage Designations (national historic sites, heritage lighthouses and railway stations)",
+   "licence": "OGL-Canada-2.0",
+   "reason": "Has designation dates but no coordinates (street addresses only), and the packs have no address geocoder."
+  },
+  {
+   "name": "TTB permittees (wineries, breweries, distilleries) and the CMS Provider of Services file",
+   "licence": "Public domain",
+   "reason": "Addresses without coordinates; placepacks has no address geocoder (lookups go from a position to a name, not back)."
+  },
+  {
+   "name": "National Heritage Areas, BLM recreation sites and Bureau of Reclamation lakes",
+   "licence": "Not found",
+   "reason": "No official open service or download was found (only third-party copies); their lands are in PAD-US."
+  },
+  {
+   "name": "Indigenous Services Canada reserve and land layers (data.sac-isc.gc.ca)",
+   "licence": "Not stated on the layers",
+   "reason": "The same lands come from the Canada Lands Survey System layer, which states the Open Government Licence - Canada."
+  },
+  {
+   "name": "NPS National Historic Landmarks as a separate layer",
+   "licence": "Public domain",
+   "reason": "Already in the National Register layer (its Is_NHL flag); not a separate source."
   }
  ],
  "candidates": [
@@ -3207,14 +3495,44 @@
    "note": "On an ArcGIS service (LouisvilleMetro, FoodServiceData) that the arcgis method can read; add once the platform's terms are read and confirmed open."
   },
   {
-   "name": "Boston food establishment inspections; Allegheny County (WPRDC) food facilities; Philadelphia licences and inspections",
-   "licence": "To confirm per portal (Boston ODC PDDL, WPRDC per dataset, OpenDataPhilly)",
-   "note": "CKAN or Carto portals: their full CSV exports are large (one row per violation); add with a grouped query (Carto SQL) or the CKAN datastore once each licence is confirmed."
-  },
-  {
    "name": "USFS trails and NPS trails",
    "licence": "Public domain (US government works)",
    "note": "Line layers on the same services as the recreation sites and points of interest; the arcgis method would need line output."
+  },
+  {
+   "name": "Vancouver business licences 1997-2012 and current",
+   "licence": "Open Government Licence - Vancouver",
+   "note": "About 959,000 dated licence records with positions; the portal's grouped export (one row per licence) could not be tested from the build sandbox (connection resets). Add as an opendatasoft export entry once tested; use trade names and storefront business types only."
+  },
+  {
+   "name": "Allegheny County (WPRDC) food facilities; Philadelphia business licences and inspections",
+   "licence": "CC0 (WPRDC); OpenDataPhilly terms to confirm",
+   "note": "WPRDC's food facility list has no queryable table (a grouped SQL query is needed to keep it small); OpenDataPhilly's catalogue API was not reachable from the sandbox."
+  },
+  {
+   "name": "Calgary, Edmonton, Ottawa, Montreal, Winnipeg, Halifax, Victoria and Mississauga business and food data",
+   "licence": "City open government licences (to confirm one by one)",
+   "note": "Not checked yet; each is a Socrata, CKAN or ArcGIS portal the existing methods can read."
+  },
+  {
+   "name": "National Trails System, Wild and Scenic Rivers, NRCan National Road Network and CanVec",
+   "licence": "Public domain / OGL-Canada",
+   "note": "Line layers: the arcgis method would need line output (and the NRN is large)."
+  },
+  {
+   "name": "Census school districts (UNSD, ELSD, SCSD), Census urban areas, older TIGER place vintages, older StatCan census subdivisions",
+   "licence": "Public domain / OGL-Canada",
+   "note": "School districts need a class the lookup and the Photo Location Identifier would not read as a town, county or trip name; older vintages would seed dated town names like the TIGER seed years."
+  },
+  {
+   "name": "Open Brewery DB, USGS stream gauges, NOAA tide stations, state rest areas and state park portals",
+   "licence": "To confirm",
+   "note": "Lower value (state parks already come from PAD-US); check each licence before adding."
+  },
+  {
+   "name": "Canadian Register of Historic Places, Quebec Répertoire du patrimoine culturel, Ontario AGCO liquor licences",
+   "licence": "To confirm",
+   "note": "Check each licence and whether it has coordinates."
   }
  ]
 }

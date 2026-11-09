@@ -27,6 +27,9 @@ Points may also have:
   "name_template": a name made of several columns, "{FACILITY_CARRIED_007} bridge over {FEATURES_DESC_006A}" (a
                record with one of them empty is left out); "name_clean": a regular expression removed from each
                of those values first ("HWY " before a road's name in the bridge inventory)
+  "type_column" and "type_map": the record's fine type ("pizza restaurant") from a column, through a table of
+               types.json ("naics", "gnis", "fsa"), "humanise", or a template ("{} restaurant"); without them the
+               record's tag (from class_map or the entry, when it is not the source id) is its type
   "kind": "areas" with columns "rings": a column of JSON rings [[[lat, lon], ...], ...] (the arcgis fetch's
                "_rings"): written as named areas (PAD-US, military installations)
   "still_open_months": N: a record whose last date is within N months of the build is still open (its last month
@@ -44,7 +47,7 @@ import os
 import re
 import zipfile
 
-from placepacks import fmt
+from placepacks import fmt, types
 from placepacks.readers import reader
 
 csv.field_size_limit(10_000_000)
@@ -255,6 +258,11 @@ def read(path, entry, region, writer):
             if not cls:
                 continue
             tag = mapped_tag or tag
+        kind = None
+        if entry.get("type_column"):
+            kind = types.of(entry.get("type_map"), _get(row, entry["type_column"])) or None
+        if not kind:
+            kind = (tag if tag and tag != source else None) or entry.get("type")
         key = _get(row, cols.get("key", ""))
         key = f"{source}:{key}" if key else None
         if key is None:
@@ -268,7 +276,7 @@ def read(path, entry, region, writer):
                 rings = [[(float(a), float(b)) for a, b in ring] for ring in json.loads(_get(row, cols["rings"]))]
             except (ValueError, TypeError):
                 continue
-            writer.add_area(key, source, name, cls, tag, rings, first, last)
+            writer.add_area(key, source, name, cls, tag, rings, first, last, type=kind)
             count += 1
             continue
         if grouped is not None:
@@ -276,16 +284,17 @@ def read(path, entry, region, writer):
             g = grouped.get((key, name.casefold()))
             if g is None:
                 grouped[(key, name.casefold())] = [cls, tag, lat, lon, first, last,
-                                                   last is None and bool(cols.get("last")), name]
+                                                   last is None and bool(cols.get("last")), name, kind]
             else:
+                g[8] = types.most_specific([g[8], kind]) or None
                 g[4] = min(x for x in (g[4], first) if x) if (g[4] or first) else None
                 still_open = g[6] or (last is None and bool(cols.get("last")))
                 g[5] = None if still_open else max(x for x in (g[5], last) if x) if (g[5] or last) else None
                 g[6] = still_open
             continue
-        writer.add_point(key, source, name, cls, tag, lat, lon, first, last)
+        writer.add_point(key, source, name, cls, tag, lat, lon, first, last, type=kind)
         count += 1
-    for (key, _), (cls, tag, lat, lon, first, last, _, name) in (grouped or {}).items():
-        writer.add_point(key, source, name, cls, tag, lat, lon, first, last)
+    for (key, _), (cls, tag, lat, lon, first, last, _, name, kind) in (grouped or {}).items():
+        writer.add_point(key, source, name, cls, tag, lat, lon, first, last, type=kind)
         count += 1
     return count

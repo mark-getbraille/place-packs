@@ -16,7 +16,7 @@ columns are read first (DESCRIBE), and each placeholder becomes the first candid
 import json
 import os
 
-from placepacks import fmt
+from placepacks import fmt, types
 from placepacks.readers import reader
 
 SLICE = ".slice.parquet"            # the ending of a region's slice written by fetch_slice
@@ -88,16 +88,19 @@ def read(path, entry, region, writer):
         cls = classify_category(entry, row.get("cls")) if entry.get("class_map") else (row.get("cls") or entry["cls"])
         if not cls:
             continue
+        # The fine type: the source's own category made a phrase ("pizza_restaurant" -> "pizza restaurant"; the
+        # last part of Foursquare's "Dining and Drinking > Restaurant > Pizzeria").
+        kind = types.humanise(row.get("cls")) or entry.get("type") or None
         key = f"{source}:{row['key']}"
         first, last = fmt.parse_month(str(row.get("first") or "")), fmt.parse_month(str(row.get("last") or ""))
         if "geojson" in row:
             geo = json.loads(row["geojson"])
             polys = geo["coordinates"] if geo["type"] == "MultiPolygon" else [geo["coordinates"]]
             rings = [[(y, x) for x, y in ring] for poly in polys for ring in poly]
-            writer.add_area(key, source, name, cls, entry.get("tag", source), rings, first, last)
+            writer.add_area(key, source, name, cls, entry.get("tag", source), rings, first, last, type=kind)
         else:
             writer.add_point(key, source, name, cls, entry.get("tag", source), float(row["lat"]), float(row["lon"]),
-                             first, last)
+                             first, last, type=kind)
         count += 1
     con.close()
     return count

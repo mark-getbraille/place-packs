@@ -61,7 +61,7 @@ class Result:
                   distance_m=None,
                   bearing="", over="", altitude_m=None, airport="", first=None, last=None, now_name="", listed=False,
                   probably=False, as_listed_now=False, no_older_record=False, when=None, latitude=None,
-                  longitude=None)
+                  longitude=None, type="")
 
     def __init__(self, **values):
         for k, v in self.FIELDS.items():
@@ -301,7 +301,27 @@ class PackReader:
                 if row["m"]:
                     old = self.source_start.get(row["source"])
                     self.source_start[row["source"]] = row["m"] if old is None else min(old, row["m"])
+        # The fine type phrases ("pizza restaurant"), in packs made since types were added (none in older ones).
+        self.types = {}
+        tables = {r["name"] for r in self._rows("SELECT name FROM sqlite_master WHERE type = 'table'")}
+        self._typed = {"types", "point_types", "area_types"} <= tables
+        if self._typed:
+            self.types = {r["id"]: r["name"] for r in self._rows("SELECT id, name FROM types")}
         _open.add(self)
+
+    def _select(self, table, where):
+        """SELECT * of points or areas with their "type" phrase (None when the pack or the row has none)."""
+        links = {"points": "point_types", "areas": "area_types"}[table]
+        if not self._typed:
+            rows = self._rows(f"SELECT * FROM {table} WHERE {where}")
+            for r in rows:
+                r["type"] = None
+            return rows
+        rows = self._rows(f"SELECT r.*, l.type AS type_id FROM {table} r LEFT JOIN {links} l ON l.id = r.id "
+                          f"WHERE {where}")
+        for r in rows:
+            r["type"] = self.types.get(r.pop("type_id"))
+        return rows
 
     def close(self):
         """Close the file (a closed reader answers nothing)."""
@@ -331,9 +351,11 @@ class PackReader:
         if coarse:
             cells = sorted({fmt.coarse_cell(lat + dy / fmt.COARSE, lon + dx / fmt.COARSE) for dy in (-1, 0, 1)
                             for dx in (-1, 0, 1)})
-            rows = self._rows(f"SELECT * FROM points WHERE ccell IN ({','.join(map(str, cells))})")
+            rows = self._select("points", f"r.ccell IN ({','.join(map(str, cells))})" if self._typed else
+                                f"ccell IN ({','.join(map(str, cells))})")
         else:
-            rows = self._rows(f"SELECT * FROM points WHERE cell IN ({','.join(map(str, _around(lat, lon)))})")
+            cells = ",".join(map(str, _around(lat, lon)))
+            rows = self._select("points", f"r.cell IN ({cells})" if self._typed else f"cell IN ({cells})")
         out = []
         for r in rows:
             if classes is not None and r["cls"] not in classes:
@@ -359,7 +381,8 @@ class PackReader:
             return []
         y, x = int(lat * fmt.SCALE), int(lon * fmt.SCALE)
         out = []
-        for r in self._rows(f"SELECT * FROM areas WHERE id IN ({','.join(map(str, ids))})"):
+        ids = ",".join(map(str, ids))
+        for r in self._select("areas", f"r.id IN ({ids})" if self._typed else f"id IN ({ids})"):
             if r["minlat"] <= y <= r["maxlat"] and r["minlon"] <= x <= r["maxlon"] and \
                     inside_rings(lat, lon, fmt.unpack_rings(r["rings"])):
                 del r["rings"]
@@ -439,12 +462,16 @@ class PackReader:
     def search(self, text, limit=20):
         """Points and areas whose name contains text (case-insensitive), the exact ones first."""
         like = f"%{text.strip()}%"
-        rows = self._rows("SELECT key, source, name, cls, lat, lon, first, last FROM points WHERE name LIKE ? "
-                          "LIMIT ?", (like, limit * 5))
-        rows += self._rows("SELECT key, source, name, cls, (minlat + maxlat) / 2 AS lat, (minlon + maxlon) / 2 "
-                           "AS lon, first, last FROM areas WHERE name LIKE ? LIMIT ?", (like, limit * 5))
+        join = (lambda links: f" LEFT JOIN {links} l ON l.id = r.id") if self._typed else (lambda links: "")
+        tid = "l.type" if self._typed else "NULL"
+        rows = self._rows(f"SELECT r.key, r.source, r.name, r.cls, r.lat, r.lon, r.first, r.last, {tid} AS type_id "
+                          f"FROM points r{join('point_types')} WHERE r.name LIKE ? LIMIT ?", (like, limit * 5))
+        rows += self._rows(f"SELECT r.key, r.source, r.name, r.cls, (r.minlat + r.maxlat) / 2 AS lat, (r.minlon + "
+                           f"r.maxlon) / 2 AS lon, r.first, r.last, {tid} AS type_id FROM areas r{join('area_types')} "
+                           f"WHERE r.name LIKE ? LIMIT ?", (like, limit * 5))
         for r in rows:
             r["lat"], r["lon"] = r["lat"] / fmt.SCALE, r["lon"] / fmt.SCALE
+            r["type"] = self.types.get(r.pop("type_id"))
         low = text.strip().lower()
         return sorted(rows, key=lambda r: (r["name"].lower() != low, len(r["name"])))[:limit]
 
@@ -616,6 +643,11 @@ class Finder:
             return
         r = chosen[0]
         result.kind, result.name, result.cls = kind, r["name"], r["cls"]
+        # The most specific type any source gives this place (the same key or name) at that time ("pizza restaurant"
+        # over "restaurant"); a neighbour's type is never taken.
+        from placepacks.types import most_specific
+        same = [c for c in chosen if c.get("key") == r.get("key") or c.get("name") == r.get("name")]
+        result.type = most_specific([r.get("type")] + [c.get("type") for c in same]) or ""
         result.first, result.last = r["first"], r["last"]
         result.listed = is_business_source(pack, r["source"])
         result.now_name = successor(rows, r, when, latest)
@@ -755,9 +787,10 @@ class Finder:
         return sorted(out, key=lambda t: t[2])
 
 
-def search_names(text, folder=None, regions=None, when=None, limit=20):
+def search_names(text, folder=None, regions=None, when=None, limit=20, type=None):
     """Places whose name contains text, in the packs of folder (only those of the region ids in regions, if given),
-    valid at when (any time when None). [Result] with kind "place", latitude and longitude set."""
+    valid at when (any time when None), and with type ("bakery") in their type phrase when type is given. [Result]
+    with kind "place", latitude and longitude set."""
     when = When.parse(when)
     out = []
     for p in open_packs(folder):
@@ -766,7 +799,10 @@ def search_names(text, folder=None, regions=None, when=None, limit=20):
         for r in p.search(text, limit):
             if when.known and not valid(r["first"], r["last"], when, p.latest):
                 continue
-            res = Result(kind="place", name=r["name"], cls=r["cls"], first=r["first"], last=r["last"],
+            if type and type.strip().lower() not in (r.get("type") or ""):
+                continue
+            res = Result(kind="place", name=r["name"], cls=r["cls"], type=r.get("type") or "", first=r["first"],
+                         last=r["last"],
                          latitude=r["lat"], longitude=r["lon"], region=p.meta.get("state", ""),
                          country=p.meta.get("country", ""), when=when)
             Finder(packs=[p], water=False)._attribute(res, p, r["source"])

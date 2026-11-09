@@ -12,7 +12,8 @@ an optional pattern such as "the {} area" for ZIP areas, or "name_template" with
 Areas and points may have dates: fields "first" and "last" (dates or text), and "open_from": a month (YYYYMM) from
 which a last date means "still current" (the Newberry atlas of historical county boundaries ends in 2000, so its
 latest versions are today's counties). "encoding": the text encoding of the .dbf (default UTF-8; a byte that does not
-decode is replaced). "skip_names": a regular expression of names left out (the atlas's non-county areas). Only
+decode is replaced). The fine type: "type_field" through "type_map" (placepacks.types.of), else the entry's
+"type", else its "tag". "skip_names": a regular expression of names left out (the atlas's non-county areas). Only
 shapes touching the region's bounding box are read.
 """
 
@@ -20,7 +21,7 @@ import glob
 import os
 import re
 
-from placepacks import fmt
+from placepacks import fmt, types
 from placepacks.readers import reader
 from placepacks.readers.tabular import smart_case
 
@@ -92,6 +93,9 @@ def read(path, entry, region, writer):
                 if not name.strip() or (skip and skip.search(name)):
                     continue
                 first, last = _dates(entry, rec)
+                phrase = (types.of(entry.get("type_map"), _field(rec, entry["type_field"])) if entry.get("type_field")
+                          else "") or entry.get("type") or (entry.get("tag") if entry.get("tag") not in (None, source)
+                                                            else None)
                 if entry.get("name_format"):
                     name = entry["name_format"].format(name)
                 key = f"{source}:{_field(rec, fields['key'])}" if fields.get("key") else None
@@ -104,7 +108,7 @@ def read(path, entry, region, writer):
                         writer.add_range(key or f"{source}:{name}:{part[0]}", source, name, *nums, zip_code, part)
                 elif kind == "areas":
                     writer.add_area(key or f"{source}:{name}", source, name, entry["cls"], entry.get("tag", source),
-                                    _parts(shape), first, last)
+                                    _parts(shape), first, last, type=phrase)
                 elif kind == "lines":
                     for i, part in enumerate(_parts(shape)):
                         writer.add_line(f"{key or source + ':' + name}:{i}", source, name, entry["cls"],
@@ -112,6 +116,6 @@ def read(path, entry, region, writer):
                 else:
                     lon, lat = shape.points[0]
                     writer.add_point(key or f"{source}:{name}:{lat:.4f}:{lon:.4f}", source, name, entry["cls"],
-                                     entry.get("tag", source), lat, lon, first, last)
+                                     entry.get("tag", source), lat, lon, first, last, type=phrase)
                 count += 1
     return count

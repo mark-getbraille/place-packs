@@ -40,6 +40,8 @@ def needed_columns(entry):
             names.add(spec)
     for spec in entry.get("columns", {}).values():
         add(spec)
+    if entry.get("type_column"):
+        add(entry["type_column"])
     for part in ("filter", "exclude"):
         if entry.get(part):
             add(entry[part]["column"])
@@ -83,7 +85,9 @@ def split_tabular(entry, path, out, regions):
             fieldnames = None
             for row in dict_rows(text, entry):
                 if fieldnames is None:
-                    fieldnames = [c for c in row if c is not None and (keep is None or headless or c in keep)]
+                    # The columns the reader uses (the same for every file of the source, even when the files
+                    # differ: StatCan's facility databases), else every column of the file.
+                    fieldnames = sorted(keep) if keep and not headless else [c for c in row if c is not None]
                 for rid in _targets(entry, row, by_value, boxes):
                     if rid not in writers:
                         folder = os.path.join(out, rid, entry["id"])

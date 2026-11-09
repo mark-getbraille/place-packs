@@ -25,9 +25,9 @@ from placepacks import fmt
 
 TABLES = {
     "points": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, name TEXT, cls TEXT, tag TEXT, lat INTEGER, "
-              "lon INTEGER, cell INTEGER, ccell INTEGER, first INTEGER, last INTEGER",
+              "lon INTEGER, cell INTEGER, ccell INTEGER, first INTEGER, last INTEGER, type",
     "areas": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, name TEXT, cls TEXT, tag TEXT, minlat INTEGER, "
-             "minlon INTEGER, maxlat INTEGER, maxlon INTEGER, size REAL, rings BLOB, first INTEGER, last INTEGER",
+             "minlon INTEGER, maxlat INTEGER, maxlon INTEGER, size REAL, rings BLOB, first INTEGER, last INTEGER, type",
     "lines": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, name TEXT, cls TEXT, tag TEXT, minlat INTEGER, "
              "minlon INTEGER, maxlat INTEGER, maxlon INTEGER, pts BLOB, first INTEGER, last INTEGER",
     "ranges": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, name TEXT, cls TEXT, lfrom INTEGER, lto INTEGER, "
@@ -48,6 +48,10 @@ SAME = {
     "addr": "p.name IS f.name AND p.street IS f.street AND abs(p.lat - f.lat) <= 100 AND abs(p.lon - f.lon) <= 100",
 }
 NEAR = 50                       # microdegrees (about 5 m): the second pass for records without a stable id
+# Points and areas have a "type" phrase while a pack is built; finish() moves the phrases to the "types" table and
+# the links to "point_types" and "area_types" (FORMAT.md), so the tables themselves keep the version 2 columns and
+# readers and merges made before types existed read new packs unchanged.
+TYPED = {"points": "point_types", "areas": "area_types"}
 SOURCE_COLUMNS = ("id", "name", "short", "kind", "part", "licence", "licence_url", "attribution", "url", "version",
                   "date", "history_start", "history_note")
 
@@ -101,18 +105,18 @@ class PackWriter:
         """The description of a source used in this pack (SOURCE_COLUMNS)."""
         self.sources[fields["id"]] = {c: str(fields.get(c, "") or "") for c in SOURCE_COLUMNS}
 
-    def add_point(self, key, source, name, cls, tag, lat, lon, first=None, last=None):
-        """A named point."""
+    def add_point(self, key, source, name, cls, tag, lat, lon, first=None, last=None, type=None):
+        """A named point; type: its fine type phrase ("pizza restaurant"), if known."""
         first, last = self._span(first, last)
         self._extend(lat, lon)
-        self.db.execute("INSERT INTO points (key, source, name, cls, tag, lat, lon, cell, ccell, first, last) "
-                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        self.db.execute("INSERT INTO points (key, source, name, cls, tag, lat, lon, cell, ccell, first, last, type) "
+                        "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         (key, source, name, cls, tag, int(round(lat * fmt.SCALE)), int(round(lon * fmt.SCALE)),
-                         fmt.fine_cell(lat, lon), fmt.coarse_cell(lat, lon), first, last))
+                         fmt.fine_cell(lat, lon), fmt.coarse_cell(lat, lon), first, last, type or None))
         self._count(source, "points")
 
-    def add_area(self, key, source, name, cls, tag, rings, first=None, last=None):
-        """A named area: rings of (lat, lon) degrees (holes are rings too, even-odd)."""
+    def add_area(self, key, source, name, cls, tag, rings, first=None, last=None, type=None):
+        """A named area: rings of (lat, lon) degrees (holes are rings too, even-odd); type: its fine type phrase."""
         # Big areas (a county, an island chain) are simplified more: 50 m instead of 5 m.
         span = max((max(p[0] for p in r) - min(p[0] for p in r)) for r in rings if r) if rings else 0
         tolerance = 50.0 if span > 0.1 else fmt.SIMPLIFY_M
@@ -125,10 +129,10 @@ class PackWriter:
         self._extend(s, w, n, e)
         first, last = self._span(first, last)
         self.db.execute("INSERT INTO areas (key, source, name, cls, tag, minlat, minlon, maxlat, maxlon, size, rings, "
-                        "first, last) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        "first, last, type) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         (key, source, name, cls, tag, *fmt.micro([(s, w)])[0], *fmt.micro([(n, e)])[0],
                          max(fmt.ring_area_m2(r) for r in rings), fmt.pack_rings([fmt.micro(r) for r in rings]),
-                         first, last))
+                         first, last, type or None))
         self._count(source, "areas")
 
     def _line_row(self, points):
@@ -200,6 +204,7 @@ class PackWriter:
             for table in TABLES:
                 db.execute(f"DELETE FROM {table} WHERE key = ?", (r["key"],))
             db.execute("INSERT INTO removals VALUES (?, ?, ?)", (r["key"], r.get("reason", ""), r.get("date", "")))
+        self._write_types()
         self._write_addresses()
         self._write_grid()
         for fields in self.sources.values():
@@ -227,6 +232,18 @@ class PackWriter:
         db.close()
         os.replace(self.tmp, self.path)
         return counts
+
+    def _write_types(self):
+        """Move the type phrases of points and areas to the "types" table (each phrase once) and the links to
+        "point_types" and "area_types" (row id -> type id), then drop the build-time column."""
+        db = self.db
+        db.execute("CREATE TABLE types (id INTEGER PRIMARY KEY, name TEXT UNIQUE)")
+        db.execute("INSERT INTO types (name) SELECT DISTINCT type FROM (SELECT type FROM points UNION SELECT type "
+                   "FROM areas) WHERE type IS NOT NULL AND type <> '' ORDER BY type")
+        for table, links in TYPED.items():
+            db.execute(f"CREATE TABLE {links} (id INTEGER PRIMARY KEY, type INTEGER)")
+            db.execute(f"INSERT INTO {links} SELECT r.id, t.id FROM {table} r JOIN types t ON t.name = r.type")
+            db.execute(f"ALTER TABLE {table} DROP COLUMN type")
 
     def _write_addresses(self):
         """Pack the address rows into one compressed record list per fine cell (address_cells). The cell's street list
@@ -286,6 +303,7 @@ def merge_history(db, previous, month):
     finally:
         prev.close()
     db.execute("ATTACH DATABASE ? AS prev", (previous,))
+    typed = {r[0] for r in db.execute("SELECT name FROM prev.sqlite_master WHERE type = 'table'")}
     for table in TABLES:
         old = "temp.old_addr" if table == "addr" else f"prev.{table}"
         if table == "addr":
@@ -312,7 +330,15 @@ def merge_history(db, previous, month):
                    f"WHERE id IN (SELECT fid FROM m)")
         # Every other old row stays as it was: closed history (renamed, moved, gone) and older rows of the key.
         cols = ", ".join(columns)
-        db.execute(f"INSERT INTO {table} ({cols}) SELECT {cols} FROM {old} WHERE id NOT IN (SELECT pid FROM m)")
+        # The previous pack's type phrases (through its types table); NULL for a pack made before types.
+        links = TYPED.get(table)
+        if links and links in typed and "types" in typed:
+            phrase = (f"(SELECT t.name FROM prev.{links} l JOIN prev.types t ON t.id = l.type WHERE l.id = "
+                      f"{old}.id)")
+        else:
+            phrase = "NULL"
+        picks = ", ".join(phrase if c == "type" else c for c in columns)
+        db.execute(f"INSERT INTO {table} ({cols}) SELECT {picks} FROM {old} WHERE id NOT IN (SELECT pid FROM m)")
         db.execute("DROP TABLE m")
     db.execute("DROP TABLE temp.old_addr")
     db.commit()

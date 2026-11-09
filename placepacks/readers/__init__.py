@@ -8,6 +8,7 @@ downloaded), the source's catalogue entry (sources.json) and the region, and add
   parquet.py  GeoParquet (DuckDB, MIT): Overture Maps places, Foursquare Open Source Places
   gtfs.py     public transit stops from GTFS feeds
   wikidata.py Wikidata query results (names, coordinates and start/end dates)
+  ohm.py      OpenHistoricalMap features (CC0) with their own start and end dates, from its Overpass API
 """
 
 READERS = {}
@@ -23,5 +24,5 @@ def reader(name):
 
 def load_all():
     """Import every reader module, so READERS is complete."""
-    from placepacks.readers import gtfs, osm, parquet, shapes, tabular, wikidata  # noqa: F401
+    from placepacks.readers import gtfs, ohm, osm, parquet, shapes, tabular, wikidata  # noqa: F401
     return READERS

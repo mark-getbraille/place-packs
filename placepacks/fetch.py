@@ -15,16 +15,23 @@ Each source's catalogue "fetch" says how:
                   $select/$where/$group (one row per permit or licence and name, with its first and last date),
                   paged with $limit/$offset into one CSV; the version is each dataset's rowsUpdatedAt
   wfs             a WFS layer (GeoServer) as CSV, paged with startIndex/count; the version is its feature count
+  arcgis          an ArcGIS REST layer (FeatureServer or MapServer, no token): the ids inside the region's box (and
+                  the entry's "where"), then the records in chunks of ids, as CSV with "_lat" and "_lon" (and
+                  "_rings" for polygons, read as areas); dates become YYYY-MM-DD; the version is the layer's last edit
+                  date and the number of records
   manual          a folder someone filled (inputs/...): used when it exists
 A national source's file may be named by the publisher's metadata instead of a fixed address ("socrata_blob": the
 NAD's file on data.transportation.gov, whose version is its blobId and rowsUpdatedAt), one file per country
 ("per_country": GeoNames) or every file a listing page links to ("listing": the FSA's hygiene ratings, one XML file
-per local authority, turned into one CSV by "xml_records").
+per local authority, turned into one CSV by "xml_records"), or only the newest of them ("latest": a regular
+expression whose first group is the year, for the NCES and IMLS files renamed every year). A downloaded .zip whose
+offsets are shifted (the Newberry atlas) is repaired (repair_zip).
 Every request names the project in its User-Agent and waits the source's "pause" seconds before the next one; a
 busy or rate-limited host (429, 5xx, "ServerBusy") is tried again after 30, 60, 120 and 240 seconds (download).
 Release names that change ("latest" in the settings) are found from the publisher's own listing (s3_latest:
 Overture's and Foursquare's buckets; the NAD from its Socrata metadata, with the old S3 bucket as a fallback). An
-interrupted download continues where it stopped (a Range request) when the host allows it. Every source ends with one status line,
+interrupted download continues where it stopped (a Range request) when the host allows it. Every source ends
+with one status line,
 "source: ok (version)", "source: skipped (reason)" or "source: failed (error)", printed and kept in fetched.json
 ("status", "reason"); the build adds the rows read, and sources-status.md lists them.
 fetched.json: {source id: {"path", "ok", "status", "reason", "version", "date", "error"}, "_bbox": [west, south, east,
@@ -217,6 +224,11 @@ def national_files(entry, values, opener=None):
         with (opener or request)(f["listing"]) as r:
             page = r.read().decode("utf-8", "replace")
         names = sorted(set(re.findall(f["pattern"], page)))
+        if f.get("latest") and names:
+            def year(n):
+                m = re.search(f["latest"], os.path.basename(n))
+                return int(m.group(1)) if m else -1
+            names = [max(names, key=year)]
         return [(urllib.parse.urljoin(f["listing"], n), os.path.basename(urllib.parse.urlsplit(n).path), None)
                 for n in names]
     url = nad_url(values, opener) if entry["id"] == "nad" else f["url"].format(**values)
@@ -240,6 +252,133 @@ def xml_to_csv(paths, spec, target):
                 count += 1
                 el.clear()
     return count
+
+
+def repair_zip(path):
+    """Rewrite a .zip whose member offsets are shifted (a prefix the central directory does not count, as in the
+    Newberry atlas: unzip "re-compensates", Python's zipfile refuses) as a plain .zip. Returns True when it was
+    rewritten; a .zip that reads as it is is left alone."""
+    import zipfile
+    try:
+        with zipfile.ZipFile(path) as z:
+            infos = [i for i in z.infolist() if not i.is_dir()]
+            if not infos:
+                return False
+            try:
+                with z.open(infos[0]) as fh:
+                    fh.read(1)
+                return False
+            except zipfile.BadZipFile:
+                pass
+            with open(path, "rb") as fh:
+                start = fh.read(1 << 20).find(b"PK\x03\x04")
+            delta = start - min(i.header_offset for i in z.infolist())
+            for i in z.infolist():
+                i.header_offset += delta
+            with zipfile.ZipFile(path + ".fixed", "w", zipfile.ZIP_DEFLATED) as out:
+                for i in infos:
+                    out.writestr(i.filename, z.read(i))
+    except zipfile.BadZipFile:
+        return False
+    os.replace(path + ".fixed", path)
+    return True
+
+
+def post_json(url, params, waits=RETRY_WAITS, sleep=time.sleep, pause=0):
+    """The JSON answer of a POST form request (ArcGIS queries: long id lists do not fit in an address), with the
+    retries of download() for a busy host. An ArcGIS error inside a 200 answer raises ValueError."""
+    data = urllib.parse.urlencode(params).encode()
+    for attempt in range(len(waits) + 1):
+        try:
+            with request(url, "POST", data, {"Content-Type": "application/x-www-form-urlencoded"}) as r:
+                answer = json.loads(r.read().decode("utf-8"))
+            break
+        except Exception as e:  # noqa: BLE001 - tried again when it is temporary
+            if attempt >= len(waits) or not retryable(e):
+                raise
+            print(f"  {url}: busy ({str(e)[:80]}); trying again in {waits[attempt]} s", flush=True)
+            sleep(waits[attempt])
+    if pause:
+        time.sleep(pause)
+    if isinstance(answer, dict) and answer.get("error"):
+        raise ValueError(f"ArcGIS error: {str(answer['error'].get('message', answer['error']))[:200]}")
+    return answer
+
+
+def _arcgis_value(value, is_date):
+    """A CSV value of an ArcGIS attribute: dates (milliseconds since 1970) as YYYY-MM-DD."""
+    if value is None:
+        return ""
+    if is_date and isinstance(value, (int, float)):
+        return (datetime.datetime(1970, 1, 1) + datetime.timedelta(milliseconds=value)).date().isoformat()
+    return str(value).strip()
+
+
+def _arcgis_geometry(geom):
+    """(lat, lon, rings) of an ArcGIS JSON geometry in longitude/latitude: a point's position, or a polygon's rings
+    [[[lat, lon], ...], ...] with the middle of its box as its position; (None, None, None) without one."""
+    if not geom:
+        return None, None, None
+    if "x" in geom:
+        return geom.get("y"), geom.get("x"), None
+    if geom.get("rings"):
+        rings = [[[round(y, 6), round(x, 6)] for x, y in ring] for ring in geom["rings"] if len(ring) >= 4]
+        if not rings:
+            return None, None, None
+        lats = [p[0] for p in rings[0]]
+        lons = [p[1] for p in rings[0]]
+        return (min(lats) + max(lats)) / 2, (min(lons) + max(lons)) / 2, rings
+    if geom.get("points"):
+        x, y = geom["points"][0]
+        return y, x, None
+    return None, None, None
+
+
+def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
+    """An ArcGIS REST layer (see the module docstring): fetch = {"url": the layer's address (…/FeatureServer/0),
+    "where": an SQL filter, "fields": the attributes to keep ("A,B,C"), "box": false for a table without shapes
+    (filtered by "where" only), "page": ids per request, "simplify": degrees for polygons (maxAllowableOffset)}."""
+    f = entry["fetch"]
+    url = f["url"].rstrip("/")
+    meta = post_json(url, {"f": "json"}, sleep=sleep)
+    dates = {fd["name"] for fd in meta.get("fields", []) if fd.get("type") == "esriFieldTypeDate"}
+    base = {"f": "json", "where": f.get("where", "1=1")}
+    if f.get("box", True) and meta.get("geometryType"):
+        west, south, east, north = region["bbox"]
+        base.update(geometry=f"{west},{south},{east},{north}", geometryType="esriGeometryEnvelope", inSR="4326",
+                    spatialRel="esriSpatialRelIntersects")
+    ids = sorted(post_json(url + "/query", {**base, "returnIdsOnly": "true"}, sleep=sleep).get("objectIds") or [])
+    edited = (meta.get("editingInfo") or {}).get("lastEditDate") or ""
+    version = f"{edited}:{len(ids)} records"
+    if fingerprint:
+        return {"ok": True, "version": version, "path": "", "date": ""}
+    os.makedirs(folder, exist_ok=True)
+    target = os.path.join(folder, entry["id"] + ".csv")
+    fields = [x.strip() for x in f["fields"].split(",") if x.strip()]
+    polygons = meta.get("geometryType") == "esriGeometryPolygon"
+    header = fields + ["_lat", "_lon"] + (["_rings"] if polygons else [])
+    page, rows = int(f.get("page", 500)), 0
+    with open(target + ".partial", "w", newline="", encoding="utf-8") as out:
+        w = csv.writer(out)
+        w.writerow(header)
+        for i in range(0, len(ids), page):
+            params = {"f": "json", "objectIds": ",".join(str(x) for x in ids[i:i + page]),
+                      "outFields": ",".join(fields), "returnGeometry": "true" if meta.get("geometryType") else
+                      "false", "outSR": "4326"}
+            if polygons and f.get("simplify"):
+                params["maxAllowableOffset"] = f["simplify"]
+            for feat in post_json(url + "/query", params, sleep=sleep, pause=f.get("pause", 0.5)).get("features", []):
+                attrs = feat.get("attributes") or {}
+                lat, lon, rings = _arcgis_geometry(feat.get("geometry"))
+                row = [_arcgis_value(attrs.get(name), name in dates) for name in fields]
+                row += ["" if lat is None else f"{lat:.6f}", "" if lon is None else f"{lon:.6f}"]
+                if polygons:
+                    row.append(json.dumps(rings, separators=(",", ":")) if rings else "")
+                w.writerow(row)
+                rows += 1
+    os.replace(target + ".partial", target)
+    return {"ok": rows > 0, "version": version, "path": target, "date": datetime.date.today().isoformat(),
+            **({} if rows else {"status": "skipped", "reason": "no record of the layer is in the region"})}
 
 
 def get_page(url, folder, pause, sleep=time.sleep):
@@ -453,6 +592,8 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         return fetch_socrata(entry, folder, fingerprint)
     if method == "wfs":
         return fetch_wfs(entry, folder, fingerprint)
+    if method == "arcgis":
+        return fetch_arcgis(entry, region, folder, fingerprint)
     # http
     if fingerprint:
         if f.get("no_head"):
@@ -598,6 +739,8 @@ def prepare_national(entry, national, values):
             failed += 1
             print(f"{entry['id']}: {name}: not downloaded ({str(e)[:100]})")
             continue
+        if target.lower().endswith(".zip") and repair_zip(target):
+            print(f"{entry['id']}: {name}: repaired (its offsets were shifted)")
         with open(stamp, "w", encoding="utf-8") as fh:
             fh.write(known or version or url)
         if len(files) <= 30:

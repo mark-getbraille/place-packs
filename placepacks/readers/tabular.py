@@ -24,6 +24,11 @@ Points may also have:
   "skip_points": [[lat, lon], ...]: placeholder positions to leave out (a city's centre used for unknown places)
   "aggregate": true: one record per key and name, from its earliest "first" to its latest "last" (inspections,
                directory years)
+  "name_template": a name made of several columns, "{FACILITY_CARRIED_007} bridge over {FEATURES_DESC_006A}" (a
+               record with one of them empty is left out); "name_clean": a regular expression removed from each
+               of those values first ("HWY " before a road's name in the bridge inventory)
+  "kind": "areas" with columns "rings": a column of JSON rings [[[lat, lon], ...], ...] (the arcgis fetch's
+               "_rings"): written as named areas (PAD-US, military installations)
   "still_open_months": N: a record whose last date is within N months of the build is still open (its last month
                is the build's); "closed_column": a column that is not empty for records the source says are closed
                (they keep their own last date)
@@ -34,6 +39,7 @@ region's bounding box, are left out. Text that is all capitals is written in ord
 import csv
 import fnmatch
 import io
+import json
 import os
 import re
 import zipfile
@@ -179,6 +185,30 @@ def class_of(entry, value):
     return cls, tag
 
 
+class _Blank(dict):
+    """format_map values: a missing column is empty."""
+
+    def __missing__(self, key):
+        return ""
+
+
+def templated(entry, row):
+    """The name of a record made by the entry's "name_template" from its columns (each cleaned by "name_clean" and
+    its spaces tidied); "" when a column the template uses is empty."""
+    clean = re.compile(entry["name_clean"], re.I) if entry.get("name_clean") else None
+    used = re.findall(r"{([^}]+)}", entry["name_template"])
+    values = _Blank()
+    for name in used:
+        value = (row.get(name) or "").strip().strip("'\"")
+        if clean:
+            value = clean.sub("", value)
+        value = smart_case(" ".join(value.split()))
+        if not value:
+            return ""
+        values[name] = value
+    return entry["name_template"].format_map(values)
+
+
 def _open_until(entry, row, last, month):
     """The record's last month, or None while it is still open (see "still_open_months" and "closed_column")."""
     if last is None:
@@ -208,7 +238,10 @@ def read(path, entry, region, writer):
                 writer.add_address(source, number, street, smart_case(_get(row, cols.get("city", ""))), lat, lon)
                 count += 1
             continue
-        name = _get(row, cols["name"])
+        if entry.get("name_template"):
+            name = templated(entry, row)
+        else:
+            name = _get(row, cols["name"])
         if strip:
             name = strip.sub("", name)
         if skip_name and skip_name.search(name.strip()):
@@ -230,6 +263,14 @@ def read(path, entry, region, writer):
         first = fmt.parse_month(_get(row, cols["first"])) if cols.get("first") else None
         last = fmt.parse_month(_get(row, cols["last"])) if cols.get("last") else None
         last = _open_until(entry, row, last, month) if cols.get("last") else None
+        if entry["kind"] == "areas":
+            try:
+                rings = [[(float(a), float(b)) for a, b in ring] for ring in json.loads(_get(row, cols["rings"]))]
+            except (ValueError, TypeError):
+                continue
+            writer.add_area(key, source, name, cls, tag, rings, first, last)
+            count += 1
+            continue
         if grouped is not None:
             # The same name in other capitals ("BOUDREAUX'S" and "Boudreaux's") is the same record.
             g = grouped.get((key, name.casefold()))

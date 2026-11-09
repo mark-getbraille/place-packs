@@ -112,7 +112,8 @@ def split_shapes(entry, path, out, regions):
     import shapefile
     targets = {rid: r for rid, r in regions.items() if catalogue.country_code(r) in entry["countries"]}
     writers, counts = {}, {}
-    with shapefile.Reader(path) as shp:
+    # The entry's text encoding (the Newberry atlas is Latin-1); a byte that does not decode is replaced, never fatal.
+    with shapefile.Reader(path, encoding=entry.get("encoding", "utf-8"), encodingErrors="replace") as shp:
         fields = shp.fields[1:]
         for sr in shp.iterShapeRecords():
             pts = sr.shape.points

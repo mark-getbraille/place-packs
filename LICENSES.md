@@ -10,8 +10,8 @@ The code of this repository (the `placepacks` package, the tools and the workflo
 A pack mixes OpenStreetMap with other open data. OpenStreetMap is under the Open Database License (ODbL) 1.0, which
 is share-alike: a database *derived* from OpenStreetMap must be offered under the ODbL. The other sources have
 their own licences (public domain, CC0, PDDL, CC BY 4.0, the Open Government Licences of Canada and the UK, Licence
-Ouverte 2.0, CDLA Permissive 2.0, Apache 2.0, and the open-use terms of New York City's and New York State's open-data
-portals).
+Ouverte 2.0, CDLA Permissive 2.0, Apache 2.0, the open-use terms of New York City's and New York State's open-data
+portals, and the Newberry Library's open terms).
 
 We chose to make each pack a **collective database** (ODbL 1.0, section 1, "Collective Database"; section 4.5),
 not one database under a single licence:
@@ -52,6 +52,10 @@ texts in `LICENSES/`.
   use) to stop. The datasets are named in the attribution all the same.
 - **Portal "Public Domain" marks (Austin, Delaware, Montgomery County MD, Colorado, Cincinnati, Baton Rouge):** the
   publishing government marks the dataset public domain on its portal; the packs name it anyway.
+- **The Newberry Library (Atlas of Historical County Boundaries):** "available ... for any lawful purpose,
+  commercial or non-commercial, without licensing or permission fees"; credit the Atlas and the Newberry Library.
+  The Creative Commons note inside the older download is superseded by those terms.
+- **CC BY 4.0 city data (Washington DC):** credit the District of Columbia as in `SOURCES.md`.
 - **Personal data:** the business sources keep only a business's trade name, class, position and dates. Records
   that may be someone's home (home-based businesses, contractors, mobile caterers, childminders, short-term rentals,
   individual licences) and licensee names that look like a person's are left out; see `SOURCES.md`. A takedown

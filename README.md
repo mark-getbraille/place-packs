@@ -8,7 +8,9 @@ nothing is sent anywhere when a place is looked up.
 The packs are built from OpenStreetMap and other open data: national address databases, government names and
 facilities, Overture Maps and Foursquare Open Source Places, Wikidata, GeoNames and public transit feeds, and dated
 business records: restaurant inspections, liquor and business licences, bank branches, the UK's food hygiene
-ratings and Victoria's Sands & McDougall directories (1896–1974). Each source is
+ratings and Victoria's Sands & McDougall directories (1896–1974), and US federal layers: historic places, parks
+and protected areas, bridges, dams, airports, stations, schools, libraries and the county boundaries of every date
+since the 1600s. Each source is
 listed with its licence in [SOURCES.md](SOURCES.md). The packs are made for the
 [Digital Accessibility Toolkit](https://getbraille.com)'s picture describer and the Photo Location Identifier
 (`photo-location-identifier/`), and anyone may use them under their licences.
@@ -55,6 +57,10 @@ How far back each layer goes:
 | FDIC bank branches | Each branch under its bank's name since the bank took it over, or since it opened. |
 | UK food hygiene ratings (FSA) | Each business from its latest rating date, then month by month. |
 | Victoria, Australia: Sands & McDougall directories | The directory years 1896–1974 each business was listed in. |
+| US counties (Newberry Library's Atlas of Historical County Boundaries) | Every version of every county since the 1600s with its exact dates: a lookup gives the county as it was on the picture's date (`county` in the result). |
+| National Register of Historic Places, bridges (FHWA), dams (USACE), public airports (FAA), PA historical markers | From the listing date, the year built or completed, the activation date or the dedication date. |
+| PAD-US parks and protected areas, NPS points of interest, Forest Service recreation sites, ferry terminals, Amtrak stations, military installations, libraries, private schools and colleges | From the first build (PAD-US also from the year an area was established). All read from the agencies' own public services and files each month, with no hand step. |
+| Washington DC business licences, Minneapolis food inspections | Licence issue and end dates; first and last inspections. |
 | Overture places | From the first build. Past monthly releases (for example one a quarter) can be merged first while Overture still keeps them. |
 | Foursquare Open Source Places | Foursquare's own creation and closing dates. |
 | Wikidata | Its start and end dates, often decades back (a mill from 1923 to 1998). |

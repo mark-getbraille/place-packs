@@ -8,14 +8,31 @@ publishes TIGER/Line address ranges per county).
   "kind": "points"  named points (trailheads)
 "fields": {"name": ..., "key": ..., and for ranges "lfrom", "lto", "rfrom", "rto", "zip"} (a name or a list of possible
 names, the first the file has); "cls": the class; "name_format":
-an optional pattern such as "the {} area" for ZIP areas. Only shapes touching the region's bounding box are read.
+an optional pattern such as "the {} area" for ZIP areas, or "name_template" with field names ("{NAME} {CNTY_TYPE}").
+Areas and points may have dates: fields "first" and "last" (dates or text), and "open_from": a month (YYYYMM) from
+which a last date means "still current" (the Newberry atlas of historical county boundaries ends in 2000, so its
+latest versions are today's counties). "encoding": the text encoding of the .dbf (default UTF-8; a byte that does not
+decode is replaced). "skip_names": a regular expression of names left out (the atlas's non-county areas). Only
+shapes touching the region's bounding box are read.
 """
 
 import glob
 import os
+import re
 
+from placepacks import fmt
 from placepacks.readers import reader
 from placepacks.readers.tabular import smart_case
+
+
+def _dates(entry, rec):
+    """(first, last) months of a record from the entry's "first" and "last" fields (None when it has none)."""
+    fields = entry["fields"]
+    first = fmt.parse_month(str(_field(rec, fields["first"]))) if fields.get("first") else None
+    last = fmt.parse_month(str(_field(rec, fields["last"]))) if fields.get("last") else None
+    if last is not None and entry.get("open_from") and last >= int(entry["open_from"]):
+        last = None
+    return first, last
 
 
 def files_of(path):
@@ -56,9 +73,10 @@ def read(path, entry, region, writer):
     """Add the source's ranges, areas, lines or points to writer. Returns the number of records."""
     import shapefile
     fields, source, kind, count = entry["fields"], entry["id"], entry["kind"], 0
+    skip = re.compile(entry["skip_names"], re.I) if entry.get("skip_names") else None
     west, south, east, north = region["bbox"]
     for file in files_of(path):
-        with shapefile.Reader(file) as shp:
+        with shapefile.Reader(file, encoding=entry.get("encoding", "utf-8"), encodingErrors="replace") as shp:
             names = [f[0] for f in shp.fields[1:]]
             for sr in shp.iterShapeRecords():
                 shape, rec = sr.shape, dict(zip(names, sr.record))
@@ -67,9 +85,13 @@ def read(path, entry, region, writer):
                 x1, y1, x2, y2 = shape.bbox if len(shape.points) > 1 else (*shape.points[0], *shape.points[0])
                 if x2 < west or x1 > east or y2 < south or y1 > north:
                     continue
-                name = smart_case(str(_field(rec, fields["name"])))
-                if not name:
+                if entry.get("name_template"):
+                    name = entry["name_template"].format(**{k: smart_case(str(v or "")) for k, v in rec.items()})
+                else:
+                    name = smart_case(str(_field(rec, fields["name"])))
+                if not name.strip() or (skip and skip.search(name)):
                     continue
+                first, last = _dates(entry, rec)
                 if entry.get("name_format"):
                     name = entry["name_format"].format(name)
                 key = f"{source}:{_field(rec, fields['key'])}" if fields.get("key") else None
@@ -82,7 +104,7 @@ def read(path, entry, region, writer):
                         writer.add_range(key or f"{source}:{name}:{part[0]}", source, name, *nums, zip_code, part)
                 elif kind == "areas":
                     writer.add_area(key or f"{source}:{name}", source, name, entry["cls"], entry.get("tag", source),
-                                    _parts(shape))
+                                    _parts(shape), first, last)
                 elif kind == "lines":
                     for i, part in enumerate(_parts(shape)):
                         writer.add_line(f"{key or source + ':' + name}:{i}", source, name, entry["cls"],
@@ -90,6 +112,6 @@ def read(path, entry, region, writer):
                 else:
                     lon, lat = shape.points[0]
                     writer.add_point(key or f"{source}:{name}:{lat:.4f}:{lon:.4f}", source, name, entry["cls"],
-                                     entry.get("tag", source), lat, lon)
+                                     entry.get("tag", source), lat, lon, first, last)
                 count += 1
     return count

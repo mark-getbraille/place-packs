@@ -91,6 +91,11 @@
    "name": "New York State OPEN-NY Terms of Use: free use and reuse, no attribution, share-alike or pre-approval required",
    "url": "https://data.ny.gov/download/77gx-ii52/application/pdf",
    "file": ""
+  },
+  "Newberry-open": {
+   "name": "The Newberry Library's open terms: available for any lawful purpose, commercial or non-commercial, without licensing or permission fees",
+   "url": "https://www.newberry.org/rights-and-reproductions",
+   "file": ""
   }
  },
  "accepted": [
@@ -610,13 +615,16 @@
    "url": "https://www.imls.gov/research-evaluation/data-collection/public-libraries-survey",
    "reader": "tabular",
    "kind": "points",
-   "cls": "public",
+   "history": "The newest survey year from the first build on (each year's file can seed earlier years).",
    "fetch": {
-    "method": "manual",
-    "folder": "inputs/imls",
-    "note": "The survey's outlet CSV changes address every year; put it in inputs/imls/."
+    "method": "national",
+    "listing": "https://www.imls.gov/research-evaluation/surveys/public-libraries-survey-pls",
+    "pattern": "[^\"'\\s>]*pls_fy\\d{4}_csv\\.zip",
+    "latest": "fy(\\d{4})",
+    "pause": 2
    },
    "member": "*outlet*.csv",
+   "encoding": "latin-1",
    "columns": {
     "lat": "LATITUDE",
     "lon": "LONGITUD",
@@ -624,13 +632,20 @@
     "key": [
      "FSCSKEY",
      "FSCS_SEQ"
-    ]
+    ],
+    "class_column": "C_OUT_TY"
+   },
+   "class_map": {
+    "CE": "public:library",
+    "BR": "public:library",
+    "*": ""
    },
    "filter": {
     "column": "STABR",
     "equals": "{code}"
    },
-   "history": "Survey years from the first build on."
+   "notes": "The newest outlet file is found on IMLS's survey page each build (no hand step). Central and branch libraries only; bookmobiles and books-by-mail have no fixed place.",
+   "split_file": "pls_outlet.csv"
   },
   {
    "id": "nrhp",
@@ -646,23 +661,25 @@
    "reader": "tabular",
    "kind": "points",
    "cls": "landmark",
+   "history": "Each property from the month it was listed (the certification date, from 1966 on); keyed by its NRIS reference number.",
+   "tag": "historic place",
    "fetch": {
-    "method": "manual",
-    "folder": "inputs/nrhp",
-    "note": "Put the NRHP spatial data export as CSV (with decimal latitude and longitude) in inputs/nrhp/."
+    "method": "arcgis",
+    "url": "https://mapservices.nps.gov/arcgis/rest/services/cultural_resources/nrhp_locations/MapServer/0",
+    "where": "1=1",
+    "fields": "NRIS_Refnum,RESNAME,ResType,CertDate",
+    "page": 500,
+    "pause": 0.5
    },
    "member": "*.csv",
    "columns": {
-    "lat": "Latitude",
-    "lon": "Longitude",
-    "name": "Property Name",
-    "key": "Reference Number"
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "RESNAME",
+    "key": "NRIS_Refnum",
+    "first": "CertDate"
    },
-   "filter": {
-    "column": "State",
-    "equals": "{name}"
-   },
-   "history": "Listings as published."
+   "notes": "Read from the National Park Service's Cultural Resources GIS service (no key). The listing date is not the building's age: a picture older than the listing still gets the name, said \"no older record\"."
   },
   {
    "id": "padus",
@@ -675,16 +692,30 @@
    "licence": "US-Government-Work",
    "attribution": "Protected areas from the U.S. Geological Survey's PAD-US (public domain).",
    "url": "https://www.usgs.gov/programs/gap-analysis-project/science/pad-us-data-overview",
-   "reader": "duckdb",
-   "spatial": true,
+   "reader": "tabular",
    "cls": "park",
+   "history": "Areas as published in the current PAD-US release, from the year established when it is given.",
+   "kind": "areas",
+   "tag": "protected area",
    "fetch": {
-    "method": "manual",
-    "folder": "inputs/padus/{code}",
-    "note": "PAD-US state downloads come from ScienceBase; put the state's geodatabase or shapefile in inputs/padus/<code>/."
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Manager_Name_PADUS/FeatureServer/0",
+    "where": "Category IN ('Fee','Designation') AND Pub_Access IN ('OA','RA') AND GIS_Acres >= 10 AND Unit_Nm IS NOT NULL AND Unit_Nm <> ''",
+    "fields": "Source_PAID,Unit_Nm,Des_Tp,Date_Est",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0005
    },
-   "query": "SELECT COALESCE(CAST(OBJECTID AS VARCHAR), Unit_Nm) AS key, Unit_Nm AS name, 'park' AS cls, ST_AsGeoJSON(ST_Transform(geom, 'EPSG:5070', 'EPSG:4326', always_xy := true)) AS geojson FROM ST_Read('{src}') WHERE Unit_Nm IS NOT NULL",
-   "history": "Releases as published."
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "rings": "_rings",
+    "name": "Unit_Nm",
+    "key": "Source_PAID",
+    "first": "Date_Est"
+   },
+   "notes": "Read from USGS's PAD-US 4.1 service (no key). Only named areas of at least 10 acres that are owned or designated (no easements, which are often private land) and open or restricted to the public; outlines simplified to about 50 m."
   },
   {
    "id": "faa-airports",
@@ -695,28 +726,39 @@
     "US"
    ],
    "licence": "US-Government-Work",
-   "attribution": "Airports from the Federal Aviation Administration's National Airspace System Resources (public domain).",
-   "url": "https://www.faa.gov/air_traffic/flight_info/aeronav/aero_data/NASR_Subscription/",
+   "attribution": "Airports from the Federal Aviation Administration's National Airspace System Resources, from the Bureau of Transportation Statistics' National Transportation Atlas Database (NTAD), a work of the United States government (public domain).",
+   "url": "https://geodata.bts.gov/datasets/usdot::aviation-facilities",
    "reader": "tabular",
    "kind": "points",
    "cls": "transit",
+   "history": "Each public-use airport from its FAA activation date; updated every 28-day cycle.",
    "fetch": {
-    "method": "manual",
-    "folder": "inputs/faa",
-    "note": "The NASR subscription changes address every 28 days; put APT_BASE.csv in inputs/faa/."
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Aviation_Facilities/FeatureServer/0",
+    "where": "FACILITY_USE_CODE = 'PU' AND ARPT_STATUS = 'O'",
+    "fields": "ARPT_ID,ARPT_NAME,SITE_TYPE_CODE,ACTIVATION_DATE",
+    "page": 500,
+    "pause": 0.5
    },
-   "member": "APT_BASE.csv",
+   "member": "*.csv",
    "columns": {
-    "lat": "LAT_DECIMAL",
-    "lon": "LONG_DECIMAL",
+    "lat": "_lat",
+    "lon": "_lon",
     "name": "ARPT_NAME",
-    "key": "ARPT_ID"
+    "key": "ARPT_ID",
+    "first": "ACTIVATION_DATE",
+    "class_column": "SITE_TYPE_CODE"
    },
-   "filter": {
-    "column": "STATE_CODE",
-    "equals": "{code}"
+   "class_map": {
+    "A": "transit:airport",
+    "H": "transit:heliport",
+    "C": "transit:seaplane base",
+    "G": "transit:gliderport",
+    "U": "transit:ultralight flightpark",
+    "B": "transit:balloonport",
+    "*": ""
    },
-   "history": "Cycles from the first build on."
+   "notes": "Only public-use facilities that are open: private strips and heliports, often at homes, are left out."
   },
   {
    "id": "ntad-amtrak",
@@ -728,27 +770,29 @@
    ],
    "licence": "US-Government-Work",
    "attribution": "Stations from the Bureau of Transportation Statistics' National Transportation Atlas Database (public domain).",
-   "url": "https://geodata.bts.gov",
+   "url": "https://geodata.bts.gov/datasets/usdot::amtrak-stations",
    "reader": "tabular",
    "kind": "points",
    "cls": "transit",
+   "history": "From the first build on.",
+   "tag": "railway station",
    "fetch": {
-    "method": "manual",
-    "folder": "inputs/ntad",
-    "note": "Put the NTAD Amtrak Stations CSV export in inputs/ntad/."
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Amtrak_Stations/FeatureServer/0",
+    "where": "StnType = 'TRAIN'",
+    "fields": "Code,City,StationName,StnType",
+    "page": 500,
+    "pause": 0.5
    },
-   "member": "*Amtrak*.csv",
+   "member": "*.csv",
    "columns": {
-    "lat": "lat",
-    "lon": "lon",
-    "name": "StationNam",
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "City",
     "key": "Code"
    },
-   "filter": {
-    "column": "State",
-    "equals": "{code}"
-   },
-   "history": "From the first build on."
+   "name_template": "{City} Amtrak station",
+   "notes": "Train stations only (Amtrak's bus stops are left out)."
   },
   {
    "id": "gtfs",
@@ -2173,6 +2217,519 @@
    },
    "history": "The current names, from the first build on (GeoNames keeps no dates).",
    "notes": "A fallback for the countries outside North America (the US and Canada have GNIS and the Canadian names): lakes, bays, mountains, islands, parks, quarters of towns, churches, castles, monuments, museums, schools, hospitals, stations and airports, from the per-country files (no login)."
+  },
+  {
+   "id": "ntad-ferry-terminals",
+   "name": "BTS National Transportation Atlas: ferry terminals",
+   "short": "the Bureau of Transportation Statistics",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Ferry terminals from the Bureau of Transportation Statistics' National Transportation Atlas Database (NTAD), a work of the United States government (public domain).",
+   "url": "https://geodata.bts.gov/datasets/usdot::ferry-terminals",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "transit",
+   "tag": "ferry terminal",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Ferry_Terminals/FeatureServer/0",
+    "where": "IN_OPERATION = 1",
+    "fields": "TERMINAL_ID,TERMINAL_NAME,TERM_CITY",
+    "page": 500,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "TERMINAL_NAME",
+    "key": "TERMINAL_ID"
+   },
+   "name_template": "{TERMINAL_NAME} ferry terminal",
+   "history": "From the first build on."
+  },
+  {
+   "id": "nbi-bridges",
+   "name": "FHWA National Bridge Inventory (historic and long bridges)",
+   "short": "the Federal Highway Administration",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Bridges of the Federal Highway Administration's National Bridge Inventory, from the Bureau of Transportation Statistics' National Transportation Atlas Database (NTAD), a work of the United States government (public domain).",
+   "url": "https://geodata.bts.gov/datasets/usdot::national-bridge-inventory",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "bridge",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_National_Bridge_Inventory/FeatureServer/0",
+    "where": "(HISTORY_037 IN ('1','2') OR STRUCTURE_LEN_MT_049 >= 150) AND YEAR_BUILT_027 > 1700",
+    "fields": "STATE_CODE_001,STRUCTURE_NUMBER_008,FACILITY_CARRIED_007,FEATURES_DESC_006A,YEAR_BUILT_027",
+    "page": 500,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "FACILITY_CARRIED_007",
+    "key": [
+     "STATE_CODE_001",
+     "STRUCTURE_NUMBER_008"
+    ],
+    "first": "YEAR_BUILT_027"
+   },
+   "name_template": "{FACILITY_CARRIED_007} bridge over {FEATURES_DESC_006A}",
+   "name_clean": "^\\s*(HWY|HIGHWAY|WATER|WTR)\\b\\.?\\s*",
+   "history": "Each bridge from the year it was built.",
+   "notes": "The inventory has no bridge names, so each is named by what it carries and crosses (\"Middle Rd bridge over Hudson Brook\"). Only bridges on or eligible for the National Register and bridges at least 150 m long are kept (about 270 in Vermont and 1,100 in Ohio, of 4,500 and 32,000)."
+  },
+  {
+   "id": "nid-dams",
+   "name": "USACE National Inventory of Dams (named dams)",
+   "short": "the U.S. Army Corps of Engineers",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Dams of the U.S. Army Corps of Engineers' National Inventory of Dams, from the Bureau of Transportation Statistics' National Transportation Atlas Database (NTAD), a work of the United States government (public domain).",
+   "url": "https://nid.sec.usace.army.mil",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "dam",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Dams/FeatureServer/0",
+    "where": "name IS NOT NULL AND name <> ''",
+    "fields": "nidId,name,yearCompleted",
+    "page": 500,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "name",
+    "key": "nidId",
+    "first": "yearCompleted"
+   },
+   "name_template": "{name} Dam",
+   "name_strip": "(?<=Dam) Dam$",
+   "history": "Each dam from the year it was completed.",
+   "notes": "Named dams only (about 770 in Vermont and 1,700 in Ohio). Owners' names are not read."
+  },
+  {
+   "id": "military-installations",
+   "name": "DoD military installations, ranges and training areas (MIRTA)",
+   "short": "the Department of Defense",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Military installations of the Department of Defense (MIRTA), from the Bureau of Transportation Statistics' National Transportation Atlas Database (NTAD), a work of the United States government (public domain).",
+   "url": "https://geodata.bts.gov/datasets/usdot::military-bases",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "campus",
+   "tag": "military",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Military_Bases/FeatureServer/0",
+    "where": "siteOperationalStatus = 'act'",
+    "fields": "sdsId,featureName",
+    "page": 100,
+    "pause": 0.5,
+    "simplify": 0.0005
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "rings": "_rings",
+    "name": "featureName",
+    "key": "sdsId"
+   },
+   "history": "Active installations from the first build on."
+  },
+  {
+   "id": "nps-poi",
+   "name": "National Park Service points of interest",
+   "short": "the National Park Service",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Points of interest from the National Park Service's public datasets (public domain).",
+   "url": "https://public-nps.opendata.arcgis.com",
+   "reader": "tabular",
+   "kind": "points",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://mapservices.nps.gov/arcgis/rest/services/NationalDatasets/NPS_Public_POIs_Geographic/MapServer/0",
+    "where": "PUBLICDISPLAY = 'Public Map Display'",
+    "fields": "FEATUREID,POINAME,POITYPE,UNITNAME",
+    "page": 500,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "POINAME",
+    "key": "FEATUREID",
+    "class_column": "POITYPE"
+   },
+   "class_map": {
+    "Trailhead": "park:trailhead",
+    "Campground": "park:campground",
+    "Picnic Area": "park:picnic area",
+    "Boat Launch": "park:boat launch",
+    "Visitor Center": "public:visitor center",
+    "Ranger Station": "public:ranger station",
+    "Overlook": "nature:overlook",
+    "Viewpoint": "nature:viewpoint",
+    "Peak": "nature:peak",
+    "Summit": "nature:peak",
+    "Mountain Pass (saddle / Gap)": "nature:pass",
+    "Ridge": "nature:ridge",
+    "Waterfall": "nature:waterfall",
+    "Geyser": "nature:geyser",
+    "Arch": "nature:arch",
+    "Historic Building": "landmark:historic building",
+    "Historic Site": "landmark:historic site",
+    "Monument": "landmark:monument",
+    "Lighthouse": "landmark:lighthouse",
+    "Bridge": "landmark:bridge",
+    "Cemetery / Graveyard": "park:cemetery",
+    "Point of Interest": "landmark",
+    "*": ""
+   },
+   "history": "From the first build on.",
+   "notes": "Read from the NPS public datasets service (no API key). Each name carries its park (\"Visitor Center (Saint-Gaudens National Historical Park)\"), since many are generic. Only named places a photo can show: trailheads, campgrounds, visitor centres, overlooks, peaks, waterfalls, historic buildings and sites, monuments; parking lots, restrooms, mile markers and benches are left out.",
+   "name_template": "{POINAME} ({UNITNAME})"
+  },
+  {
+   "id": "usfs-recreation-sites",
+   "name": "US Forest Service recreation sites",
+   "short": "the US Forest Service",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Recreation sites from the US Forest Service's Enterprise Data Warehouse (public domain).",
+   "url": "https://data.fs.usda.gov/geodata/edw/datasets.php",
+   "reader": "tabular",
+   "kind": "points",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_InfraRecreationSites_01/MapServer/0",
+    "where": "development_status = 'EXISTING'",
+    "fields": "site_id,site_name,site_subtype",
+    "page": 500,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "site_name",
+    "key": "site_id",
+    "class_column": "site_subtype"
+   },
+   "class_map": {
+    "CAMPGROUND": "park:campground",
+    "GROUP CAMPGROUND": "park:campground",
+    "HORSE CAMP": "park:campground",
+    "TRAILHEAD": "park:trailhead",
+    "PICNIC SITE": "park:picnic area",
+    "GROUP PICNIC SITE": "park:picnic area",
+    "DAY USE AREA": "park",
+    "BOATING SITE": "park:boat launch",
+    "SWIMMING SITE": "park:swimming",
+    "FISHING SITE": "park:fishing",
+    "OBSERVATION SITE": "nature:overlook",
+    "WILDLIFE VIEWING SITE": "nature:viewpoint",
+    "LOOKOUT/CABIN": "landmark:lookout",
+    "INTERPRETIVE*": "landmark",
+    "DOCUMENTARY SITE": "landmark",
+    "SKI AREA*": "park:ski area",
+    "SNOWPARK": "park",
+    "HOTEL, LODGE, RESORT": "business:lodge",
+    "*": ""
+   },
+   "history": "From the first build on.",
+   "notes": "Read from the Forest Service's EDW map service (no RIDB key). Existing developed sites only; recreation residences (private cabins), dispersed camping spots and single camp units are left out."
+  },
+  {
+   "id": "nces-private-schools",
+   "name": "NCES private school locations (PSS)",
+   "short": "the National Center for Education Statistics",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Private school locations from the National Center for Education Statistics (EDGE, Private School Universe Survey), U.S. Department of Education (public domain).",
+   "url": "https://nces.ed.gov/programs/edge/Geographic/SchoolLocations",
+   "reader": "shapes",
+   "kind": "points",
+   "cls": "campus",
+   "tag": "private school",
+   "fetch": {
+    "method": "national",
+    "listing": "https://nces.ed.gov/programs/edge/Geographic/SchoolLocations",
+    "pattern": "/programs/edge/data/EDGE_GEOCODE_PRIVATESCH_[0-9_]+\\.zip",
+    "latest": "_(\\d\\d)_?\\d\\d\\.zip",
+    "pause": 2
+   },
+   "fields": {
+    "name": "NAME",
+    "key": "PPIN"
+   },
+   "history": "The newest survey (every two years) from the first build on; older survey files can seed closures."
+  },
+  {
+   "id": "nces-postsecondary",
+   "name": "NCES postsecondary school locations (IPEDS)",
+   "short": "the National Center for Education Statistics",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Colleges and universities from the National Center for Education Statistics (EDGE, IPEDS), U.S. Department of Education (public domain).",
+   "url": "https://nces.ed.gov/programs/edge/Geographic/SchoolLocations",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "campus",
+   "tag": "college",
+   "fetch": {
+    "method": "national",
+    "listing": "https://nces.ed.gov/programs/edge/Geographic/SchoolLocations",
+    "pattern": "/programs/edge/data/EDGE_GEOCODE_POSTSECSCH_\\d+\\.zip",
+    "latest": "_(\\d\\d)\\d\\d\\.zip",
+    "pause": 2
+   },
+   "member": "*.TXT",
+   "delimiter": "|",
+   "encoding": "latin-1",
+   "fieldnames": [
+    "UNITID",
+    "NAME",
+    "STREET",
+    "CITY",
+    "STATE",
+    "ZIP",
+    "STFIP",
+    "CNTY",
+    "NMCNTY",
+    "LOCALE",
+    "LAT",
+    "LON",
+    "CBSA",
+    "NMCBSA",
+    "CBSATYPE",
+    "CSA",
+    "NMCSA",
+    "CD",
+    "SLDL",
+    "SLDU",
+    "SCHOOLYEAR"
+   ],
+   "columns": {
+    "lat": "LAT",
+    "lon": "LON",
+    "name": "NAME",
+    "key": "UNITID"
+   },
+   "filter": {
+    "column": "STATE",
+    "equals": "{code}"
+   },
+   "history": "The newest school year from the first build on; older files can seed closures."
+  },
+  {
+   "id": "newberry-counties",
+   "name": "Atlas of Historical County Boundaries (Newberry Library)",
+   "short": "the Newberry Library's Atlas of Historical County Boundaries",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "Newberry-open",
+   "attribution": "Atlas of Historical County Boundaries, Dr. William M. Scholl Center for American History and Culture, The Newberry Library.",
+   "url": "https://digital.newberry.org/ahcb/",
+   "reader": "shapes",
+   "kind": "areas",
+   "cls": "county",
+   "tag": "county",
+   "fetch": {
+    "method": "national",
+    "url": "https://publications.newberry.org/ahcb/downloads/gis/US_AtlasHCB_Counties_Gen001.zip",
+    "pause": 2
+   },
+   "fields": {
+    "name": "NAME",
+    "key": "ID_NUM",
+    "first": "START_DATE",
+    "last": "END_DATE"
+   },
+   "name_template": "{NAME} {CNTY_TYPE}",
+   "open_from": 200012,
+   "history": "Every version of every county and its boundaries since the first colonial counties, each with the exact dates it held (to 2000; the versions current in 2000 are taken as current).",
+   "notes": "Non-county areas (unorganised land) are left out. Lookups give the county as it was on the picture's date. The national file (generalised to about 100 m) has shifted offsets inside its .zip, which the build repairs. The Newberry's terms: \"available ... for any lawful purpose, commercial or non-commercial, without licensing or permission fees\"; the older Creative Commons note inside the file is superseded.",
+   "encoding": "latin-1",
+   "skip_names": "\\bNca\\b|Non-County"
+  },
+  {
+   "id": "pa-historical-markers",
+   "name": "Pennsylvania historical markers (PHMC)",
+   "short": "the Pennsylvania Historical and Museum Commission",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-pennsylvania"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Historical markers of the Pennsylvania Historical and Museum Commission (data.pa.gov, dataset xt8f-pzzz), public domain.",
+   "url": "https://data.pa.gov/Government-Efficiency-Citizen-Engagement/Pennsylvania-Historical-Markers-Historical-and-Mu/xt8f-pzzz",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "historical marker",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.pa.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "xt8f-pzzz",
+      "select": "id AS key, name, latitude, longitude, dedicateddate AS first",
+      "where": "latitude > 1",
+      "order": "id"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "name",
+    "key": "key",
+    "first": "first"
+   },
+   "history": "Each marker from its dedication date (from 1914 on).",
+   "name_strip": "\\s*-\\s*(PLAQUE|ROADSIDE|CITY)\\s*$"
+  },
+  {
+   "id": "dc-business-licences",
+   "name": "Washington, DC basic business licences (storefronts)",
+   "short": "the District of Columbia",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-district-of-columbia"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Basic Business Licenses from the District of Columbia Department of Licensing and Consumer Protection (opendata.dc.gov), CC BY 4.0.",
+   "url": "https://opendata.dc.gov/datasets/basic-business-licenses",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://maps2.dcgis.dc.gov/dcgis/rest/services/FEEDS/DCRA/FeatureServer/0",
+    "where": "LICENSETYPE = 'Business License' AND PREMISEINDC = 'Yes' AND ENTITYTRADENAME IS NOT NULL AND BUSINESSACTIVITY IN ('Restaurant','Delicatessen','Grocery Store','Hotel','Beauty Shop','Barber Shop','Beauty Shop (Nails)','Gasoline Dealer','Dry Cleaner','Bakery','Parking Facility','Motor Vehicle Dealer','Consumer Goods (Auto Repair)','Secondhand Dealer (Class A)','Public Hall','Power Laundry')",
+    "fields": "CUSTOMERNUMBER,ENTITYTRADENAME,BUSINESSACTIVITY,INITIALISSUEDATE,LICENSEENDDATE,LATITUDE,LONGITUDE",
+    "page": 500,
+    "pause": 0.5,
+    "box": false
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "LATITUDE",
+    "lon": "LONGITUDE",
+    "name": "ENTITYTRADENAME",
+    "key": "CUSTOMERNUMBER",
+    "class_column": "BUSINESSACTIVITY",
+    "first": "INITIALISSUEDATE",
+    "last": "LICENSEENDDATE"
+   },
+   "class_map": {
+    "Restaurant": "business:restaurant",
+    "Delicatessen": "business:restaurant",
+    "Bakery": "business:shop",
+    "Grocery Store": "business:shop",
+    "Hotel": "business:hotel",
+    "Beauty Shop*": "business:salon",
+    "Barber Shop": "business:salon",
+    "Gasoline Dealer": "business:fuel",
+    "Dry Cleaner": "business:laundry",
+    "Power Laundry": "business:laundry",
+    "Parking Facility": "business:parking",
+    "Motor Vehicle Dealer": "business:car dealer",
+    "Consumer Goods (Auto Repair)": "business:garage",
+    "Secondhand Dealer (Class A)": "business:shop",
+    "Public Hall": "business:venue",
+    "*": ""
+   },
+   "aggregate": true,
+   "history": "Each licence from its first issue date to its end (an expired one ends there); keyed by the customer number, so a renamed business keeps its old name with its dates.",
+   "notes": "Only premises in DC of storefront activities, under their trade names: rentals (one- and two-family, short-term and vacation rentals, rooming houses), contractors, salespeople and owners' and agents' names are left out."
+  },
+  {
+   "id": "minneapolis-food-inspections",
+   "name": "Minneapolis food inspections",
+   "short": "the City of Minneapolis",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-minnesota"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Food inspections from the City of Minneapolis (opendata.minneapolismn.gov); the City has waived all copyright and related rights to its open data.",
+   "url": "https://opendata.minneapolismn.gov/datasets/food-inspections",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "restaurant",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/afSMGVsC7QlRK1kZ/arcgis/rest/services/Food_Inspections/FeatureServer/0",
+    "where": "1=1",
+    "fields": "HealthFacilityIDNumber,BusinessName,DateOfInspection",
+    "page": 1000,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "BusinessName",
+    "key": "HealthFacilityIDNumber",
+    "first": "DateOfInspection",
+    "last": "DateOfInspection"
+   },
+   "aggregate": true,
+   "still_open_months": 24,
+   "history": "Each establishment's first and last inspection, one record per licence and name."
   }
  ],
  "rejected": [
@@ -2292,11 +2849,6 @@
    "reason": "Share-alike; only OpenStreetMap's own layer may be ODbL in a pack."
   },
   {
-   "name": "Los Angeles County restaurant inspections, Boston food establishment inspections, Louisville food inspections",
-   "licence": "Varies",
-   "reason": "Not on a Socrata portal (ArcGIS Hub or CKAN); not wired in yet. Each needs its terms checked and its own download method."
-  },
-  {
    "name": "Kansas City, Providence, Cincinnati and Delaware business licences",
    "licence": "Public domain or PDDL",
    "reason": "Open, but without storefront categories that keep home-based businesses out (Delaware's are mostly contractors), or without dates (Kansas City, Providence)."
@@ -2370,6 +2922,61 @@
    "name": "USPS post office locations",
    "licence": "Public domain",
    "reason": "No current official download with coordinates (the HIFLD layer is gone); post offices come from GNIS, OpenStreetMap, Overture and Foursquare."
+  },
+  {
+   "name": "Denver business, liquor and other City and County of Denver data",
+   "licence": "Denver's use constraints",
+   "reason": "The terms make every user indemnify the City and hold it harmless: not an open licence."
+  },
+  {
+   "name": "EIA power plants (EIA-860)",
+   "licence": "Public domain (US government work)",
+   "reason": "EIA publishes plant locations only as an Excel workbook (not read by the build yet) or through an API that needs a key; the Esri copy of the layer is under the Esri Master License Agreement."
+  },
+  {
+   "name": "USCG Light List and lighthouses",
+   "licence": "Public domain (US government work)",
+   "reason": "The Light List is published as PDF volumes; navcen.uscg.gov refused requests from the build environment (403), and no open point file was found. Lighthouses in national parks come with the NPS points of interest."
+  },
+  {
+   "name": "FCC antenna structure registrations and broadcast station lists",
+   "licence": "Public domain",
+   "reason": "Weekly bulk files of unnamed structures (owners and registration numbers, which are often people); they would not name a place in a picture."
+  },
+  {
+   "name": "EPA Facility Registry Service",
+   "licence": "Public domain",
+   "reason": "Millions of regulated sites (many of them farms and homes with a tank or a permit); no lightweight named subset of public places."
+  },
+  {
+   "name": "Texas Historical Commission markers (THC Atlas)",
+   "licence": "Not stated",
+   "reason": "THC's published layer states no licence; only a county's copy asks to credit the THC."
+  },
+  {
+   "name": "Virginia DHR highway markers",
+   "licence": "Not found",
+   "reason": "No open download or service of the markers was found on Virginia's portals."
+  },
+  {
+   "name": "Los Angeles County restaurant inspections",
+   "licence": "Not stated",
+   "reason": "Only university research copies were found, not an official open layer."
+  },
+  {
+   "name": "Alaska / Anchorage business licences (DCRA)",
+   "licence": "Disclaimer only",
+   "reason": "No licence stated, and the statewide list is mostly sole proprietors at home addresses."
+  },
+  {
+   "name": "New Orleans occupational business licences",
+   "licence": "No licence stated",
+   "reason": "The dataset (data.nola.gov hjcd-grvu) states no licence."
+  },
+  {
+   "name": "Honolulu, Las Vegas (Southern Nevada Health District), Wake County/Raleigh, Tampa/Hillsborough, Portland and Kansas City business licences or restaurant inspections",
+   "licence": "Not found",
+   "reason": "No downloadable dataset with coordinates and an open licence was found on their portals (Kansas City's has no dates)."
   }
  ],
  "candidates": [
@@ -2429,11 +3036,6 @@
    "note": "Later, for named undersea features."
   },
   {
-   "name": "USFS trails and trailheads; NPS trails and points of interest",
-   "licence": "Public domain (US government works)",
-   "note": "Open; not wired in yet (national shapefiles: add as shapes entries of kind lines and points)."
-  },
-  {
    "name": "US Census school districts (UNSD, ELSD, SCSD)",
    "licence": "Public domain (US government works)",
    "note": "Open; to add like the Census places (areas per state)."
@@ -2459,9 +3061,19 @@
    "note": "Open; can be added as \"socrata\" entries like the ones used, after checking each one's columns."
   },
   {
-   "name": "FCC antenna structures and broadcast stations; EPA Facility Registry Service; NPS and USFS points of interest and recreation sites",
+   "name": "Louisville Metro restaurant inspection scores",
+   "licence": "Louisville Open Data Platform terms",
+   "note": "On an ArcGIS service (LouisvilleMetro, FoodServiceData) that the arcgis method can read; add once the platform's terms are read and confirmed open."
+  },
+  {
+   "name": "Boston food establishment inspections; Allegheny County (WPRDC) food facilities; Philadelphia licences and inspections",
+   "licence": "To confirm per portal (Boston ODC PDDL, WPRDC per dataset, OpenDataPhilly)",
+   "note": "CKAN or Carto portals: their full CSV exports are large (one row per violation); add with a grouped query (Carto SQL) or the CKAN datastore once each licence is confirmed."
+  },
+  {
+   "name": "USFS trails and NPS trails",
    "licence": "Public domain (US government works)",
-   "note": "Open national files; mostly unnamed structures or regulated sites (FCC, EPA), or national shapefiles (NPS, USFS): to add as national entries with a class map that keeps only named public places."
+   "note": "Line layers on the same services as the recreation sites and points of interest; the arcgis method would need line output."
   }
  ]
 }

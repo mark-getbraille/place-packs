@@ -4,11 +4,13 @@
 #   versions, ETags or Last-Modified dates differ from the ones recorded in packs.json). Started by hand (Actions,
 #   "Build place packs", Run workflow), it builds the regions typed (all when empty), with "force" to rebuild them
 #   even when nothing changed, and "seed_history" to seed the US address-range history from older TIGER years.
-# - plan: the regions to build. prepare: the national files (NAD, ZIP areas, school list, Canadian names, GeoNames,
-#   the UK's food hygiene ratings, and the Foursquare places of every covered country, read once), split into one
+# - plan: the regions to build. prepare: the national files (NAD, ZIP areas, public and private schools, colleges,
+#   libraries, historical counties, Canadian names, GeoNames, the UK's food hygiene ratings, and the Foursquare
+#   places of every covered country, read once), split into one
 #   slice per region; the NAD (found from its data.transportation.gov metadata) is kept in the Actions cache between
 #   runs and downloaded again only when its blobId or rowsUpdatedAt changes. The city and state open-data sources
-#   (Socrata portals) are fetched by each region's build job, one small grouped query per dataset. build: one job per region (two at a time, so Geofabrik and the other services get
+#   (Socrata portals) and the federal ArcGIS layers (historic places, PAD-US, bridges, dams, airports, stations,
+#   parks) are fetched by each region's build job, by the region's box or one small grouped query per dataset. build: one job per region (two at a time, so Geofabrik and the other services get
 #   one download at a time from each), core then extra, each merged with the region's previous pack (history is
 #   never rewritten). publish: the new packs under dated names, then packs-previous.json (the list before), then
 #   packs.json last; then the files neither list names are deleted. Only the repository's own GITHUB_TOKEN is used.

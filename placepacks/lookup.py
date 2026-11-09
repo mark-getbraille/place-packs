@@ -36,7 +36,7 @@ from placepacks.when import When
 AREA_CLASSES = {"park", "landmark", "neighbourhood", "campus", "water", "nature"}
 POINT_CLASSES = AREA_CLASSES | {"building", "business", "street", "public", "transit"}
 FACILITY_CLASSES = {"public", "campus", "landmark", "transit", "business", "park"}
-NOT_A_NAME = {"settlement", "town", "zip", "admin", "region", "range", "address"}
+NOT_A_NAME = {"settlement", "town", "zip", "admin", "region", "range", "address", "county"}
 BUSINESS_SOURCES = {"overture-places", "fsq-places"}
 
 
@@ -57,7 +57,8 @@ class Result:
     kind: "place", "address", "approx_address", "nearby", "area", "water", "air" or "none"."""
 
     FIELDS = dict(kind="none", name="", cls="", house_number="", street="", street_then="", street_now="", town="",
-                  neighbourhood="", zip_area="", region="", country="", water_name="", water_cls="", distance_m=None,
+                  neighbourhood="", zip_area="", county="", region="", country="", water_name="", water_cls="",
+                  distance_m=None,
                   bearing="", over="", altitude_m=None, airport="", first=None, last=None, now_name="", listed=False,
                   probably=False, as_listed_now=False, no_older_record=False, when=None, latitude=None,
                   longitude=None)
@@ -662,7 +663,9 @@ class Finder:
 
     def _town(self, result, packs, lat, lon, when, latest, start):
         """The neighbourhood, the town (a Census place or county subdivision, else the nearest settlement) and the
-        ZIP area."""
+        ZIP area, and the county as it was on the picture's date (the Newberry atlas: boundaries since the 1600s,
+        each version of a county with its own dates)."""
+        counties = []
         for p in packs:
             for a in p.areas_at(lat, lon):
                 if a["cls"] == "town" and not result.town:
@@ -671,6 +674,12 @@ class Finder:
                         result.town = a["name"]
                 elif a["cls"] == "zip" and not result.zip_area:
                     result.zip_area = a["name"]
+                elif a["cls"] == "county":
+                    counties.append(a)
+        if counties:
+            chosen, _ = choose(counties, when, latest, self._start_for(counties, start), self._b)
+            if chosen:
+                result.county = chosen[0]["name"]
         hood = [r for p in packs for r in p.points_near(lat, lon, 1500, {"neighbourhood"})]
         if hood:
             result.neighbourhood = hood[0]["name"]
@@ -686,7 +695,7 @@ class Finder:
         """True when a pack names a place on land right here (so a coarse coastline does not put a beach at sea)."""
         for p in self._packs_at(lat, lon):
             for a in p.areas_at(lat, lon):
-                if a["cls"] not in ("water", "zip", "admin", "region", "town") and a["cls"] in POINT_CLASSES:
+                if a["cls"] not in ("water", "zip", "admin", "region", "town", "county") and a["cls"] in POINT_CLASSES:
                     return True
             if p.points_near(lat, lon, 25, POINT_CLASSES - {"street", "transit"}):
                 return True

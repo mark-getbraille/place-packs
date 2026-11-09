@@ -113,3 +113,20 @@ def test_fetched_json_with_its_bounding_box_entry():
     from placepacks import manifest
     fetched = {"osm": {"ok": True, "version": "2026-11-09"}, "nad": {"ok": False}, "_bbox": [-73.4, 42.7, -71.5, 45.0]}
     assert manifest.fingerprint(fetched) == {"osm": "2026-11-09"}
+
+
+def test_point_shapefile_is_split_per_region(tmp_path):
+    """A shapefile of points (the NCES schools) is split per state: pyshp's points have no bbox (the second real
+    build stopped on it)."""
+    import shapefile
+    from placepacks import catalogue
+    path = str(tmp_path / "schools")
+    with shapefile.Writer(path, shapeType=shapefile.POINT) as w:
+        w.field("NAME", "C", 40)
+        w.point(-72.0, 44.0)
+        w.record("Made-up School")
+        w.point(-71.4, 41.8)
+        w.record("Invented Academy")
+    entry = {"id": "nces-schools", "countries": ["US"]}
+    counts = split.split_shapes(entry, path + ".shp", str(tmp_path / "split"), catalogue.regions())
+    assert counts.get("us-vermont") == 1 and counts.get("us-rhode-island") == 1

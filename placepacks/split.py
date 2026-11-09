@@ -62,7 +62,15 @@ def split_shapes(entry, path, out, regions):
     with shapefile.Reader(path) as shp:
         fields = shp.fields[1:]
         for sr in shp.iterShapeRecords():
-            x1, y1, x2, y2 = sr.shape.bbox
+            pts = sr.shape.points
+            if not pts:
+                continue
+            # Point shapes have no bbox in pyshp: take it from the points themselves.
+            bbox = getattr(sr.shape, "bbox", None)
+            if bbox is None:
+                xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+                bbox = (min(xs), min(ys), max(xs), max(ys))
+            x1, y1, x2, y2 = bbox
             for rid, r in targets.items():
                 w, s, e, n = r["bbox"]
                 if x2 < w or x1 > e or y2 < s or y1 > n:
@@ -125,13 +133,18 @@ def main(argv=None):
             if name.endswith(".version"):
                 continue
             path = os.path.join(folder, name)
-            if entry["fetch"]["method"] == "duckdb_national" and name.endswith(".parquet"):
-                counts = split_parquet(entry, path, a.out, regions)
-            elif entry["reader"] == "tabular" and entry.get("filter"):
-                counts = split_tabular(entry, path, a.out, regions)
-            elif entry["reader"] == "shapes":
-                counts = split_shapes(entry, path, a.out, regions)
-            else:
+            # One source that cannot be split is reported and left out; the others are still split.
+            try:
+                if entry["fetch"]["method"] == "duckdb_national" and name.endswith(".parquet"):
+                    counts = split_parquet(entry, path, a.out, regions)
+                elif entry["reader"] == "tabular" and entry.get("filter"):
+                    counts = split_tabular(entry, path, a.out, regions)
+                elif entry["reader"] == "shapes":
+                    counts = split_shapes(entry, path, a.out, regions)
+                else:
+                    continue
+            except Exception as exc:  # noqa: BLE001 - reported, the build goes on without this source
+                print(f"{entry['id']}: failed (not split: {type(exc).__name__}: {exc})")
                 continue
             print(f"{entry['id']}: {sum(counts.values()):,} records in {len(counts)} regions")
     return 0

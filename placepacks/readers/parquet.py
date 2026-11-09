@@ -6,6 +6,11 @@ for fetch.py the source's remote address) and {west} {south} {east} {north} (the
 the columns key, name, cls, lat, lon and, when the source has them, first and last (dates as text), or for areas
 key, name, cls and geojson (the shape in longitude/latitude). Only rows with a name are kept. fetch.py runs the same
 query on the remote files (range reads by bounding box), so only the region's slice is ever downloaded.
+
+A publisher may rename columns between releases (Overture replaced "categories" by "taxonomy" and
+"basic_category" in 2026). The entry's "pick" lists candidates for further placeholders, for example
+{"cls": ["taxonomy.primary", "basic_category", "categories.primary"], "status": ["operating_status"]}: the input's
+columns are read first (DESCRIBE), and each placeholder becomes the first candidate the input has, or NULL.
 """
 
 import json
@@ -26,12 +31,33 @@ def connect(spatial=False):
     return con
 
 
-def sql(entry, src, region):
-    """The entry's query for an input and a region."""
+def has_column(columns, path):
+    """True when DESCRIBE's columns ({name: type text}) have path: "basic_category", or a struct field
+    "taxonomy.primary"."""
+    top, _, field = path.partition(".")
+    if top not in columns:
+        return False
+    return not field or f'{field} ' in columns[top].replace('"', "") or f"{field}," in columns[top]
+
+
+def picked(entry, con, src, read):
+    """{placeholder: SQL expression} of the entry's "pick" for this input (see the module docstring)."""
+    if not entry.get("pick"):
+        return {}
+    cur = con.execute(f"DESCRIBE SELECT * FROM {read} LIMIT 0")
+    columns = {r[0]: str(r[1]) for r in cur.fetchall()}
+    return {name: next((c for c in candidates if has_column(columns, c)), "NULL")
+            for name, candidates in entry["pick"].items()}
+
+
+def sql(entry, src, region, con=None):
+    """The entry's query for an input and a region (con: a DuckDB connection, needed for "pick")."""
     west, south, east, north = region["bbox"]
     if os.path.isdir(str(src)):
         src = os.path.join(str(src), "*.parquet")
-    return entry["query"].format(src=str(src).replace("'", "''"), west=west, south=south, east=east, north=north)
+    src = str(src).replace("'", "''")
+    extra = picked(entry, con, src, f"read_parquet('{src}', hive_partitioning = 1)") if con is not None else {}
+    return entry["query"].format(src=src, west=west, south=south, east=east, north=north, **extra)
 
 
 def classify_category(entry, category):
@@ -51,7 +77,7 @@ def read(path, entry, region, writer):
     con = connect(entry.get("spatial", False))
     count, source = 0, entry["id"]
     # A slice written by fetch_slice already has the query's columns.
-    query = f"SELECT * FROM read_parquet('{path}')" if str(path).endswith(SLICE) else sql(entry, path, region)
+    query = f"SELECT * FROM read_parquet('{path}')" if str(path).endswith(SLICE) else sql(entry, path, region, con)
     cursor = con.execute(query)
     names = [d[0] for d in cursor.description]
     for values in cursor.fetchall():
@@ -84,5 +110,5 @@ def fetch_slice(entry, region, target):
     con.execute("INSTALL httpfs; LOAD httpfs;")
     if entry.get("s3_region"):
         con.execute(f"SET s3_region = '{entry['s3_region']}'")
-    con.execute(f"COPY ({sql(entry, entry['remote'], region)}) TO '{target}' (FORMAT PARQUET)")
+    con.execute(f"COPY ({sql(entry, entry['remote'], region, con)}) TO '{target}' (FORMAT PARQUET)")
     con.close()

@@ -38,6 +38,13 @@ POINT_CLASSES = AREA_CLASSES | {"building", "business", "street", "public", "tra
 FACILITY_CLASSES = {"public", "campus", "landmark", "transit", "business", "park"}
 NOT_A_NAME = {"settlement", "town", "zip", "admin", "region", "range", "address"}
 BUSINESS_SOURCES = {"overture-places", "fsq-places"}
+
+
+def is_business_source(pack, source):
+    """True for a source of business listings (Overture, Foursquare, and every source whose kind in the pack's
+    sources table is "businesses": inspections, licences, directories), whose names are said as "listed as"."""
+    return source in BUSINESS_SOURCES or (pack is not None and
+                                          (pack.sources.get(source) or {}).get("kind") == "businesses")
 PLACE_M, ADDRESS_M, RANGE_M, FACILITY_M, STREET_M = 40, 40, 40, 60, 60
 SAME_PLACE_M = 15
 
@@ -562,7 +569,8 @@ class Finder:
         # 4. a facility nearby
         if not result.name and result.kind != "address":
             near = [r for p in packs for r in p.points_near(lat, lon, FACILITY_M, FACILITY_CLASSES)]
-            near.sort(key=lambda r: (r["source"] in BUSINESS_SOURCES, r["d"]))
+            owner = {s: p for p in packs for s in p.sources}
+            near.sort(key=lambda r: (is_business_source(owner.get(r["source"]), r["source"]), r["d"]))
             if near:
                 pack = next((p for p in packs if near[0]["source"] in p.sources), packs[0])
                 self._take(result, pack, [near[0]] + [r for r in near[1:] if r["key"] == near[0]["key"]], when,
@@ -579,7 +587,7 @@ class Finder:
         r = chosen[0]
         result.kind, result.name, result.cls = kind, r["name"], r["cls"]
         result.first, result.last = r["first"], r["last"]
-        result.listed = r["source"] in BUSINESS_SOURCES
+        result.listed = is_business_source(pack, r["source"])
         result.now_name = successor(rows, r, when, latest)
         for k, v in flags.items():
             setattr(result, k, v)

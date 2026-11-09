@@ -80,8 +80,12 @@ class PackWriter:
     # -- adding this month's records
 
     def _span(self, first, last):
-        """(first, last) months: the given ones (a source's own dates), else this month."""
-        return first or self.month, last or self.month
+        """(first, last) months: the given ones (a source's own dates), else this month. A date after this month (a
+        licence that expires next year, a start date typed in the future) is this month: the pack only says what
+        was true up to its build. A record without a start date starts at its last month."""
+        last = min(last or self.month, self.month)
+        first = min(first or last, self.month)     # no start date: from its own end (a closed licence) or now
+        return min(first, last), last
 
     def _extend(self, south, west, north=None, east=None):
         """Grow the pack's bounds."""
@@ -291,8 +295,11 @@ def merge_history(db, previous, month):
             match = "p.key = f.key AND " + SAME[table].format(t=TOLERANCE)
         columns = [c.split()[0] for c in TABLES[table].split(", ") if not c.startswith("id ")]
         db.execute("CREATE TEMP TABLE m (fid INTEGER, pid INTEGER, pfirst INTEGER)")
-        db.execute(f"INSERT INTO m SELECT f.id, p.id, p.first FROM {table} f JOIN {old} p ON p.last >= ? AND {match}",
-                   (last_month,))
+        # The same record as an old row when that row was still open at the last build, or when the source gives the
+        # record its own end (a closed licence, a demolished building: f.last before this month) and the old row
+        # ends no later: the source still lists it, so it continues instead of being copied every month.
+        db.execute(f"INSERT INTO m SELECT f.id, p.id, p.first FROM {table} f JOIN {old} p ON (p.last >= ? OR "
+                   f"(f.last < ? AND p.last <= f.last)) AND {match}", (last_month, month))
         if table != "addr":
             # The second pass: records without a stable id, the same name and class within about 5 m.
             db.execute(f"INSERT INTO m SELECT f.id, p.id, p.first FROM {table} f JOIN {old} p ON p.last >= ? AND "

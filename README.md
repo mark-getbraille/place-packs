@@ -6,7 +6,9 @@ New Zealand or Japan. Programs download a region's pack the first time a picture
 nothing is sent anywhere when a place is looked up.
 
 The packs are built from OpenStreetMap and other open data: national address databases, government names and
-facilities, Overture Maps and Foursquare Open Source Places, Wikidata and public transit feeds. Each source is
+facilities, Overture Maps and Foursquare Open Source Places, Wikidata, GeoNames and public transit feeds, and dated
+business records: restaurant inspections, liquor and business licences, bank branches, the UK's food hygiene
+ratings and Victoria's Sands & McDougall directories (1896–1974). Each source is
 listed with its licence in [SOURCES.md](SOURCES.md). The packs are made for the
 [Digital Accessibility Toolkit](https://getbraille.com)'s picture describer and the Photo Location Identifier
 (`photo-location-identifier/`), and anyone may use them under their licences.
@@ -47,7 +49,12 @@ How far back each layer goes:
 |---|---|
 | OpenStreetMap | From the first build (November 2026). Full OpenStreetMap history would need about 150 GB, or an OpenStreetMap login for per-state history extracts, so it is not used. |
 | US street names and address ranges (TIGER/Line) | Seeded from the yearly releases of 2011, 2014, 2017, 2020 and 2023 (ADDRFEAT starts in 2011), then every build. This catches street renames, new streets and changed ranges. |
-| US address points (NAD) | From the first build. Earlier NAD releases are added if USDOT keeps them openly downloadable. |
+| US address points (NAD) | From the first build. Earlier NAD releases are added if USDOT keeps them openly downloadable. The NAD is downloaded again only when USDOT publishes a new file (data.transportation.gov). |
+| Restaurant inspections (New York City and State, Austin, Delaware, Montgomery County MD, Boulder County, Cincinnati, Baton Rouge, San Francisco 2016–2019) | Each establishment from its first to its last inspection, one record per permit and name, so a renamed restaurant keeps its old name with its own dates. New York State's go back to 2005. |
+| Liquor licences (New York State, Colorado), New York City storefront licences, San Francisco and Los Angeles business locations | Each licence's issue and expiry dates, or each business location's start and end dates (San Francisco's go back to the 1960s). Only storefront businesses, under their trade names. |
+| FDIC bank branches | Each branch under its bank's name since the bank took it over, or since it opened. |
+| UK food hygiene ratings (FSA) | Each business from its latest rating date, then month by month. |
+| Victoria, Australia: Sands & McDougall directories | The directory years 1896–1974 each business was listed in. |
 | Overture places | From the first build. Past monthly releases (for example one a quarter) can be merged first while Overture still keeps them. |
 | Foursquare Open Source Places | Foursquare's own creation and closing dates. |
 | Wikidata | Its start and end dates, often decades back (a mill from 1923 to 1998). |

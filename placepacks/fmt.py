@@ -9,6 +9,7 @@ fine cells of 1/100 degree (about 1.1 km) and coarse cells of 1/10 degree. Dates
 import array
 import datetime
 import math
+import re
 import struct
 import sys
 import zlib
@@ -35,9 +36,16 @@ def month_of(date=None):
 
 
 def parse_month(text):
-    """YYYYMM from "2026-11", "2026-11-03", "2026-11-03T10:00:00Z", "+1923-05-00T00:00:00Z" (Wikidata) or "2026";
-    None when it is not a date."""
+    """YYYYMM from "2026-11", "2026-11-03", "2026-11-03T10:00:00Z", "+1923-05-00T00:00:00Z" (Wikidata), "2026",
+    "11/03/2026" (US month/day/year, as FDIC and some city portals write it) or "20261103"; None when it is not a
+    date."""
     text = (text or "").strip().lstrip("+")
+    us = re.fullmatch(r"(\d{1,2})/\d{1,2}/(\d{4})(?:\s.*)?", text)
+    if us:
+        month, year = int(us.group(1)), int(us.group(2))
+        return year * 100 + month if 1 <= month <= 12 and 1 <= year <= 9999 else None
+    if re.fullmatch(r"\d{8}", text):
+        text = f"{text[:4]}-{text[4:6]}"
     try:
         year = int(text[:4])
     except ValueError:

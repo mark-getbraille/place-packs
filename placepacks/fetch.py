@@ -11,11 +11,20 @@ Each source's catalogue "fetch" says how:
   duckdb          the region's slice of remote Parquet (Overture, Foursquare), by bounding box (range reads)
   wikidata        one query to the Wikidata Query Service, by bounding box
   gtfs            the region's feeds of the Mobility Database catalogue whose licence allows redistribution
+  socrata         a Socrata open-data portal's dataset(s), through its SODA API without an app token: each query's
+                  $select/$where/$group (one row per permit or licence and name, with its first and last date),
+                  paged with $limit/$offset into one CSV; the version is each dataset's rowsUpdatedAt
+  wfs             a WFS layer (GeoServer) as CSV, paged with startIndex/count; the version is its feature count
   manual          a folder someone filled (inputs/...): used when it exists
+A national source's file may be named by the publisher's metadata instead of a fixed address ("socrata_blob": the
+NAD's file on data.transportation.gov, whose version is its blobId and rowsUpdatedAt), one file per country
+("per_country": GeoNames) or every file a listing page links to ("listing": the FSA's hygiene ratings, one XML file
+per local authority, turned into one CSV by "xml_records").
 Every request names the project in its User-Agent and waits the source's "pause" seconds before the next one; a
 busy or rate-limited host (429, 5xx, "ServerBusy") is tried again after 30, 60, 120 and 240 seconds (download).
 Release names that change ("latest" in the settings) are found from the publisher's own listing (s3_latest:
-Overture's and Foursquare's buckets, the NAD's releases). Every source ends with one status line,
+Overture's and Foursquare's buckets; the NAD from its Socrata metadata, with the old S3 bucket as a fallback). An
+interrupted download continues where it stopped (a Range request) when the host allows it. Every source ends with one status line,
 "source: ok (version)", "source: skipped (reason)" or "source: failed (error)", printed and kept in fetched.json
 ("status", "reason"); the build adds the rows read, and sources-status.md lists them.
 fetched.json: {source id: {"path", "ok", "status", "reason", "version", "date", "error"}, "_bbox": [west, south, east,
@@ -23,9 +32,11 @@ north]}.
 """
 
 import argparse
+import csv
 import datetime
 import email.utils
 import hashlib
+import io
 import json
 import os
 import re
@@ -72,9 +83,16 @@ def download(url, target, pause=0, waits=RETRY_WAITS, sleep=time.sleep):
     """Download url to target (through a .partial file), trying a busy host again after each of waits. Returns
     (version, date)."""
     os.makedirs(os.path.dirname(os.path.abspath(target)), exist_ok=True)
+    partial = target + ".partial"
+    if os.path.exists(partial):
+        os.remove(partial)
     for attempt in range(len(waits) + 1):
         try:
-            with request(url) as r, open(target + ".partial", "wb") as f:
+            # After a dropped connection, ask only for the rest (the NAD is 8.5 GB); a host that answers with the
+            # whole file (200) is written from the start.
+            done = os.path.getsize(partial) if os.path.exists(partial) else 0
+            with request(url, headers={"Range": f"bytes={done}-"} if done else None) as r, \
+                    open(partial, "ab" if done and getattr(r, "status", 200) == 206 else "wb") as f:
                 while True:
                     block = r.read(1 << 20)
                     if not block:
@@ -87,7 +105,7 @@ def download(url, target, pause=0, waits=RETRY_WAITS, sleep=time.sleep):
                 raise
             print(f"  {url}: busy ({str(e)[:80]}); trying again in {waits[attempt]} s", flush=True)
             sleep(waits[attempt])
-    os.replace(target + ".partial", target)
+    os.replace(partial, target)
     if pause:
         time.sleep(pause)
     date = ""
@@ -156,6 +174,161 @@ def nad_url(values, opener=None):
     except Exception:  # noqa: BLE001 - no list: the setting's release
         pass
     return f"{bucket}/NAD_r{values.get('nad_release', '20')}_TXT.zip"
+
+
+def read_json(url, opener=None):
+    """The JSON answer of url."""
+    with (opener or request)(url) as r:
+        return json.loads(r.read().decode("utf-8"))
+
+
+def socrata_blob(spec, values, opener=None):
+    """(address, file name, version) of a file published as a Socrata "blob" (the NAD on data.transportation.gov):
+    spec = {"metadata": the view's JSON address, "download": an address with {blobId} and {blobFilename}, "file":
+    the local name with {blobFilename}}. The version is the blobId and rowsUpdatedAt, so a new file (or a file
+    replaced under the same id) is downloaded again and an unchanged one is not."""
+    meta = read_json(spec["metadata"].format(**values), opener)
+    blob, name = meta.get("blobId"), meta.get("blobFilename") or "data.zip"
+    if not blob:
+        raise ValueError("the metadata names no file (blobId)")
+    url = spec["download"].format(**{**values, "blobId": blob, "blobFilename": urllib.parse.quote(name)})
+    return url, spec.get("file", "{blobFilename}").format(blobFilename=name), f"{blob}:{meta.get('rowsUpdatedAt', '')}"
+
+
+def national_files(entry, values, opener=None):
+    """[(address, local file name, version or None)] of a national source. None: the version comes from the
+    download's ETag or Last-Modified."""
+    f = entry["fetch"]
+    if f.get("socrata_blob"):
+        try:
+            return [socrata_blob(f["socrata_blob"], values, opener)]
+        except Exception as e:  # noqa: BLE001 - the old address, when the metadata cannot be read
+            print(f"  {entry['id']}: the publisher's metadata could not be read ({str(e)[:100]}); trying the old "
+                  f"address", flush=True)
+            url = nad_url(values, opener) if entry["id"] == "nad" else f["url"].format(**values)
+            return [(url, os.path.basename(urllib.parse.urlsplit(url).path), None)]
+    if f.get("per_country"):
+        out = []
+        for cc in entry["countries"]:
+            url = f["url"].format(**{**values, "cc": cc})
+            out.append((url, os.path.basename(urllib.parse.urlsplit(url).path), None))
+        return out
+    if f.get("listing"):
+        with (opener or request)(f["listing"]) as r:
+            page = r.read().decode("utf-8", "replace")
+        names = sorted(set(re.findall(f["pattern"], page)))
+        return [(urllib.parse.urljoin(f["listing"], n), os.path.basename(urllib.parse.urlsplit(n).path), None)
+                for n in names]
+    url = nad_url(values, opener) if entry["id"] == "nad" else f["url"].format(**values)
+    return [(url, os.path.basename(urllib.parse.urlsplit(url).path), None)]
+
+
+def xml_to_csv(paths, spec, target):
+    """Write the records of XML files as one CSV: spec = {"record": the element of one record, "fields": [child
+    element names, found at any depth inside the record]}. Returns the number of records."""
+    import xml.etree.ElementTree as ET
+    fields, count = spec["fields"], 0
+    with open(target, "w", newline="", encoding="utf-8") as out:
+        w = csv.writer(out)
+        w.writerow(fields)
+        for path in paths:
+            for _, el in ET.iterparse(path, events=("end",)):
+                if el.tag != spec["record"]:
+                    continue
+                values = {c.tag: (c.text or "").strip() for c in el.iter()}
+                w.writerow([values.get(name, "") for name in fields])
+                count += 1
+                el.clear()
+    return count
+
+
+def get_page(url, folder, pause, sleep=time.sleep):
+    """The text of one page of an API answer (downloaded through download(), so a busy host is tried again)."""
+    tmp = os.path.join(folder, ".page")
+    download(url, tmp, pause, sleep=sleep)
+    with open(tmp, encoding="utf-8-sig", newline="") as f:
+        text = f.read()
+    os.remove(tmp)
+    return text
+
+
+def socrata_version(domain, datasets, opener=None):
+    """"<id>:<rowsUpdatedAt>,..." of a Socrata portal's datasets (their metadata, one small request each)."""
+    return ",".join(f"{d}:{read_json(f'https://{domain}/api/views/{d}.json', opener).get('rowsUpdatedAt', '')}"
+                    for d in datasets)
+
+
+def append_csv(text, writer_state, out):
+    """Append the rows of one CSV page to out (the header of the first page only). Returns the rows added."""
+    reader = csv.DictReader(io.StringIO(text))
+    if writer_state.get("w") is None:
+        writer_state["w"] = csv.DictWriter(out, fieldnames=reader.fieldnames or [], extrasaction="ignore")
+        writer_state["w"].writeheader()
+    n = 0
+    for row in reader:
+        writer_state["w"].writerow(row)
+        n += 1
+    return n
+
+
+def fetch_socrata(entry, folder, fingerprint, opener=None, sleep=time.sleep):
+    """A Socrata source (see the module docstring): fetch = {"domain", "queries": [{"dataset", "select", "where",
+    "group", "order"}], "page": rows per request}. Every query's $select gives the same column names (aliases), so
+    the pages make one CSV. Returns the fetched.json entry."""
+    f = entry["fetch"]
+    queries, page = f["queries"], int(f.get("page", 50000))
+    version = socrata_version(f["domain"], list(dict.fromkeys(q["dataset"] for q in queries)), opener)
+    if fingerprint:
+        return {"ok": True, "version": version, "path": "", "date": ""}
+    os.makedirs(folder, exist_ok=True)
+    target = os.path.join(folder, entry["id"] + ".csv")
+    state, rows = {}, 0
+    with open(target + ".partial", "w", newline="", encoding="utf-8") as out:
+        for q in queries:
+            offset = 0
+            while True:
+                params = {"$select": q["select"], "$limit": page, "$offset": offset,
+                          "$order": q.get("order") or q.get("group") or ":id"}
+                if q.get("where"):
+                    params["$where"] = q["where"]
+                if q.get("group"):
+                    params["$group"] = q["group"]
+                url = f"https://{f['domain']}/resource/{q['dataset']}.csv?" + urllib.parse.urlencode(params)
+                got = append_csv(get_page(url, folder, f.get("pause", 1), sleep), state, out)
+                rows += got
+                if got < page:
+                    break
+                offset += page
+    os.replace(target + ".partial", target)
+    return {"ok": rows > 0, "version": version, "path": target, "date": datetime.date.today().isoformat(),
+            **({} if rows else {"status": "failed", "reason": "the portal returned no rows"})}
+
+
+def fetch_wfs(entry, folder, fingerprint, opener=None, sleep=time.sleep):
+    """A WFS layer as CSV (see the module docstring): fetch = {"url": GetFeature address with the layer,
+    "properties": the columns, "sort": a column for stable paging, "page": features per request}."""
+    f = entry["fetch"]
+    with (opener or request)(f["url"] + "&resultType=hits") as r:
+        found = re.search(r'numberMatched="(\d+)"', r.read(4000).decode("utf-8", "replace"))
+    total = int(found.group(1)) if found else 0
+    version = f"{total} features"
+    if fingerprint:
+        return {"ok": bool(total), "version": version, "path": "", "date": ""}
+    os.makedirs(folder, exist_ok=True)
+    target = os.path.join(folder, entry["id"] + ".csv")
+    page, state, rows, start = int(f.get("page", 5000)), {}, 0, 0
+    with open(target + ".partial", "w", newline="", encoding="utf-8") as out:
+        while start < max(total, 1):
+            url = (f["url"] + "&" + urllib.parse.urlencode({"outputFormat": "csv", "srsName": "EPSG:4326",
+                                                             "propertyName": f["properties"], "sortBy": f["sort"],
+                                                             "count": page, "startIndex": start}))
+            got = append_csv(get_page(url, folder, f.get("pause", 1), sleep), state, out)
+            rows += got
+            if got == 0:
+                break
+            start += got
+    os.replace(target + ".partial", target)
+    return {"ok": rows > 0, "version": version, "path": target, "date": datetime.date.today().isoformat()}
 
 
 def resolve(entry, values, opener=None):
@@ -244,15 +417,20 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         out.update(ok=True, path=target, date=datetime.date.today().isoformat())
         return out
     if method == "national":
-        if entry["id"] == "nad":
-            url = nad_url(values)
         folder = os.path.join(national or "national", entry["id"])
-        path = os.path.join(folder, os.path.basename(urllib.parse.urlsplit(url).path))
+        if f.get("socrata_blob"):
+            # The publisher's own version (blobId and rowsUpdatedAt), the same in the plan and in the build.
+            url, name, version = national_files(entry, values)[0]
+            path = os.path.join(folder, name)
+        elif f.get("per_country") or f.get("listing"):
+            path, version = folder, ""
+        else:
+            path, version = os.path.join(folder, os.path.basename(urllib.parse.urlsplit(url).path)), ""
         stamp = path + ".version"
         if not os.path.exists(path) and os.path.isdir(folder):
             path = folder                   # the region's slice made by placepacks.split
         out.update(ok=os.path.exists(path), path=path,
-                   version=open(stamp, encoding="utf-8").read() if os.path.exists(stamp) else url)
+                   version=version or (open(stamp, encoding="utf-8").read() if os.path.exists(stamp) else url))
         if not out["ok"] and not fingerprint:
             out.update(status="failed", reason="the national file was not downloaded by the prepare job")
         return out
@@ -271,13 +449,23 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         return out
     if method == "gtfs":
         return fetch_gtfs(entry, region, url, folder, pause, fingerprint)
+    if method == "socrata":
+        return fetch_socrata(entry, folder, fingerprint)
+    if method == "wfs":
+        return fetch_wfs(entry, folder, fingerprint)
     # http
     if fingerprint:
+        if f.get("no_head"):
+            # A host that does not answer HEAD (the FDIC's API): the source changes with the month.
+            out.update(ok=True, version=datetime.date.today().strftime("%Y-%m"))
+            return out
         with request(url, "HEAD") as r:
             out.update(ok=True, version=version_of(r.headers))
         return out
     target = os.path.join(folder, f.get("file") or os.path.basename(urllib.parse.urlsplit(url).path))
     version, date = download(url, target, pause)
+    if f.get("no_head"):
+        version = datetime.date.today().strftime("%Y-%m")     # the same version as the plan's fingerprint
     if f.get("md5") and not md5_ok(target, url):
         os.remove(target)
         raise ValueError("the download does not match its .md5 file")
@@ -321,11 +509,12 @@ def fetch_gtfs(entry, region, url, folder, pause, fingerprint):
 
 def status_line(source, got, rows=None):
     """"source: ok (version, rows)", "source: skipped (reason)" or "source: failed (error)"."""
+    from placepacks.status import one_line
     if got.get("status") == "ok":
         rows = got.get("rows", rows)
-        bits = [str(got.get("version", ""))[:80] or "no version"] + ([f"{rows} rows"] if rows is not None else [])
+        bits = [one_line(got.get("version", ""), 80) or "no version"] + ([f"{rows} rows"] if rows is not None else [])
         return f"{source}: ok ({', '.join(bits)})"
-    return f"{source}: {got.get('status', 'failed')} ({str(got.get('reason', ''))[:200]})"
+    return f"{source}: {got.get('status', 'failed')} ({one_line(got.get('reason', ''))})"
 
 
 def fetch_region(region_id, work, parts=("core", "extra"), national=None, fingerprint=False, cat=None, only=None):
@@ -370,27 +559,61 @@ def prepare(national, cat=None):
             continue
         if entry["fetch"]["method"] != "national":
             continue
-        values = catalogue.settings_for(cat, any_region)
-        url = nad_url(values) if entry["id"] == "nad" else entry["fetch"]["url"].format(**values)
-        target = os.path.join(national, entry["id"], os.path.basename(urllib.parse.urlsplit(url).path))
-        stamp = target + ".version"
-        if os.path.exists(target) and os.path.exists(stamp):
-            # Restored from the Actions cache: kept unless the publisher's version changed (or cannot be asked).
-            try:
-                with request(url, "HEAD") as r:
-                    now = version_of(r.headers)
-            except Exception:  # noqa: BLE001 - the host is busy: the cached copy is used
-                now = None
-            if now is None or now == open(stamp, encoding="utf-8").read():
-                print(f"{entry['id']}: {os.path.getsize(target):,} bytes (the cached copy)")
-                continue
         try:
-            version, _ = download(url, target, entry["fetch"].get("pause", 2))
-            with open(target + ".version", "w", encoding="utf-8") as f:
-                f.write(version or url)
-            print(f"{entry['id']}: {os.path.getsize(target):,} bytes")
+            prepare_national(entry, national, catalogue.settings_for(cat, any_region))
         except Exception as e:  # noqa: BLE001 - that layer is left out this time
             print(f"{entry['id']}: not downloaded ({e})")
+
+
+def prepare_national(entry, national, values):
+    """Download a national source's files into national/<id>/ (see national_files). A file restored from the
+    Actions cache is kept unless the publisher's version changed (or cannot be asked); files of an older release
+    are deleted once the new one is in; "xml_records" turns the downloaded XML files into one CSV."""
+    f = entry["fetch"]
+    folder = os.path.join(national, entry["id"])
+    files = national_files(entry, values)
+    if not files:
+        raise ValueError("the publisher lists no file")
+    kept, failed = [], 0
+    for url, name, known in files:
+        target = os.path.join(folder, name)
+        stamp = target + ".version"
+        kept.append(name)
+        if os.path.exists(target) and os.path.exists(stamp):
+            now = known
+            if now is None:
+                try:
+                    with request(url, "HEAD") as r:
+                        now = version_of(r.headers)
+                except Exception:  # noqa: BLE001 - the host is busy: the cached copy is used
+                    now = None
+            if now is None or now == open(stamp, encoding="utf-8").read():
+                print(f"{entry['id']}: {name}: {os.path.getsize(target):,} bytes (the cached copy)")
+                continue
+        try:
+            version, _ = download(url, target, f.get("pause", 2))
+        except Exception as e:  # noqa: BLE001 - one file of many missing does not stop the others
+            if len(files) == 1:
+                raise
+            failed += 1
+            print(f"{entry['id']}: {name}: not downloaded ({str(e)[:100]})")
+            continue
+        with open(stamp, "w", encoding="utf-8") as fh:
+            fh.write(known or version or url)
+        if len(files) <= 30:
+            print(f"{entry['id']}: {name}: {os.path.getsize(target):,} bytes")
+    for name in os.listdir(folder) if os.path.isdir(folder) else []:
+        base = name[:-len(".version")] if name.endswith(".version") else name
+        if base not in kept:
+            os.remove(os.path.join(folder, name))       # an older release (NAD_r20_TXT.zip after NAD_TXT.zip)
+    if f.get("xml_records"):
+        paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
+        count = xml_to_csv(paths, f["xml_records"], os.path.join(folder, entry["id"] + ".csv"))
+        for p in paths:
+            os.remove(p)
+            if os.path.exists(p + ".version"):
+                os.remove(p + ".version")
+        print(f"{entry['id']}: {count:,} records from {len(paths)} files ({failed} not downloaded)")
 
 
 def prepare_parquet(entry, national, cat):

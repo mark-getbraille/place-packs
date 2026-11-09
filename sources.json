@@ -71,6 +71,26 @@
    "name": "Licence Ouverte / Open Licence 2.0 (Etalab)",
    "url": "https://www.etalab.gouv.fr/licence-ouverte-open-licence/",
    "file": "LICENSES/etalab-2.0.txt"
+  },
+  "PDDL-1.0": {
+   "name": "Open Data Commons Public Domain Dedication and License 1.0",
+   "url": "https://opendatacommons.org/licenses/pddl/1-0/",
+   "file": ""
+  },
+  "public-domain-marked": {
+   "name": "Public domain (marked \"Public Domain\" by the publishing government's open-data portal)",
+   "url": "https://creativecommons.org/publicdomain/mark/1.0/",
+   "file": ""
+  },
+  "NYC-Open-Data": {
+   "name": "New York City Open Data: made available without registration, licence requirements or restrictions on use (NYC Administrative Code 23-502(d)); the source and version are named",
+   "url": "https://opendata.cityofnewyork.us/overview/#termsofuse",
+   "file": ""
+  },
+  "OPEN-NY": {
+   "name": "New York State OPEN-NY Terms of Use: free use and reuse, no attribution, share-alike or pre-approval required",
+   "url": "https://data.ny.gov/download/77gx-ii52/application/pdf",
+   "file": ""
   }
  },
  "accepted": [
@@ -126,14 +146,19 @@
    ],
    "licence": "US-Government-Work",
    "attribution": "Contains address points from the U.S. Department of Transportation's National Address Database, compiled from state, county, city and tribal addressing authorities. Not for use as a mailing list.",
-   "url": "https://www.transportation.gov/gis/national-address-database",
+   "url": "https://data.transportation.gov/Mapping-and-Geospatial/National-Address-Database-NAD-Text-File/fc2s-wawr",
    "reader": "tabular",
    "kind": "addresses",
    "fetch": {
     "method": "national",
+    "socrata_blob": {
+     "metadata": "https://data.transportation.gov/api/views/fc2s-wawr.json",
+     "download": "https://data.transportation.gov/api/views/fc2s-wawr/files/{blobId}?download=true&filename={blobFilename}",
+     "file": "NAD_{blobFilename}"
+    },
     "url": "https://nationaladdressdata.s3.amazonaws.com/NAD_r{nad_release}_TXT.zip",
     "split_column": "State",
-    "verify": true
+    "pause": 2
    },
    "member": "*.txt",
    "columns": {
@@ -169,8 +194,11 @@
      "ND"
     ]
    },
-   "history": "From the first build on; earlier NAD releases are added (nad_seed_releases) only if USDOT keeps them openly downloadable.",
-   "notes": "USDOT marks the data of HI, MI, MN, NH, OR, SC and SD, and parts of CO, IL, KS, MD and ND, as possibly not public domain; those states are left out until their terms are checked. State laws forbid using it as a mailing list; the packs are for naming places in pictures."
+   "history": "From the first build on; earlier NAD releases are added (nad_seed_releases) only if USDOT keeps them openly downloadable. A new release is downloaded only when its file on data.transportation.gov changes (its blobId and rowsUpdatedAt).",
+   "notes": "Downloaded from USDOT's data.transportation.gov (dataset fc2s-wawr, the \"TXT.zip\" file, about 8.5 GB): its address is read from the dataset's metadata at each build, and the old nationaladdressdata S3 bucket (now refusing downloads) is only a fallback. The download is kept in the Actions cache and continues where it stopped after a dropped connection. USDOT marks the data of HI, MI, MN, NH, OR, SC and SD, and parts of CO, IL, KS, MD and ND, as possibly not public domain; those states are left out until their terms are checked. State laws forbid using it as a mailing list; the packs are for naming places in pictures.",
+   "blank_values": [
+    "Not stated"
+   ]
   },
   {
    "id": "oda",
@@ -383,10 +411,15 @@
     "method": "duckdb",
     "file": "overture.slice.parquet"
    },
-   "query": "SELECT id AS key, names.primary AS name, categories.primary AS cls, bbox.ymin AS lat, bbox.xmin AS lon FROM read_parquet('{src}', hive_partitioning = 1) WHERE bbox.xmin BETWEEN {west} AND {east} AND bbox.ymin BETWEEN {south} AND {north} AND confidence >= 0.6",
+   "query": "SELECT id AS key, names.primary AS name, {cls} AS cls, bbox.ymin AS lat, bbox.xmin AS lon FROM read_parquet('{src}', hive_partitioning = 1) WHERE bbox.xmin BETWEEN {west} AND {east} AND bbox.ymin BETWEEN {south} AND {north} AND confidence >= 0.6 AND COALESCE(CAST({status} AS VARCHAR), '') <> 'permanently_closed'",
    "class_map": {
+    "parking": "business",
     "park": "park",
     "school": "campus",
+    "elementary_school": "campus",
+    "middle_school": "campus",
+    "high_school": "campus",
+    "place_of_learning": "campus",
     "college": "campus",
     "university": "campus",
     "hospital": "campus",
@@ -394,21 +427,35 @@
     "post_office": "public",
     "police": "public",
     "fire_station": "public",
+    "government_office": "public",
     "museum": "landmark",
     "landmark": "landmark",
+    "historic_site": "landmark",
     "monument": "landmark",
     "bus_station": "transit",
     "train_station": "transit",
+    "public_transit_facility_or_service": "transit",
     "airport": "transit",
     "*": "business"
    },
-   "history": "From the first build on; earlier monthly releases are merged first (overture_seed_releases) while Overture still keeps them in its bucket. Keyed by the GERS id. The newest release is found from the bucket's list.",
+   "history": "From the first build on; earlier monthly releases are merged first (overture_seed_releases) while Overture still keeps them in its bucket. Keyed by the GERS id. The newest release is found from the bucket's list. A place Overture marks permanently closed is closed at its last month.",
    "release_setting": "overture_release",
    "release_list": {
     "bucket": "https://overturemaps-us-west-2.s3.us-west-2.amazonaws.com",
     "prefix": "release/",
     "pattern": "release/(\\d{4}-\\d{2}-\\d{2}\\.\\d+)/"
-   }
+   },
+   "pick": {
+    "cls": [
+     "taxonomy.primary",
+     "basic_category",
+     "categories.primary"
+    ],
+    "status": [
+     "operating_status"
+    ]
+   },
+   "notes": "Overture renamed its category columns in 2026 (\"categories\" became \"taxonomy\" and \"basic_category\"): the build reads the release's columns first and uses taxonomy.primary, else basic_category, else the old categories.primary. Places whose operating_status is \"permanently_closed\" are left out of the month's data, so their earlier record stays, closed at the last build that listed them open."
   },
   {
    "id": "fsq-places",
@@ -1094,6 +1141,1038 @@
     "*": "landmark"
    },
    "history": "Current names."
+  },
+  {
+   "id": "nyc-restaurant-inspections",
+   "name": "New York City restaurant inspections (DOHMH)",
+   "short": "New York City's health inspections",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "NYC-Open-Data",
+   "attribution": "Restaurant inspection results from the New York City Department of Health and Mental Hygiene (DOHMH), NYC Open Data dataset 43nn-pn8j; names, positions and inspection dates only.",
+   "url": "https://data.cityofnewyork.us/Health/DOHMH-New-York-City-Restaurant-Inspection-Results/43nn-pn8j",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "restaurant",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.cityofnewyork.us",
+    "queries": [
+     {
+      "dataset": "43nn-pn8j",
+      "select": "camis AS key, dba AS name, max(latitude) AS lat, max(longitude) AS lon, min(inspection_date) AS first, max(inspection_date) AS last",
+      "where": "inspection_date > '1901-01-01' AND latitude > 1",
+      "group": "camis, dba"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last"
+   },
+   "aggregate": true,
+   "still_open_months": 24,
+   "history": "Each establishment's earliest and latest inspection dates (one record per permit and name, so a renamed business keeps its old name with its own dates); one inspected within the last two years is taken as still open. DOHMH keeps about three years of inspections.",
+   "notes": "New establishments not yet inspected carry the date 1900-01-01 and are left out until their first inspection."
+  },
+  {
+   "id": "nys-food-service-inspections",
+   "name": "New York State food service establishment inspections (NYSDOH)",
+   "short": "the New York State Department of Health",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "Food service establishment inspections from the New York State Department of Health (health.data.ny.gov, datasets 2hcc-shji and aaxz-j6pj); names, positions and inspection dates only.",
+   "url": "https://health.data.ny.gov/Health/Food-Service-Establishment-Inspections-Beginning-2/2hcc-shji",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "restaurant",
+   "fetch": {
+    "method": "socrata",
+    "domain": "health.data.ny.gov",
+    "queries": [
+     {
+      "dataset": "2hcc-shji",
+      "select": "nys_health_operation_id AS key, operation_name AS name, max(latitude) AS lat, max(longitude) AS lon, min(date_of_inspection) AS first, max(date_of_inspection) AS last",
+      "where": "latitude > 1",
+      "group": "nys_health_operation_id, operation_name"
+     },
+     {
+      "dataset": "aaxz-j6pj",
+      "select": "nys_health_operation_id AS key, operation_name AS name, max(latitude) AS lat, max(longitude) AS lon, min(date_of_inspection) AS first, max(date_of_inspection) AS last, 'yes' AS closed",
+      "where": "latitude > 1",
+      "group": "nys_health_operation_id, operation_name"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last",
+    "closed_column": "closed"
+   },
+   "aggregate": true,
+   "still_open_months": 24,
+   "history": "Inspections from 2005 on, outside New York City (which has its own): the active and the inactive (closed) establishments, each with its earliest and latest inspection; a closed one keeps its last inspection as its last month.",
+   "notes": "The operators' personal names in the source are not read.",
+   "name_strip": "\\s*/(Dormant|Dorman|Dorma|Dorm|Inactive|Inactiv|Inacti|Inact|Inac|Ina|Closed)(/.*)?$"
+  },
+  {
+   "id": "austin-food-inspections",
+   "name": "Austin, Texas food establishment inspection scores",
+   "short": "the City of Austin",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-texas"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Food establishment inspections from the City of Austin, Texas (data.austintexas.gov, dataset ecmv-9xxi), public domain.",
+   "url": "https://data.austintexas.gov/Health-and-Community-Services/Food-Establishment-Inspection-Scores/ecmv-9xxi",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "restaurant",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.austintexas.gov",
+    "queries": [
+     {
+      "dataset": "ecmv-9xxi",
+      "select": "facility_id AS key, restaurant_name AS name, max(lat) AS latitude, max(lng) AS longitude, min(inspection_date) AS first, max(inspection_date) AS last",
+      "where": "lat > 1",
+      "group": "facility_id, restaurant_name"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last"
+   },
+   "aggregate": true,
+   "still_open_months": 24,
+   "history": "Each establishment's earliest and latest inspection dates (one record per permit and name, so a renamed business keeps its old name with its own dates); one inspected within the last two years is taken as still open."
+  },
+  {
+   "id": "delaware-food-inspections",
+   "name": "Delaware food establishment inspections",
+   "short": "the Delaware Division of Public Health",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-delaware"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Food establishment inspections from the Delaware Department of Health and Social Services, Division of Public Health, Office of Food Protection (data.delaware.gov, dataset 384s-wygj), public domain.",
+   "url": "https://data.delaware.gov/Health/Food-Establishment-Inspection-Violations/384s-wygj",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "restaurant",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.delaware.gov",
+    "queries": [
+     {
+      "dataset": "384s-wygj",
+      "select": "restname AS name, restaddress AS address, geocoded_column AS point, min(insp_date) AS first, max(insp_date) AS last",
+      "where": "geocoded_column IS NOT NULL",
+      "group": "restname, restaddress, geocoded_column",
+      "order": "restname, restaddress"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": [
+     "name",
+     "address"
+    ],
+    "first": "first",
+    "last": "last"
+   },
+   "aggregate": true,
+   "still_open_months": 24,
+   "history": "Each establishment's earliest and latest inspection dates (one record per permit and name, so a renamed business keeps its old name with its own dates); one inspected within the last two years is taken as still open.",
+   "notes": "The dataset has no permit number: records are keyed by name and street address."
+  },
+  {
+   "id": "montgomery-md-food-inspections",
+   "name": "Montgomery County, Maryland food inspections",
+   "short": "Montgomery County, Maryland",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-maryland"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Food inspections from Montgomery County, Maryland, Department of Health and Human Services (data.montgomerycountymd.gov, dataset dkrp-gr48), public domain.",
+   "url": "https://data.montgomerycountymd.gov/Health-and-Human-Services/HHS-Food-Inspection-Data-from-July-2024-and-onward/dkrp-gr48",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "restaurant",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.montgomerycountymd.gov",
+    "queries": [
+     {
+      "dataset": "dkrp-gr48",
+      "select": "registration_number AS key, business_name AS name, location AS point, min(inspection_start_date) AS first, max(inspection_start_date) AS last",
+      "where": "location IS NOT NULL",
+      "group": "registration_number, business_name, location",
+      "order": "registration_number, business_name"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last"
+   },
+   "aggregate": true,
+   "still_open_months": 24,
+   "history": "Each establishment's earliest and latest inspection dates (one record per permit and name, so a renamed business keeps its old name with its own dates); one inspected within the last two years is taken as still open. This dataset starts in July 2024.",
+   "notes": "The owner column of the source is not read."
+  },
+  {
+   "id": "boulder-food-inspections",
+   "name": "Boulder County, Colorado restaurant inspections 2013-2025",
+   "short": "Boulder County",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-colorado"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Restaurant inspections from Boulder County Public Health, Colorado (data.colorado.gov, dataset tuvj-xz3m), public domain.",
+   "url": "https://data.colorado.gov/Health/Restaurant-Inspections-in-Boulder-County-2013-2025-/tuvj-xz3m",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "restaurant",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.colorado.gov",
+    "queries": [
+     {
+      "dataset": "tuvj-xz3m",
+      "select": "facilityid AS key, facilityname AS name, location AS point, min(inspectiondate) AS first, max(inspectiondate) AS last",
+      "where": "location IS NOT NULL",
+      "group": "facilityid, facilityname, location",
+      "order": "facilityid, facilityname"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last"
+   },
+   "aggregate": true,
+   "still_open_months": 24,
+   "history": "Each establishment's earliest and latest inspection dates (one record per permit and name, so a renamed business keeps its old name with its own dates); one inspected within the last two years is taken as still open. The dataset ends in 2025 (a later dataset, 6ytb-f2cq, has other columns)."
+  },
+  {
+   "id": "cincinnati-food-inspections",
+   "name": "Cincinnati food safety program inspections",
+   "short": "the City of Cincinnati",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-ohio"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Food safety inspections from the City of Cincinnati, Ohio (data.cincinnati-oh.gov, dataset rg6p-b3h3), public domain.",
+   "url": "https://data.cincinnati-oh.gov/Thriving-Neighborhoods/Cincinnati-Food-Safety-Program/rg6p-b3h3",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "restaurant",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.cincinnati-oh.gov",
+    "queries": [
+     {
+      "dataset": "rg6p-b3h3",
+      "select": "license_no AS key, business_name AS name, max(latitude) AS lat, max(longitude) AS lon, min(action_date) AS first, max(action_date) AS last",
+      "where": "latitude > 1",
+      "group": "license_no, business_name"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last"
+   },
+   "aggregate": true,
+   "still_open_months": 24,
+   "history": "Each establishment's earliest and latest inspection dates (one record per permit and name, so a renamed business keeps its old name with its own dates); one inspected within the last two years is taken as still open."
+  },
+  {
+   "id": "baton-rouge-food-inspections",
+   "name": "Baton Rouge retail food inspections",
+   "short": "the Louisiana Department of Health",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-louisiana"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Retail food inspections from the Louisiana Department of Health, Office of Public Health, published by the City of Baton Rouge and Parish of East Baton Rouge (data.brla.gov, dataset ux2t-b9wr), public domain.",
+   "url": "https://data.brla.gov/Health/Retail-Food-Inspections/ux2t-b9wr",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "restaurant",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.brla.gov",
+    "queries": [
+     {
+      "dataset": "ux2t-b9wr",
+      "select": "permitid AS key, permitname AS name, geocoded_column AS point, min(inspectiondate) AS first, max(inspectiondate) AS last",
+      "where": "geocoded_column IS NOT NULL",
+      "group": "permitid, permitname, geocoded_column",
+      "order": "permitid, permitname"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last"
+   },
+   "aggregate": true,
+   "still_open_months": 24,
+   "history": "Each establishment's earliest and latest inspection dates (one record per permit and name, so a renamed business keeps its old name with its own dates); one inspected within the last two years is taken as still open."
+  },
+  {
+   "id": "sf-health-inspections",
+   "name": "San Francisco health inspection scores 2016-2019",
+   "short": "San Francisco's Department of Public Health",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-california"
+   ],
+   "licence": "PDDL-1.0",
+   "attribution": "Health inspection scores (2016-2019) from the San Francisco Department of Public Health (data.sfgov.org, dataset pyih-qa8i), Open Data Commons PDDL.",
+   "url": "https://data.sfgov.org/Health-and-Social-Services/Health-Inspection-Scores-2016-2019-/pyih-qa8i",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "restaurant",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.sfgov.org",
+    "queries": [
+     {
+      "dataset": "pyih-qa8i",
+      "select": "business_id AS key, business_name AS name, max(business_latitude) AS lat, max(business_longitude) AS lon, min(inspection_date) AS first, max(inspection_date) AS last",
+      "where": "business_latitude > 1",
+      "group": "business_id, business_name"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last"
+   },
+   "aggregate": true,
+   "still_open_months": 0,
+   "history": "A closed dataset (2016 to 2019): each establishment's first and last inspection in those years."
+  },
+  {
+   "id": "ny-liquor-licences",
+   "name": "New York State Liquor Authority licences (active and inactive)",
+   "short": "the New York State Liquor Authority",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "Licences of the New York State Liquor Authority, Division of Alcoholic Beverage Control (data.ny.gov, datasets 9s3h-dpkz and 6dg3-2z7i); trade names, positions and dates only.",
+   "url": "https://data.ny.gov/Economic-Development/Current-Liquor-Authority-Active-Licenses/9s3h-dpkz",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ny.gov",
+    "queries": [
+     {
+      "dataset": "9s3h-dpkz",
+      "select": "licensepermitid AS key, dba, legalname, description AS kind, georeference AS point, originalissuedate AS first, expirationdate AS last",
+      "where": "statename = 'New York' AND georeference IS NOT NULL",
+      "order": "licensepermitid"
+     },
+     {
+      "dataset": "6dg3-2z7i",
+      "select": "license_permit_id AS key, dba, legalname, description AS kind, georeference AS point, original_issue_date AS first, expiration_date AS last, 'yes' AS closed",
+      "where": "state_name = 'New York' AND georeference IS NOT NULL",
+      "order": "license_permit_id"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": {
+     "first_of": [
+      "dba",
+      "legalname"
+     ]
+    },
+    "key": "key",
+    "first": "first",
+    "last": "last",
+    "class_column": "kind",
+    "closed_column": "closed"
+   },
+   "class_map": {
+    "Restaurant": "business:restaurant",
+    "Food & Beverage Business": "business:restaurant",
+    "Summer Food & beverage business": "business:restaurant",
+    "Catering Establishment": "business:restaurant",
+    "Grocery Store": "business:shop",
+    "Liquor Store": "business:shop",
+    "Drug Store": "business:shop",
+    "Wine Store": "business:shop",
+    "Tavern": "business:bar",
+    "Club": "business:bar",
+    "Cabaret": "business:bar",
+    "Hotel": "business:hotel",
+    "Winter Restaurant": "business:restaurant",
+    "Farm winery": "business:winery",
+    "Winery": "business:winery",
+    "Micro-Brewer": "business:brewery",
+    "Farm Brewer": "business:brewery",
+    "Brewer": "business:brewery",
+    "Legitimate theatre": "business:theatre",
+    "Wholesale Beer (Retail)": "business:shop",
+    "*": ""
+   },
+   "skip_names": "^(?!.*\\b(LLC|L\\.L\\.C|INC|CORP|CORPORATION|CO|COMPANY|LTD|LP|LLP|PC|PLLC|THE|CLUB|ASSOCIATION|ASSN|CHURCH|LODGE|POST|SOCIETY|FOUNDATION|TRUST|GROUP|ENTERPRISES?|HOLDINGS|DBA)\\b)[A-Za-z'\\-]+,\\s*[A-Za-z'\\-\\. ]+$",
+   "history": "Each licence from its original issue date; an inactive licence ends at its expiry. Keyed by the licence number, so a new licence at the same address is a separate dated record.",
+   "notes": "Only premises open to the public (restaurants, bars, shops, hotels, wineries and breweries); additional bars, wholesalers, importers, direct shippers and temporary permits are left out. The trade name is used, or the licensee's name when there is none; a licensee name that looks like a person's (\"Surname, Given\") is left out."
+  },
+  {
+   "id": "colorado-liquor-licences",
+   "name": "Colorado liquor licences (current and recently expired)",
+   "short": "the Colorado Department of Revenue",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-colorado"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Liquor licences from the Colorado Department of Revenue, Liquor Enforcement Division (data.colorado.gov, datasets ier5-5ms2 and pwjb-9dd5), public domain.",
+   "url": "https://data.colorado.gov/Business/Liquor-Licenses-in-Colorado/ier5-5ms2",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.colorado.gov",
+    "queries": [
+     {
+      "dataset": "ier5-5ms2",
+      "select": "license_number AS key, doing_business_as AS dba, licensee_name AS legalname, license_type AS kind, location AS point, expiration AS last",
+      "where": "location IS NOT NULL",
+      "order": "license_number"
+     },
+     {
+      "dataset": "pwjb-9dd5",
+      "select": "licensenumber AS key, doingbusinessas AS dba, companyname AS legalname, licensetype AS kind, geo AS point, expirationdate AS last, 'yes' AS closed",
+      "where": "geo IS NOT NULL",
+      "order": "licensenumber"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": {
+     "first_of": [
+      "dba",
+      "legalname"
+     ]
+    },
+    "key": "key",
+    "first": "first",
+    "last": "last",
+    "class_column": "kind",
+    "closed_column": "closed"
+   },
+   "class_map": {
+    "Hotel & Restaurant*": "business:restaurant",
+    "Tavern*": "business:bar",
+    "Brew Pub*": "business:bar",
+    "Retail Liquor Store*": "business:shop",
+    "Fermented Malt Beverage*": "business:shop",
+    "Beer & Wine*": "business:restaurant",
+    "Club License*": "business:bar",
+    "Lodging Facility*": "business:hotel",
+    "Entertainment Facility*": "business:venue",
+    "Manufacturer (brewery)": "business:brewery",
+    "Limited Winery": "business:winery",
+    "Manufacturer (distillery & rectifier)": "business:distillery",
+    "*": ""
+   },
+   "skip_names": "^(?!.*\\b(LLC|L\\.L\\.C|INC|CORP|CORPORATION|CO|COMPANY|LTD|LP|LLP|PC|PLLC|THE|CLUB|ASSOCIATION|ASSN|CHURCH|LODGE|POST|SOCIETY|FOUNDATION|TRUST|GROUP|ENTERPRISES?|HOLDINGS|DBA)\\b)[A-Za-z'\\-]+,\\s*[A-Za-z'\\-\\. ]+$",
+   "history": "From the first build on (the datasets have no issue date); an expired or surrendered licence ends at its expiry. Keyed by the licence number.",
+   "notes": "Only premises open to the public; permits, wholesalers, importers and direct shippers are left out. A licensee name that looks like a person's is left out."
+  },
+  {
+   "id": "sf-registered-businesses",
+   "name": "San Francisco registered business locations",
+   "short": "the City and County of San Francisco",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-california"
+   ],
+   "licence": "PDDL-1.0",
+   "attribution": "Registered business locations from the City and County of San Francisco, Office of the Treasurer & Tax Collector (data.sfgov.org, dataset g8m3-pdis), Open Data Commons PDDL.",
+   "url": "https://data.sfgov.org/Economy-and-Community/Registered-Business-Locations-San-Francisco/g8m3-pdis",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.sfgov.org",
+    "queries": [
+     {
+      "dataset": "g8m3-pdis",
+      "select": "uniqueid AS key, dba_name AS name, self_reported_naics_code AS naics, location AS point, location_start_date AS first, location_end_date AS last",
+      "where": "location IS NOT NULL AND city = 'San Francisco' AND self_reported_naics_code IS NOT NULL AND dba_name IS NOT NULL",
+      "order": "uniqueid"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last",
+    "class_column": "naics"
+   },
+   "class_map": {
+    "722*": "business:restaurant",
+    "7224*": "business:bar",
+    "44*": "business:shop",
+    "45*": "business:shop",
+    "454*": "",
+    "4541*": "",
+    "4542*": "",
+    "4543*": "",
+    "447*": "business:fuel",
+    "457*": "business:fuel",
+    "8111*": "business:garage",
+    "811192*": "business:car wash",
+    "8121*": "business:salon",
+    "8123*": "business:laundry",
+    "5221*": "business:bank",
+    "512131*": "business:cinema",
+    "71211*": "business:museum",
+    "7131*": "business:amusement",
+    "71394*": "business:gym",
+    "71395*": "business:bowling",
+    "53113*": "business:storage",
+    "72111*": "business:hotel",
+    "72112*": "business:hotel",
+    "*": ""
+   },
+   "history": "Each business location's own start and end dates, back to the 1960s; keyed by the location's id, so a business that moved or was renamed keeps its old record with its dates.",
+   "notes": "Only storefront business types (restaurants, bars, shops, hotels and motels (not short-term rentals or bed and breakfasts), petrol stations, garages, salons, laundries, banks, cinemas, gyms; by NAICS code) and only the business's trade name (dba_name): offices, contractors and home services, which are often registered at a home address, and owners' names are left out."
+  },
+  {
+   "id": "la-businesses",
+   "name": "Los Angeles businesses (active and closed)",
+   "short": "the City of Los Angeles",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-california"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Business locations from the City of Los Angeles Office of Finance (data.lacity.org, dataset r4uk-afju), CC0.",
+   "url": "https://data.lacity.org/Administration-Finance/Listing-of-All-Businesses/r4uk-afju",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.lacity.org",
+    "queries": [
+     {
+      "dataset": "r4uk-afju",
+      "select": "location_account AS key, dba_name AS name, naics, location AS point, location_start_date AS first, location_end_date AS last",
+      "where": "dba_name IS NOT NULL AND naics IS NOT NULL AND location IS NOT NULL",
+      "order": "location_account"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last",
+    "class_column": "naics"
+   },
+   "class_map": {
+    "722*": "business:restaurant",
+    "7224*": "business:bar",
+    "44*": "business:shop",
+    "45*": "business:shop",
+    "454*": "",
+    "4541*": "",
+    "4542*": "",
+    "4543*": "",
+    "447*": "business:fuel",
+    "457*": "business:fuel",
+    "8111*": "business:garage",
+    "811192*": "business:car wash",
+    "8121*": "business:salon",
+    "8123*": "business:laundry",
+    "5221*": "business:bank",
+    "512131*": "business:cinema",
+    "71211*": "business:museum",
+    "7131*": "business:amusement",
+    "71394*": "business:gym",
+    "71395*": "business:bowling",
+    "53113*": "business:storage",
+    "72111*": "business:hotel",
+    "72112*": "business:hotel",
+    "*": ""
+   },
+   "skip_points": [
+    [
+     34.0,
+     -118.0
+    ]
+   ],
+   "history": "Each business location's own start and end dates; keyed by the location account, so a renamed or moved business keeps its old record with its dates.",
+   "notes": "Only storefront business types (by NAICS code) and only the trade name (dba_name), as for San Francisco; the placeholder position 34.0, -118.0 is left out."
+  },
+  {
+   "id": "nyc-dcwp-licences",
+   "name": "New York City consumer licences of storefront businesses (DCWP)",
+   "short": "New York City's Department of Consumer and Worker Protection",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "NYC-Open-Data",
+   "attribution": "Licences issued by the New York City Department of Consumer and Worker Protection (DCWP), NYC Open Data dataset w7w3-xahh; trade names, positions and dates only.",
+   "url": "https://data.cityofnewyork.us/Business/Issued-Licenses/w7w3-xahh",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.cityofnewyork.us",
+    "queries": [
+     {
+      "dataset": "w7w3-xahh",
+      "select": "license_nbr AS key, dba_trade_name AS name, business_category AS kind, latitude AS lat, longitude AS lon, license_creation_date AS first, lic_expir_dd AS last, case(license_status IN ('Close', 'Out of Business', 'Revoked', 'Surrendered', 'Voided'), 'yes', true, '') AS closed",
+      "where": "license_type = 'Premises' AND latitude > 1 AND dba_trade_name IS NOT NULL"
+     }
+    ],
+    "page": 50000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last",
+    "class_column": "kind",
+    "closed_column": "closed"
+   },
+   "class_map": {
+    "Tobacco Retail Dealer": "business:shop",
+    "Electronic Cigarette Dealer": "business:shop",
+    "Electronics Store": "business:shop",
+    "Electronics": "business:shop",
+    "Secondhand Dealer - General": "business:shop",
+    "Secondhand Dealer - Auto": "business:car dealer",
+    "Pawnbroker": "business:shop",
+    "Newsstand": "business:newsstand",
+    "Stoop Line Stand": "business:shop",
+    "Dealer In Products For The Disabled": "business:shop",
+    "Garage & Parking Lot": "business:parking",
+    "Car Wash": "business:car wash",
+    "Hotel": "business:hotel",
+    "Laundries": "business:laundry",
+    "Self-Storage Facility": "business:storage",
+    "*": ""
+   },
+   "history": "Each licence from its creation date to its expiry or closing; keyed by the licence number.",
+   "notes": "Only premises licences of storefront businesses, and only their trade names: home improvement contractors, individual licences (vendors, drivers, guides) and licences without a trade name, which would show a person's name or home address, are left out."
+  },
+  {
+   "id": "fdic-branches",
+   "name": "FDIC bank branch locations",
+   "short": "the FDIC",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Bank branch locations from the Federal Deposit Insurance Corporation's BankFind Suite (api.fdic.gov), public domain.",
+   "url": "https://banks.data.fdic.gov/bankfind-suite/",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "bank",
+   "fetch": {
+    "method": "http",
+    "url": "https://api.fdic.gov/banks/locations?filters=STALP:{code}&fields=UNINUM,NAME,OFFNAME,LATITUDE,LONGITUDE,ESTYMD,ACQDATE&limit=10000&format=csv",
+    "file": "fdic-branches.csv",
+    "no_head": true,
+    "pause": 2
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "LATITUDE",
+    "lon": "LONGITUDE",
+    "name": "NAME",
+    "key": "UNINUM",
+    "first": {
+     "first_of": [
+      "ACQDATE",
+      "ESTYMD"
+     ]
+    }
+   },
+   "history": "Every open branch under its bank's name since the bank took it over (ACQDATE), or since the branch opened (ESTYMD), often decades back. Keyed by the branch's FDIC number, so a branch taken over by another bank keeps its earlier bank's name with its dates from the first build on.",
+   "notes": "The API needs no key (\"users are currently not required to register\"); it does not answer HEAD requests, so its version is the build month."
+  },
+  {
+   "id": "fsa-hygiene",
+   "name": "Food Standards Agency food hygiene ratings (UK)",
+   "short": "the Food Standards Agency",
+   "part": "extra",
+   "countries": [
+    "GB",
+    "IE"
+   ],
+   "licence": "OGL-UK-3.0",
+   "attribution": "Contains Food Standards Agency data © Crown copyright and database right (food hygiene rating data, ratings.food.gov.uk), Open Government Licence v3.0.",
+   "url": "https://ratings.food.gov.uk/open-data",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "national",
+    "listing": "https://ratings.food.gov.uk/open-data",
+    "pattern": "[^\"'\\s>]*open-data-files/FHRS\\d+en-GB\\.xml",
+    "xml_records": {
+     "record": "EstablishmentDetail",
+     "fields": [
+      "FHRSID",
+      "BusinessName",
+      "BusinessType",
+      "RatingDate",
+      "Latitude",
+      "Longitude"
+     ]
+    },
+    "pause": 1
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "Latitude",
+    "lon": "Longitude"
+   },
+   "columns": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "name": "BusinessName",
+    "key": "FHRSID",
+    "class_column": "BusinessType",
+    "first": "RatingDate"
+   },
+   "class_map": {
+    "Restaurant/Cafe/Canteen": "business:restaurant",
+    "Pub/bar/nightclub": "business:bar",
+    "Takeaway/sandwich shop": "business:takeaway",
+    "Retailers - supermarkets/hypermarkets": "business:shop",
+    "Retailers - other": "business:shop",
+    "Hotel/bed & breakfast/guest house": "business:hotel",
+    "*": ""
+   },
+   "history": "The establishments rated now, each from its latest rating date (they are listed while they trade), then month by month from the first build; keyed by the FHRS id. England, Wales, Northern Ireland and Scotland (FHIS).",
+   "notes": "Read from the FSA's open data files (one XML file per local authority, no key or login). Only restaurants, pubs, takeaways, shops and hotels: mobile caterers, home caterers, childminders and care premises, which may be private homes, are left out. No ratings or scores are kept."
+  },
+  {
+   "id": "vic-sands-mcdougall",
+   "name": "Sands & McDougall business directories of Victoria, 1896-1974",
+   "short": "the Sands & McDougall directories (Victoria)",
+   "part": "extra",
+   "countries": [
+    "AU"
+   ],
+   "regions": [
+    "au-australia"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Historical Business Listings from Sands & McDougall directories, © State of Victoria (Department of Energy, Environment and Climate Action), CC BY 4.0.",
+   "url": "https://discover.data.vic.gov.au/dataset/historical-business-listings-from-sands-mcdougall-directories",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "directory",
+   "fetch": {
+    "method": "wfs",
+    "url": "https://opendata.maps.vic.gov.au/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeNames=open-data-platform:sands_mcdougall_public",
+    "properties": "geom,unique_id,directory,business_type,business_name,address",
+    "sort": "unique_id",
+    "page": 5000,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "geom",
+    "name": "business_name",
+    "key": [
+     "business_name",
+     "address"
+    ],
+    "first": "directory",
+    "last": "directory"
+   },
+   "aggregate": true,
+   "history": "The directory years (about every ten years, 1896 to 1974) each business was listed in at its address: from the first to the last listing. Melbourne and Victoria only.",
+   "notes": "About 550,000 listings from the Victoria Unearthed project, geocoded by the Victorian government; read page by page from its WFS service (no login). Some listings are tradespeople's names as printed in the directories (1896 to 1974)."
+  },
+  {
+   "id": "geonames",
+   "name": "GeoNames",
+   "short": "GeoNames",
+   "part": "extra",
+   "countries": [
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Place names from GeoNames (geonames.org), CC BY 4.0.",
+   "url": "https://www.geonames.org",
+   "reader": "tabular",
+   "kind": "points",
+   "fetch": {
+    "method": "national",
+    "per_country": true,
+    "url": "https://download.geonames.org/export/dump/{cc}.zip",
+    "pause": 5
+   },
+   "member": "[A-Z][A-Z].txt",
+   "split_file": "GN.txt",
+   "delimiter": "\t",
+   "no_quotes": true,
+   "fieldnames": [
+    "geonameid",
+    "name",
+    "asciiname",
+    "alternatenames",
+    "latitude",
+    "longitude",
+    "feature_class",
+    "feature_code",
+    "country_code",
+    "cc2",
+    "admin1",
+    "admin2",
+    "admin3",
+    "admin4",
+    "population",
+    "elevation",
+    "dem",
+    "timezone",
+    "modified"
+   ],
+   "split_box": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "country": "country_code"
+   },
+   "columns": {
+    "lat": "latitude",
+    "lon": "longitude",
+    "name": "name",
+    "key": "geonameid",
+    "class_column": [
+     "feature_class",
+     "feature_code"
+    ]
+   },
+   "class_map": {
+    "H LK": "water",
+    "H LKS": "water",
+    "H BAY": "water",
+    "H RSV": "water",
+    "H FJD": "water",
+    "H LGN": "water",
+    "H HBR": "water",
+    "T MT": "nature",
+    "T MTS": "nature",
+    "T PK": "nature",
+    "T HLL": "nature",
+    "T HLLS": "nature",
+    "T PASS": "nature",
+    "T ISL": "nature",
+    "T VAL": "nature",
+    "T CAPE": "nature",
+    "T BCH": "water",
+    "T GLCR": "nature",
+    "L PRK": "park",
+    "L CMTY": "park",
+    "P PPLX": "neighbourhood",
+    "S CH": "landmark",
+    "S CTRL": "landmark",
+    "S CSTL": "landmark",
+    "S MNMT": "landmark",
+    "S MUS": "landmark",
+    "S RUIN": "landmark",
+    "S TOWR": "landmark",
+    "S LTHSE": "landmark",
+    "S BDG": "landmark",
+    "S STDM": "landmark",
+    "S PAL": "landmark",
+    "S MSTY": "landmark",
+    "S TMPL": "landmark",
+    "S SHRN": "landmark",
+    "S CTHSE": "landmark",
+    "S SCH": "campus",
+    "S UNIV": "campus",
+    "S HSP": "campus",
+    "S RSTN": "transit",
+    "S AIRP": "transit",
+    "S HTL": "business",
+    "*": ""
+   },
+   "history": "The current names, from the first build on (GeoNames keeps no dates).",
+   "notes": "A fallback for the countries outside North America (the US and Canada have GNIS and the Canadian names): lakes, bays, mountains, islands, parks, quarters of towns, churches, castles, monuments, museums, schools, hospitals, stations and airports, from the per-country files (no login)."
   }
  ],
  "rejected": [
@@ -1181,6 +2260,116 @@
    "name": "Marine Regions IHO Sea Areas v3",
    "licence": "CC BY-NC-SA 4.0",
    "reason": "Non-commercial and share-alike; the program uses Natural Earth's public-domain marine names."
+  },
+  {
+   "name": "Chicago food inspections, business licences and other City of Chicago data",
+   "licence": "City of Chicago Data Terms of Use",
+   "reason": "The terms let the City require anyone to stop all display and distribution of the data at any time, ask for an indemnity, and require a disclaimer on every site that redistributes it: not an open licence."
+  },
+  {
+   "name": "Seattle and King County: food establishment inspections (r878-4sxa) and active business licences (wnbq-64tb)",
+   "licence": "Public domain",
+   "reason": "Open, but neither dataset has coordinates (addresses only); geocoding them is not simple enough."
+  },
+  {
+   "name": "Texas Alcoholic Beverage Commission licences (data.texas.gov 7hf9-qc9f) and Mixed Beverage receipts",
+   "licence": "No licence stated (data.texas.gov)",
+   "reason": "No coordinates (addresses only) and no licence stated on the dataset."
+  },
+  {
+   "name": "Iowa, Connecticut and Washington State liquor licences",
+   "licence": "Public domain (portals)",
+   "reason": "No dataset of licensed premises with coordinates was found on data.iowa.gov or data.ct.gov (Connecticut publishes brand registrations and suspensions only); Washington's LCB datasets are renewal and local authority notices, not a premises list."
+  },
+  {
+   "name": "Montgomery County, Maryland food inspections before July 2024 (5pue-gfbe), Prince George's County food inspections, Dallas restaurant inspections",
+   "licence": "No licence stated",
+   "reason": "No licence is stated on these datasets (Montgomery County's newer dataset, which is marked public domain, is used)."
+  },
+  {
+   "name": "Marin County food facility inspections and active business licences",
+   "licence": "ODbL-1.0",
+   "reason": "Share-alike; only OpenStreetMap's own layer may be ODbL in a pack."
+  },
+  {
+   "name": "Los Angeles County restaurant inspections, Boston food establishment inspections, Louisville food inspections",
+   "licence": "Varies",
+   "reason": "Not on a Socrata portal (ArcGIS Hub or CKAN); not wired in yet. Each needs its terms checked and its own download method."
+  },
+  {
+   "name": "Kansas City, Providence, Cincinnati and Delaware business licences",
+   "licence": "Public domain or PDDL",
+   "reason": "Open, but without storefront categories that keep home-based businesses out (Delaware's are mostly contractors), or without dates (Kansas City, Providence)."
+  },
+  {
+   "name": "Netherlands KVK Handelsregister",
+   "licence": "Commercial (paid products)",
+   "reason": "Not open."
+  },
+  {
+   "name": "Belgium KBO/BCE open data",
+   "licence": "KBO open data licence",
+   "reason": "The bulk files need a registered account."
+  },
+  {
+   "name": "Denmark CVR (Erhvervsstyrelsen)",
+   "licence": "Free, with registration",
+   "reason": "Bulk and API access need a registered username and password."
+  },
+  {
+   "name": "Norway Enhetsregisteret (Brønnøysund)",
+   "licence": "NLOD 2.0",
+   "reason": "Open, but addresses without coordinates; Norway's address register is not in the catalogue yet, so it cannot be geocoded cheaply."
+  },
+  {
+   "name": "Australia ABN bulk extract (data.gov.au)",
+   "licence": "CC BY 3.0 AU",
+   "reason": "No addresses with coordinates (state and postcode only), and many entries are individuals."
+  },
+  {
+   "name": "New Zealand Companies Office register",
+   "licence": "Terms of the API",
+   "reason": "The API needs a subscription key."
+  },
+  {
+   "name": "Kitchener, Ontario: Historical Vernon City Directories Mapped (University of Waterloo Library)",
+   "licence": "Not stated",
+   "reason": "The project page offers the geocoded CSV files but states no licence (the directory scans came from partners); not used unless the Library publishes an open licence."
+  },
+  {
+   "name": "Pleiades",
+   "licence": "CC BY 3.0",
+   "reason": "Open, but ancient-world places (mostly before AD 640) rarely name where a photo was taken."
+  },
+  {
+   "name": "World Historical Gazetteer",
+   "licence": "Per contributed dataset",
+   "reason": "No single bulk download under one open licence; each contributed dataset has its own terms and some downloads need a login."
+  },
+  {
+   "name": "Library of Congress Sanborn fire insurance maps",
+   "licence": "Public domain (most sheets)",
+   "reason": "Scanned map images, with no point data of buildings or businesses to read."
+  },
+  {
+   "name": "USDA National Farmers Market Directory",
+   "licence": "Public domain",
+   "reason": "Its download now goes through the USDA Local Food Portal API, which needs a key."
+  },
+  {
+   "name": "IRS Exempt Organizations Business Master File",
+   "licence": "Public domain",
+   "reason": "Addresses but no coordinates; geocoding them against NAD or TIGER ranges is not simple enough yet."
+  },
+  {
+   "name": "HMdb (the Historical Marker Database)",
+   "licence": "Copyright, permission needed",
+   "reason": "Not open; state historic marker lists can be added state by state when an open download exists."
+  },
+  {
+   "name": "USPS post office locations",
+   "licence": "Public domain",
+   "reason": "No current official download with coordinates (the HIFLD layer is gone); post offices come from GNIS, OpenStreetMap, Overture and Foursquare."
   }
  ],
  "candidates": [
@@ -1258,6 +2447,21 @@
    "name": "Microsoft Global ML Building Footprints as a third, optional part",
    "licence": "ODbL-1.0",
    "note": "Possible later as a separate download for inside/outside a building."
+  },
+  {
+   "name": "France: SIRENE establishments (INSEE) with INSEE's geolocation file",
+   "licence": "Licence Ouverte / Open Licence 2.0 (Etalab)",
+   "note": "Etalab's geocoded \"GeoSIRENE\" files were decommissioned in April 2026; INSEE now publishes a separate geolocation file (data.gouv.fr dataset 61d5e2d372a52d9f9411ff88, about 1.2 GB) that has to be joined with the 2 GB stock of establishments for names, NAF codes and dates. To add as a prepared DuckDB join (like Foursquare), keeping only storefront NAF codes, statutDiffusionEtablissement = O, and legal persons (no entrepreneurs individuels)."
+  },
+  {
+   "name": "Other US city health inspections on Socrata (Cambridge MA PDDL, Kansas City food permits, San Mateo, Fulton County GA CC BY)",
+   "licence": "PDDL, public domain or CC BY 4.0",
+   "note": "Open; can be added as \"socrata\" entries like the ones used, after checking each one's columns."
+  },
+  {
+   "name": "FCC antenna structures and broadcast stations; EPA Facility Registry Service; NPS and USFS points of interest and recreation sites",
+   "licence": "Public domain (US government works)",
+   "note": "Open national files; mostly unnamed structures or regulated sites (FCC, EPA), or national shapefiles (NPS, USFS): to add as national entries with a class map that keeps only named public places."
   }
  ]
 }

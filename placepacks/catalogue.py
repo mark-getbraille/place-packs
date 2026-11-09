@@ -11,8 +11,12 @@ import os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Licences a source may have to be in a pack (each allows redistribution; none is non-commercial or no-derivatives).
 # ODbL is share-alike, so only OpenStreetMap's own layer has it (see LICENSES.md: each pack is a collective database).
+# NYC-Open-Data and OPEN-NY are the terms of New York City's and New York State's portals: by law (NYC Admin. Code
+# 23-502(d)) and by their terms, the data is free to use and redistribute without licence, attribution or share-alike
+# requirements (see sources.json "licences").
 ALLOWED = {"ODbL-1.0", "CDLA-Permissive-2.0", "Apache-2.0", "OGL-Canada-2.0", "OGL-UK-3.0", "CC0-1.0", "CC-BY-4.0",
-           "US-Government-Work", "etalab-2.0", "per-feed-open", "per-source-open", "PDDL-1.0", "ODC-By-1.0"}
+           "US-Government-Work", "etalab-2.0", "per-feed-open", "per-source-open", "PDDL-1.0", "ODC-By-1.0",
+           "NYC-Open-Data", "OPEN-NY", "public-domain-marked"}
 SHARE_ALIKE = {"ODbL-1.0"}
 
 
@@ -38,6 +42,7 @@ def check(cat=None):
     cat = cat or load()
     problems, ids = [], set()
     licences = cat.get("licences", {})
+    known = regions()
     for e in cat.get("accepted", []):
         where = e.get("id", "?")
         if where in ids:
@@ -55,6 +60,9 @@ def check(cat=None):
             problems.append(f"{where}: the licence {e.get('licence')} is not described in licences")
         if e.get("part") not in ("core", "extra"):
             problems.append(f"{where}: the part must be core or extra")
+        for rid in e.get("regions", []):
+            if rid not in known:
+                problems.append(f"{where}: the region {rid} is not in regions.json")
     for lid, lic in licences.items():
         if not lic.get("url"):
             problems.append(f"licence {lid}: no address")
@@ -78,8 +86,9 @@ def settings_for(cat, region, extra=None):
 
 
 def sources_for(region, part, cat=None, only=None):
-    """The accepted sources of a region's part (the region's country is in the source's countries)."""
+    """The accepted sources of a region's part (the region's country is in the source's countries and, for a source
+    of one city or state, the region is in its "regions")."""
     cat = cat or load()
     cc = country_code(region)
-    return [e for e in cat["accepted"] if e["part"] == part and cc in e["countries"] and (only is None or
-                                                                                          e["id"] in only)]
+    return [e for e in cat["accepted"] if e["part"] == part and cc in e["countries"] and
+            (not e.get("regions") or region["id"] in e["regions"]) and (only is None or e["id"] in only)]

@@ -6,7 +6,17 @@ GitHub's schedule of the workflow alive).
 
 import datetime
 import json
+import re
 import sys
+
+REASON_LIMIT = 200          # characters of a reason in the table (DuckDB's errors run to several lines)
+
+
+def one_line(text, limit=REASON_LIMIT):
+    """text on one line (newlines and runs of spaces become one space; "|" would split a Markdown cell), at most
+    limit characters, ending in "..." when it was cut."""
+    text = re.sub(r"\s+", " ", str(text or "")).strip().replace("|", "/")
+    return text if len(text) <= limit else text[:limit - 3].rstrip() + "..."
 
 
 def status(manifest, today=None):
@@ -28,7 +38,7 @@ def status(manifest, today=None):
     for key, e in sorted(packs.items()):
         for sid, st in sorted((e.get("status") or {}).items()):
             detail = str(st.get("rows", "")) if st.get("status") == "ok" else str(st.get("reason", ""))
-            lines.append(f"| {key} | {sid} | {st.get('status', '?')} | {detail.replace('|', '/')} |")
+            lines.append(f"| {key} | {sid} | {one_line(st.get('status', '?'), 20)} | {one_line(detail)} |")
     return "\n".join(lines) + "\n"
 
 

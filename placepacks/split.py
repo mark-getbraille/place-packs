@@ -8,8 +8,11 @@ downloads only its own part (the NAD is several GB for the whole country).
   - shapefile sources (ZIP code areas): each shape goes to the US states whose box it touches, as a zipped
     shapefile national-split/<region id>/<source id>/<source id>.zip;
   - the Foursquare slice of every covered country (prepared once) goes to each region by its box, as Parquet;
-  - sources without a filter (France's BAN) are not split: the region builds read the whole file, filtered by the
-    extract's box.
+  - tabular sources with "split_box" (GeoNames, the FSA's hygiene ratings): each row goes to every region of the
+    source's countries whose box holds it (optionally only the regions of the row's own country column);
+  - other sources without a filter (France's BAN) are not split: the region builds read the whole file, filtered by
+    the extract's box.
+Only the columns the reader uses are written (needed_columns), so a slice of the NAD (60 columns) stays small.
 """
 
 import argparse
@@ -19,35 +22,85 @@ import sys
 import zipfile
 
 from placepacks import catalogue
-from placepacks.readers.tabular import _get, open_texts, region_values
+from placepacks.readers.tabular import _get, dict_rows, open_texts, parse_point, region_values
+
+
+def needed_columns(entry):
+    """The column names a tabular entry reads (its columns, filter, exclude and split settings), or None when it
+    names none (then every column is kept)."""
+    names = set()
+
+    def add(spec):
+        if isinstance(spec, dict):
+            for c in spec.get("first_of", []):
+                names.add(c)
+        elif isinstance(spec, list):
+            names.update(spec)
+        elif isinstance(spec, str) and spec:
+            names.add(spec)
+    for spec in entry.get("columns", {}).values():
+        add(spec)
+    for part in ("filter", "exclude"):
+        if entry.get(part):
+            add(entry[part]["column"])
+    for spec in (entry.get("split_box") or {}).values():
+        add(spec)
+    return names or None
+
+
+def _targets(entry, row, by_value, boxes):
+    """The region ids a row goes to: by the filter's value, or by the regions' boxes (split_box)."""
+    if by_value is not None:
+        rid = by_value.get(_get(row, entry["filter"]["column"]).upper())
+        return [rid] if rid else []
+    spec = entry["split_box"]
+    at = parse_point(_get(row, spec["point"])) if spec.get("point") else None
+    if at is None:
+        try:
+            at = float(_get(row, spec["lat"])), float(_get(row, spec["lon"]))
+        except (KeyError, ValueError):
+            return []
+    lat, lon = at
+    cc = _get(row, spec["country"]).upper() if spec.get("country") else None
+    return [rid for rid, (rcc, (w, s, e, n)) in boxes.items() if (cc is None or cc == rcc) and
+            s - 0.05 <= lat <= n + 0.05 and w - 0.05 <= lon <= e + 0.05]
 
 
 def split_tabular(entry, path, out, regions):
-    """Route each row of a filtered tabular source to its region's CSV. Returns {region id: rows}."""
-    flt = entry["filter"]
-    by_value = {}
-    for rid, r in regions.items():
-        if catalogue.country_code(r) in entry["countries"]:
-            by_value[flt["equals"].format(**region_values(r)).upper()] = rid
+    """Route each row of a filtered (or split_box) tabular source to its regions' CSVs. Returns {region id: rows}."""
+    mine = {rid: r for rid, r in regions.items() if catalogue.country_code(r) in entry["countries"] and
+            (not entry.get("regions") or rid in entry["regions"])}
+    by_value, boxes = None, {}
+    if entry.get("filter"):
+        by_value = {entry["filter"]["equals"].format(**region_values(r)).upper(): rid for rid, r in mine.items()}
+    else:
+        boxes = {rid: (catalogue.country_code(r), r["bbox"]) for rid, r in mine.items()}
+    keep = needed_columns(entry)
+    headless = bool(entry.get("fieldnames"))
     writers, files, counts = {}, [], {}
     try:
         for text in open_texts(path, entry.get("member", "*"), entry.get("encoding", "utf-8-sig")):
-            reader = csv.DictReader(text, delimiter=entry.get("delimiter", ","))
-            for row in reader:
-                rid = by_value.get(_get(row, flt["column"]).upper())
-                if rid is None:
-                    continue
-                if rid not in writers:
-                    folder = os.path.join(out, rid, entry["id"])
-                    os.makedirs(folder, exist_ok=True)
-                    ext = os.path.splitext(entry.get("member", "*.csv"))[1] or ".csv"   # what the reader looks for
-                    f = open(os.path.join(folder, entry["id"] + ext), "w", newline="", encoding="utf-8")
-                    files.append(f)
-                    writers[rid] = csv.DictWriter(f, fieldnames=reader.fieldnames,
-                                                  delimiter=entry.get("delimiter", ","))
-                    writers[rid].writeheader()
-                writers[rid].writerow(row)
-                counts[rid] = counts.get(rid, 0) + 1
+            fieldnames = None
+            for row in dict_rows(text, entry):
+                if fieldnames is None:
+                    fieldnames = [c for c in row if c is not None and (keep is None or headless or c in keep)]
+                for rid in _targets(entry, row, by_value, boxes):
+                    if rid not in writers:
+                        folder = os.path.join(out, rid, entry["id"])
+                        os.makedirs(folder, exist_ok=True)
+                        ext = os.path.splitext(entry.get("member", "*.csv"))[1] or ".csv"   # what the reader reads
+                        name = entry.get("split_file") or entry["id"] + ext       # a name its "member" matches
+                        f = open(os.path.join(folder, name), "w", newline="", encoding="utf-8")
+                        files.append(f)
+                        writers[rid] = csv.DictWriter(f, fieldnames=fieldnames, extrasaction="ignore",
+                                                      delimiter=entry.get("delimiter", ","),
+                                                      quoting=csv.QUOTE_NONE if entry.get("no_quotes") else
+                                                      csv.QUOTE_MINIMAL, escapechar="\\" if entry.get("no_quotes")
+                                                      else None)
+                        if not headless:
+                            writers[rid].writeheader()
+                    writers[rid].writerow({k: row.get(k) for k in fieldnames})
+                    counts[rid] = counts.get(rid, 0) + 1
     finally:
         for f in files:
             f.close()
@@ -129,6 +182,15 @@ def main(argv=None):
         folder = os.path.join(a.national, entry["id"])
         if not os.path.isdir(folder):
             continue
+        if entry["reader"] == "tabular" and (entry.get("filter") or entry.get("split_box")):
+            # The whole folder in one pass (GeoNames has one file per country; each region gets one slice).
+            try:
+                counts = split_tabular(entry, folder, a.out, regions)
+            except Exception as exc:  # noqa: BLE001 - reported, the build goes on without this source
+                print(f"{entry['id']}: failed (not split: {type(exc).__name__}: {exc})")
+                continue
+            print(f"{entry['id']}: {sum(counts.values()):,} records in {len(counts)} regions")
+            continue
         for name in os.listdir(folder):
             if name.endswith(".version"):
                 continue
@@ -137,8 +199,6 @@ def main(argv=None):
             try:
                 if entry["fetch"]["method"] == "duckdb_national" and name.endswith(".parquet"):
                     counts = split_parquet(entry, path, a.out, regions)
-                elif entry["reader"] == "tabular" and entry.get("filter"):
-                    counts = split_tabular(entry, path, a.out, regions)
                 elif entry["reader"] == "shapes":
                     counts = split_shapes(entry, path, a.out, regions)
                 else:

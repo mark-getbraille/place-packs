@@ -21,7 +21,7 @@ on:
   workflow_dispatch:
     inputs:
       regions:
-        description: "Region ids separated by spaces, for example us-vermont fr-ile-de-france (empty: all)"
+        description: "Region ids separated by spaces or commas, for example us-vermont fr-ile-de-france (empty: all)"
         required: false
         default: ""
       force:

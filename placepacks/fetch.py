@@ -436,7 +436,7 @@ def main(argv=None):
         return 0
     if a.fingerprint_all is not None and a.region is None:
         from placepacks.manifest import fingerprint
-        ids = a.fingerprint_all.split() or list(catalogue.regions())
+        ids = a.fingerprint_all.replace(",", " ").split() or list(catalogue.regions())
         prints = {r: fingerprint(fetch_region(r, os.path.join("work", r), ("core", "extra"), a.national, True))
                   for r in ids}
         with open(a.out, "w", encoding="utf-8") as f:

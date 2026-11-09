@@ -207,7 +207,7 @@ def main(argv=None):
         print(f"{len(uploads)} packs to upload; {len(manifest['packs'])} in the list.")
         return 0
     from placepacks.regions import REGIONS
-    wanted = [r for r in args.regions.split() if r] or list(REGIONS)
+    wanted = [r for r in args.regions.replace(",", " ").split() if r] or list(REGIONS)
     unknown = [r for r in wanted if r not in REGIONS]
     if unknown:
         raise SystemExit(f"Unknown region ids: {', '.join(unknown)}")

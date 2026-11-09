@@ -14,6 +14,10 @@ taken. Point it at your photo album, and if your family goes to the Outer Banks 
 - **Check before anything moves:** a list of the new folders, with photo counts, dates and where each name came from.
   Rename or merge folders, then **Sort now**. **Undo the last sort** puts everything back.
 - **My places:** your own names, such as "Grandma's house", come first.
+- **Import places from a list:** paste a list of businesses or schools copied from a chat answer (a table or a
+  bulleted list), or open a CSV, Excel, SQLite database or .sql file. Addresses are found on your computer in the
+  place packs, and a picture taken within 60 metres of one of these places gets its name. These places stay on
+  your computer only. My places can also be exported to and imported from SQLite databases and .sql files.
 - **Photos without a location** can stay where they are, go to "Unknown place", or be guessed from photos taken
   around the same time (marked "probably").
 - **Made for screen readers:** every window works with NVDA and JAWS: labels on every field, Alt keys on every
@@ -26,7 +30,7 @@ Reads JPEG, PNG, TIFF, WebP, HEIC/HEIF, AVIF and most RAW files; videos too when
 
 ## Download and install
 
-Download `PhotoLocationIdentifier-1.1.0-setup.exe` from the release **photo-location-identifier-v1.1.0** on this
+Download `PhotoLocationIdentifier-1.2.0-setup.exe` from the release **photo-location-identifier-v1.2.0** on this
 repository's Releases page and open it.
 
 The installer is not signed with a paid certificate, so Windows **SmartScreen** may say "Windows protected your PC".

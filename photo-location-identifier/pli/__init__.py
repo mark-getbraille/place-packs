@@ -6,7 +6,8 @@ OpenStreetMap and other open data) from the place-packs project's public release
 Modules:
   photos     read the location, date and height from pictures (and from videos when ffprobe is installed)
   places     the adapter to the placepacks package (place names at each level, water and air, pack downloads)
-  myplaces   the user's own names for places ("Grandma's house" within 200 metres)
+  myplaces   the user's own names for places ("Grandma's house" within 200 metres), and places from lists
+  placelist  Import places from a list: pasted lists, CSV, Excel, SQLite and .sql files, offline address finding
   grouping   trips, guessing places by time, naming each trip by its area, folder-name templates: the plan
   naming     new picture names with the exact place ("Put the exact place in each picture's name")
   sorter     moving or copying (and renaming) the files, the report, and undoing the last sort
@@ -15,6 +16,6 @@ Modules:
   gui        the windows
 """
 
-__version__ = "1.1.0"
+__version__ = "1.2.0"
 APP_NAME = "Photo Location Identifier"
 PUBLISHER = "Company Maker, LLC"

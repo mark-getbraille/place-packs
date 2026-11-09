@@ -6,7 +6,9 @@
                    Sort now
   RenameWindow     type a folder's new name
   MergeWindow      choose the folder to merge the chosen one into
-  MyPlacesWindow   your own names for places ("Grandma's house" within 200 metres), with import and export
+  MyPlacesWindow   your own names for places ("Grandma's house" within 200 metres), the places from lists (Import
+                   places from a list, in importlist.py; Remove places from a list), import and export (.json,
+                   .csv, SQLite database, .sql)
   AboutWindow      the version, the licence, the privacy note and the place-name attributions
 
 Every window follows access.py: labels ending in ":" before fields and lists, Alt keys on every button (named in the
@@ -20,6 +22,7 @@ import wx
 from pli import APP_NAME, PUBLISHER, __version__, sorter
 from pli import myplaces as mp
 from pli.gui import access
+from pli.gui.importlist import ImportListWindow, choose_one
 
 
 def _row(sizer):
@@ -241,14 +244,17 @@ class MergeWindow(wx.Dialog):
 
 class MyPlacesWindow(wx.Dialog):
     """My places (see the module docstring). places: myplaces.MyPlaces (saved when the window closes).
-    photo_reader(path) -> (lat, lon) or None: reads a picture's position (photos.read_photo by default)."""
+    photo_reader(path) -> (lat, lon) or None: reads a picture's position (photos.read_photo by default).
+    finder: the places.Places for Import places from a list (its packs folder and downloads; None: its own);
+    pack_mode: the place packs downloads setting ("ask", "auto", "never"; None: the saved one)."""
 
-    def __init__(self, parent, places, photo_reader=None):
+    def __init__(self, parent, places, photo_reader=None, finder=None, pack_mode=None):
         """Make the window for places."""
-        super().__init__(parent, title=f"My places - {APP_NAME}", size=(620, 560),
+        super().__init__(parent, title=f"My places - {APP_NAME}", size=(640, 640),
                          style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
         self.places = places
         self.photo_reader = photo_reader or _photo_position
+        self.finder, self.pack_mode = finder, pack_mode
         panel = wx.Panel(self)
         s = wx.BoxSizer(wx.VERTICAL)
         intro = wx.StaticText(panel, label="Your own names for places come first: a photo taken within the distance "
@@ -269,9 +275,19 @@ class MyPlacesWindow(wx.Dialog):
         self.remove_btn = access.button(panel, row, "&Remove", "Remove the place chosen in the list", self.on_remove)
         access.button(panel, row, "Position from a p&icture...", "Fill in the position from a picture's GPS details",
                       self.on_from_photo)
+        self.lists = access.labelled(panel, s, "Places from lists (pictures within 60 metres get their names):",
+                                     lambda: wx.TextCtrl(panel, style=wx.TE_MULTILINE | wx.TE_READONLY,
+                                                         size=(-1, 60)))
         row = _row(s)
-        access.button(panel, row, "Imp&ort...", "Add the places in a .json or .csv file", self.on_import)
-        access.button(panel, row, "&Export...", "Save My places to a .json or .csv file", self.on_export)
+        access.button(panel, row, "Import places from a li&st...", "Add businesses, schools or other places from "
+                      "a list you paste or a file; they stay on this computer only", self.on_import_list)
+        self.remove_list_btn = access.button(panel, row, "Remo&ve places from a list...",
+                                             "Remove every place of one imported list", self.on_remove_list)
+        row = _row(s)
+        access.button(panel, row, "Imp&ort...", "Add the places in a .json, .csv, SQLite database or .sql file",
+                      self.on_import)
+        access.button(panel, row, "&Export...", "Save My places (all, or one list) to a .json, .csv, SQLite "
+                      "database or .sql file", self.on_export)
         access.button(panel, row, "&Close", "Save My places and close (Escape)", self.on_close)
         panel.SetSizer(s)
         self.list.Bind(wx.EVT_LISTBOX, lambda e: self.on_select())
@@ -282,12 +298,16 @@ class MyPlacesWindow(wx.Dialog):
         self.list.SetFocus()
 
     def refresh(self, select=None):
-        """Fill the list again."""
+        """Fill the list (and the places from lists) again."""
         self.list.Set([p.describe() for p in self.places.places])
         if self.places.places:
             self.list.SetSelection(select if select is not None and 0 <= select < len(self.places.places) else 0)
             self.on_select()
         self.remove_btn.Enable(bool(self.places.places))
+        names = self.places.list_names()
+        self.lists.SetValue("\n".join(f"{source}: {n:,} places" for source, n in names) if names else
+                            "None yet. Import places from a list (Alt+S) adds them; they stay on this computer only.")
+        self.remove_list_btn.Enable(bool(names))
 
     def on_select(self):
         """Show the chosen place in the fields, to change it."""
@@ -353,31 +373,88 @@ class MyPlacesWindow(wx.Dialog):
             self.name.SetFocus()
         access.announce(self, f"Position {pos[0]:.5f}, {pos[1]:.5f} filled in; type a name and choose Add")
 
+    def on_import_list(self):
+        """Import places from a list (gui/importlist.py)."""
+        dlg = ImportListWindow(self, self.places, finder=self.finder, pack_mode=self.pack_mode)
+        result = dlg.ShowModal()
+        if dlg:
+            dlg.Destroy()
+        self.refresh()
+        if result == wx.ID_OK:
+            access.announce(self, f"{self.places.listed_count():,} places from lists in My places")
+
+    def on_remove_list(self):
+        """Remove every place of one imported list, after asking."""
+        names = self.places.list_names()
+        if not names:
+            access.announce(self, "There are no places from lists.")
+            return
+        i = choose_one(self, "Remove the places of which list?", "Remove places from a list",
+                       [f"{source} ({n:,} places)" for source, n in names])
+        if i is None:
+            return
+        source, n = names[i]
+        if access.message(self, f"Remove the {n:,} places of {source} from My places?", "Remove places from a list",
+                          wx.YES_NO | wx.ICON_QUESTION) != wx.YES:
+            return
+        removed = self.places.remove_list(source)
+        self.places.save()
+        self.refresh()
+        access.announce(self, f"Removed {removed:,} places of {source}")
+
     def on_import(self):
         """Add the places in a file."""
         with wx.FileDialog(self, "Import My places", style=wx.FD_OPEN | wx.FD_FILE_MUST_EXIST,
-                           wildcard="My places (*.json;*.csv)|*.json;*.csv|All files|*.*") as dlg:
+                           wildcard=IMPORT_WILDCARD) as dlg:
             if dlg.ShowModal() != wx.ID_OK:
                 return
             path = dlg.GetPath()
+        self.import_path(path)
+
+    def import_path(self, path):
+        """Add the places in the file at path and say what happened."""
         added, problems = self.places.import_file(path)
         self.places.save()
         self.refresh()
         text = f"Added {added} places."
         if problems:
             text += " Not added: " + "; ".join(problems[:10])
+            if len(problems) > 10:
+                text += f"; and {len(problems) - 10} more"
         access.message(self, text, "Import My places")
 
+    def export_choices(self):
+        """[(label, which)] of what Export can save: all, only your own places, or one list."""
+        out = [("All My places (your own and every list)", None)]
+        if self.places.lists:
+            out.append(("Only the places you added yourself", ""))
+            out += [(f"Only the list {source} ({n:,} places)", source) for source, n in self.places.list_names()]
+        return out
+
     def on_export(self):
-        """Save the places to a file."""
+        """Save the places (all, or one list) to a file."""
+        choices = self.export_choices()
+        which = None
+        if len(choices) > 1:
+            i = choose_one(self, "Which places do you want to export?", "Export My places", [c[0] for c in choices])
+            if i is None:
+                return
+            which = choices[i][1]
         with wx.FileDialog(self, "Export My places", defaultFile="My places.json",
-                           style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT,
-                           wildcard="JSON (*.json)|*.json|CSV for spreadsheets (*.csv)|*.csv") as dlg:
+                           style=wx.FD_SAVE | wx.FD_OVERWRITE_PROMPT, wildcard=EXPORT_WILDCARD) as dlg:
             if dlg.ShowModal() != wx.ID_OK:
                 return
             path = dlg.GetPath()
-        self.places.export(path)
-        access.announce(self, f"Saved {len(self.places.places)} places to {os.path.basename(path)}")
+        self.export_path(path, which)
+
+    def export_path(self, path, which=None):
+        """Save the places (which: see MyPlaces.export) to path and say so."""
+        try:
+            n = self.places.export(path, which)
+        except (OSError, ValueError) as e:
+            access.message(self, f"My places could not be saved: {e}", "Export My places", wx.OK | wx.ICON_ERROR)
+            return
+        access.announce(self, f"Saved {n:,} places to {os.path.basename(path)}")
 
     def on_close(self):
         """Save and close."""
@@ -386,6 +463,12 @@ class MyPlacesWindow(wx.Dialog):
             self.EndModal(wx.ID_CANCEL)
         else:
             self.Destroy()
+
+
+IMPORT_WILDCARD = ("My places (*.json;*.csv;*.db;*.sqlite;*.sqlite3;*.sql)|*.json;*.csv;*.db;*.sqlite;*.sqlite3;*.sql|"
+                   "All files|*.*")
+EXPORT_WILDCARD = ("JSON (*.json)|*.json|CSV for spreadsheets (*.csv)|*.csv|SQLite database (*.db)|*.db|"
+                   "SQL statements (*.sql)|*.sql")
 
 
 def _photo_position(path):
@@ -453,5 +536,6 @@ def all_windows(parent, plan):
     """[window] of every window here (not shown)."""
     return [ReviewWindow(parent, plan), RenameWindow(parent, "Outer Banks 2005"),
             MergeWindow(parent, "Outer Banks 2005", ["Outer Banks 2006"]),
-            MyPlacesWindow(parent, mp.MyPlaces([mp.MyPlace("Grandma's house", 36.0, -75.7)])), AboutWindow(parent)]
+            MyPlacesWindow(parent, mp.MyPlaces([mp.MyPlace("Grandma's house", 36.0, -75.7)])),
+            ImportListWindow(parent, mp.MyPlaces(), pack_mode="never"), AboutWindow(parent)]
 

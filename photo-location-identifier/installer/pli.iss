@@ -1,12 +1,12 @@
 ; Inno Setup script for Photo Location Identifier. Built by .github/workflows/photo-location-identifier.yml:
-;   ISCC.exe /DAppVersion=1.1.0 installer\pli.iss      (from the photo-location-identifier folder)
+;   ISCC.exe /DAppVersion=1.2.0 installer\pli.iss      (from the photo-location-identifier folder)
 ; Installs for the current user by default (no administrator question; the installer offers all users too), adds
 ; "Sort pictures by location" to File Explorer's menu for folders and for the inside of a folder, a Start menu
 ; entry, the manual, and a desktop shortcut. Inno Setup's standard windows are read by NVDA, JAWS and Narrator,
 ; including the progress bar.
 
 #ifndef AppVersion
-  #define AppVersion "1.1.0"
+  #define AppVersion "1.2.0"
 #endif
 #define AppName "Photo Location Identifier"
 #define AppExe "PhotoLocationIdentifier.exe"

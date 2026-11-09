@@ -355,3 +355,109 @@ def test_review_shows_old_and_new_names(app, tmp_path):
     review.refresh(0)
     assert "IMG_0006.jpg \u2192 2005-07-15 Sandpiper Bay (IMG_0006).jpg" in review.details.GetValue()
     review.Destroy()
+
+
+def test_import_places_from_a_pasted_list(app, tmp_path):
+    """Paste a chat's list, Find the places (in the progress window), see the summary and the review list, type the
+    list's name, Import; then Remove places from a list takes them all away. Escape cancels; F1 opens the part."""
+    import listpack
+    from pli.gui import importlist
+    folder = str(tmp_path / "packs")
+    listpack.build(folder)
+    places = mp.MyPlaces([mp.MyPlace("Hilltop Center", 39.7817, -89.6501)], path=str(tmp_path / "my.json"))
+    finder = Places(my_places=places, packs_folder=folder)
+    w = importlist.ImportListWindow(None, places, finder=finder, pack_mode="never")
+    assert_accessible(w)
+    labels = " ".join(c.GetLabel() for c in walk(w) if isinstance(c, wx.StaticText))
+    assert importlist.PRIVACY in " ".join(labels.split())
+    assert w.name.GetValue().startswith("Pasted list 20") and not w.import_btn.IsEnabled()
+    w.text.SetValue("Here you go:\n\n- **Maple Grove School**: 123 Main St, Springfield, IL 62701 (217) 555-0100\n"
+                    "- Pinecrest Park, Springfield, IL\n- Hilltop Center: 39.7817, -89.6501\n"
+                    "- Nowhere Cafe, 77 Nowhere Lane, Springfield, IL\n")
+    w.on_find()
+    wait_for(w.busy)
+    until(lambda: w.rows)
+    assert w.summary.GetValue().startswith("4 places found; 2 located; 1 could not be located; 1 duplicate of "
+                                           "My places.")
+    assert "line 6: Nowhere Cafe — 77 Nowhere Lane, Springfield, IL — not located" in w.summary.GetValue()
+    assert "These places stay on this computer only." in w.summary.GetValue()
+    assert w.review.GetString(0).startswith("Nowhere Cafe — ")
+    assert "Maple Grove School — 123 Main St, Springfield, IL 62701 — located" in w.review.GetStrings()
+    assert any(s.startswith("4 places found") for s in access.SPOKEN)
+    assert w.import_btn.IsEnabled()
+    key(w, wx.WXK_F1)
+    assert access.MANUAL_OPENED[-1] == "import-list"
+    w.name.SetValue("Schools list")
+    w.on_import()
+    assert places.list_names() == [("Schools list", 2)]
+    assert mp.MyPlaces.load(str(tmp_path / "my.json")).find_listed(39.8012, -89.6441).name == "Maple Grove School"
+    assert "555" not in open(tmp_path / "my.json", encoding="utf-8").read()
+
+    other = importlist.ImportListWindow(None, mp.MyPlaces(), pack_mode="never")
+    key(other, wx.WXK_ESCAPE)
+    for _ in range(3):
+        wx.Yield()
+
+    win = dialogs.MyPlacesWindow(None, places)
+    assert_accessible(win)
+    assert win.lists.GetValue() == "Schools list: 2 places"
+    asked = []
+    dialogs.choose_one, old = (lambda parent, prompt, title, choices: asked.append(choices) or 0), dialogs.choose_one
+    old_message = access.message
+    access.message = lambda *a, **k: wx.YES
+    try:
+        win.on_remove_list()
+    finally:
+        dialogs.choose_one, access.message = old, old_message
+    assert asked == [["Schools list (2 places)"]] and places.lists == {}
+    assert "Removed 2 places of Schools list" in access.SPOKEN
+    assert not win.remove_list_btn.IsEnabled()
+    win.on_close()
+
+
+def test_import_list_from_a_database_with_a_choice_of_tables(app, tmp_path, monkeypatch):
+    """Open a file instead: a SQLite database with two tables of places asks which one; the list's name is the
+    file's name and table."""
+    import sqlite3
+    from pli.gui import importlist
+    path = str(tmp_path / "list.db")
+    con = sqlite3.connect(path)
+    con.executescript("CREATE TABLE shops (name TEXT, latitude REAL, longitude REAL);"
+                      "INSERT INTO shops VALUES ('Dune Kite Shop', 35.96, -75.63);"
+                      "CREATE TABLE branches (name TEXT, city TEXT, state TEXT);"
+                      "INSERT INTO branches VALUES ('Oak Branch', 'Springfield', 'IL');")
+    con.commit()
+    con.close()
+    asked = []
+    monkeypatch.setattr(importlist, "choose_one", lambda parent, prompt, title, choices: asked.append(choices) or 0)
+    w = importlist.ImportListWindow(None, mp.MyPlaces(), pack_mode="never")
+    assert w.open_path(path)
+    wait_for(w.busy)
+    until(lambda: w.rows)
+    assert asked == [["shops (1 rows: name, latitude, longitude)", "branches (1 rows: name, city, state)"]]
+    assert w.name.GetValue() == "list.db, shops"
+    assert w.summary.GetValue().startswith("1 place found; 1 located; 0 could not be located; 0 duplicates")
+
+
+def test_my_places_export_and_import_sql_and_sqlite(app, tmp_path, monkeypatch):
+    """Export asks which places (all, your own, one list), then saves; Import reads the file back."""
+    places = mp.MyPlaces([mp.MyPlace("Grandma's house", 36.0, -75.7)], path=str(tmp_path / "my.json"))
+    from pli import placelist
+    rows = placelist.parse_pasted("- Dune Kite Shop: 35.96, -75.63\n")
+    placelist.Locator(None).locate(rows)
+    places.add_list("Shops", rows)
+    w = dialogs.MyPlacesWindow(None, places)
+    assert [c[0] for c in w.export_choices()] == ["All My places (your own and every list)",
+                                                  "Only the places you added yourself",
+                                                  "Only the list Shops (1 places)"]
+    w.export_path(str(tmp_path / "all.sql"))
+    w.export_path(str(tmp_path / "shops.db"), "Shops")
+    assert "Saved 2 places to all.sql" in access.SPOKEN and "Saved 1 places to shops.db" in access.SPOKEN
+    empty = mp.MyPlaces(path=str(tmp_path / "other.json"))
+    w2 = dialogs.MyPlacesWindow(None, empty)
+    said = []
+    monkeypatch.setattr(access, "message", lambda parent, text, *a, **k: said.append(text))
+    w2.import_path(str(tmp_path / "all.sql"))
+    assert said == ["Added 2 places."]
+    assert empty.export_rows() == places.export_rows()
+    assert w2.lists.GetValue() == "Shops: 1 places"

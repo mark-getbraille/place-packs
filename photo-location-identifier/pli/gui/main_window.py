@@ -283,7 +283,8 @@ class MainWindow(wx.Frame):
 
     def on_my_places(self):
         """Open My places."""
-        dlg = MyPlacesWindow(self, self.my_places)
+        dlg = MyPlacesWindow(self, self.my_places, finder=self.make_places(),
+                             pack_mode=settings.PACK_MODES[max(0, self.packs.GetSelection())])
         dlg.ShowModal()
         if dlg:
             dlg.Destroy()

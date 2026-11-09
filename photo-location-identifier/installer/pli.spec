@@ -2,7 +2,8 @@
 # replaceable). Run from the photo-location-identifier folder:   pyinstaller installer/pli.spec
 # The result is dist/PhotoLocationIdentifier/ with PhotoLocationIdentifier.exe, which the Inno Setup script packs.
 # Bundled: the program (pli), placepacks' reading, lookup and download parts (not its pack builder and its readers),
-# placepacks' regions list and water layer, the manual, the licences, and the licence files of wxPython and Pillow.
+# placepacks' regions list and water layer, the manual, the licences, and the licence files of wxPython, Pillow and
+# openpyxl (with et_xmlfile).
 
 import glob
 import os
@@ -20,7 +21,7 @@ datas = [
 datas += [(f, "placepacks/data") for f in glob.glob(os.path.join(REPO, "placepacks", "data", "*"))]
 
 # The licence files of the bundled libraries, from their installed package details.
-for dist in ("wxPython", "pillow", "pyinstaller"):
+for dist in ("wxPython", "pillow", "openpyxl", "et_xmlfile", "pyinstaller"):
     try:
         for f in metadata.distribution(dist).files or []:
             name = os.path.basename(str(f)).upper()

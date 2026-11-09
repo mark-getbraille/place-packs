@@ -14,6 +14,8 @@ details, and the tests can use a stand-in finder (StandInFinder) without any pac
                        address, the neighbourhood, the town, the water; Places.exact looks it up
   StandInFinder        a finder made of rectangles, for the tests and for trying the program without packs
 
+Places from a list (myplaces.MyPlaces.find_listed) give the exact place of a picture taken within 60 metres of one.
+
 placepacks calls used (all on this computer, except ensure_pack, which downloads a pack from the public releases):
   placepacks.lookup.Finder(folder=...).lookup(lat, lon, when=..., detail="area", altitude=...) -> Result
       (detail "area" names the folders; detail "address" gives the exact place for the file names: a business,
@@ -385,7 +387,13 @@ class Places:
                 except Exception:  # noqa: BLE001 - a broken pack: only what the area lookup knows
                     result = None
             self.exact_cache[key] = result
-        return spot_from_result(self.exact_cache[key], info)
+        spot = spot_from_result(self.exact_cache[key], info)
+        listed = self.my_places.find_listed(lat, lon)
+        if listed is not None:
+            # A place from a list (Import places from a list) within its 60 metres names the picture before the
+            # packs' name; your own places (spot.my_place) still come first in the name.
+            spot.name = listed.name
+        return spot
 
     @staticmethod
     def _stamp(when):
@@ -484,8 +492,12 @@ class Places:
         Already downloaded packs are used offline; nothing is sent but the request for the pack's file."""
         if mode == "never":
             return [], []
-        needed = self.regions_needed(positions)
-        if not needed:
+        return self.get_region_packs(self.regions_needed(positions), mode, ask, progress, catalogue)
+
+    def get_region_packs(self, needed, mode="ask", ask=None, progress=None, catalogue=None):
+        """Make sure the packs of the regions in needed ({region id: count}) are on this computer, as get_packs
+        does (count is said in the question: photos, or places of a list)."""
+        if mode == "never" or not needed:
             return [], []
         try:
             _ensure_import_path()

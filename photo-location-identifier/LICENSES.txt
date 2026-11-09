@@ -43,6 +43,10 @@ Pillow (reading the pictures' details)
   libavif and others), all listed in Pillow's LICENSE file.
   https://github.com/python-pillow/Pillow/blob/main/LICENSE  (the full text is in third-party-licences\pillow)
 
+openpyxl (reading Excel .xlsx lists in Import places from a list)
+  MIT licence, Copyright (c) 2010 openpyxl. https://foss.heptapod.net/openpyxl/openpyxl/-/blob/branch/3.1/LICENCE.rst
+  It uses et_xmlfile, MIT licence, Copyright (c) 2010 openpyxl. https://foss.heptapod.net/openpyxl/et_xmlfile
+
 PyInstaller (packs the program into PhotoLocationIdentifier.exe)
   GNU General Public License 2.0 with the bootloader exception, which allows programs built with it to use any
   licence. Only its bootloader is in the installed program. https://pyinstaller.org/en/stable/license.html

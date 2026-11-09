@@ -7,12 +7,12 @@ as "Outer Banks 2005" and "Outer Banks 2006".
 It uses the location your camera or phone saved in each picture (its GPS position). Nothing is moved until you have
 checked the new folders, and "Undo the last sort" puts everything back.
 
-Version 1.1.0. Free software under the MIT licence, made by Company Maker, LLC.
+Version 1.2.0. Free software under the MIT licence, made by Company Maker, LLC.
 
 ## Installing {#installing}
 
-1. Download "PhotoLocationIdentifier-1.1.0-setup.exe" from the program's release page on GitHub
-   (github.com/mark-getbraille/place-packs, Releases, "photo-location-identifier-v1.1.0").
+1. Download "PhotoLocationIdentifier-1.2.0-setup.exe" from the program's release page on GitHub
+   (github.com/mark-getbraille/place-packs, Releases, "photo-location-identifier-v1.2.0").
 2. Open it. Windows may show "Windows protected your PC" (SmartScreen), because the program is new and not
    signed with a paid certificate. Choose "More info", then "Run anyway".
 3. Follow the installer. Its progress is read by NVDA and JAWS.
@@ -160,9 +160,71 @@ folder with your name, such as "Grandma's house 2007". This works at the Trip ar
 - **Within this many metres (Alt+M):** 200 by default.
 - **Add or change (Alt+A):** adds the place, or changes the one with the same name. **Remove (Alt+R).**
 - **Position from a picture (Alt+I):** fills in the position from a picture taken there.
-- **Import (Alt+O)** and **Export (Alt+E):** a .json file, or a .csv file for spreadsheets with the columns name,
-  latitude, longitude, metres.
+- **Places from lists:** the lists you imported, with how many places each has.
+- **Import places from a list (Alt+S):** businesses, schools or other places from a list you paste or a file (see
+  Import places from a list, below).
+- **Remove places from a list (Alt+V):** choose a list, say Yes, and all its places are removed together.
+- **Import (Alt+O):** adds the places of a .json file, a .csv file, a SQLite database (.db, .sqlite, .sqlite3) or a
+  .sql file. Only places with a latitude and longitude are added here; a list with only addresses goes through
+  Import places from a list. A .sql file is read safely: only its CREATE TABLE and INSERT statements are used, and
+  the message says how many other statements were skipped.
+- **Export (Alt+E):** first choose what to save (all My places, only the places you added yourself, or one list),
+  then the file: .json, .csv for spreadsheets, a SQLite database (.db) or a .sql file of plain SQL (CREATE TABLE and
+  INSERT statements). The table is called my_places, with the columns name, latitude, longitude, metres and list
+  (the list's name; empty for your own places), the same columns as the .csv file. Importing an export gives back
+  the same places and lists.
 - **Close (Alt+C or Escape)** saves.
+
+## Import places from a list {#import-list}
+
+Use this to add the businesses, schools or other places of a list, so that a picture taken at one of them gets its
+name, such as "2025-05-02 Maple Grove School (IMG_1234).jpg". These places stay on this computer only: they are
+kept with My places in the program's own folder, are never sent anywhere, and are never part of the place packs.
+
+A place from a list names a picture taken within 60 metres of it, so a whole street does not take one shop's name.
+It is used for the exact place in each picture's name (turn on "Put the exact place in each picture's name"), not
+for the folders, and your own places still come first.
+
+1. In My places, choose **Import places from a list (Alt+S).**
+2. **Paste a list (Alt+P):** paste the list copied from a chat answer, a web page or a spreadsheet. These forms are
+   understood:
+   - a table, with a header row and | between the columns (the address can be in one column, such as "123 Main
+     St, Springfield, IL 62701");
+   - a bulleted or numbered list, such as "- Maple Grove School, 123 Main St, Springfield, IL 62701", "Name —
+     address", `**Name**: address`, or the name on one line and the address on the next (lines such as "Address:"
+     under a name are read too);
+   - CSV or tab-separated text with a header row, such as a copy of spreadsheet cells;
+   - a name with only a town and state, such as "Pinecrest Park, Springfield, IL": the place is looked for by its
+     name in that town in the place packs.
+
+   Bold, italics and links are removed (a link keeps its text). Phone numbers, e-mail addresses, web addresses and
+   people's names are left out and never kept: only each place's name and position are saved.
+3. **Find the places (Alt+F).** The progress window shows how far it has got. Or choose **Open a file instead
+   (Alt+O)** for a .csv, .tsv or .txt file, an Excel workbook (.xlsx), a SQLite database (.db, .sqlite, .sqlite3)
+   or a .sql file. The columns are found by their names, in any order and any capitals: name (or business,
+   company, organization), address (or street, address1), city (or town), state (or region), ZIP (or postal code),
+   country, latitude (or lat) and longitude (or lon, lng). A database is only read, never changed; if it has
+   several tables of places, you choose the table.
+4. Read the **Summary**, such as "1,234 places found; 1,100 located; 134 could not be located; 20 duplicates of My
+   places", followed by the places that could not be located and why (for example "the address was not found in
+   the place pack"). **Review the places found (Alt+R)** lists each place as "name — address — located", with the
+   ones that could not be located first. Duplicates (the same name within 100 metres of a place you already have,
+   or twice in the list) are not added again.
+5. **Name for this list (Alt+N):** "Pasted list" and the date unless you type another name, such as "Schools
+   list"; for a file, the file's name. This is the name you choose in Remove places from a list.
+6. **Import (Alt+I)** adds the located places. **Cancel (Alt+C or Escape)** adds nothing.
+
+How places are located, all on this computer:
+
+- a latitude and longitude in the list are used as they are;
+- an address is found in the place pack of its state: first among the address points (the National Address
+  Database), then along the address ranges of the streets (US Census TIGER/Line), where the house number is placed
+  along its block; when two towns have the same street, the town or ZIP code decides;
+- a name with a town is looked for among the place names of that town.
+
+A place pack the list needs is downloaded as the Place packs downloads choice of the main window says (asking first
+with the size, automatically, or never). Only places in the United States can be found by their address; anywhere
+else, give the latitude and longitude. A list of 150,000 places takes a few minutes: each state's pack is read once.
 
 ## Place packs {#packs}
 
@@ -184,7 +246,8 @@ Ocean") need no pack.
 ## Privacy {#privacy}
 
 Everything runs on your computer. The only internet use is downloading place packs, and only when you allow it. No
-photo, position, file name or other detail of yours is ever sent. The program never changes a photo: it only moves
+photo, position, file name or other detail of yours is ever sent. My places and the places from your lists are kept
+in the program's own folder on this computer only. The program never changes a photo: it only moves
 or copies files.
 
 ## What pictures can be read {#formats}

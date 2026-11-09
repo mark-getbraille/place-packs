@@ -4,6 +4,7 @@
   2. read where and when each was taken
   3. get the place packs the positions need (ask first, automatically, or never: the setting)
   4. look up the places and work out the folders (grouping.make_plan)
+  5. with "Put the exact place in each picture's name", look up the exact place of each photo (look_up_spots)
 
 progress(step_text, done, total) is called throughout; stop() True ends early (the plan then holds what was read).
 """
@@ -40,9 +41,24 @@ def build_plan(folder, opts, places=None, packs="ask", ask=None, progress=None, 
         notes += [f"Downloaded the place pack for {g}." for g in got] + problems
     plan = grouping.make_plan(folder, found, places, opts,
                               progress=lambda d, t, p: say("Looking up the places", d, t), stop=stop)
+    if opts.get("rename") and not (stop and stop()):
+        look_up_spots(plan, places, progress=lambda d, t: say("Looking up the exact place of each photo", d, t),
+                      stop=stop)
     plan.problems = notes + plan.problems
     say(f"Found {total} photos", total, total)
     return plan, notes
+
+
+def look_up_spots(plan, places, progress=None, stop=None):
+    """Give each photo in the plan's new folders (not "Unknown place", not a guessed position) its exact place,
+    photo.spot (places.Places.exact), for its new name. progress(done, total) as it goes."""
+    todo = [p for g in plan.groups if not g.unknown for p in g.photos if p.has_location and not p.probably]
+    for i, p in enumerate(todo):
+        if stop and stop():
+            break
+        p.spot = places.exact(p.lat, p.lon, p.taken, p.altitude)
+        if progress:
+            progress(i + 1, len(todo))
 
 
 def is_sortable_folder(folder):

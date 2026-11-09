@@ -35,9 +35,13 @@ DETAILS = ("trip-area", "place", "town", "county", "state", "country")
 TIMES = ("none", "year", "month", "trip")
 UNKNOWN_CHOICES = ("leave", "unknown", "guess")
 TEMPLATES = ("{place} {year}", "{year}\\{place}", "{place}\\{year}", "{year}-{month} {place}")
+# "Put the exact place in each picture's name" (rename, off by default: renaming is a bigger change than moving) and
+# the pattern of the new names (see naming.py): date, exact place, then the old name (the default); exact place,
+# date, then the old name; or the exact place and the old name only.
+NAME_PATTERNS = ("date-place-name", "place-date-name", "place-name")
 DEFAULT_OPTIONS = {"detail": "trip-area", "time": "year", "template": TEMPLATES[0], "gap_days": 2,
                    "split_on_place": False, "unknown": "leave", "guess_hours": 3, "mode": "move",
-                   "subfolders": True, "videos": True}
+                   "subfolders": True, "videos": True, "rename": False, "name_pattern": NAME_PATTERNS[0]}
 UNKNOWN_FOLDER = "Unknown place"
 SPREAD_KM = 5                 # a trip more spread out than this is named by an area around it, not one town
 PLACE_CHANGE_KM = 80          # "start a new trip when the place changes" in Trip area: this far from the trip start
@@ -63,6 +67,9 @@ def options(**changes):
         raise ValueError(f"Photos without a location must be one of {', '.join(UNKNOWN_CHOICES)}")
     if out["mode"] not in ("move", "copy"):
         raise ValueError("Move or copy must be move or copy")
+    if out["name_pattern"] not in NAME_PATTERNS:
+        raise ValueError(f"Picture names must be one of {', '.join(NAME_PATTERNS)}")
+    out["rename"] = bool(out["rename"])
     out["gap_days"] = max(0.0, float(out["gap_days"]))
     return out
 

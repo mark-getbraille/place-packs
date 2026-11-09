@@ -5,10 +5,18 @@ the undo file, and undoing the last sort.
   undo(undo_path, progress)           put every file back where it was and remove the folders the sort made (only
                                       when they are empty again)
   last_undo()                         the newest undo file that has not been undone yet
+  preview(plan, dest)                 what apply would do with each photo, without doing it: the review window and
+                                      the trial run (dry run) show the new names from it
 
 Rules:
   - A file is never overwritten: when the name is taken in the new folder, " (2)", " (3)" ... is added.
   - A photo's companions (IMG_1.AAE, IMG_1.xmp, a Live Photo's IMG_1.MOV) go with it and get the same new name.
+  - With "Put the exact place in each picture's name" (plan.options["rename"]), each photo gets a new name made by
+    naming.wanted_stem ("2005-07-14 Jockey's Ridge State Park (IMG_1234).jpg"); a photo already in its folder is
+    renamed there if its name is not the wanted one yet.
+  - The undo file holds the full old and new path of every file, so Undo puts back both the folder and the name.
+    Its format did not change when renaming was added (the header only gained "rename" and "name_pattern"), so
+    older undo files still work.
   - The undo file is written as the sort goes (one line per file, JSON), so a sort that was stopped, or a computer
     that was switched off part way, can still be undone.
   - A copy is undone by deleting the copy, only if it still has the same size as when it was made.
@@ -18,10 +26,11 @@ Rules:
 import datetime as dt
 import json
 import os
+import re
 import shutil
 import time
 
-from pli import APP_NAME, __version__
+from pli import APP_NAME, __version__, naming
 from pli import settings as st
 from pli.grouping import date_range_words
 
@@ -35,7 +44,8 @@ class Outcome:
 
     def __init__(self):
         """All zero."""
-        self.moved = self.copied = self.skipped = 0
+        self.moved = self.copied = self.skipped = self.renamed = 0
+        self.names = {}                    # {photo's old path: its new file name} for the photos renamed
         self.problems, self.folders = [], []
         self.report_path = self.undo_path = ""
         self.stopped = False
@@ -46,6 +56,8 @@ class Outcome:
         verb = "Copied" if self.copied and not self.moved else "Moved"
         text = f"{verb} {done} photo{'s' if done != 1 else ''} into {len(self.folders)} new " \
                f"folder{'s' if len(self.folders) != 1 else ''}."
+        if self.renamed:
+            text = text[:-1] + f", {self.renamed} of them with a new name that has the exact place."
         if self.skipped:
             text += f" {self.skipped} {'was' if self.skipped == 1 else 'were'} already in the right folder."
         if self.problems:
@@ -88,6 +100,51 @@ def _ending_after(companion, photo_path):
     return name[len(stem):] if name.lower().startswith(stem.lower()) else os.path.splitext(name)[1]
 
 
+def _destination(plan, g, photo, target_dir, used):
+    """Where photo goes: (stem, endings) for its new name in target_dir and its companions' endings, or None when it
+    stays as it is (already in its folder, with the wanted name when renaming). used: the names given in this
+    folder so far (lower case); the chosen names are added to it."""
+    here = os.path.dirname(os.path.abspath(photo.path))
+    endings = [_ending_after(c, photo.path) for c in photo.companions]
+    old_stem, ext = os.path.splitext(os.path.basename(photo.path))
+    wanted = None
+    if plan.options.get("rename") and not g.unknown:
+        wanted = naming.wanted_stem(photo, g.folder, plan.options.get("name_pattern", "date-place-name"),
+                                    target_dir, endings, g.place)
+    if os.path.normcase(here) == os.path.normcase(os.path.abspath(target_dir)):
+        if wanted is None or naming.is_named(old_stem, wanted):
+            return None
+    stem = free_name(target_dir, (wanted or old_stem) + ext, endings, used)
+    used.update(n.lower() for n in [stem + ext] + [stem + e for e in endings])
+    return stem, endings
+
+
+def preview(plan, dest=None):
+    """What apply would do, without doing it: {id(photo): new file name} for every photo that moves or is copied
+    (its name with " (2)" when it is taken), and None for one that stays where it is. The review window and the
+    trial run show the new names from it."""
+    dest = dest or plan.root
+    out, taken = {}, {}
+    for g in plan.groups:
+        target_dir = os.path.join(dest, *g.folder.split("\\"))
+        used = taken.setdefault(os.path.normcase(target_dir), set())
+        for photo in g.photos:
+            found = _destination(plan, g, photo, target_dir, used)
+            out[id(photo)] = None if found is None else found[0] + os.path.splitext(photo.path)[1]
+    return out
+
+
+def renamed_names(plan, names):
+    """[(group, photo, new name)] of the photos whose name changes, from preview()'s or an Outcome's names."""
+    out = []
+    for g in plan.groups:
+        for p in g.photos:
+            new = names.get(id(p)) if id(p) in names else names.get(p.path)
+            if new and new != os.path.basename(p.path):
+                out.append((g, p, new))
+    return out
+
+
 def apply(plan, dest=None, progress=None, stop=None, undo_path=None, report=True):
     """Move (or copy, by plan.options["mode"]) each group's photos into dest\\<group folder> (dest: plan.root when
     None). progress(done, total, text) after each photo; stop() True ends after the current photo. Writes the undo
@@ -95,8 +152,13 @@ def apply(plan, dest=None, progress=None, stop=None, undo_path=None, report=True
     mode = plan.options.get("mode", "move")
     dest = dest or plan.root
     out = Outcome()
-    out.undo_path = undo_path or os.path.join(undo_folder(), f"{_stamp()} {os.path.basename(os.path.abspath(dest))}"
-                                                             f".jsonl")
+    if undo_path is None:
+        # Two sorts in the same second must not share (and overwrite) one undo file.
+        base = os.path.join(undo_folder(), f"{_stamp()} {os.path.basename(os.path.abspath(dest))}")
+        undo_path, n = base + ".jsonl", 2
+        while os.path.exists(undo_path):
+            undo_path, n = f"{base} ({n}).jsonl", n + 1
+    out.undo_path = undo_path
     total = sum(len(g.photos) for g in plan.groups)
     done = 0
     taken = {}
@@ -105,7 +167,8 @@ def apply(plan, dest=None, progress=None, stop=None, undo_path=None, report=True
             log.write(json.dumps(entry, ensure_ascii=False) + "\n")
             log.flush()
         write({"program": APP_NAME, "version": __version__, "root": plan.root, "dest": dest, "mode": mode,
-               "time": dt.datetime.now().isoformat(timespec="seconds")})
+               "time": dt.datetime.now().isoformat(timespec="seconds"),
+               "rename": bool(plan.options.get("rename")), "name_pattern": plan.options.get("name_pattern", "")})
         for g in plan.groups:
             target_dir = os.path.join(dest, *g.folder.split("\\"))
             for photo in g.photos:
@@ -114,18 +177,17 @@ def apply(plan, dest=None, progress=None, stop=None, undo_path=None, report=True
                     break
                 done += 1
                 try:
-                    here = os.path.dirname(os.path.abspath(photo.path))
-                    if os.path.normcase(here) == os.path.normcase(os.path.abspath(target_dir)):
+                    used = taken.setdefault(os.path.normcase(target_dir), set())
+                    found = _destination(plan, g, photo, target_dir, used)
+                    if found is None:
                         out.skipped += 1
                         continue
+                    stem, endings = found
                     _make_dirs(target_dir, dest, out, write)
-                    used = taken.setdefault(os.path.normcase(target_dir), set())
-                    endings = [_ending_after(c, photo.path) for c in photo.companions]
-                    stem = free_name(target_dir, os.path.basename(photo.path), endings, used)
-                    pairs = [(photo.path, os.path.join(target_dir, stem + os.path.splitext(photo.path)[1]))]
+                    new_name = stem + os.path.splitext(photo.path)[1]
+                    pairs = [(photo.path, os.path.join(target_dir, new_name))]
                     pairs += [(c, os.path.join(target_dir, stem + e)) for c, e in zip(photo.companions, endings)]
                     for src, dst in pairs:
-                        used.add(os.path.basename(dst).lower())
                         if mode == "copy":
                             shutil.copy2(src, dst)
                             write({"op": "copy", "from": src, "to": dst, "size": os.path.getsize(dst)})
@@ -136,6 +198,9 @@ def apply(plan, dest=None, progress=None, stop=None, undo_path=None, report=True
                         out.copied += 1
                     else:
                         out.moved += 1
+                    if new_name != os.path.basename(photo.path):
+                        out.renamed += 1
+                        out.names[photo.path] = new_name
                 except OSError as e:
                     out.problems.append((photo.path, e.strerror or str(e)))
                 finally:
@@ -186,7 +251,11 @@ def last_undo():
         files = [os.path.join(undo_folder(), f) for f in os.listdir(undo_folder()) if f.endswith(".jsonl")]
     except OSError:
         return None
-    return max(files, key=lambda p: (os.path.getmtime(p), p)) if files else None
+    def order(path):
+        """Newest first by time; within one second, "... (3).jsonl" is newer than "... (2).jsonl" and "....jsonl"."""
+        m = re.search(r" \((\d+)\)\.jsonl$", path)
+        return os.path.getmtime(path), path[:m.start()] if m else path[:-len(".jsonl")], int(m.group(1)) if m else 1
+    return max(files, key=order) if files else None
 
 
 def describe_undo(undo_path):
@@ -201,11 +270,14 @@ def describe_undo(undo_path):
     except ValueError:
         pass
     verb = "copied" if header.get("mode") == "copy" else "moved"
-    return f"the sort of {header.get('root', '?')} {when} ({files} files {verb})"
+    renamed = sum(1 for e in entries if e.get("op") in ("move", "copy") and
+                  os.path.basename(e.get("from", "")) != os.path.basename(e.get("to", "")))
+    extra = f", {renamed} of them renamed" if renamed else ""
+    return f"the sort of {header.get('root', '?')} {when} ({files} files {verb}{extra})"
 
 
 def undo(undo_path, progress=None):
-    """Undo a sort (newest change first): moved files go back, copies are deleted (only if unchanged), and the
+    """Undo a sort (newest change first): moved files go back to their old folder with their old name, copies are deleted (only if unchanged), and the
     folders the sort made are removed when they are empty again. A file that is no longer where the sort put it, or
     whose old place is taken, is left alone and listed. The undo file is renamed "... (undone).txt" when everything
     went back. Returns (restored, problems [(path, reason)])."""
@@ -257,11 +329,20 @@ def report_text(plan, out=None, dest=None, dry_run=False):
               f"Place detail: {o['detail']}; Time: {o['time']}; Folder names: {o['template']}; "
               f"Trips: new trip after {o['gap_days']:g} days without photos"
               f"{' or when the place changes' if o.get('split_on_place') else ''}; "
-              f"{'Copy' if o['mode'] == 'copy' else 'Move'}; Photos without a location: {o['unknown']}", ""]
+              f"{'Copy' if o['mode'] == 'copy' else 'Move'}; Photos without a location: {o['unknown']}",
+              "Picture names: " + (f"the exact place put in each name ({o.get('name_pattern')})"
+                                   if o.get("rename") else "kept as they are"), ""]
     if dry_run:
         lines += ["This is a trial run (dry run): nothing was moved or copied.", ""]
     elif out is not None:
         lines += [out.summary(), ""]
+    names = {}
+    if o.get("rename"):
+        names = out.names if out is not None else {id(p): n for _g, p, n in renamed_names(plan, preview(plan, dest))}
+        count = len(names)
+        lines += [f"{count} picture{'s' if count != 1 else ''} "
+                  f"{'would get' if out is None else 'got'} a new name with the exact place (old name → new "
+                  f"name below).", ""]
     lines.append(f"New folders ({len(plan.groups)}):")
     for g in plan.groups:
         lines.append("")
@@ -277,8 +358,10 @@ def report_text(plan, out=None, dest=None, dry_run=False):
             if p.date_source in ("file name", "file date"):
                 note.append(f"date from the {p.date_source}")
             when = f"{p.taken:%Y-%m-%d %H:%M}" if p.taken else "no date"
-            lines.append(f"  {os.path.relpath(p.path, plan.root)}, {when}" + (f" ({'; '.join(note)})" if note
-                                                                               else ""))
+            new = names.get(p.path) if out is not None else names.get(id(p))
+            arrow = f" → {new}" if new else ""
+            lines.append(f"  {os.path.relpath(p.path, plan.root)}{arrow}, {when}" +
+                         (f" ({'; '.join(note)})" if note else ""))
     if plan.left:
         lines += ["", f"Left where they are ({len(plan.left)}):"]
         for p, reason in plan.left:

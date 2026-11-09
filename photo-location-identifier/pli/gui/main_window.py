@@ -6,6 +6,7 @@ Choices (each with a label ending in ":"; see grouping.py for what they do):
   Time:           None, Year, Year and month, Trip
   Folder names:   a template ("{place} {year}", "{year}\\{place}", "{place}\\{year}", "{year}-{month} {place}", or
                   your own), with examples of the names it makes
+  Picture names:  "Put the exact place in each picture's name" (off by default) and the order of the new names
   Trips:          a new trip after this many days without photos; also when the place changes
   Move or copy, Photos without a location, New folders go in, Place packs downloads
 Buttons: Look at the pictures (then the review window, then Sort now), My places, Undo the last sort, About, Help,
@@ -32,6 +33,12 @@ TIME_LABELS = ["None: one folder for each place",
                "Year",
                "Year and month",
                "Trip: each trip separately, with its dates"]
+NAME_PATTERN_LABELS = ["Date, exact place, then the old name: 2005-07-14 Jockey's Ridge State Park (IMG_1234).jpg",
+                       "Exact place, date, then the old name: Jockey's Ridge State Park 2005-07-14 (IMG_1234).jpg",
+                       "Exact place and the old name: Jockey's Ridge State Park (IMG_1234).jpg"]
+RENAME_TIP = ("Give each picture a new name with the most specific place known for it, such as a park, a shop or a "
+              "street; the folder keeps the wider place, such as Outer Banks 2005. Off by default. You see every new "
+              "name before anything happens, and Undo puts the old names back (Alt+P)")
 MODE_LABELS = ["Move the photos (you can undo it)", "Copy the photos (the originals stay where they are)"]
 MODES = ("move", "copy")
 UNKNOWN_LABELS = ["Leave them where they are",
@@ -50,7 +57,7 @@ class MainWindow(wx.Frame):
 
     def __init__(self, folder="", places=None):
         """Make the window with the saved choices."""
-        super().__init__(None, title=APP_NAME, size=(760, 860))
+        super().__init__(None, title=APP_NAME, size=(760, 940))
         self.saved = settings.load()
         self.places_override = places
         self.my_places = myplaces.MyPlaces.load(settings.my_places_path())
@@ -80,6 +87,12 @@ class MainWindow(wx.Frame):
                                                             choices=list(grouping.TEMPLATES), style=wx.CB_DROPDOWN))
         self.examples = access.labelled(p, s, "Examples of folder names:",
                                         lambda: wx.TextCtrl(p, style=wx.TE_READONLY))
+        self.rename = access.check(p, s, "&Put the exact place in each picture's name",
+                                   self.saved.get("rename", False), tip=RENAME_TIP)
+        self.name_pattern = access.labelled(p, s, "Pictu&re names (when the exact place is put in them):",
+                                            lambda: wx.Choice(p, choices=NAME_PATTERN_LABELS))
+        self.name_pattern.SetSelection(grouping.NAME_PATTERNS.index(
+            self.saved.get("name_pattern", grouping.NAME_PATTERNS[0])))
         self.gap = access.labelled(p, s, "Start a new trip after this many days &without photos:",
                                    lambda: wx.SpinCtrl(p, min=0, max=365,
                                                        initial=int(self.saved.get("gap_days", 2))))
@@ -133,7 +146,8 @@ class MainWindow(wx.Frame):
                                 gap_days=self.gap.GetValue(), split_on_place=self.split.GetValue(),
                                 mode=MODES[max(0, self.mode.GetSelection())],
                                 unknown=grouping.UNKNOWN_CHOICES[max(0, self.unknown.GetSelection())],
-                                subfolders=self.subfolders.GetValue())
+                                subfolders=self.subfolders.GetValue(), rename=self.rename.GetValue(),
+                                name_pattern=grouping.NAME_PATTERNS[max(0, self.name_pattern.GetSelection())])
         return opts
 
     def save_choices(self):

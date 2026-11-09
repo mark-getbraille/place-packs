@@ -1,7 +1,9 @@
 """The program's smaller windows:
 
   ReviewWindow     the new folders before anything moves: each with its photo count, dates and where its place
-                   name came from; Rename folder, Merge into another folder, Sort now
+                   name came from (and, when pictures get the exact place in their names, how many, with each
+                   picture's "old name → new name" in the details); Rename folder, Merge into another folder,
+                   Sort now
   RenameWindow     type a folder's new name
   MergeWindow      choose the folder to merge the chosen one into
   MyPlacesWindow   your own names for places ("Grandma's house" within 200 metres), with import and export
@@ -15,7 +17,7 @@ import os
 
 import wx
 
-from pli import APP_NAME, PUBLISHER, __version__
+from pli import APP_NAME, PUBLISHER, __version__, sorter
 from pli import myplaces as mp
 from pli.gui import access
 
@@ -36,6 +38,8 @@ class ReviewWindow(wx.Dialog):
         super().__init__(parent, title=f"New folders - {APP_NAME}", size=(760, 600),
                          style=wx.DEFAULT_DIALOG_STYLE | wx.RESIZE_BORDER)
         self.plan, self.dest = plan, dest or plan.root
+        self.names = {}                    # {id(photo): new file name or None}, from sorter.preview
+        self.update_names()
         panel = wx.Panel(self)
         s = wx.BoxSizer(wx.VERTICAL)
         self.intro = wx.StaticText(panel, label=self.intro_text())
@@ -68,10 +72,37 @@ class ReviewWindow(wx.Dialog):
         verb = "copied" if p.options.get("mode") == "copy" else "moved"
         text = (f"{p.photo_count} photos will be {verb} into {len(p.groups)} new folders in {self.dest}. Nothing has "
                 f"moved yet. Check the names, rename or merge folders if you like, then choose Sort now.")
+        if p.options.get("rename"):
+            n = self.renamed_count()
+            text += (f" {n} picture{'s' if n != 1 else ''} will get a new name with the exact place; Details lists "
+                     f"each old name and its new name." if n else
+                     " No picture gets a new name: no place more exact than its folder's was found.")
         if p.left:
             text += f" {len(p.left)} photos stay where they are (the report lists them)."
         if p.problems:
             text += " " + " ".join(p.problems)
+        return text
+
+    def update_names(self):
+        """Work out the new names again (after a rename or merge, the names change with the folder)."""
+        self.names = sorter.preview(self.plan, self.dest) if self.plan.options.get("rename") else {}
+
+    def new_name(self, photo):
+        """The photo's new file name, or "" when it keeps its name."""
+        new = self.names.get(id(photo))
+        return new if new and new != os.path.basename(photo.path) else ""
+
+    def renamed_count(self, group=None):
+        """How many photos (of group, or of every folder) get a new name."""
+        groups = [group] if group is not None else self.plan.groups
+        return sum(1 for g in groups for p in g.photos if self.new_name(p))
+
+    def row_text(self, g):
+        """A folder's line in the list: its description and, when renaming, how many get a new name."""
+        text = g.describe()
+        if self.plan.options.get("rename"):
+            n = self.renamed_count(g)
+            text += f", {n} with a new name" if n else ", names kept"
         return text
 
     def chosen(self):
@@ -81,7 +112,10 @@ class ReviewWindow(wx.Dialog):
 
     def refresh(self, select=None):
         """Fill the list again (after a rename or merge), choosing row select."""
-        self.folders.Set([g.describe() for g in self.plan.groups])
+        self.update_names()
+        self.intro.SetLabel(self.intro_text())
+        self.intro.Wrap(720)
+        self.folders.Set([self.row_text(g) for g in self.plan.groups])
         if self.plan.groups:
             self.folders.SetSelection(max(0, min(select or 0, len(self.plan.groups) - 1)))
         self.show_details()
@@ -96,7 +130,7 @@ class ReviewWindow(wx.Dialog):
         if g is None:
             self.details.SetValue("There are no new folders: no photo has a place that could be found.")
             return
-        lines = [g.describe(), ""]
+        lines = [self.row_text(g), ""]
         for p in g.photos:
             bits = [f"{p.taken:%Y-%m-%d %H:%M}" if p.taken else "no date"]
             if p.probably:
@@ -104,7 +138,9 @@ class ReviewWindow(wx.Dialog):
             info = getattr(p, "info", None)
             if info is not None and info.known and not g.unknown:
                 bits.append(info.name_at("place"))
-            lines.append(f"{os.path.relpath(p.path, self.plan.root)}: " + ", ".join(b for b in bits if b))
+            new = self.new_name(p)
+            old = os.path.relpath(p.path, self.plan.root)
+            lines.append((f"{old} → {new}" if new else old) + ": " + ", ".join(b for b in bits if b))
         self.details.SetValue("\n".join(lines))
 
     def on_rename(self):

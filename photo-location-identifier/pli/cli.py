@@ -11,6 +11,10 @@
       --copy (or --move, the default)
       --unknown leave|unknown|guess  --guess-hours 3       photos without a location
       --to FOLDER                                          make the new folders there (default: the folder itself)
+      --rename (or --keep-names)                           put the exact place in each picture's name (off by
+                                                           default): the folder keeps the broad place
+      --name-pattern date-place-name|place-date-name|place-name   the new names' order (implies --rename):
+                                                           "2005-07-14 Jockey's Ridge State Park (IMG_1234).jpg"
       --no-subfolders  --no-videos
       --packs ask|auto|never  --packs-folder FOLDER  --yes  place packs (ask: asks on the console; --yes says yes)
       --my-places FILE                                     My places from this file instead of the saved ones
@@ -65,6 +69,14 @@ def parser():
     p.add_argument("--unknown", choices=grouping.UNKNOWN_CHOICES, default=None)
     p.add_argument("--guess-hours", type=float, default=None)
     p.add_argument("--to", default="", help="make the new folders in this folder")
+    names = p.add_mutually_exclusive_group()
+    names.add_argument("--rename", dest="rename", action="store_const", const=True, default=None,
+                       help="put the exact place in each picture's name")
+    names.add_argument("--keep-names", dest="rename", action="store_const", const=False,
+                       help="keep the pictures' names (the default)")
+    p.add_argument("--name-pattern", choices=grouping.NAME_PATTERNS, default=None,
+                   help="the order of the new names: date-place-name (2005-07-14 Jockey's Ridge State Park "
+                        "(IMG_1234).jpg), place-date-name, or place-name; implies --rename")
     p.add_argument("--no-subfolders", action="store_true")
     p.add_argument("--no-videos", action="store_true")
     p.add_argument("--packs", choices=settings.PACK_MODES, default=None)
@@ -82,10 +94,14 @@ def options_from(args, saved=None):
     """grouping.options() from the command line, the saved settings filling what is not given."""
     saved = saved or {}
     get = lambda name: getattr(args, name) if getattr(args, name) is not None else saved.get(name)  # noqa: E731
+    rename = get("rename")
+    if args.name_pattern is not None and args.rename is None:
+        rename = True                      # --name-pattern on its own means: rename, with this pattern
     return grouping.options(detail=get("detail"), time=get("time"), template=get("template"),
                             gap_days=get("gap_days"), split_on_place=get("split_on_place"), mode=get("mode"),
                             unknown=get("unknown"), guess_hours=get("guess_hours"),
-                            subfolders=not args.no_subfolders, videos=not args.no_videos)
+                            subfolders=not args.no_subfolders, videos=not args.no_videos,
+                            rename=rename, name_pattern=get("name_pattern"))
 
 
 def console_ask(yes):
@@ -164,6 +180,10 @@ def main(argv=None):
     args = parser().parse_args(argv)
     if args.folder or args.undo_last:
         _attach_console()
+        try:
+            sys.stdout.reconfigure(errors="replace")   # a console that cannot show "→" shows "?" instead
+        except (AttributeError, ValueError):
+            pass
         return run_undo() if args.undo_last else run_sort(args)
     from pli.gui.main_window import run
     return run(args.open or args.open_folder)

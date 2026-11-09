@@ -9,10 +9,15 @@ details, and the tests can use a stand-in finder (StandInFinder) without any pac
   Places               looks up positions (with a cache: photos taken close together are looked up once), using the
                        photo's date for the names of that time (placepacks keeps history), and gets the packs a
                        folder needs: ask first with the size, download automatically, or never (the setting)
+  Spot                 the most specific place known for one photo, for its file name ("Put the exact place in each
+                       picture's name"): a named place at the point as named on the photo's date, the street
+                       address, the neighbourhood, the town, the water; Places.exact looks it up
   StandInFinder        a finder made of rectangles, for the tests and for trying the program without packs
 
 placepacks calls used (all on this computer, except ensure_pack, which downloads a pack from the public releases):
   placepacks.lookup.Finder(folder=...).lookup(lat, lon, when=..., detail="area", altitude=...) -> Result
+      (detail "area" names the folders; detail "address" gives the exact place for the file names: a business,
+      building, school or landmark at the point, else the address point or street, with the neighbourhood and town)
   Finder.areas_at(lat, lon, when=None) -> [(name, cls, size_m2, source)], smallest first (when it exists)
   placepacks.regions.regions_for(lat, lon) -> [region id, best first]; region_label(id)
   placepacks.download.Catalogue().packs() -> {key: PackInfo}; ensure_pack(region, ...); default_folder()
@@ -139,6 +144,59 @@ class PlaceInfo:
                 f"areas={[a.name for a in self.areas]}, water={self.water!r}, my_place={self.my_place!r})")
 
 
+class Spot:
+    """The most specific place known for one photo, for its file name (any field "" when not known).
+
+    my_place: the user's own name for the place; name: a named business, landmark, park, school or building at the
+    point, as it was named on the photo's date (the packs keep the history of names); house_number and street: the
+    address point (house_number only for a real address point, never an estimated one) or the street;
+    neighbourhood; town (or village); water: the water or air description ("Off Martha's Vineyard")."""
+
+    FIELDS = ("my_place", "name", "house_number", "street", "neighbourhood", "town", "water")
+
+    def __init__(self, **fields):
+        """Store the fields (see the class docstring)."""
+        for k in self.FIELDS:
+            setattr(self, k, fields.get(k) or "")
+
+    @property
+    def known(self):
+        """True if anything is known."""
+        return any(getattr(self, k) for k in self.FIELDS)
+
+    def __repr__(self):
+        """For test messages."""
+        return "Spot(" + ", ".join(f"{k}={getattr(self, k)!r}" for k in self.FIELDS if getattr(self, k)) + ")"
+
+
+def spot_from_result(result, info=None):
+    """A Spot from a placepacks Result looked up at the "address" detail, with the PlaceInfo of the same position
+    (info) filling the town, the neighbourhood (an area of kind "neighbourhood") and the water when the Result has
+    none. A place found only near the point ("next to Riverside Library", kind "nearby") is not used: the file name
+    should say where the photo was taken, not what was close by."""
+    spot = Spot()
+    if result is not None:
+        kind, cls = _get(result, "kind"), _get(result, "cls")
+        spot.water = water_phrase(result)
+        if kind in ("place", "area") and _get(result, "name"):
+            if cls == "neighbourhood":
+                spot.neighbourhood = _get(result, "name")
+            elif cls not in ("water", "zip"):
+                spot.name = _get(result, "name")
+        spot.street = _get(result, "street")
+        if kind == "address" and spot.street:
+            spot.house_number = str(_get(result, "house_number") or "")
+        spot.neighbourhood = spot.neighbourhood or _get(result, "neighbourhood")
+        spot.town = _get(result, "town")
+    if info is not None:
+        spot.town = spot.town or info.town
+        spot.water = spot.water or info.water
+        spot.my_place = info.my_place
+        if not spot.neighbourhood:
+            spot.neighbourhood = next((a.name for a in info.areas if a.cls == "neighbourhood"), "")
+    return spot
+
+
 def _get(obj, name, default=""):
     """obj.name, or default when it is missing or empty."""
     value = getattr(obj, name, default)
@@ -257,6 +315,7 @@ class Places:
         self.my_places = my_places or mp.MyPlaces()
         self.packs_folder = packs_folder
         self.cache = {}
+        self.exact_cache = {}
         self.attributions = set()
         self.problem = ""                  # why no finder could be made ("" when there is one)
         self._sources = None               # the packs' source names and attributions (_source_table)
@@ -305,18 +364,45 @@ class Places:
             return copy
         return info
 
+    EXACT_DIGITS = 4            # the exact place: positions within about 10 metres share one lookup
+
+    def exact(self, lat, lon, when=None, altitude=None):
+        """The Spot for a position on the date when: the most specific place known, for the photo's file name
+        (see Spot). Never raises: a failed lookup gives what the area lookup knows (the town, the water)."""
+        info = self.lookup(lat, lon, when, altitude)
+        key = (round(lat, self.EXACT_DIGITS), round(lon, self.EXACT_DIGITS),
+               (when.year, when.month) if when is not None else None,
+               None if altitude is None else int(altitude // 300))
+        if key not in self.exact_cache:
+            result = None
+            finder = self.finder
+            if finder is not None:
+                stamp = self._stamp(when)
+                try:
+                    result = finder.lookup(lat, lon, when=stamp, detail="address", altitude=altitude)
+                except TypeError:
+                    result = finder.lookup(lat, lon, when=stamp, detail="address")
+                except Exception:  # noqa: BLE001 - a broken pack: only what the area lookup knows
+                    result = None
+            self.exact_cache[key] = result
+        return spot_from_result(self.exact_cache[key], info)
+
+    @staticmethod
+    def _stamp(when):
+        """The date as placepacks wants it (a When); the datetime itself for a stand-in finder."""
+        try:
+            _ensure_import_path()
+            from placepacks.when import When
+            return When.parse(when) if when is not None else None
+        except Exception:  # noqa: BLE001 - a stand-in finder takes the datetime itself
+            return when
+
     def _lookup(self, lat, lon, when, altitude):
         """Ask the finder (see lookup)."""
         finder = self.finder
         if finder is None:
             return PlaceInfo()
-        stamp = when
-        try:
-            _ensure_import_path()
-            from placepacks.when import When
-            stamp = When.parse(when) if when is not None else None
-        except Exception:  # noqa: BLE001 - a stand-in finder takes the datetime itself
-            stamp = when
+        stamp = self._stamp(when)
         try:
             result = finder.lookup(lat, lon, when=stamp, detail="area", altitude=altitude)
         except TypeError:
@@ -441,6 +527,7 @@ class Places:
             self._sources = None
             self.problem = ""
             self.cache.clear()
+            self.exact_cache.clear()
         return done, problems
 
     @staticmethod
@@ -465,6 +552,7 @@ class FakeResult:
         """Any Result fields (kind, name, town, region, country, water_name, attributions ...)."""
         self.kind, self.name, self.cls = "none", "", ""
         self.town = self.region = self.country = self.water_name = ""
+        self.street = self.house_number = self.neighbourhood = ""
         self.probably = False
         self.over = False
         self.distance_m = 0
@@ -481,17 +569,34 @@ class FakeResult:
         return self.name
 
 
+def _year_of(when):
+    """The year of a date given to a finder (a placepacks When, a datetime, or None)."""
+    if when is None:
+        return None
+    start = getattr(when, "start", None)
+    if isinstance(start, int):
+        return start // 100
+    return getattr(when, "year", None)
+
+
 class StandInFinder:
     """A finder made of rectangles, for the tests (and for trying the program without packs).
 
     areas: [(name, cls, (south, west, north, east))]; a position inside several gets them all, smallest first.
-    places: [(name, (south, west, north, east))]: points of interest (the "place" level). water: [(name, box,
-    "water" or "air")]: water and air descriptions ("Martha's Vineyard" -> "Off Martha's Vineyard"). Any other
-    position is "none"."""
+    places: [(name, (south, west, north, east))] or [(name, box, {"cls": ..., "years": (first, last)})]: points of
+    interest (the "place" level). A business or building (cls "business", "building", "public", "school") is only
+    found at the "address" detail, as placepacks does; "years" makes the name valid only in those years, so a place
+    can have a history (a shop that changed its name). water: [(name, box, "water" or "air")]: water and air
+    descriptions ("Martha's Vineyard" -> "Off Martha's Vineyard"). streets: [(street, box, house number or "")]:
+    given at the "street" and "address" details, with the neighbourhood (an area of cls "neighbourhood") and the
+    town. Any other position is "none"."""
 
-    def __init__(self, areas=(), places=(), water=()):
+    POINT_ONLY = ("business", "building", "public", "school", "transit")
+
+    def __init__(self, areas=(), places=(), water=(), streets=()):
         """Store the rectangles."""
         self.areas, self.places, self.water = list(areas), list(places), list(water)
+        self.streets = list(streets)
         self.calls = 0
 
     @staticmethod
@@ -511,6 +616,21 @@ class StandInFinder:
         found = [(n, c, self._size(b), "test places") for n, c, b in self.areas if self._inside(b, lat, lon)]
         return sorted(found, key=lambda a: a[2])
 
+    def _place_at(self, lat, lon, when, detail):
+        """(name, cls) of the place at the position valid on the date, or None."""
+        year = _year_of(when)
+        for item in self.places:
+            name, box = item[0], item[1]
+            extra = item[2] if len(item) > 2 else {}
+            cls = extra.get("cls", "")
+            if not self._inside(box, lat, lon) or (detail == "area" and cls in self.POINT_ONLY):
+                continue
+            years = extra.get("years")
+            if years and year is not None and not years[0] <= year <= years[1]:
+                continue
+            return name, cls
+        return None
+
     def lookup(self, lat, lon, when=None, detail="area", altitude=None):
         """A FakeResult for the position (see the class docstring)."""
         self.calls += 1
@@ -526,9 +646,19 @@ class StandInFinder:
             key = {"town": "town", "state": "region", "country": "country"}.get(lv)
             if key and key not in fields:
                 fields[key] = name
-        for name, box in self.places:
-            if self._inside(box, lat, lon):
-                return FakeResult(kind="place", name=name, **fields)
-        if around:
+        if detail != "area":
+            fields["neighbourhood"] = next((n for n, c, _s, _src in around if c == "neighbourhood"), "")
+            street = next((s for s in self.streets if self._inside(s[1], lat, lon)), None)
+            if street is not None:
+                fields["street"], fields["house_number"] = street[0], street[2] if len(street) > 2 else ""
+        place = self._place_at(lat, lon, when, detail)
+        if place is not None:
+            return FakeResult(kind="place", name=place[0], cls=place[1], **fields)
+        if fields.get("house_number"):
+            return FakeResult(kind="address", **fields)
+        around = [a for a in around if a[1] != "neighbourhood"] if detail == "area" else around
+        if around and detail == "area":
             return FakeResult(kind="area", name=around[0][0], cls=around[0][1], **fields)
+        if fields.get("street") or fields.get("neighbourhood") or around:
+            return FakeResult(kind="area", **fields)
         return FakeResult(kind="none")

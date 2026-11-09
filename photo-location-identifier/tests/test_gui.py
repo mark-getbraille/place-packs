@@ -112,7 +112,8 @@ def test_every_window_is_accessible(app, plan, finder):
     """The main window, the review, rename, merge, My places, About and the progress window."""
     frame = mw.MainWindow("", places=Places(finder=finder))
     keys = assert_accessible(frame)
-    assert {"f", "b", "s", "d", "t", "n", "w", "h", "m", "o", "i", "g", "k", "l", "y", "u", "a", "e", "c"} == set(keys)
+    assert {"f", "b", "s", "d", "t", "n", "p", "r", "w", "h", "m", "o", "i", "g", "k", "l", "y", "u", "a", "e",
+            "c"} == set(keys)
     for w in dialogs.all_windows(frame, plan):
         assert_accessible(w)
         w.Destroy()
@@ -307,3 +308,50 @@ def test_stop_ends_the_task(app):
 def test_sorter_left_no_undo_between_tests():
     """The test set-up gives every test its own program folder (no undo file is left over)."""
     assert sorter.last_undo() is None
+
+
+def test_exact_place_in_names_choice(app, finder, tmp_path):
+    """"Put the exact place in each picture's name" (Alt+P, named in its tooltip, off by default) and "Picture
+    names:" (Alt+R, a label ending in ":" before it) are in the main window, change the options and are saved."""
+    frame = mw.MainWindow(str(tmp_path), places=Places(finder=finder))
+    assert frame.rename.GetLabel() == "&Put the exact place in each picture's name"
+    assert "(Alt+P)" in frame.rename.GetToolTipText() and not frame.rename.GetValue()
+    controls = list(walk(frame))
+    label = controls[controls.index(frame.name_pattern) - 1]
+    assert isinstance(label, wx.StaticText) and label.GetLabel().startswith("Pictu&re names")
+    assert label.GetLabel().endswith(":")
+    targets = access.mnemonic_targets(frame)
+    assert (targets["p"], targets["r"]) == (frame.rename, frame.name_pattern)
+    assert frame.name_pattern.GetCount() == len(grouping.NAME_PATTERNS)
+    assert frame.name_pattern.GetString(0).startswith("Date, exact place, then the old name")
+    assert frame.choices()["rename"] is False and frame.choices()["name_pattern"] == "date-place-name"
+    key(frame, ord("P"), wx.MOD_ALT)
+    assert frame.rename.GetValue()
+    frame.name_pattern.SetSelection(2)
+    frame.save_choices()
+    again = mw.MainWindow("", places=Places(finder=finder))
+    assert again.rename.GetValue() and again.choices()["name_pattern"] == "place-name"
+
+
+def test_review_shows_old_and_new_names(app, tmp_path):
+    """With renaming on, the review says how many pictures get a new name, each folder's row says how many, and the
+    details list "old name \u2192 new name"; a merge works the names out again. The window stays accessible."""
+    from test_naming import AREAS, PLACES, STREETS, WATER, plan_of, week
+    from pli.places import StandInFinder
+    finder = StandInFinder(areas=AREAS, places=PLACES, water=WATER, streets=STREETS)
+    plan = plan_of(week(tmp_path / "a"), finder, detail="town")
+    review = dialogs.ReviewWindow(None, plan)
+    assert_accessible(review)
+    assert "will get a new name with the exact place" in review.intro.GetLabel()
+    row = review.folders.GetString(0)
+    assert row.startswith("Pelican Point 2005") and "with a new name" in row
+    details = review.details.GetValue()
+    assert "IMG_0001.jpg \u2192 2005-07-14 Heron Dunes State Park (IMG_0001).jpg" in details
+    assert "IMG_0003.jpg \u2192 2005-07-14 120 Seagrass Lane (IMG_0003).jpg" in details
+    sandpiper = next(i for i, g in enumerate(plan.groups) if g.folder == "Sandpiper Bay 2005")
+    pelican = plan.groups[0]
+    plan.merge(pelican, plan.groups[sandpiper])
+    plan.rename(pelican, "Beach week 2005")
+    review.refresh(0)
+    assert "IMG_0006.jpg \u2192 2005-07-15 Sandpiper Bay (IMG_0006).jpg" in review.details.GetValue()
+    review.Destroy()

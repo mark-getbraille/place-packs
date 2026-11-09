@@ -5,13 +5,13 @@ Photo Location Identifier sorts the pictures in a folder into new folders named 
 
 It uses the location your camera or phone saved in each picture (its GPS position). Nothing is moved until you have checked the new folders, and "Undo the last sort" puts everything back.
 
-Version 1.0.0. Free software under the MIT licence, made by Company Maker, LLC.
+Version 1.1.0. Free software under the MIT licence, made by Company Maker, LLC.
 
 
 Installing
 ----------
 
-1. Download "PhotoLocationIdentifier-1.0.0-setup.exe" from the program's release page on GitHub (github.com/mark-getbraille/place-packs, Releases, "photo-location-identifier-v1.0.0").
+1. Download "PhotoLocationIdentifier-1.1.0-setup.exe" from the program's release page on GitHub (github.com/mark-getbraille/place-packs, Releases, "photo-location-identifier-v1.1.0").
 2. Open it. Windows may show "Windows protected your PC" (SmartScreen), because the program is new and not signed with a paid certificate. Choose "More info", then "Run anyway".
 3. Follow the installer. Its progress is read by NVDA and JAWS.
 
@@ -50,6 +50,13 @@ Every choice has a label, and the underlined letter is its Alt key.
   - {year}-{month} {place}: "2005-07 Outer Banks".
 
     You can use {place}, {year}, {month} (07), {monthname} (July), {day}, {dates} (the first and last date), {start}, {end}, {town}, {county}, {state} and {country}. A backslash (\) makes a folder inside a folder. Examples of folder names shows what your pattern makes. If two folders would get the same name (for example the pattern has no year but Time is Year), the year or the dates are added so they stay apart.
+- Put the exact place in each picture's name (Alt+P): off by default, because renaming your files is a bigger change than moving them. When it is on, the folder keeps the wider place ("Outer Banks 2005") and each picture's name gets the most specific place known for it: a shop, landmark, park, school or building where it was taken, with the name it had on the day the picture was taken; otherwise the street address or street (with the town when the folder does not already name it, such as "120 Main Street, Nags Head"); otherwise the neighbourhood or the village or town ("Nags Head" alone is fine in "Outer Banks 2005"); on the water or in the air, a description such as "Off Martha's Vineyard". The folder's own place is never repeated in the name. Pictures without a location, pictures whose place was only guessed, and pictures where nothing more exact than the folder is known keep their names. You see every new name in the review before anything happens, and Undo puts the old names back.
+- Picture names (Alt+R): the order of the new names. The old name always stays at the end in brackets, so you can still recognise each picture:
+  - Date, exact place, then the old name (the default): "2005-07-14 Jockey's Ridge State Park (IMG_1234).jpg";
+  - Exact place, date, then the old name: "Jockey's Ridge State Park 2005-07-14 (IMG_1234).jpg";
+  - Exact place and the old name: "Jockey's Ridge State Park (IMG_1234).jpg".
+
+    New names are always safe for Windows: characters Windows does not allow are left out, a long place is shortened so the whole name stays under 120 characters and the whole path under 240 (if even that does not fit, the picture keeps its name), and a name that is already taken gets " (2)". Files that belong to a picture (an .AAE or .xmp file, a Live Photo's video) get the same new name, and a RAW and JPEG pair stays a pair.
 - Start a new trip after this many days without photos (Alt+W): 2 by default. If more than this many days pass between two photos, a new trip starts.
 - Also start a new trip when the place changes (Alt+H): for road trips: a new trip begins when you move on.
 - Move or copy (Alt+M): Move (the default, can be undone) or Copy (the originals stay where they are).
@@ -74,6 +81,7 @@ Reviewing the new folders
 The review window lists every new folder, for example: "Outer Banks 2005: 42 photos, 2 to 9 July 2005, place from the place packs (OpenStreetMap), 3 probably (place guessed from photos taken around the same time)".
 
 - New folders (Alt+N): use the arrow keys. Details of the chosen folder (Alt+D) lists its photos with their dates.
+- When "Put the exact place in each picture's name" is on, the text at the top says how many pictures get a new name, each folder in the list says how many of its pictures do ("12 with a new name", or "names kept"), and Details lists each picture as "old name → new name" (your screen reader may say "right arrow" between them). Renaming or merging a folder works the names out again, so they never repeat the folder's new name.
 - Rename folder (Alt+R): type a better name ("Beach week 2005"). Characters Windows does not allow in names are left out.
 - Merge into another folder (Alt+M): puts the chosen folder's photos into another folder from the list.
 - Sort now (Alt+S): moves (or copies) the photos.
@@ -89,7 +97,9 @@ The report and Undo
 
 Each sort writes a report ("Photo Location Identifier report" with the date and time) into the sorted folder. It lists every new folder and its photos, the photos left where they were and why, any problems, and the sources of the place names with their attributions.
 
-Undo the last sort (Alt+U) puts every file back where it was and removes the new folders once they are empty. After a copy, Undo deletes the copies (a copy that was changed since is kept). A file you moved yourself after the sort is left where it is and listed. The report stays, so you still have a record.
+When pictures got new names, the report says how many and lists each one as "old name → new name".
+
+Undo the last sort (Alt+U) puts every file back where it was, with its old name, and removes the new folders once they are empty. After a copy, Undo deletes the copies (a copy that was changed since is kept). A file you moved yourself after the sort is left where it is and listed. The report stays, so you still have a record.
 
 
 How trip areas are named
@@ -156,6 +166,7 @@ For power users and scripts (the program is installed in "%LOCALAPPDATA%\Program
 
 - --detail trip-area|place|town|county|state|country, --time none|year|month|trip, --template "..."
 - --gap-days 2, --split-on-place, --copy or --move, --to FOLDER
+- --rename (put the exact place in each picture's name) or --keep-names; --name-pattern date-place-name|place-date-name|place-name chooses the order of the new names and turns renaming on
 - --unknown leave|unknown|guess, --guess-hours 3, --no-subfolders, --no-videos
 - --packs ask|auto|never, --packs-folder FOLDER, --yes (say yes to downloads), --my-places FILE
 - --dry-run (show what would happen), --report FILE, --undo-last, --version

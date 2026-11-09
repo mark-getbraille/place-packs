@@ -45,6 +45,27 @@ def test_real_placepacks_place_detail(real_pack):
     assert [a.name for a in park.areas if not a.level] == ["Jockey's Ridge State Park", "Outer Banks"]
 
 
+def test_real_placepacks_exact_place_in_names(real_pack, tmp_path):
+    """With the real placepacks, --rename looks the photos up at the "address" detail without trouble, the folders
+    stay as without it, every photo gets a name that is safe and does not repeat its folder's place, and Undo puts
+    back the old names."""
+    from pli import naming
+    photos = str(tmp_path / "photos")
+    make_test_pack.write_photos(photos)
+    before = sorted(os.listdir(photos))
+    spot = Places(packs_folder=real_pack).exact(35.96, -75.63)
+    assert spot.name == "Jockey's Ridge State Park" and spot.town == "Nags Head"
+    assert cli.main(["--folder", photos, "--packs", "never", "--packs-folder", real_pack, "--rename"]) == 0
+    made = sorted(d for d in os.listdir(photos) if os.path.isdir(os.path.join(photos, d)))
+    assert made == make_test_pack.EXPECTED_FOLDERS
+    for d in made:
+        for f in os.listdir(os.path.join(photos, d)):
+            assert not any(c in f for c in '<>:"/\\|?*') and len(f) <= naming.FILE_NAME_LIMIT
+            assert d.rsplit(" ", 1)[0] not in f, (d, f)
+    assert cli.main(["--undo-last"]) == 0
+    assert sorted(f for f in os.listdir(photos) if not f.endswith(".txt")) == before
+
+
 def test_dry_run_moves_nothing(album, finder, monkeypatch, capsys, tmp_path):
     """--dry-run prints the plan (and --report writes it) without moving anything."""
     monkeypatch.setattr(cli, "Places", lambda **k: Places(finder=finder, **{x: y for x, y in k.items()

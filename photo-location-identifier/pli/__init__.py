@@ -8,12 +8,13 @@ Modules:
   places     the adapter to the placepacks package (place names at each level, water and air, pack downloads)
   myplaces   the user's own names for places ("Grandma's house" within 200 metres)
   grouping   trips, guessing places by time, naming each trip by its area, folder-name templates: the plan
-  sorter     moving or copying the files, the report, and undoing the last sort
+  naming     new picture names with the exact place ("Put the exact place in each picture's name")
+  sorter     moving or copying (and renaming) the files, the report, and undoing the last sort
   settings   the saved choices
   cli        the command line (and the start of the program)
   gui        the windows
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.0"
 APP_NAME = "Photo Location Identifier"
 PUBLISHER = "Company Maker, LLC"

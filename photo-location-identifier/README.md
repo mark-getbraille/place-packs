@@ -8,6 +8,9 @@ taken. Point it at your photo album, and if your family goes to the Outer Banks 
   "Show more options", or press Shift+F10.)
 - **Choose how detailed:** trip area (smart), place, town, county, state or country; by year, year and month, or
   trip; and a pattern for the folder names, such as `{place} {year}` or `{year}\{place}`.
+- **The exact place in each picture's name (if you want it):** the folder keeps the wider place and each picture
+  is renamed with the most specific place known, such as "2005-07-14 Jockey's Ridge State Park (IMG_1234).jpg" in
+  "Outer Banks 2005". Off unless you turn it on; Undo puts the old names back.
 - **Check before anything moves:** a list of the new folders, with photo counts, dates and where each name came from.
   Rename or merge folders, then **Sort now**. **Undo the last sort** puts everything back.
 - **My places:** your own names, such as "Grandma's house", come first.
@@ -23,7 +26,7 @@ Reads JPEG, PNG, TIFF, WebP, HEIC/HEIF, AVIF and most RAW files; videos too when
 
 ## Download and install
 
-Download `PhotoLocationIdentifier-1.0.0-setup.exe` from the release **photo-location-identifier-v1.0.0** on this
+Download `PhotoLocationIdentifier-1.1.0-setup.exe` from the release **photo-location-identifier-v1.1.0** on this
 repository's Releases page and open it.
 
 The installer is not signed with a paid certificate, so Windows **SmartScreen** may say "Windows protected your PC".
@@ -35,6 +38,7 @@ The full manual is in [docs/MANUAL.md](docs/MANUAL.md) (press F1 in the program)
 
 ```
 PhotoLocationIdentifier.exe --folder "D:\Photos" --detail trip-area --time year --template "{place} {year}" --dry-run
+PhotoLocationIdentifier.exe --folder "D:\Photos" --name-pattern date-place-name --dry-run
 PhotoLocationIdentifier.exe --undo-last
 ```
 
@@ -57,7 +61,8 @@ Layout:
 - `pli/photos.py`: reads GPS, height and date (EXIF, HEIC boxes, RAW, videos via ffprobe)
 - `pli/places.py`: the adapter to placepacks (names at every level, water and air, pack downloads)
 - `pli/grouping.py`: trips, smart trip-area names, guessing by time, folder-name templates
-- `pli/sorter.py`: move or copy, never overwrite, the report, the undo file
+- `pli/naming.py`: new picture names with the exact place (the order, patterns, Windows-safe names)
+- `pli/sorter.py`: move or copy (and rename), never overwrite, the report, the undo file
 - `pli/gui/`: the windows; `pli/cli.py`: the command line
 - `tools/make_test_pack.py`: a tiny made-up place pack for the tests and the installer's smoke test
 - `installer/`: PyInstaller and Inno Setup; `.github/workflows/photo-location-identifier.yml` builds, tests,

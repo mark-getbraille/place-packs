@@ -12,7 +12,7 @@ import json
 import os
 
 from pli import APP_NAME
-from pli.grouping import DEFAULT_OPTIONS
+from pli.grouping import DEFAULT_OPTIONS, NAME_PATTERNS
 
 PACK_MODES = ("ask", "auto", "never")
 DEFAULTS = {**DEFAULT_OPTIONS, "packs": "ask", "last_folder": "", "dest": ""}
@@ -51,6 +51,8 @@ def load():
         pass
     if out.get("packs") not in PACK_MODES:
         out["packs"] = "ask"
+    if out.get("name_pattern") not in NAME_PATTERNS:
+        out["name_pattern"] = NAME_PATTERNS[0]
     return out
 
 

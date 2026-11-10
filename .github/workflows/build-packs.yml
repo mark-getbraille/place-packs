@@ -266,4 +266,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add sources-status.md
           git commit -m "Monthly place packs status" || echo "Nothing to commit"
+          git pull --rebase origin main || true   # main may have moved while the packs were building
           git push || echo "The status could not be pushed (the packs are published)."

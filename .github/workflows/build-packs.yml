@@ -95,6 +95,17 @@ jobs:
           path: national/nad
           key: nad-${{ github.run_id }}
           restore-keys: nad-
+      # The Newberry atlas (53 MB, changes rarely) is cached the same way: its host times out from the runners.
+      - name: Restore the cached Newberry atlas
+        uses: actions/cache/restore@v4
+        with:
+          path: national/newberry-counties
+          key: newberry-${{ github.run_id }}
+          restore-keys: newberry-
+      # The NAD's TXT.zip uses Deflate64, which Python cannot read: it is streamed through unzip (Info-ZIP 6.0) or
+      # 7z, both on ubuntu-latest; installed here only if missing.
+      - name: Check the zip tools
+        run: command -v unzip >/dev/null || (sudo apt-get update && sudo apt-get install -y unzip)
       - name: Download and split the national files
         run: |
           python -m placepacks.fetch --prepare --national national
@@ -105,6 +116,12 @@ jobs:
         with:
           path: national/nad
           key: nad-${{ github.run_id }}
+      - name: Save the Newberry atlas in the cache
+        if: ${{ hashFiles('national/newberry-counties/*.zip') != '' }}
+        uses: actions/cache/save@v4
+        with:
+          path: national/newberry-counties
+          key: newberry-${{ github.run_id }}
       - name: Keep the files that are not split
         run: |
           # The files that are not split (read whole by their regions) go with the slices.

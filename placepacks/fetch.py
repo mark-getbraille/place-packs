@@ -349,9 +349,13 @@ def repair_zip(path):
             infos = [i for i in z.infolist() if not i.is_dir()]
             if not infos:
                 return False
+            if infos[0].compress_type == 9:
+                return False            # Deflate64 (the NAD): Python cannot open it; read through unzip or 7z
             try:
                 with z.open(infos[0]) as fh:
                     fh.read(1)
+                return False
+            except NotImplementedError:
                 return False
             except zipfile.BadZipFile:
                 pass
@@ -431,6 +435,12 @@ def _arcgis_geometry(geom):
     return None, None, None
 
 
+# ArcGIS answers that mean "too much at once, ask again later": treated like a 429 (fetch_arcgis splits the request).
+ARCGIS_BUSY = re.compile(r"too many|non-cacheable|unable to perform operation|exceeded|timeout|timed out|busy", re.I)
+ARCGIS_WAITS = (20, 60, 120, 240)
+ARCGIS_SPLITS = 6                       # halvings of one chunk before giving up
+
+
 def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
     """An ArcGIS REST layer (see the module docstring): fetch = {"url": the layer's address (…/FeatureServer/0),
     "where": an SQL filter, "fields": the attributes to keep ("A,B,C"), "box": false for a table without shapes
@@ -462,8 +472,8 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
                         writer.writerow(row)
                         rows += 1
                 os.remove(path)
-        return {"ok": rows > 0, "version": version, "path": target, "date": datetime.date.today().isoformat(),
-                **({} if rows else {"status": "skipped", "reason": "no record of the layers is in the region"})}
+        # No record in the region's box: an empty file (the build says "ok (0 in this region)").
+        return {"ok": True, "version": version, "path": target, "date": datetime.date.today().isoformat()}
     url = f["url"].rstrip("/")
     meta = post_json(url, {"f": "json"}, sleep=sleep)
     dates = {fd["name"] for fd in meta.get("fields", []) if fd.get("type") == "esriFieldTypeDate"}
@@ -487,13 +497,32 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
     with open(target + ".partial", "w", newline="", encoding="utf-8") as out:
         w = csv.writer(out)
         w.writerow(header)
+        def features(chunk, simplify, tries=0):
+            """The features of a chunk of ids. A server that refuses heavy geometry ("Too many large geometry
+            non-cacheable requests", PAD-US) or is busy is treated like a 429: after a pause the chunk is asked for
+            in two halves, with its geometry simplified more, down to single records."""
+            params = {"f": "json", "objectIds": ",".join(str(x) for x in chunk), "outFields": ",".join(fields),
+                      "returnGeometry": "true" if meta.get("geometryType") else "false", "outSR": "4326"}
+            if meta.get("geometryType"):
+                params["geometryPrecision"] = 6                 # about 0.1 m: smaller answers
+            if (polygons or polylines) and simplify:
+                params["maxAllowableOffset"] = simplify
+            try:
+                return post_json(url + "/query", params, sleep=sleep, pause=f.get("pause", 0.5)).get("features", [])
+            except ValueError as e:
+                if not ARCGIS_BUSY.search(str(e)) or tries >= ARCGIS_SPLITS:
+                    raise
+            print(f"  {entry['id']}: the server refused {len(chunk)} records (heavy geometry); trying again in "
+                  f"{ARCGIS_WAITS[min(tries, len(ARCGIS_WAITS) - 1)]} s with fewer and simpler", flush=True)
+            sleep(ARCGIS_WAITS[min(tries, len(ARCGIS_WAITS) - 1)])
+            simpler = max(simplify or 0, 0.0002) * 2 if (polygons or polylines) else simplify
+            if len(chunk) == 1:
+                return features(chunk, simpler, tries + 1)
+            half = len(chunk) // 2
+            return features(chunk[:half], simpler, tries + 1) + features(chunk[half:], simpler, tries + 1)
+
         for i in range(0, len(ids), page):
-            params = {"f": "json", "objectIds": ",".join(str(x) for x in ids[i:i + page]),
-                      "outFields": ",".join(fields), "returnGeometry": "true" if meta.get("geometryType") else
-                      "false", "outSR": "4326"}
-            if (polygons or polylines) and f.get("simplify"):
-                params["maxAllowableOffset"] = f["simplify"]
-            for feat in post_json(url + "/query", params, sleep=sleep, pause=f.get("pause", 0.5)).get("features", []):
+            for feat in features(ids[i:i + page], f.get("simplify")):
                 attrs = feat.get("attributes") or {}
                 lat, lon, rings = _arcgis_geometry(feat.get("geometry"))
                 row = [_arcgis_value(attrs.get(name), name in dates) for name in fields]
@@ -506,8 +535,7 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
                 w.writerow(row)
                 rows += 1
     os.replace(target + ".partial", target)
-    return {"ok": rows > 0, "version": version, "path": target, "date": datetime.date.today().isoformat(),
-            **({} if rows else {"status": "skipped", "reason": "no record of the layer is in the region"})}
+    return {"ok": True, "version": version, "path": target, "date": datetime.date.today().isoformat()}
 
 
 # ------------------------------------------------------------------------------------------- Wikidata, all items
@@ -519,15 +547,18 @@ def wikidata_tiles(ask, tiles, pause=0, limit=None, query=None):
     query(box, limit): the query of a tile (default wikidata.all_query)."""
     from placepacks.readers import wikidata as wd
     limit = limit or wd.ALL_LIMIT
-    rows, todo = [], list(tiles)
+    rows, todo, skipped = [], list(tiles), []
     while todo:
         box = todo.pop()
         small = box[2] - box[0] <= wd.MIN_TILE or box[3] - box[1] <= wd.MIN_TILE
         try:
             got = ask((query or wd.all_query)(box, limit))
-        except Exception:  # noqa: BLE001 - a timeout: ask for the four quarters instead
+        except Exception as e:  # noqa: BLE001 - a timeout (504): ask for the four quarters instead
             if small:
-                raise
+                # The smallest tile still fails: it is left out (said in the log), the rest of the region is kept.
+                skipped.append(box)
+                print(f"  Wikidata: a tile of {box} could not be read ({str(e)[:80]}); left out", flush=True)
+                continue
             todo += wd.split_tile(box)
             continue
         finally:
@@ -536,6 +567,8 @@ def wikidata_tiles(ask, tiles, pause=0, limit=None, query=None):
             todo += wd.split_tile(box)
             continue
         rows += got
+    if skipped and not rows:
+        raise ValueError(f"no tile of the region could be read ({len(skipped)} tried)")
     return rows
 
 
@@ -1027,15 +1060,19 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
             bindings = wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), wd.first_tiles(region), pause,
                                       f.get("limit", wd.ALL_LIMIT), query=lambda box, n: wd.labels_query(box, n,
                                                                                                          f["languages"]))
-        elif f.get("mode") == "all":
+        elif f.get("mode", "all") == "all":
             # A tile that times out is split at once rather than asked again and again.
             bindings = wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), wd.first_tiles(region), pause,
                                       f.get("limit", wd.ALL_LIMIT))
         else:
-            for query in wd.queries_for(region):
-                # One query per group of classes (each within the service's time limit).
-                bindings += ask(query)
-                time.sleep(pause)
+            # The class query ("mode": "classes"), one group of classes at a time, tile by tile like the others: a
+            # tile that times out (504) is split into four.
+            ids = list(wd.CLASSES)
+            for i in range(0, len(ids), wd.GROUP):
+                group = " ".join(f"wd:{q}" for q in ids[i:i + wd.GROUP])
+                bindings += wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), wd.first_tiles(region, wd.BIG_BOX),
+                                           pause, f.get("limit", wd.ALL_LIMIT),
+                                           query=lambda box, n, g=group: wd.class_query(box, g))
         with open(target, "w", encoding="utf-8") as fh:
             json.dump({"results": {"bindings": bindings}}, fh)
         out.update(ok=True, path=target, date=datetime.date.today().isoformat())
@@ -1162,7 +1199,8 @@ def status_line(source, got, rows=None):
     from placepacks.status import one_line
     if got.get("status") == "ok":
         rows = got.get("rows", rows)
-        bits = [one_line(got.get("version", ""), 80) or "no version"] + ([f"{rows} rows"] if rows is not None else [])
+        count = (got["note"] if got.get("note") else f"{rows} rows") if rows is not None else None
+        bits = [one_line(got.get("version", ""), 80) or "no version"] + ([count] if count else [])
         return f"{source}: ok ({', '.join(bits)})"
     return f"{source}: {got.get('status', 'failed')} ({one_line(got.get('reason', ''))})"
 
@@ -1246,7 +1284,8 @@ def prepare_national(entry, national, values):
                 print(f"{entry['id']}: {name}: {os.path.getsize(target):,} bytes (the cached copy)")
                 continue
         try:
-            version, _ = download(url, target, f.get("pause", 2))
+            # "retry_waits": a longer back-off for a host that times out from the build machines (the Newberry).
+            version, _ = download(url, target, f.get("pause", 2), waits=tuple(f.get("retry_waits", RETRY_WAITS)))
         except Exception as e:  # noqa: BLE001 - one file of many missing does not stop the others
             if len(files) == 1:
                 raise

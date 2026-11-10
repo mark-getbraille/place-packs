@@ -69,10 +69,12 @@ class When:
         """"November 2026", "1950 to 1960", or "" for no date."""
         if not self.known:
             return ""
+        from placepacks.fmt import year_text
         if self.is_range:
-            a, b = self.start // 100, self.end // 100
-            return f"{a} to {b}" if a != b else str(a)
-        return datetime.date(self.start // 100, self.start % 100, 1).strftime("%B %Y")
+            a, b = year_text(self.start // 100), year_text(self.end // 100)
+            return f"{a} to {b}" if a != b else a
+        import calendar
+        return f"{calendar.month_name[self.start % 100]} {year_text(self.start // 100)}"
 
     def __repr__(self):
         return f"When({self.start}, {self.end}, {self.kind})"

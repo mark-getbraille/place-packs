@@ -187,6 +187,25 @@ def split_parquet(entry, path, out, regions):
     return counts
 
 
+EMPTY = "_empty.txt"
+
+
+def mark_empty(entry, out, regions, counts):
+    """For every region the source covers that got no rows, an empty slice folder holding EMPTY (the national number
+    of rows), so the region's build says "ok (0 in this region)" rather than "not downloaded"."""
+    total = sum(counts.values())
+    if not total:
+        return
+    for rid, r in regions.items():
+        if catalogue.country_code(r) not in entry["countries"] or (entry.get("regions") and rid not in
+                                                                    entry["regions"]) or counts.get(rid):
+            continue
+        folder = os.path.join(out, rid, entry["id"])
+        os.makedirs(folder, exist_ok=True)
+        with open(os.path.join(folder, EMPTY), "w", encoding="utf-8") as f:
+            f.write(f"{total}\n")
+
+
 def main(argv=None):
     """The command line (see the module docstring)."""
     p = argparse.ArgumentParser()
@@ -208,6 +227,7 @@ def main(argv=None):
                 print(f"{entry['id']}: failed (not split: {type(exc).__name__}: {exc})")
                 continue
             print(f"{entry['id']}: {sum(counts.values()):,} records in {len(counts)} regions")
+            mark_empty(entry, a.out, regions, counts)
             continue
         for name in os.listdir(folder):
             if name.endswith(".version") or name.startswith("_"):
@@ -225,6 +245,7 @@ def main(argv=None):
                 print(f"{entry['id']}: failed (not split: {type(exc).__name__}: {exc})")
                 continue
             print(f"{entry['id']}: {sum(counts.values()):,} records in {len(counts)} regions")
+            mark_empty(entry, a.out, regions, counts)
     return 0
 
 

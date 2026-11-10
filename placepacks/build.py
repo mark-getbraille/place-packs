@@ -33,6 +33,40 @@ def removals(path=None):
         return json.load(f).get("removals", [])
 
 
+def empty_reason(entry, path):
+    """Why a source read nothing for a region: "" when the region simply has none of its rows (an empty slice of a
+    national file, or a file whose columns are all there), else what did not match ("missing columns: X")."""
+    from placepacks.split import EMPTY, needed_columns
+    if os.path.isdir(path) and os.path.exists(os.path.join(path, EMPTY)):
+        return ""                       # the national file has rows, none in this region
+    try:
+        if entry["reader"] == "tabular":
+            import csv
+            from placepacks.readers.tabular import open_texts
+            for text in open_texts(path, entry.get("member", "*"), entry.get("encoding", "utf-8-sig")):
+                header = next(csv.reader(text, delimiter=entry.get("delimiter", ",")), None) \
+                    if not entry.get("fieldnames") else entry["fieldnames"]
+                if not header:
+                    return ""           # an empty file: nothing in this region
+                wanted = (needed_columns(entry) or set()) - {"statcan_lambert"}
+                missing = sorted(c for c in wanted if c not in header and not c.startswith("_"))
+                return f"missing columns: {', '.join(missing)}" if missing else ""
+        if entry["reader"] == "shapes":
+            import shapefile
+            from placepacks.readers.shapes import files_of
+            for file in files_of(path, entry.get("shp_member")):
+                with shapefile.Reader(file) as shp:
+                    names = {f[0] for f in shp.fields[1:]}
+                want = entry.get("fields", {}).get("name")
+                options = want if isinstance(want, list) else [want] if want else []
+                if options and not any(o in names for o in options):
+                    return f"no name field ({', '.join(options)})"
+                return ""
+    except Exception as e:  # noqa: BLE001 - the check itself failing says nothing about the region
+        return f"the file could not be checked ({str(e)[:80]})"
+    return ""
+
+
 def build(region_id, part, fetched, out, previous=None, month=None, only=None, cat=None, regions=None,
           removal_list=None):
     """Build the pack out. fetched: {source id: {"path", "version", "ok"}}. Returns the meta written."""
@@ -71,9 +105,15 @@ def build(region_id, part, fetched, out, previous=None, month=None, only=None, c
             if error:
                 status[entry["id"]] = {"status": "failed", "reason": error, "version": got.get("version", "")}
             elif count == 0:
-                # Read, but nothing kept: the file's columns, its filter or the region's box did not match.
-                status[entry["id"]] = {"status": "failed", "reason": "read, but no rows matched (columns, filter "
-                                       "or box)", "version": got.get("version", "")}
+                # Read, but nothing kept. A region that simply has none (the source's rows are all elsewhere) is
+                # ok; a file whose columns do not match the catalogue is a real failure.
+                mismatch = empty_reason(entry, got["path"])
+                if mismatch:
+                    status[entry["id"]] = {"status": "failed", "reason": f"read, but no rows matched: {mismatch}",
+                                           "version": got.get("version", "")}
+                else:
+                    status[entry["id"]] = {"status": "ok", "rows": 0, "note": "0 in this region",
+                                           "version": got.get("version", "")}
             else:
                 status[entry["id"]] = {"status": "ok", "rows": count, "version": got.get("version", "")}
         from placepacks.fetch import status_line

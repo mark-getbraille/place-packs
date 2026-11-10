@@ -255,6 +255,12 @@ def exclusions():
     return _EXCLUDE
 
 
+def class_query(box, classes):
+    """The class query of one tile (west, south, east, north) for a group of classes ("wd:Q1 wd:Q2")."""
+    west, south, east, north = box
+    return QUERY.format(west=west, south=south, east=east, north=north, classes=classes)
+
+
 def queries_for(region):
     """The SPARQL queries for a region's bounding box (four tiles for a box larger than BIG_BOX): one per group of
     GROUP classes, and one for the designations (World Heritage Sites). fetch.py sends them one after the other and

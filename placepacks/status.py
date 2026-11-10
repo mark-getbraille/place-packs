@@ -9,6 +9,8 @@ import json
 import re
 import sys
 
+from placepacks.fmt import month_label
+
 REASON_LIMIT = 200          # characters of a reason in the table (DuckDB's errors run to several lines)
 
 
@@ -30,14 +32,15 @@ def status(manifest, today=None):
              "| Pack | Built | Size (MB) | History from | Sources |", "|---|---|---|---|---|"]
     for key, e in sorted(packs.items()):
         built, start = e.get("built_month", 0), e.get("history_start", 0)
-        lines.append(f"| {key} | {built // 100}-{built % 100:02d} | {e.get('size', 0) / 1e6:.1f} | "
-                     f"{start // 100}-{start % 100:02d} | {', '.join(sorted(e.get('sources', {})))} |")
+        lines.append(f"| {key} | {month_label(built)} | {e.get('size', 0) / 1e6:.1f} | "
+                     f"{month_label(start)} | {', '.join(sorted(e.get('sources', {})))} |")
     lines += ["", "## Sources of each pack", "",
               "Each source of the last build of each pack: ok (with its rows), skipped (why) or failed (why).", "",
               "| Pack | Source | Status | Rows or reason |", "|---|---|---|---|"]
     for key, e in sorted(packs.items()):
         for sid, st in sorted((e.get("status") or {}).items()):
-            detail = str(st.get("rows", "")) if st.get("status") == "ok" else str(st.get("reason", ""))
+            detail = (st.get("note") or str(st.get("rows", ""))) if st.get("status") == "ok" else \
+                str(st.get("reason", ""))
             lines.append(f"| {key} | {sid} | {one_line(st.get('status', '?'), 20)} | {one_line(detail)} |")
     return "\n".join(lines) + "\n"
 

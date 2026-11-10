@@ -92,11 +92,50 @@ def region_values(region):
             "name": region.get("name", ""), "id": region["id"], "cc": region.get("cc", "")}
 
 
+# Compression methods zipfile names but cannot read (9 = Deflate64).
+UNSUPPORTED_ZIP = {9}
+
+
+class extracted_stream:
+    """The bytes of one member of a .zip read through an external extractor ("unzip -p", Info-ZIP 6.0, or "7z e
+    -so", p7zip), for compression methods Python's zipfile cannot read (Deflate64). A context manager giving a
+    binary stream; the extractor is stopped when the stream is closed early, and a failed extraction raises."""
+
+    TOOLS = (["unzip", "-p", "{zip}", "{member}"], ["7z", "e", "-so", "-bd", "{zip}", "{member}"])
+
+    def __init__(self, path, member):
+        import shutil
+        self.path, self.member, self.proc = str(path), member, None
+        self.command = next(([a.format(zip=self.path, member=member) for a in tool] for tool in self.TOOLS
+                             if shutil.which(tool[0])), None)
+        if self.command is None:
+            raise RuntimeError(f"{os.path.basename(self.path)}: {member} uses a compression method Python cannot "
+                               f"read (Deflate64), and neither unzip nor 7z is installed")
+
+    def __enter__(self):
+        import subprocess
+        self.proc = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        return self.proc.stdout
+
+    def __exit__(self, kind, value, tb):
+        if self.proc.poll() is None and kind is not None:
+            self.proc.kill()                    # stopped early (an error, or the reader had enough)
+        self.proc.stdout.close()
+        err = self.proc.stderr.read().decode("utf-8", "replace").strip()
+        self.proc.stderr.close()
+        code = self.proc.wait()
+        if kind is None and code not in (0, -9):
+            raise RuntimeError(f"{self.command[0]} could not extract {self.member}: {err[:200]}")
+        return False
+
+
 def open_texts(path, member="*", encoding="utf-8-sig"):
     """Text streams of a file, of the members of a .zip that match member, or of the matching files in a folder."""
     path = str(path)
     if os.path.isdir(path):
         for name in sorted(os.listdir(path)):
+            if name.startswith("_"):
+                continue                # markers (_empty.txt: the region has none of a national file's rows)
             plain = name[:-3] if name.endswith(".gz") else name
             if fnmatch.fnmatch(plain, member) or name.endswith(".zip"):
                 yield from open_texts(os.path.join(path, name), member, encoding)
@@ -108,9 +147,15 @@ def open_texts(path, member="*", encoding="utf-8-sig"):
         return
     if path.lower().endswith(".zip"):
         with zipfile.ZipFile(path) as z:
-            for name in z.namelist():
-                if fnmatch.fnmatch(os.path.basename(name), member):
-                    with z.open(name) as raw:
+            infos = [i for i in z.infolist() if fnmatch.fnmatch(os.path.basename(i.filename), member)]
+            for info in infos:
+                if info.compress_type in zipfile.compressor_names and info.compress_type not in UNSUPPORTED_ZIP:
+                    with z.open(info) as raw:
+                        yield io.TextIOWrapper(raw, encoding=encoding, errors="replace", newline="")
+                else:
+                    # Deflate64 (method 9, the NAD's TXT.zip) and other methods Python cannot read: streamed from
+                    # an external extractor's output, so a large file is never written out twice.
+                    with extracted_stream(path, info.filename) as raw:
                         yield io.TextIOWrapper(raw, encoding=encoding, errors="replace", newline="")
         return
     with open(path, encoding=encoding, errors="replace", newline="") as f:

@@ -110,7 +110,7 @@ class Result:
         if self.listed:
             name = f"a business listed as {name}"
             if self.no_older_record and self.first:
-                name += f" in {self.first // 100}; no older record"
+                name += f" in {fmt.year_text(self.first // 100)}; no older record"
             elif self.as_listed_now:
                 name += " (as listed now)"
         return name
@@ -192,7 +192,7 @@ def month_text(m):
     if not m:
         return "?"
     import calendar
-    return f"{calendar.month_name[m % 100]} {m // 100}"
+    return f"{calendar.month_name[m % 100]} {fmt.year_text(m // 100)}"
 
 
 # ------------------------------------------------------------------------------------------- history

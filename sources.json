@@ -3006,7 +3006,13 @@
    "fetch": {
     "method": "national",
     "url": "https://publications.newberry.org/ahcb/downloads/gis/US_AtlasHCB_Counties_Gen001.zip",
-    "pause": 2
+    "pause": 2,
+    "retry_waits": [
+     60,
+     180,
+     600,
+     1200
+    ]
    },
    "fields": {
     "name": "NAME",
@@ -3017,7 +3023,7 @@
    "name_template": "{NAME} {CNTY_TYPE}",
    "open_from": 200012,
    "history": "Every version of every county and its boundaries since the first colonial counties, each with the exact dates it held (to 2000; the versions current in 2000 are taken as current).",
-   "notes": "Non-county areas (unorganised land) are left out. Lookups give the county as it was on the picture's date. The national file (generalised to about 100 m) has shifted offsets inside its .zip, which the build repairs. The Newberry's terms: \"available ... for any lawful purpose, commercial or non-commercial, without licensing or permission fees\"; the older Creative Commons note inside the file is superseded.",
+   "notes": "Non-county areas (unorganised land) are left out. Lookups give the county as it was on the picture's date. The national file (generalised to about 100 m) has shifted offsets inside its .zip, which the build repairs. The Newberry's terms: \"available ... for any lawful purpose, commercial or non-commercial, without licensing or permission fees\"; the older Creative Commons note inside the file is superseded. The zip (53 MB, changes rarely) is kept in the Actions cache, and a host that times out is tried again for up to 34 minutes; the Newberry has no mirror (digital.newberry.org redirects to the same host).",
    "encoding": "latin-1",
    "skip_names": "\\bNca\\b|Non-County"
   },
@@ -3200,7 +3206,7 @@
     ]
    },
    "history": "The lights listed now, from the first build on (the Light List has no dates; lighthouse dates come from Wikidata).",
-   "notes": "Read from the Navigation Center's Light List volumes I-VII: the XML files when the Light List page offers them, else the text PDFs, read with pypdf (no OCR: the volumes are text; a scanned volume is reported and left out). Only lights named \"... Light\" whose structure is a tower, house or lighthouse are kept; buoys, daybeacons, range lights and lights on skeleton towers, poles, posts, dolphins or spindles are left out. Positions are converted from the list's degrees, minutes and seconds. navcen.uscg.gov refused requests from the development sandbox (403); the build tries from GitHub Actions and reports \"skipped (could not be downloaded: ...)\" when it is refused there too."
+   "notes": "Read from the Navigation Center's Light List volumes I-VII: the XML files when the Light List page offers them, else the text PDFs, read with pypdf (no OCR: the volumes are text; a scanned volume is reported and left out). Only lights named \"... Light\" whose structure is a tower, house or lighthouse are kept; buoys, daybeacons, range lights and lights on skeleton towers, poles, posts, dolphins or spindles are left out. Positions are converted from the list's degrees, minutes and seconds. NEEDS A REACHABLE SOURCE: navcen.uscg.gov answers 403 Forbidden both to the development sandbox and to GitHub Actions (trial #8, November 2026), so every pack lists it as skipped (could not be downloaded); this is not worked around. Lighthouses still come from Wikidata, GNIS, OpenStreetMap and TIGER's point landmarks. It starts working by itself once the Navigation Center answers the build machines."
   },
   {
    "id": "fuds",

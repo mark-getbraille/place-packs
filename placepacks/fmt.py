@@ -59,6 +59,18 @@ def parse_month(text):
     return year * 100 + month if 1 <= year <= 9999 else None
 
 
+def year_text(year):
+    """A year as text, always with four digits ("0055" for a Roman-era date, "1873", "2026")."""
+    return f"{int(year):04d}"
+
+
+def month_label(yyyymm):
+    """A month as "YYYY-MM" with a four-digit year ("0055-01", "2026-11"); "" for none."""
+    if not yyyymm:
+        return ""
+    return f"{year_text(int(yyyymm) // 100)}-{int(yyyymm) % 100:02d}"
+
+
 def month_index(yyyymm):
     """Months since January 2000 (0 for 200001; never below 0, at most 65535), for the address cells."""
     return max(0, min(65535, (yyyymm // 100 - 2000) * 12 + yyyymm % 100 - 1))

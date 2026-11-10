@@ -15,7 +15,8 @@ latest versions are today's counties). "encoding": the text encoding of the .dbf
 decode is replaced). The fine type: "type_field" through "type_map" (placepacks.types.of), else the entry's
 "type", else its "tag". "class_field" with "class_map": each record's class from a field (TIGER's MTFCC
 codes; tabular.class_of: an unmapped code or a code mapped to "" is left out). "name_replace" and "name_words":
-types.rename (TIGER's abbreviations written out: "Marlboro Colg" -> "Marlboro College"). "skip_names": a regular expression of names left out (the atlas's non-county areas). "projection": the
+types.rename (TIGER's abbreviations written out: "Marlboro Colg" -> "Marlboro College"). "skip_names": a regular expression of names left out (the atlas's non-county areas). "shp_member": the one shapefile wanted
+in a .zip of several; "zero_is_none": a house number 0 means none (NRCan). "projection": the
 shapes are in a projection (fmt.PROJECTIONS: Statistics Canada's Lambert for its boundary files) and are converted. Only
 shapes touching the region's bounding box are read.
 """
@@ -39,12 +40,24 @@ def _dates(entry, rec):
     return first, last
 
 
-def files_of(path):
-    """The shapefiles (.shp or .zip) of path (a file or a folder)."""
+def files_of(path, member=None):
+    """The shapefiles (.shp or .zip) of path (a file or a folder). member: a pattern of the one shapefile wanted
+    inside a .zip that holds several ("*_ROADSEG.shp" in NRCan's road network), opened as "file.zip/member.shp"."""
     path = str(path)
-    if os.path.isdir(path):
-        return sorted(glob.glob(os.path.join(path, "*.zip")) + glob.glob(os.path.join(path, "*.shp")))
-    return [path]
+    files = sorted(glob.glob(os.path.join(path, "*.zip")) + glob.glob(os.path.join(path, "*.shp"))) \
+        if os.path.isdir(path) else [path]
+    if not member:
+        return files
+    import fnmatch
+    import zipfile
+    out = []
+    for f in files:
+        if f.lower().endswith(".zip"):
+            with zipfile.ZipFile(f) as z:
+                out += [f"{f}/{n}" for n in z.namelist() if fnmatch.fnmatch(os.path.basename(n), member)]
+        else:
+            out.append(f)
+    return out
 
 
 def _number(text):
@@ -89,7 +102,7 @@ def read(path, entry, region, writer):
     fields, source, kind, count = entry["fields"], entry["id"], entry["kind"], 0
     skip = re.compile(entry["skip_names"], re.I) if entry.get("skip_names") else None
     west, south, east, north = region["bbox"]
-    for file in files_of(path):
+    for file in files_of(path, entry.get("shp_member")):
         with shapefile.Reader(file, encoding=entry.get("encoding", "utf-8"), encodingErrors="replace") as shp:
             names = [f[0] for f in shp.fields[1:]]
             for sr in shp.iterShapeRecords():
@@ -122,6 +135,8 @@ def read(path, entry, region, writer):
                 key = f"{source}:{_field(rec, fields['key'])}" if fields.get("key") else None
                 if kind == "ranges":
                     nums = [_number(rec.get(fields[k])) for k in ("lfrom", "lto", "rfrom", "rto")]
+                    if entry.get("zero_is_none"):
+                        nums = [None if n == 0 else n for n in nums]     # NRCan writes 0 for "no number"
                     if all(n is None for n in nums):
                         continue
                     zip_code = str(rec.get(fields.get("zip", ""), "") or rec.get(fields.get("zip2", ""), "") or "")

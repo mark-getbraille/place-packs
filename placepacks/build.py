@@ -20,8 +20,8 @@ from placepacks.writer import PackWriter
 
 
 def pack_name(region_id, part):
-    """The local file name of a part: "us-vermont.osmpack" (core) or "us-vermont-extra.osmpack"."""
-    return region_id + ("" if part == "core" else "-extra") + fmt.PACK_SUFFIX
+    """The local file name of a part: "us-vermont.osmpack" (core), "us-vermont-extra.osmpack", "us-vermont-names.osmpack"."""
+    return region_id + ("" if part == "core" else f"-{part}") + fmt.PACK_SUFFIX
 
 
 def removals(path=None):
@@ -78,6 +78,13 @@ def build(region_id, part, fetched, out, previous=None, month=None, only=None, c
                 status[entry["id"]] = {"status": "ok", "rows": count, "version": got.get("version", "")}
         from placepacks.fetch import status_line
         print(status_line(entry["id"], status[entry["id"]], status[entry["id"]].get("rows")), flush=True)
+    # Sources that would repeat another source's places (the national transit stops and the agencies' own GTFS
+    # feeds): their duplicates are removed once every source has been read.
+    for entry in catalogue.sources_for(region, part, cat, only):
+        if entry.get("dedupe_against") and status.get(entry["id"], {}).get("status") == "ok":
+            gone = writer.drop_duplicates(entry["id"], entry["dedupe_against"], entry.get("dedupe_m", 100))
+            if gone:
+                print(f"  {entry['id']}: {gone:,} duplicates of {', '.join(entry['dedupe_against'])} removed", flush=True)
     meta = {"region_id": region_id, "region_name": region["name"], "country": region["country"],
             "state": region["name"], "part": part, "sources_used": ",".join(used), "sources_missing": ",".join(missing),
             "licence": "collective (see sources)", "attribution": fmt.ATTRIBUTION,

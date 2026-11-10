@@ -19,11 +19,15 @@ A pack is one SQLite file. Coordinates are whole microdegrees. Months are YYYYMM
 | area_types | id, type | an area's fine type: areas.id -> types.id |
 | brands | id, name, wikidata | the chain brands of the pack, each once ("Made-up Burgers", "Q9999901"; wikidata may be ""); since November 2026, absent in older packs |
 | point_brands | id, brand | a chain location's brand: points.id -> brands.id |
+| notes | id, text | short notes about places, each once ("filming location of ..."); data only, never spoken |
+| point_notes | id, note | a point's note: points.id -> notes.id |
+| labels | key, lang, name | only in the optional "names" part: a place's name in another language, by the key of the place in the main packs ("wikidata:Q42", "fr", "Lac Champlain") |
 
 Fine cell: `floor((lat + 90) * 100) * 36000 + floor((lon + 180) * 100)`. Coarse cell: the same with 10 and 3600.
 Classes (`cls`): park, cemetery, landmark, campus, water, nature, neighbourhood, region, admin, town, county, zip,
-street, building, business, public, transit, settlement, variant, airspace. (airspace: FAA special use airspace,
-data only, never spoken; cemetery since November 2026: cemeteries were park
+street, building, business, public, transit, settlement, variant, airspace, note. (airspace: FAA special use airspace,
+data only, never spoken; note: a row that only carries a note for the place with the same key, never a place
+itself; cemetery since November 2026: cemeteries were park
 before; county: the Newberry atlas's dated county versions; variant: a former or other name of a feature (GNIS),
 kept for name search and never said as a place's name.) Lines have the class street (streets), trail, water
 (rivers), rail, byway (National Scenic Byways) or geoline (the Equator, tropics, polar circles and date line: data
@@ -65,4 +69,20 @@ No pack change: the lookup counts only the businesses valid at the picture's dat
 month), and, when two or more are within 15 m of each other with none clearly nearest (or within the picture's GPS
 accuracy), names the mall, plaza, campus or building area holding them, else the address, else the street. The
 candidates are in `Result.others` (name, type, brand, distance), data only, never spoken.
+
+## Notes on places (added November 2026, still version 2)
+
+A point may carry a short note, stored once in `notes` and linked from `point_notes` like the types and brands.
+Wikidata's filming locations ("filming location of A; B; C") are written as rows of class `note` with the place's own
+key (`wikidata:Q...`), so a lookup that names the place gives `Result.note`; the note is data for future programs,
+never spoken.
+
+## Parts: core, extra and names
+
+A region has up to three packs: core (OpenStreetMap, addresses, address ranges, Census areas), extra (everything
+else) and the optional names part (`us-vermont-names.osmpack`, key `us-vermont-names` in packs.json). The names part
+holds only the `labels` table: the names of the region's Wikidata places in French, Spanish, German, Italian, Dutch,
+Japanese and Chinese. A program downloads it only when its user turns on other languages
+(`download.ensure_pack(region, part="names")`) and reads it with `PackReader.labels(key)`; the core and extra packs do
+not change size. The names are data only.
 

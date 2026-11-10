@@ -73,7 +73,7 @@ class Result:
                   distance_m=None,
                   bearing="", over="", altitude_m=None, airport="", first=None, last=None, now_name="", listed=False,
                   probably=False, as_listed_now=False, no_older_record=False, when=None, latitude=None,
-                  longitude=None, type="", brand="", brand_wikidata="", line="", line_cls="")
+                  longitude=None, type="", brand="", brand_wikidata="", note="", line="", line_cls="")
 
     def __init__(self, **values):
         for k, v in self.FIELDS.items():
@@ -332,7 +332,27 @@ class PackReader:
         if self._branded:
             names = {r["id"]: (r["name"], r["wikidata"]) for r in self._rows("SELECT id, name, wikidata FROM brands")}
             self.brands = {r["id"]: names.get(r["brand"]) for r in self._rows("SELECT id, brand FROM point_brands")}
+        # Notes about places (filming locations; data only): point id -> text.
+        self.notes = {}
+        if {"notes", "point_notes"} <= tables:
+            texts = {r["id"]: r["text"] for r in self._rows("SELECT id, text FROM notes")}
+            self.notes = {r["id"]: texts.get(r["note"]) for r in self._rows("SELECT id, note FROM point_notes")}
+        # Names of places in other languages, in the optional "names" part (data only): key -> {lang: name}.
+        self.has_labels = "labels" in tables
         _open.add(self)
+
+    def notes_for(self, key):
+        """The notes of every point with this key ("wikidata:Q42": its filming locations), [] when none."""
+        if not self.notes or not key:
+            return []
+        return [self.notes[r["id"]] for r in self._rows("SELECT id FROM points WHERE key = ?", (key,))
+                if self.notes.get(r["id"])]
+
+    def labels(self, key):
+        """{language: name} of a place's key in a "names" part pack ({} in other packs)."""
+        if not self.has_labels:
+            return {}
+        return {r["lang"]: r["name"] for r in self._rows("SELECT lang, name FROM labels WHERE key = ?", (key,))}
 
     def _select(self, table, where):
         """SELECT * of points or areas with their "type" phrase (None when the pack or the row has none)."""
@@ -348,6 +368,7 @@ class PackReader:
             r["type"] = self.types.get(r.pop("type_id"))
             if table == "points":
                 r["brand"] = self.brands.get(r["id"])
+                r["note"] = self.notes.get(r["id"])
         return rows
 
     def close(self):
@@ -494,7 +515,8 @@ class PackReader:
         join = (lambda links: f" LEFT JOIN {links} l ON l.id = r.id") if self._typed else (lambda links: "")
         tid = "l.type" if self._typed else "NULL"
         rows = self._rows(f"SELECT r.key, r.source, r.name, r.cls, r.lat, r.lon, r.first, r.last, {tid} AS type_id "
-                          f"FROM points r{join('point_types')} WHERE r.name LIKE ? LIMIT ?", (like, limit * 5))
+                          f"FROM points r{join('point_types')} WHERE r.name LIKE ? AND r.cls IS NOT 'note' LIMIT ?",
+                          (like, limit * 5))
         rows += self._rows(f"SELECT r.key, r.source, r.name, r.cls, (r.minlat + r.maxlat) / 2 AS lat, (r.minlon + "
                            f"r.maxlon) / 2 AS lon, r.first, r.last, {tid} AS type_id FROM areas r{join('area_types')} "
                            f"WHERE r.name LIKE ? LIMIT ?", (like, limit * 5))
@@ -804,6 +826,9 @@ class Finder:
         result.type = most_specific([r.get("type")] + [c.get("type") for c in same]) or ""
         brand = next((c.get("brand") for c in [r] + same if c.get("brand")), None)
         result.brand, result.brand_wikidata = (brand[0], brand[1] or "") if brand else ("", "")
+        # A note about the place (a filming location) from any source of the same place: data only, never spoken.
+        result.note = next((c.get("note") for c in [r] + same if c.get("note")), None) or \
+            next(iter(pack.notes_for(r.get("key"))), "")
         result.first, result.last = r["first"], r["last"]
         result.listed = is_business_source(pack, r["source"])
         result.now_name = successor(rows, r, when, latest)

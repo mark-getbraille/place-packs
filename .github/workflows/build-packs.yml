@@ -168,7 +168,7 @@ jobs:
           rm -rf national-split national-whole
           gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern packs.json --dir previous 2>/dev/null || true
           if [ -f previous/packs.json ]; then
-            for key in "$REGION" "$REGION-extra"; do
+            for key in "$REGION" "$REGION-extra" "$REGION-names"; do
               name=$(python -c "import json,sys; print(json.load(open('previous/packs.json')).get('packs',{}).get(sys.argv[1],{}).get('name',''))" "$key")
               if [ -n "$name" ]; then
                 gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern "$name" --dir previous
@@ -191,7 +191,7 @@ jobs:
             rm -rf "seed/$year"
           done
           if [ ! -f "previous/$REGION-extra.osmpack" ] && [ -n "$prev" ]; then cp "$prev" "previous/$REGION-extra.osmpack"; fi
-      - name: Build the core and extra packs
+      - name: Build the core, extra and names packs
         env:
           REGION: ${{ matrix.region.id }}
         run: |
@@ -199,6 +199,10 @@ jobs:
           echo "::group::Sources of $REGION"
           python -m placepacks.build "$REGION" --part core --inputs "work/$REGION/fetched.json" --previous "previous/$REGION.osmpack" --out "out/$REGION.osmpack"
           python -m placepacks.build "$REGION" --part extra --inputs "work/$REGION/fetched.json" --previous "previous/$REGION-extra.osmpack" --out "out/$REGION-extra.osmpack"
+          # The optional names part (other-language names), only for regions that have a source for it.
+          if python -c "import sys; from placepacks import catalogue; r = catalogue.regions()[sys.argv[1]]; sys.exit(0 if catalogue.sources_for(r, 'names') else 1)" "$REGION"; then
+            python -m placepacks.build "$REGION" --part names --inputs "work/$REGION/fetched.json" --out "out/$REGION-names.osmpack"
+          fi
           echo "::endgroup::"
           mkdir -p "out/fetched/$REGION"
           cp "work/$REGION/fetched.json" "out/fetched/$REGION/"

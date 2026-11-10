@@ -38,7 +38,8 @@ Points may also have:
                types.json ("naics", "gnis", "fsa"), "humanise", or a template ("{} restaurant"); without them the
                record's tag (from class_map or the entry, when it is not the source id) is its type
   "geocode": {"street", "city", "zip": columns, "from": "nad"}: an address-only source, located by the offline
-               geocoder against the region's address points (placepacks.geocode; a home is put on its street)
+               geocoder against the region's address points (placepacks.geocode; a home is put on its street);
+               "ranges_from": an address-range source ("nrn-address-ranges") for the addresses with no point
   "brand_column", "brand_wikidata_column": a chain location's brand and its Wikidata id (data only)
   "kind": "lines" with columns "paths": a column of JSON paths [[[lat, lon], ...], ...] (the arcgis fetch's
                "_paths"): written as named lines (trails, rivers), each path a line of the record
@@ -192,8 +193,14 @@ def geocoded_rows(path, entry, region):
     source = spec.get("from", "nad")
     nad_path = (region.get("_inputs") or {}).get(source)
     nad_entry = next((e for e in catalogue.load()["accepted"] if e["id"] == source), None)
-    found = geocode.locate([(_get(r, spec["street"]), _get(r, spec.get("city", "")), _get(r, spec.get("zip", "")))
-                            for r in rows], nad_path, nad_entry) if nad_entry else {}
+    requests = [(_get(r, spec["street"]), _get(r, spec.get("city", "")), _get(r, spec.get("zip", ""))) for r in rows]
+    found = geocode.locate(requests, nad_path, nad_entry) if nad_entry else {}
+    if spec.get("ranges_from"):
+        # Addresses without a point: along the street's address range (NRCan's road network in Canada).
+        ranges_entry = next((e for e in catalogue.load()["accepted"] if e["id"] == spec["ranges_from"]), None)
+        ranges_path = (region.get("_inputs") or {}).get(spec["ranges_from"])
+        if ranges_entry and ranges_path:
+            found.update(geocode.locate_ranges(requests, ranges_path, ranges_entry, skip=set(found)))
     print(f"  {entry['id']}: {geocode.stats(found, len(rows))}" + ("" if nad_path else " (no address points for "
                                                                     "this region)"), flush=True)
     for i, (lat, lon, how) in sorted(found.items()):
@@ -232,7 +239,17 @@ def rows_of(path, entry, region):
             if at is None or (round(at[0], 4), round(at[1], 4)) in skip:
                 continue
             lat, lon = at
-            if not (south - 0.05 <= lat <= north + 0.05 and west - 0.05 <= lon <= east + 0.05) or (lat == lon == 0):
+            inside = south - 0.05 <= lat <= north + 0.05 and west - 0.05 <= lon <= east + 0.05
+            if not inside and entry.get("kind") in ("lines", "areas"):
+                # A long line or a big area whose middle is outside the region may still cross it (an Amtrak route).
+                shape = _get(row, cols.get("paths") or cols.get("rings") or "")
+                try:
+                    parts = json.loads(shape) if shape else []
+                except ValueError:
+                    parts = []
+                inside = any(south - 0.05 <= p[0] <= north + 0.05 and west - 0.05 <= p[1] <= east + 0.05
+                             for part in parts for p in part)
+            if not inside or (lat == lon == 0):
                 continue
             row["_lat"], row["_lon"] = lat, lon
             yield row

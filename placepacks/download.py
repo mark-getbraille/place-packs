@@ -153,6 +153,14 @@ def merge_local(new_path, old_path):
                         bid = con.execute("SELECT id FROM main.brands WHERE name = ? AND wikidata = ?",
                                           brand).fetchone()[0]
                         con.execute("INSERT OR REPLACE INTO main.point_brands VALUES (?, ?)", (start + i, bid))
+                    note = (con.execute("SELECT n.text FROM old.point_notes l JOIN old.notes n ON n.id = l.note "
+                                        "WHERE l.id = ?", (old_id,)).fetchone()
+                            if table == "points" and {"notes", "point_notes"} <= have["old"] and
+                            {"notes", "point_notes"} <= have["main"] else None)
+                    if note:
+                        con.execute("INSERT OR IGNORE INTO main.notes (text) VALUES (?)", note)
+                        nid = con.execute("SELECT id FROM main.notes WHERE text = ?", note).fetchone()[0]
+                        con.execute("INSERT OR REPLACE INTO main.point_notes VALUES (?, ?)", (start + i, nid))
         con.commit()
         con.execute("DETACH DATABASE old")
     finally:

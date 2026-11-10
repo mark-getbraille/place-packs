@@ -124,6 +124,93 @@ ALL_LIMIT = 50000               # rows per tile; a tile that fills it is split i
 MIN_TILE = 0.02                 # degrees: a tile this small is not split again
 
 
+LABELS_QUERY = """SELECT ?item ?label ?lang WHERE {{
+  SERVICE wikibase:box {{ ?item wdt:P625 ?coord .
+    bd:serviceParam wikibase:cornerSouthWest "Point({west} {south})"^^geo:wktLiteral .
+    bd:serviceParam wikibase:cornerNorthEast "Point({east} {north})"^^geo:wktLiteral . }}
+  FILTER NOT EXISTS {{ ?item wdt:P31 wd:Q5 . }}
+  ?item rdfs:label ?label . BIND(LANG(?label) AS ?lang) FILTER(?lang IN ({langs}))
+}} LIMIT {limit}"""
+
+
+FILMING_QUERY = """SELECT ?item ?itemLabel ?coord ?work ?workLabel WHERE {{
+  SERVICE wikibase:box {{ ?item wdt:P625 ?coord .
+    bd:serviceParam wikibase:cornerSouthWest "Point({west} {south})"^^geo:wktLiteral .
+    bd:serviceParam wikibase:cornerNorthEast "Point({east} {north})"^^geo:wktLiteral . }}
+  ?work wdt:P915 ?item .
+  FILTER NOT EXISTS {{ ?item wdt:P31 wd:Q5 . }}
+  SERVICE wikibase:label {{ bd:serviceParam wikibase:language "en". }}
+}} LIMIT {limit}"""
+FILMING_TITLES = 8                  # titles kept in a place's note
+
+
+def filming_query(box, limit):
+    """The query of one tile's filming locations (P915, asked the other way round: places that films or series
+    were filmed at)."""
+    west, south, east, north = box
+    return FILMING_QUERY.format(west=west, south=south, east=east, north=north, limit=limit)
+
+
+@reader("wikidata_filming")
+def read_filming(path, entry, region, writer):
+    """Add the filming locations of a saved SPARQL answer: one point per place (its Wikidata key, so the lookup
+    joins it to the place), with the note "filming location of A; B; C" (data only). Returns the places."""
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    places = {}
+    for b in data.get("results", {}).get("bindings", []):
+        item = _qid(b, "item")
+        title = b.get("workLabel", {}).get("value", "")
+        if not item.startswith("Q") or not title or title == _qid(b, "work"):
+            continue
+        p = places.setdefault(item, {"name": b.get("itemLabel", {}).get("value", ""),
+                                     "coord": b.get("coord", {}).get("value", ""), "titles": []})
+        if title not in p["titles"]:
+            p["titles"].append(title)
+    count = 0
+    for item, p in places.items():
+        if not p["name"] or p["name"] == item or not p["coord"].startswith("Point("):
+            continue
+        try:
+            lon, lat = (float(v) for v in p["coord"][6:-1].split())
+        except ValueError:
+            continue
+        titles = sorted(p["titles"])
+        note = "filming location of " + "; ".join(titles[:FILMING_TITLES]) + \
+            (f" and {len(titles) - FILMING_TITLES} more" if len(titles) > FILMING_TITLES else "")
+        # Class "note": a data-only row that no lookup returns as a place; the lookup joins its note to the place
+        # with the same Wikidata key (a city that films were made in stays a city).
+        writer.add_point(f"wikidata:{item}", entry["id"], p["name"], "note", "filming location", lat, lon,
+                         type="filming location", note=note)
+        count += 1
+    return count
+
+
+def labels_query(box, limit, languages):
+    """The query of one tile's other-language names (people left out)."""
+    west, south, east, north = box
+    return LABELS_QUERY.format(west=west, south=south, east=east, north=north, limit=limit,
+                               langs=", ".join(f'"{l}"' for l in languages))
+
+
+@reader("wikidata_labels")
+def read_labels(path, entry, region, writer):
+    """Add the other-language names of a saved SPARQL answer (item, label, lang) to the "names" part. Returns the
+    number of items named."""
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+    langs = set(entry["fetch"]["languages"])
+    items = set()
+    for b in data.get("results", {}).get("bindings", []):
+        item = _qid(b, "item")
+        lang = b.get("lang", {}).get("value", "")
+        name = b.get("label", {}).get("value", "")
+        if item.startswith("Q") and lang in langs and name:
+            writer.add_label(f"wikidata:{item}", lang, name)
+            items.add(item)
+    return len(items)
+
+
 def all_query(box, limit=ALL_LIMIT):
     """The "all" mode query of one tile (west, south, east, north)."""
     west, south, east, north = box

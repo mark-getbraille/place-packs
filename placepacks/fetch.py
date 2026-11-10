@@ -55,7 +55,7 @@ import time
 import urllib.parse
 import urllib.request
 
-from placepacks import catalogue
+from placepacks import catalogue, fmt
 
 USER_AGENT = "place-packs-builder/1 (+https://github.com/mark-getbraille/place-packs)"
 FAILED = "_not_downloaded.txt"      # national/<id>/: why the prepare job could not download a source
@@ -226,7 +226,9 @@ def national_files(entry, values, opener=None):
             "version_key", ""), "")) or None)]
     if f.get("urls"):
         # Several fixed files of one source (StatCan's facility databases).
-        return [(u.format(**values), os.path.basename(urllib.parse.urlsplit(u).path), None) for u in f["urls"]]
+        # "names": the local file names when the addresses have none of their own (one export per year).
+        names = f.get("names") or [os.path.basename(urllib.parse.urlsplit(u).path) for u in f["urls"]]
+        return [(u.format(**values), n, None) for u, n in zip(f["urls"], names)]
     if f.get("per_country"):
         out = []
         for cc in entry["countries"]:
@@ -511,9 +513,10 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
 # ------------------------------------------------------------------------------------------- Wikidata, all items
 
 
-def wikidata_tiles(ask, tiles, pause=0, limit=None):
+def wikidata_tiles(ask, tiles, pause=0, limit=None, query=None):
     """Every row of the "all" mode over tiles, splitting a tile into four when it times out (or is refused once the
-    retries are spent) or fills the row limit, down to wikidata.MIN_TILE degrees. ask(query) returns the rows."""
+    retries are spent) or fills the row limit, down to wikidata.MIN_TILE degrees. ask(query) returns the rows;
+    query(box, limit): the query of a tile (default wikidata.all_query)."""
     from placepacks.readers import wikidata as wd
     limit = limit or wd.ALL_LIMIT
     rows, todo = [], list(tiles)
@@ -521,7 +524,7 @@ def wikidata_tiles(ask, tiles, pause=0, limit=None):
         box = todo.pop()
         small = box[2] - box[0] <= wd.MIN_TILE or box[3] - box[1] <= wd.MIN_TILE
         try:
-            got = ask(wd.all_query(box, limit))
+            got = ask((query or wd.all_query)(box, limit))
         except Exception:  # noqa: BLE001 - a timeout: ask for the four quarters instead
             if small:
                 raise
@@ -534,6 +537,116 @@ def wikidata_tiles(ask, tiles, pause=0, limit=None):
             continue
         rows += got
     return rows
+
+
+# ------------------------------------------------------------------------------------------- NCES school years
+
+
+def _nces_rows(path):
+    """(id, name, lat, lon) of the schools of one yearly EDGE file, whichever form the year has: a pipe-separated
+    .TXT without a header (id, district id, name, ..., latitude and longitude in the 13th and 14th fields), else a
+    shapefile (NCESSCH, NAME, LAT..., LON...)."""
+    import io
+    import zipfile
+    import shapefile
+    with zipfile.ZipFile(path) as z:
+        names = z.namelist()
+        txt = next((n for n in names if n.lower().endswith(".txt")), None)
+        if txt:
+            for line in io.TextIOWrapper(z.open(txt), encoding="utf-8", errors="replace"):
+                f = line.rstrip("\r\n").split("|")
+                if len(f) > 13 and f[0].isdigit():
+                    yield f[0], f[2], f[12], f[13]
+            return
+        shp = next((n for n in names if n.lower().endswith(".shp")), None)
+    if not shp:
+        return
+    with shapefile.Reader(f"{path}/{shp}", encoding="utf-8", encodingErrors="replace") as r:
+        fields = [f[0] for f in r.fields[1:]]
+        lat_f = next(n for n in fields if n.upper().startswith("LAT"))
+        lon_f = next(n for n in fields if n.upper().startswith("LON"))
+        for rec in r.iterRecords():
+            d = dict(zip(fields, rec))
+            if d.get("NCESSCH"):
+                yield str(d["NCESSCH"]), d.get("NAME") or d.get("SCH_NAME") or "", d[lat_f], d[lon_f]
+
+
+def nces_history_to_csv(paths, target):
+    """The public schools of NCES's yearly EDGE geocode files (one .zip a school year, "..._1516.zip") that are gone
+    from the newest year, as CSV: id, name, lat, lon, first (September of its first year), last (June after its last
+    year). Returns the rows. The schools still open come from the current year's source."""
+    import re as _re
+    seen, newest = {}, None
+    years = sorted(((int(m.group(1)), p) for p in paths for m in [_re.search(r"_(\d{4})\.zip$", p)] if m))
+    for code, path in years:
+        y1 = 2000 + code // 100                       # 1516 -> autumn 2015
+        newest = code
+        for sid, name, lat, lon in _nces_rows(path):
+            s_ = seen.setdefault(sid, {"first": y1, "code": code})
+            s_.update(name=name, lat=lat, lon=lon, last=y1 + 1, code=code)
+    count = 0
+    with open(target, "w", newline="", encoding="utf-8") as out:
+        w = csv.writer(out)
+        w.writerow(["id", "name", "lat", "lon", "first", "last"])
+        for sid, s_ in seen.items():
+            if s_["code"] == newest or not s_["name"]:
+                continue
+            w.writerow([sid, s_["name"], s_["lat"], s_["lon"], f"{s_['first']}-09", f"{s_['last']}-06"])
+            count += 1
+    return count
+
+
+# ------------------------------------------------------------------------------------------- Who's On First
+
+# The geometry sources (src:geom) of Who's On First records whose licence allows a pack: Mapzen and Who's On First's
+# own work (CC0), Mesoshapes (CC0), Natural Earth and the US Census (public domain), Quattroshapes, Zetashapes,
+# GeoNames and GeoPlanet (CC BY), Statistics Canada (OGL-Canada). OpenStreetMap-derived records (ODbL) and unknown
+# sources are left out.
+WOF_OPEN = {"mz", "mapzen", "whosonfirst", "wof", "meso", "naturalearth", "ne", "us-census", "uscensus", "census",
+            "quattroshapes", "quattroshapes_pg", "qs", "qs_pg", "zetashapes", "zs", "geonames", "gn", "geoplanet", "gp", "woe", "statcan"}
+WOF_PLACETYPES = ("neighbourhood", "macrohood", "microhood", "borough", "campus")
+
+
+def wof_to_csv(db_path, target):
+    """Write the current neighbourhoods (and boroughs and campuses) of a Who's On First SQLite bundle whose geometry
+    source is open (WOF_OPEN) as CSV: id, name, placetype, source, lat, lon. Returns the rows."""
+    import sqlite3
+    con = sqlite3.connect(f"file:{db_path}?mode=ro", uri=True)
+    count = 0
+    marks = ",".join("?" * len(WOF_PLACETYPES))
+    with open(target, "w", newline="", encoding="utf-8") as out:
+        w = csv.writer(out)
+        w.writerow(["id", "name", "placetype", "source", "lat", "lon"])
+        rows = con.execute(f"SELECT s.id, s.name, s.placetype, s.latitude, s.longitude, g.body FROM spr s JOIN geojson g "
+                           f"ON g.id = s.id WHERE s.placetype IN ({marks}) AND s.is_current != 0 AND "
+                           f"s.is_deprecated = 0 AND s.is_superseded = 0", WOF_PLACETYPES)
+        seen = set()
+        for wid, name, placetype, lat, lon, body in rows:
+            if wid in seen:
+                continue                # a record's alternate geometries come as more rows: one place each
+            try:
+                props = json.loads(body).get("properties", {})
+            except ValueError:
+                continue
+            src = str(props.get("src:geom", "")).lower()
+            if src not in WOF_OPEN or not name:
+                continue
+            seen.add(wid)
+            w.writerow([wid, name, placetype, src, f"{lat:.6f}", f"{lon:.6f}"])
+            count += 1
+    con.close()
+    return count
+
+
+def bunzip(path, target):
+    """Decompress a .bz2 file to target in pieces (a WOF bundle is several GB unpacked)."""
+    import bz2
+    with bz2.open(path, "rb") as src, open(target, "wb") as dst:
+        while True:
+            chunk = src.read(1 << 22)
+            if not chunk:
+                break
+            dst.write(chunk)
 
 
 # ------------------------------------------------------------------------------------------- All The Places
@@ -906,7 +1019,15 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
                     time.sleep(retries[attempt])
 
         bindings = []
-        if f.get("mode") == "all":
+        if f.get("mode") == "filming":
+            bindings = wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), wd.first_tiles(region), pause,
+                                      f.get("limit", wd.ALL_LIMIT), query=wd.filming_query)
+        elif f.get("mode") == "labels":
+            # Other-language names of the items with coordinates, tile by tile (the optional "names" part).
+            bindings = wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), wd.first_tiles(region), pause,
+                                      f.get("limit", wd.ALL_LIMIT), query=lambda box, n: wd.labels_query(box, n,
+                                                                                                         f["languages"]))
+        elif f.get("mode") == "all":
             # A tile that times out is split at once rather than asked again and again.
             bindings = wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), wd.first_tiles(region), pause,
                                       f.get("limit", wd.ALL_LIMIT))
@@ -1046,7 +1167,7 @@ def status_line(source, got, rows=None):
     return f"{source}: {got.get('status', 'failed')} ({one_line(got.get('reason', ''))})"
 
 
-def fetch_region(region_id, work, parts=("core", "extra"), national=None, fingerprint=False, cat=None, only=None):
+def fetch_region(region_id, work, parts=fmt.PARTS, national=None, fingerprint=False, cat=None, only=None):
     """Fetch every source of a region's parts. Returns the fetched dict (also written to work/fetched.json)."""
     cat = cat or catalogue.load()
     region = dict(catalogue.regions()[region_id])
@@ -1142,6 +1263,26 @@ def prepare_national(entry, national, values):
         base = name[:-len(".version")] if name.endswith(".version") else name
         if base not in kept:
             os.remove(os.path.join(folder, name))       # an older release (NAD_r20_TXT.zip after NAD_TXT.zip)
+    if f.get("convert") == "nces_history":
+        paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
+        count = nces_history_to_csv(paths, os.path.join(folder, entry["id"] + ".csv"))
+        for p in paths:
+            os.remove(p)
+            if os.path.exists(p + ".version"):
+                os.remove(p + ".version")
+        print(f"{entry['id']}: {count:,} schools closed since the oldest year")
+    if f.get("convert") == "wof":
+        paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
+        total = 0
+        for i, p in enumerate(paths):
+            db = os.path.join(folder, f"wof-{i}.db")
+            bunzip(p, db)
+            total += wof_to_csv(db, os.path.join(folder, f"{entry['id']}-{i}.csv"))
+            os.remove(db)
+            os.remove(p)
+            if os.path.exists(p + ".version"):
+                os.remove(p + ".version")
+        print(f"{entry['id']}: {total:,} neighbourhoods with an open geometry source")
     if f.get("convert") == "json_records":
         paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
         count = json_to_csv(paths, f["json_records"], os.path.join(folder, entry["id"] + ".csv"))
@@ -1209,7 +1350,7 @@ def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("region", nargs="?")
     p.add_argument("--dir", default="")
-    p.add_argument("--part", default="all", choices=("core", "extra", "all"))
+    p.add_argument("--part", default="all", choices=fmt.PARTS + ("all",))
     p.add_argument("--national", default="national")
     p.add_argument("--fingerprint", action="store_true")
     p.add_argument("--prepare", action="store_true")
@@ -1223,12 +1364,12 @@ def main(argv=None):
     if a.fingerprint_all is not None and a.region is None:
         from placepacks.manifest import fingerprint
         ids = a.fingerprint_all.replace(",", " ").split() or list(catalogue.regions())
-        prints = {r: fingerprint(fetch_region(r, os.path.join("work", r), ("core", "extra"), a.national, True))
+        prints = {r: fingerprint(fetch_region(r, os.path.join("work", r), fmt.PARTS, a.national, True))
                   for r in ids}
         with open(a.out, "w", encoding="utf-8") as f:
             json.dump(prints, f, indent=1)
         return 0
-    parts = ("core", "extra") if a.part == "all" else (a.part,)
+    parts = fmt.PARTS if a.part == "all" else (a.part,)
     result = fetch_region(a.region, a.dir or os.path.join("work", a.region), parts, a.national, a.fingerprint,
                           only=set(a.only.split(",")) if a.only else None)
     print(json.dumps({k: {"ok": v.get("ok"), "version": v.get("version", "")[:80], "error": v.get("error", "")}

@@ -26,6 +26,8 @@ import os
 import re
 import sys
 
+from placepacks import fmt
+
 FORMAT = "place-packs"
 VERSIONS = (1, 2)
 LIMIT = 4_000_000
@@ -78,7 +80,7 @@ def parse(data, regions=None):
         if not isinstance(e, dict) or not isinstance(key, str):
             continue
         region, part = e.get("region"), e.get("part")
-        if region not in regions or part not in ("core", "extra") or key != key_of(region, part):
+        if region not in regions or part not in fmt.PARTS or key != key_of(region, part):
             continue
         name, size, digest = e.get("name"), e.get("size"), e.get("sha256")
         if not isinstance(name, str) or not re.fullmatch(re.escape(key) + r"(-\d{8})?\.osmpack", name):

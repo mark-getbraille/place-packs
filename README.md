@@ -38,6 +38,9 @@ church" or "lighthouse" (`type` in a lookup's result; `search_names(..., type="b
 Water, coastlines and the air work without any pack, from the small global layer in `placepacks/data/`
 (Natural Earth and OurAirports, both public domain; Marine Regions' bays and gulfs, CC BY 4.0).
 
+Names in other languages (French, Spanish, German, Italian, Dutch, Japanese, Chinese) are in an optional third pack
+per region, the "names" part, downloaded only when a program's user turns other languages on.
+
 ## History: names as they were
 
 Packs never forget. Every record (a place, a business, a street, an address) has the months it was first and

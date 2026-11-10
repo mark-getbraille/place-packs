@@ -142,6 +142,11 @@
    "name": "Open Government Licence - New Brunswick",
    "url": "https://geonb.snb.ca/documents/license/geonb-odl_en.pdf",
    "file": ""
+  },
+  "CC-BY-3.0-US": {
+   "name": "Creative Commons Attribution 3.0 United States",
+   "url": "https://creativecommons.org/licenses/by/3.0/us/",
+   "file": ""
   }
  },
  "accepted": [
@@ -5077,11 +5082,74 @@
    "kind": "points",
    "cls": "business",
    "history": "Each business from its first licence (1997 on) to its last; a licence still current is open.",
-   "notes": "About 207,000 yearly licences since 1997, one place per licence (aggregated over the years: from its first issue to its last). Home-based businesses, contractors, rentals and other non-premises licences are left out by type. From the sandbox, the export download was cut off by the network path (the tunnel closed mid-transfer); not worked around. If the build runner cannot reach it either, the build lists it as failed.",
+   "notes": "About 207,000 yearly licences since 1997, one place per licence (aggregated over the years: from its first issue to its last). Home-based businesses, contractors, rentals and other non-premises licences are left out by type. Downloaded one licence year at a time (30 small exports, 10 seconds apart, each retried with backoff) because the whole export is cut off; from the sandbox even those were reset by the network path in November 2026 (not worked around), so the build machine fetches them and reports the source as skipped if it cannot.",
    "fetch": {
-    "method": "http",
-    "url": "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C",
-    "file": "business-licences.csv"
+    "method": "national",
+    "urls": [
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2797%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2798%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2799%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2700%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2701%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2702%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2703%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2704%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2705%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2706%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2707%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2708%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2709%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2710%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2711%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2712%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2713%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2714%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2715%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2716%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2717%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2718%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2719%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2720%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2721%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2722%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2723%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2724%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2725%27",
+     "https://opendata.vancouver.ca/api/explore/v2.1/catalog/datasets/business-licences/exports/csv?select=licencersn,businessname,businesstradename,businesstype,issueddate,expireddate,geo_point_2d&delimiter=%2C&where=folderyear%3D%2726%27"
+    ],
+    "pause": 10,
+    "names": [
+     "vancouver-1997.csv",
+     "vancouver-1998.csv",
+     "vancouver-1999.csv",
+     "vancouver-2000.csv",
+     "vancouver-2001.csv",
+     "vancouver-2002.csv",
+     "vancouver-2003.csv",
+     "vancouver-2004.csv",
+     "vancouver-2005.csv",
+     "vancouver-2006.csv",
+     "vancouver-2007.csv",
+     "vancouver-2008.csv",
+     "vancouver-2009.csv",
+     "vancouver-2010.csv",
+     "vancouver-2011.csv",
+     "vancouver-2012.csv",
+     "vancouver-2013.csv",
+     "vancouver-2014.csv",
+     "vancouver-2015.csv",
+     "vancouver-2016.csv",
+     "vancouver-2017.csv",
+     "vancouver-2018.csv",
+     "vancouver-2019.csv",
+     "vancouver-2020.csv",
+     "vancouver-2021.csv",
+     "vancouver-2022.csv",
+     "vancouver-2023.csv",
+     "vancouver-2024.csv",
+     "vancouver-2025.csv",
+     "vancouver-2026.csv"
+    ]
    },
    "member": "*.csv",
    "columns": {
@@ -5106,7 +5174,11 @@
      "column": "businesstype",
      "pattern": "home|contractor|rental|apartment|strata|residen|short.term|rooming|secondary suite|dwelling|peddler|vendor|mobile|dog walk|trades|plumb|electric|gas contractor|painter|roof|janitor|cleaning|landscap|taxi|limousine|driver"
     }
-   ]
+   ],
+   "split_box": {
+    "point": "geo_point_2d"
+   },
+   "split_file": "vancouver-business-licences.csv"
   },
   {
    "id": "calgary-business-licences",
@@ -7033,6 +7105,1230 @@
    },
    "history": "From the first build on.",
    "notes": "318 trailheads (the same dataset's historical markers are already in pa-historical-markers)."
+  },
+  {
+   "id": "wikidata-labels",
+   "name": "Wikidata names in other languages (optional names part)",
+   "short": "Wikidata",
+   "part": "names",
+   "countries": [
+    "US",
+    "CA",
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Names in other languages from Wikidata (CC0).",
+   "url": "https://www.wikidata.org",
+   "reader": "wikidata_labels",
+   "kind": "labels",
+   "fetch": {
+    "method": "wikidata",
+    "url": "https://query.wikidata.org/sparql",
+    "mode": "labels",
+    "languages": [
+     "fr",
+     "es",
+     "de",
+     "it",
+     "nl",
+     "ja",
+     "zh"
+    ],
+    "pause": 10
+   },
+   "history": "Current labels; replaced at each build (no history).",
+   "notes": "French, Spanish, German, Italian, Dutch, Japanese and Chinese names of the places with coordinates (people left out), keyed like the Wikidata places of the main packs (\"wikidata:Q...\"). In a separate, optional pack part (\"names\"), downloaded only when a user turns on other languages; the main packs stay as they are. Data only."
+  },
+  {
+   "id": "ntad-rail-lines",
+   "name": "NTAD North American Rail Network lines (named subdivisions, active and abandoned)",
+   "short": "the Federal Railroad Administration",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Rail lines from the Federal Railroad Administration's North American Rail Network (National Transportation Atlas Database), a work of the United States government (public domain).",
+   "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_North_American_Rail_Network_Lines/FeatureServer",
+   "reader": "tabular",
+   "kind": "lines",
+   "cls": "rail",
+   "tag": null,
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_North_American_Rail_Network_Lines/FeatureServer/0",
+    "where": "SUBDIV IS NOT NULL AND COUNTRY = 'US'",
+    "fields": "OBJECTID,FRAARCID,SUBDIV,RROWNER1,NET",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0003
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "SUBDIV",
+    "key": "FRAARCID",
+    "class_column": "NET",
+    "paths": "_paths"
+   },
+   "history": "From the first build on.",
+   "notes": "Railway segments that carry a subdivision name (\"Northern Subdivision\"), active and abandoned (type abandoned railway). Segments with only an owner code are left out (no name).",
+   "name_template": "{SUBDIV} Subdivision",
+   "name_replace": [
+    [
+     "(?i)\\b(Subdivision|Sub|Subdiv)\\s+Subdivision$",
+     "Subdivision"
+    ]
+   ],
+   "class_map": {
+    "X": "rail:abandoned railway",
+    "*": "rail:railway"
+   },
+   "skip_names": "(?i)\\bmap\\b|^us\\s*\\d|^\\d|^[a-z]{1,3}\\s*\\d+$"
+  },
+  {
+   "id": "ntad-amtrak-routes",
+   "name": "NTAD Amtrak routes",
+   "short": "the Bureau of Transportation Statistics",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Amtrak routes from the Bureau of Transportation Statistics' National Transportation Atlas Database, a work of the United States government (public domain).",
+   "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Amtrak_Routes/FeatureServer",
+   "reader": "tabular",
+   "kind": "lines",
+   "cls": "rail",
+   "tag": "Amtrak route",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_Amtrak_Routes/FeatureServer/0",
+    "where": "1=1",
+    "fields": "OBJECTID,name",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0003
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "name",
+    "key": "OBJECTID",
+    "paths": "_paths"
+   },
+   "history": "From the first build on.",
+   "notes": "The 49 named Amtrak routes (\"Vermonter\", \"Empire Builder\") as lines.",
+   "box": false
+  },
+  {
+   "id": "nhd-named-flowlines",
+   "name": "USGS National Hydrography Dataset named rivers and streams (medium resolution)",
+   "short": "the U.S. Geological Survey",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Rivers and streams from the U.S. Geological Survey's National Hydrography Dataset, a work of the United States government (public domain).",
+   "url": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+   "reader": "tabular",
+   "kind": "lines",
+   "cls": "water",
+   "tag": "stream",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/4",
+    "where": "GNIS_ID IS NOT NULL",
+    "fields": "OBJECTID,COMID,GNIS_NAME",
+    "page": 500,
+    "pause": 0.5,
+    "simplify": 0.0003
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "GNIS_NAME",
+    "key": "COMID",
+    "paths": "_paths"
+   },
+   "history": "From the first build on.",
+   "notes": "Only the stream segments named in GNIS (a GNIS id), at medium resolution (1:100,000), so a picture beside a river gets the river's line, not only GNIS's point (about 15,000 segments in Vermont)."
+  },
+  {
+   "id": "nhd-named-waterbodies",
+   "name": "USGS National Hydrography Dataset named lakes, ponds and reservoirs (medium resolution)",
+   "short": "the U.S. Geological Survey",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Lakes and ponds from the U.S. Geological Survey's National Hydrography Dataset, a work of the United States government (public domain).",
+   "url": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "water",
+   "tag": null,
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/10",
+    "where": "GNIS_ID IS NOT NULL",
+    "fields": "OBJECTID,COMID,GNIS_NAME,FTYPE",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0003
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "GNIS_NAME",
+    "key": "COMID",
+    "class_column": "FTYPE",
+    "rings": "_rings"
+   },
+   "history": "From the first build on.",
+   "notes": "Only the waterbodies named in GNIS, as areas (about 2,250 in Vermont), so \"on Lake Bomoseen\" is known by its shore.",
+   "class_map": {
+    "LakePond": "water:lake or pond",
+    "Reservoir": "water:reservoir",
+    "SwampMarsh": "nature:swamp or marsh",
+    "Playa": "water:playa",
+    "Ice Mass": "nature:glacier",
+    "IceMass": "nature:glacier",
+    "Estuary": "water:estuary",
+    "*": "water"
+   }
+  },
+  {
+   "id": "nrn-address-ranges",
+   "name": "NRCan National Road Network: street names and address ranges",
+   "short": "Natural Resources Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Natural Resources Canada: National Road Network).",
+   "url": "https://open.canada.ca/data/en/dataset/3d282116-e556-400c-9306-ca1a3cada77f",
+   "reader": "shapes",
+   "kind": "ranges",
+   "fetch": {
+    "method": "http",
+    "url": "https://ftp.maps.canada.ca/pub/nrcan_rncan/vector/geobase_nrn_rrn/{code_lower}/nrn_rrn_{code_lower}_shp_en.zip"
+   },
+   "shp_member": "*_ROADSEG.shp",
+   "zero_is_none": true,
+   "skip_names": "^None$",
+   "fields": {
+    "name": [
+     "L_STNAME_C",
+     "R_STNAME_C"
+    ],
+    "key": "NID",
+    "lfrom": "L_HNUMF",
+    "lto": "L_HNUML",
+    "rfrom": "R_HNUMF",
+    "rto": "R_HNUML",
+    "city": [
+     "L_PLACENAM",
+     "R_PLACENAM"
+    ]
+   },
+   "history": "The current release, from the first build on (street renames and new ranges, as with TIGER's address ranges).",
+   "notes": "Road segments with their complete street names and the house numbers on each side, for every province and territory (6 MB for PEI to 237 MB for Ontario): \"at about 120 Main Street\" in Canada, and the address ranges the build-time geocoder falls back on when an address has no point."
+  },
+  {
+   "id": "canvec-named-lakes",
+   "name": "CanVec named lakes, ponds and rivers (areas, 1:50,000)",
+   "short": "Natural Resources Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-prince-edward-island",
+    "ca-nova-scotia",
+    "ca-new-brunswick",
+    "ca-yukon",
+    "ca-alberta",
+    "ca-saskatchewan",
+    "ca-manitoba"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Natural Resources Canada: CanVec, 1:50,000 hydrography).",
+   "url": "https://open.canada.ca/data/en/dataset/8ba2aa2a-7bb9-4448-b4d7-f164409fe056",
+   "reader": "shapes",
+   "kind": "areas",
+   "cls": "water",
+   "fetch": {
+    "method": "http",
+    "url": "https://ftp.maps.canada.ca/pub/nrcan_rncan/vector/canvec/shp/Hydro/canvec_50K_{code}_Hydro_shp.zip"
+   },
+   "shp_member": "waterbody_2.shp",
+   "fields": {
+    "name": [
+     "name_en",
+     "namelk1en",
+     "namerv1en",
+     "name_fr",
+     "namelk1fr"
+    ],
+    "key": "feature_id"
+   },
+   "skip_names": "^$",
+   "history": "The current CanVec release, from the first build on.",
+   "notes": "Named waterbodies (lakes, ponds, wide rivers) from CanVec's 1:50,000 hydrography, which carries the National Hydro Network's names (874 in PEI). Only the provinces and territories whose CanVec hydrography file is under 1 GB (6 MB for PEI to 944 MB for Manitoba); British Columbia, Ontario, Québec, Newfoundland and Labrador, the Northwest Territories and Nunavut (1.1 to 6.4 GB each) are left to the CGNDB's points."
+  },
+  {
+   "id": "canvec-named-rivers",
+   "name": "CanVec named rivers and streams (lines, 1:50,000)",
+   "short": "Natural Resources Canada",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-prince-edward-island",
+    "ca-nova-scotia",
+    "ca-new-brunswick",
+    "ca-yukon"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (Natural Resources Canada: CanVec, 1:50,000 hydrography).",
+   "url": "https://open.canada.ca/data/en/dataset/8ba2aa2a-7bb9-4448-b4d7-f164409fe056",
+   "reader": "shapes",
+   "kind": "lines",
+   "cls": "water",
+   "fetch": {
+    "method": "http",
+    "url": "https://ftp.maps.canada.ca/pub/nrcan_rncan/vector/canvec/shp/Hydro/canvec_50K_{code}_Hydro_shp.zip"
+   },
+   "shp_member": "watercourse_1.shp",
+   "fields": {
+    "name": [
+     "name_1_en",
+     "name_en",
+     "name_1_fr"
+    ],
+    "key": "feature_id"
+   },
+   "skip_names": "^$",
+   "history": "The current CanVec release, from the first build on.",
+   "notes": "Named watercourses as lines (1,181 in PEI), in the four provinces and territories with the smallest CanVec files; the larger ones would double a download of up to 944 MB."
+  },
+  {
+   "id": "ntad-transit-stations",
+   "name": "NTAD National Transit Map stations (stations and terminals only)",
+   "short": "the Bureau of Transportation Statistics",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "CC-BY-3.0-US",
+   "attribution": "Transit stations from the Bureau of Transportation Statistics' National Transit Map (National Transportation Atlas Database), CC BY 3.0 US.",
+   "url": "https://geodata.bts.gov/datasets/usdot::national-transit-map-stops",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "transit",
+   "tag": "transit station",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/xOi1kZaI0eWDREZv/arcgis/rest/services/NTAD_National_Transit_Map_Stops/FeatureServer/0",
+    "where": "(stop_name LIKE '%Station%' OR stop_name LIKE '%Terminal%' OR stop_name LIKE '%Transit Center%' OR stop_name LIKE '%Transit Centre%' OR stop_name LIKE '%Transportation Center%' OR stop_name LIKE '%Park and Ride%' OR stop_name LIKE '%Park & Ride%' OR stop_name LIKE '%Depot%' OR stop_name LIKE '%Intermodal%' OR location_type = '1')",
+    "fields": "OBJECTID,feed_id,stop_id,stop_name,location_type",
+    "page": 500,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "stop_name",
+    "key": [
+     "feed_id",
+     "stop_id"
+    ]
+   },
+   "skip_names": "(?i)(\\b(st|ave|rd|blvd|dr|ln|hwy|pkwy|ct|pl)\\.?$|&| at |/|\\bopp\\b|\\bnb\\b|\\bsb\\b|\\beb\\b|\\bwb\\b)",
+   "dedupe_against": [
+    "gtfs"
+   ],
+   "dedupe_m": 150,
+   "history": "From the first build on (a station dropped from the map is closed at its last build).",
+   "notes": "Only stations, terminals, transit centres and park-and-rides out of the 673,251 stops of every US agency's feed (about 25,000 by name, plus stops their feed marks as stations unless the name is a street corner), so street-corner bus stops do not flood the packs; it fills the agencies whose own GTFS feed has no open licence. A station that the GTFS layer of the same pack already has (the same name within 150 m) is removed at build time; OpenStreetMap's stations are in the core pack and are merged at lookup time (the same name within 50 m is one place)."
+  },
+  {
+   "id": "wikidata-filming",
+   "name": "Wikidata filming locations",
+   "short": "Wikidata",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA",
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Filming locations from Wikidata (CC0).",
+   "url": "https://www.wikidata.org",
+   "reader": "wikidata_filming",
+   "kind": "points",
+   "fetch": {
+    "method": "wikidata",
+    "url": "https://query.wikidata.org/sparql",
+    "mode": "filming",
+    "pause": 10
+   },
+   "history": "Current statements, from the first build on.",
+   "notes": "Places that films and series were filmed at (Wikidata's filming location, P915, asked the other way round), each with a note \"filming location of A; B; C\" (up to 8 titles). The note is data only, never spoken; the point has the place's own Wikidata key, so a lookup joins it to the place."
+  },
+  {
+   "id": "whosonfirst-neighbourhoods",
+   "name": "Who's On First neighbourhoods (open-source records only)",
+   "short": "Who's On First",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Neighbourhoods from Who's On First (whosonfirst.org; Mapzen's work CC0, with Quattroshapes, Zetashapes and GeoNames, CC BY).",
+   "url": "https://whosonfirst.org",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "neighbourhood",
+   "fetch": {
+    "method": "national",
+    "urls": [
+     "https://data.geocode.earth/wof/dist/sqlite/whosonfirst-data-admin-us-latest.db.bz2",
+     "https://data.geocode.earth/wof/dist/sqlite/whosonfirst-data-admin-ca-latest.db.bz2"
+    ],
+    "convert": "wof",
+    "pause": 5
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "split_file": "whosonfirst-neighbourhoods.csv",
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "id",
+    "class_column": "placetype"
+   },
+   "class_map": {
+    "neighbourhood": "neighbourhood",
+    "macrohood": "neighbourhood",
+    "microhood": "neighbourhood",
+    "borough": "neighbourhood",
+    "campus": "campus:campus",
+    "*": ""
+   },
+   "type_column": "placetype",
+   "type_map": "humanise",
+   "history": "The bundle's current records, from the first build on.",
+   "notes": "Current neighbourhoods, macrohoods, microhoods, boroughs and campuses of the US and Canada (the admin bundles: 886 MB and 184 MB compressed), as points, kept only when the record's geometry source (src:geom) is open: Mapzen and Who's On First's own work (CC0), Mesoshapes, Natural Earth, the US Census, Quattroshapes, Zetashapes, GeoNames, GeoPlanet, Statistics Canada. OpenStreetMap-derived records (ODbL) and unknown sources are left out. Who's On First's venue bundles are no longer published."
+  },
+  {
+   "id": "nces-closed-schools",
+   "name": "NCES public schools closed since 2015 (EDGE yearly files)",
+   "short": "the National Center for Education Statistics",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "School locations from the National Center for Education Statistics (EDGE), U.S. Department of Education (public domain).",
+   "url": "https://nces.ed.gov/programs/edge/Geographic/SchoolLocations",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "campus",
+   "tag": "school",
+   "fetch": {
+    "method": "national",
+    "urls": [
+     "https://nces.ed.gov/programs/edge/data/EDGE_GEOCODE_PUBLICSCH_1516.zip",
+     "https://nces.ed.gov/programs/edge/data/EDGE_GEOCODE_PUBLICSCH_1617.zip",
+     "https://nces.ed.gov/programs/edge/data/EDGE_GEOCODE_PUBLICSCH_1718.zip",
+     "https://nces.ed.gov/programs/edge/data/EDGE_GEOCODE_PUBLICSCH_1819.zip",
+     "https://nces.ed.gov/programs/edge/data/EDGE_GEOCODE_PUBLICSCH_1920.zip",
+     "https://nces.ed.gov/programs/edge/data/EDGE_GEOCODE_PUBLICSCH_2021.zip",
+     "https://nces.ed.gov/programs/edge/data/EDGE_GEOCODE_PUBLICSCH_2122.zip",
+     "https://nces.ed.gov/programs/edge/data/EDGE_GEOCODE_PUBLICSCH_2223.zip",
+     "https://nces.ed.gov/programs/edge/data/EDGE_GEOCODE_PUBLICSCH_2324.zip",
+     "https://nces.ed.gov/programs/edge/data/EDGE_GEOCODE_PUBLICSCH_2425.zip"
+    ],
+    "convert": "nces_history",
+    "pause": 2
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "split_file": "nces-closed-schools.csv",
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "id",
+    "first": "first",
+    "last": "last"
+   },
+   "history": "Each closed school from September of its first school year in the files (2015-16 on) to June after its last.",
+   "notes": "The public schools of the yearly EDGE geocode files (2015-16 to 2024-25, about 30 MB each) that are no longer in the newest year, with their years: a closed or renamed school keeps its dates. The older CCD years (before 2015-16) have no geocode file of this kind on the EDGE site."
+  },
+  {
+   "id": "nyc-honorary-street-names",
+   "name": "New York City honorary street names and renamings (City Map alterations)",
+   "short": "the New York City Department of City Planning",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "NYC-Open-Data",
+   "attribution": "Street name changes from the New York City Department of City Planning's City Map (NYC Open Data, data.cityofnewyork.us, dataset y23c-72fa).",
+   "url": "https://data.cityofnewyork.us/d/y23c-72fa",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "variant",
+   "tag": "honorary street name",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.cityofnewyork.us",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "y23c-72fa",
+      "select": "intro_num, ll_num, ll_sec, honor_name, official_nm, old_name, lleffect_dt, repeal_dt, the_geom"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "the_geom",
+    "name": {
+     "first_of": [
+      "honor_name",
+      "official_nm"
+     ]
+    },
+    "key": [
+     "ll_num",
+     "ll_sec",
+     "intro_num"
+    ],
+    "first": "lleffect_dt",
+    "last": "repeal_dt"
+   },
+   "history": "Each name from the day its local law took effect to its repeal, where repealed.",
+   "notes": "About 1,100 honorary co-names and renamings of streets, corners, intersections and plazas, each with the date its local law took effect. Class variant: found by name search and never said as a place's name (the street keeps its official name in the lookup)."
+  },
+  {
+   "id": "houston-historic-landmarks",
+   "name": "Houston historic sites and landmarks",
+   "short": "the City of Houston",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-texas"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Historic sites and landmarks of the City of Houston Planning and Development Department (COHGIS: \"in the public domain and may be copied without permission\").",
+   "url": "https://services.arcgis.com/NummVBqZSIJKUeVR/arcgis/rest/services/COH_Historic_Sites_and_Landmarks_view/FeatureServer",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "historic landmark",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/NummVBqZSIJKUeVR/arcgis/rest/services/COH_Historic_Sites_and_Landmarks_view/FeatureServer/6",
+    "where": "1=1",
+    "fields": "OBJECTID,SITE_NAME,DESIG_TYPE",
+    "page": 200,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "SITE_NAME",
+    "key": "OBJECTID",
+    "class_column": "DESIG_TYPE"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "422 designated landmarks and protected sites. Only the site's name and designation are asked for (the layer also holds owners' names and phone numbers, which are never fetched).",
+   "class_map": {
+    "LM": "landmark:historic landmark",
+    "PLM": "landmark:protected landmark",
+    "*": "landmark:historic landmark"
+   }
+  },
+  {
+   "id": "houston-historic-districts",
+   "name": "Houston historic districts (City of Houston)",
+   "short": "the City of Houston",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-texas"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Historic districts of the City of Houston (COHGIS, public domain).",
+   "url": "https://services.arcgis.com/NummVBqZSIJKUeVR/arcgis/rest/services/COH_Historic_Districts_view/FeatureServer",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "landmark",
+   "tag": "historic district",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/NummVBqZSIJKUeVR/arcgis/rest/services/COH_Historic_Districts_view/FeatureServer/7",
+    "where": "1=1",
+    "fields": "OBJECTID,NAME,DATE_EST",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0002
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "NAME",
+    "key": "OBJECTID",
+    "first": "DATE_EST",
+    "rings": "_rings"
+   },
+   "history": "Each district from its establishment date.",
+   "notes": "23 city historic districts, each from its establishment date."
+  },
+  {
+   "id": "fort-worth-facilities",
+   "name": "Fort Worth libraries and community centres",
+   "short": "the City of Fort Worth",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-texas"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "City facilities of the City of Fort Worth (CFW Open Data), CC BY 4.0.",
+   "url": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/OpenData_Facilities/MapServer",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "city facility",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/OpenData_Facilities/MapServer/0",
+    "where": "1=1",
+    "fields": "OBJECTID,NAME",
+    "page": 200,
+    "pause": 0.5,
+    "urls": [
+     "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/OpenData_Facilities/MapServer/0",
+     "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/OpenData_Facilities/MapServer/1"
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "NAME",
+    "key": "OBJECTID"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "Libraries and community centres of Fort Worth."
+  },
+  {
+   "id": "fort-worth-police-stations",
+   "name": "Fort Worth police stations",
+   "short": "the City of Fort Worth",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-texas"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "City facilities of the City of Fort Worth (CFW Open Data), CC BY 4.0.",
+   "url": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/OpenData_Facilities/MapServer",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "police station",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/OpenData_Facilities/MapServer/2",
+    "where": "1=1",
+    "fields": "OBJECTID_1,NAME",
+    "page": 200,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "NAME",
+    "key": "OBJECTID_1"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "Police stations of Fort Worth."
+  },
+  {
+   "id": "fort-worth-fire-stations",
+   "name": "Fort Worth fire stations",
+   "short": "the City of Fort Worth",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-texas"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "City facilities of the City of Fort Worth (CFW Open Data), CC BY 4.0.",
+   "url": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/OpenData_Facilities/MapServer",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "fire station",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/OpenData_Facilities/MapServer/3",
+    "where": "1=1",
+    "fields": "OBJECTID,STATION",
+    "page": 200,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "STATION",
+    "key": "OBJECTID"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "The 45 fire stations of Fort Worth, named by number.",
+   "name_template": "Fort Worth Fire Station {STATION}"
+  },
+  {
+   "id": "fort-worth-parks",
+   "name": "Fort Worth parks",
+   "short": "the City of Fort Worth",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-texas"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Parks of the City of Fort Worth (CFW Open Data), CC BY 4.0.",
+   "url": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/OpenData_Facilities/MapServer",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "park",
+   "tag": "city park",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://mapit.fortworthtexas.gov/ags/rest/services/CIVIC/OpenData_Facilities/MapServer/31",
+    "where": "1=1",
+    "fields": "OBJECTID,PARK_NAME,TYPE,YEAR",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0002
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "PARK_NAME",
+    "key": "OBJECTID",
+    "first": "YEAR",
+    "rings": "_rings"
+   },
+   "history": "Each park from its year.",
+   "notes": "314 parks, each from the year it was acquired or opened."
+  },
+  {
+   "id": "miami-landmarks",
+   "name": "City of Miami landmarks",
+   "short": "the City of Miami",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-florida"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Landmarks of the City of Miami (City of Miami GIS), CC BY 4.0.",
+   "url": "https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Landmarks/FeatureServer",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": null,
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services1.arcgis.com/CvuPhqcTQpZPT9qY/arcgis/rest/services/Landmarks/FeatureServer/0",
+    "where": "1=1",
+    "fields": "FID,LMID,LMNAME,LMCNAME",
+    "page": 200,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "LMNAME",
+    "key": "LMID",
+    "class_column": "LMCNAME"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "About 700 named landmarks (parks, schools, hospitals, hotels, consulates, stations, marinas, beaches), typed by their category. Apartments, residential communities, retirement and nursing homes and ramps are left out.",
+   "class_map": {
+    "Apartment": "",
+    "Residential Community": "",
+    "Retirement Home": "",
+    "Nursing Home": "",
+    "Ramp": "",
+    "Aid to Navigation": "",
+    "Parking Garage/Lot": "",
+    "Expressway/Causeway": "",
+    "Park": "park:park",
+    "School": "campus:school",
+    "Hospital": "public:hospital",
+    "MetroMover Station": "transit:metromover station",
+    "MetroRail Station": "transit:metrorail station",
+    "Hotel/Motel": "business:hotel",
+    "Restaurant": "business:restaurant",
+    "Business": "business",
+    "Shopping Center": "business:shopping center",
+    "Bank": "business:bank",
+    "Night Club": "business:nightclub",
+    "Office": "business:office building",
+    "Marina": "landmark:marina",
+    "Beach": "water:beach",
+    "*": "landmark"
+   },
+   "type_column": "LMCNAME",
+   "type_map": "humanise"
+  },
+  {
+   "id": "sacramento-county-food-facilities",
+   "name": "Sacramento County food facilities (inspections)",
+   "short": "Sacramento County Environmental Management",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-california"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Food inspections of Sacramento County Environmental Management Department, CC0 (public domain dedication).",
+   "url": "https://services1.arcgis.com/5NARefyPVtAeuJPU/arcgis/rest/services/Food_Inspections/FeatureServer",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "tag": null,
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services1.arcgis.com/5NARefyPVtAeuJPU/arcgis/rest/services/Food_Inspections/FeatureServer/0",
+    "where": "1=1",
+    "fields": "OBJECTID,Facility_ID,Facility_Name,Description,Inspection_Date",
+    "page": 200,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "Facility_Name",
+    "key": "Facility_ID",
+    "first": "Inspection_Date",
+    "last": "Inspection_Date"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "Restaurants, bars, markets, bakeries and farmers' markets, one place per facility from its earliest to its latest inspection in the layer. Mobile food facilities, commissaries and satellite and school meal programmes are left out.",
+   "aggregate": true,
+   "still_open_months": 14,
+   "type_column": "Description",
+   "type_map": "humanise",
+   "exclude_pattern": [
+    {
+     "column": "Description",
+     "pattern": "mobile|commissary|satellite|school|senior meal|veteran|restricted"
+    }
+   ]
+  },
+  {
+   "id": "saint-paul-historic-sites",
+   "name": "Saint Paul historic sites",
+   "short": "the City of Saint Paul",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-minnesota"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Historic sites of the City of Saint Paul Planning and Economic Development (public domain).",
+   "url": "https://services1.arcgis.com/9meaaHE3uiba0zr8/arcgis/rest/services/Historic_Sites/FeatureServer",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "landmark",
+   "tag": "historic site",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services1.arcgis.com/9meaaHE3uiba0zr8/arcgis/rest/services/Historic_Sites/FeatureServer/7",
+    "where": "1=1",
+    "fields": "OBJECTID,Inventory_ID,Name,Year_added_to_National_Register,Year_added_as_a_Local_Heritage_",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0002
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "Name",
+    "key": "Inventory_ID",
+    "first": {
+     "first_of": [
+      "Year_added_as_a_Local_Heritage_",
+      "Year_added_to_National_Register"
+     ]
+    },
+    "rings": "_rings"
+   },
+   "history": "Each site from its year of designation.",
+   "notes": "115 designated historic sites, each from its year of designation."
+  },
+  {
+   "id": "tampa-historic-landmarks",
+   "name": "Tampa historic landmarks (local and national)",
+   "short": "the City of Tampa",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-florida"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Historic landmarks of the City of Tampa (Tampa GIS open data), CC0.",
+   "url": "https://arcgis.tampagov.net/arcgis/rest/services/OpenData/Planning/MapServer",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "historic landmark",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://arcgis.tampagov.net/arcgis/rest/services/OpenData/Planning/MapServer/29",
+    "where": "1=1",
+    "fields": "OBJECTID,NUMBER,NAME,ORD_DATE",
+    "page": 200,
+    "pause": 0.5,
+    "urls": [
+     "https://arcgis.tampagov.net/arcgis/rest/services/OpenData/Planning/MapServer/29",
+     "https://arcgis.tampagov.net/arcgis/rest/services/OpenData/Planning/MapServer/35"
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "NAME",
+    "key": [
+     "NUMBER",
+     "OBJECTID"
+    ],
+    "first": "ORD_DATE"
+   },
+   "history": "Each landmark from its designation date.",
+   "notes": "About 140 local and national historic landmarks, each from the date of its ordinance."
+  },
+  {
+   "id": "arlington-tx-hotels",
+   "name": "Arlington (Texas) hotels (inspections)",
+   "short": "the City of Arlington",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-texas"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Hotel inspections of the City of Arlington, Texas (Arlington open data), CC BY 4.0.",
+   "url": "https://gis2.arlingtontx.gov/agsext2/rest/services/OpenData/OD_Community/MapServer",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "business",
+   "tag": "hotel",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://gis2.arlingtontx.gov/agsext2/rest/services/OpenData/OD_Community/MapServer/9",
+    "where": "1=1",
+    "fields": "ESRI_OID,FacilityName,InspectionDate",
+    "page": 200,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "FacilityName",
+    "key": "FacilityName",
+    "first": "InspectionDate",
+    "last": "InspectionDate"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "Hotels and motels, one place each from its earliest to its latest inspection.",
+   "aggregate": true,
+   "still_open_months": 14
+  },
+  {
+   "id": "seattle-historic-districts",
+   "name": "Seattle historic and special review districts",
+   "short": "the City of Seattle",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-washington"
+   ],
+   "licence": "PDDL-1.0",
+   "attribution": "Historic and special review districts of the City of Seattle, under the Open Data Commons Public Domain Dedication and License.",
+   "url": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Zoning_Overlays-Historic-Special_Review_Districts/FeatureServer",
+   "reader": "tabular",
+   "kind": "areas",
+   "cls": "landmark",
+   "tag": "historic district",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/ZOyb2t4B0UYuYNYH/arcgis/rest/services/Zoning_Overlays-Historic-Special_Review_Districts/FeatureServer/23",
+    "where": "1=1",
+    "fields": "OBJECTID,DESCRIPTION",
+    "page": 200,
+    "pause": 0.5,
+    "simplify": 0.0002
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "DESCRIPTION",
+    "key": "OBJECTID",
+    "rings": "_rings"
+   },
+   "history": "From the first build on (a place dropped from the layer is closed at its last build).",
+   "notes": "Pioneer Square, the International Special Review District, Pike Place Market and the other historic districts."
+  },
+  {
+   "id": "seattle-business-licences",
+   "name": "Seattle active business licence tax certificates (located by address)",
+   "short": "the City of Seattle",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-washington"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Business licence tax certificates of the City of Seattle (data.seattle.gov, cos-data.seattle.gov, dataset wnbq-64tb), public domain.",
+   "url": "https://data.seattle.gov/d/wnbq-64tb",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "socrata",
+    "domain": "cos-data.seattle.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "wnbq-64tb",
+      "select": "city_account_number AS key, trade_name, naics_code, license_start_date AS first, street_address, city, zip, ownership_type",
+      "where": "ownership_type NOT IN ('Sole proprietorship', 'LLC - Single Member') AND trade_name IS NOT NULL AND upper(city) = 'SEATTLE'"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "name": "trade_name",
+    "key": "key",
+    "first": "first",
+    "class_column": "naics_code"
+   },
+   "class_map": {
+    "*": "business"
+   },
+   "type_column": "naics_code",
+   "type_map": "naics",
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "geocode": {
+    "street": "street_address",
+    "city": "city",
+    "zip": "zip",
+    "from": "nad"
+   },
+   "history": "Each business from its licence start date; one that leaves the list is closed at its last build.",
+   "notes": "About 40,000 Seattle businesses (corporations, multi-member companies, partnerships, non-profits; sole proprietors and single-member companies are left out, as they are often a person at home), located by the offline geocoder against the National Address Database (an address that is a home is put on its street), typed by NAICS code. Only the trade name is kept, never the legal (often personal) name, owner or phone."
+  },
+  {
+   "id": "winnipeg-business-licences",
+   "name": "Winnipeg business licences (personal sales and services)",
+   "short": "the City of Winnipeg",
+   "part": "extra",
+   "countries": [
+    "CA"
+   ],
+   "regions": [
+    "ca-manitoba"
+   ],
+   "licence": "OGL-Canada-2.0",
+   "attribution": "Contains information licensed under the Open Government Licence - Canada (City of Winnipeg: Business Licenses, data.winnipeg.ca, dataset d5k3-sfzx).",
+   "url": "https://data.winnipeg.ca/d/d5k3-sfzx",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.winnipeg.ca",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "d5k3-sfzx",
+      "select": "trade_name, address, subdescription, issue_date AS first, expiry_date AS last, location",
+      "where": "folder_description IN ('License - Personal Sales', 'License - Personal Services') AND location IS NOT NULL"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "location",
+    "name": "trade_name",
+    "key": [
+     "trade_name",
+     "address"
+    ],
+    "first": "first",
+    "last": "last"
+   },
+   "aggregate": true,
+   "still_open_months": 13,
+   "type_column": "subdescription",
+   "type_map": "humanise",
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "history": "Each business from its first licence (2010 on) to its last; a current licence is open.",
+   "notes": "Licensed second-hand dealers, pawn shops, personal service shops and the like (about 2,700 licences since 2010), one place each from its first to its last licence. Rooming-house and residential licences (homes) are left out."
+  },
+  {
+   "id": "oakland-public-art",
+   "name": "City of Oakland public art collection",
+   "short": "the City of Oakland",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-california"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Public art collection of the City of Oakland (data.oaklandca.gov, dataset fw6y-ui8e), CC0.",
+   "url": "https://data.oaklandca.gov/d/fw6y-ui8e",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "landmark",
+   "tag": "public art",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.oaklandca.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "fw6y-ui8e",
+      "select": "project_name, year AS first, temporary_permanent, location_district_neighborhood"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "location_district_neighborhood",
+    "name": "project_name",
+    "first": "first"
+   },
+   "exclude": {
+    "column": "temporary_permanent",
+    "values": [
+     "Temporary"
+    ]
+   },
+   "history": "Each work from its year.",
+   "notes": "About 90 permanent public artworks (the artist's name is not kept).",
+   "skip_names": "^Untitled"
   }
  ],
  "rejected": [
@@ -7120,11 +8416,6 @@
    "name": "Chicago food inspections, business licences and other City of Chicago data",
    "licence": "City of Chicago Data Terms of Use",
    "reason": "The terms let the City require anyone to stop all display and distribution of the data at any time, ask for an indemnity, and require a disclaimer on every site that redistributes it: not an open licence."
-  },
-  {
-   "name": "Seattle and King County: food establishment inspections (r878-4sxa) and active business licences (wnbq-64tb)",
-   "licence": "Public domain",
-   "reason": "Open, but neither dataset has coordinates (addresses only); geocoding them is not simple enough."
   },
   {
    "name": "Texas Alcoholic Beverage Commission licences (data.texas.gov 7hf9-qc9f) and Mixed Beverage receipts",
@@ -7402,11 +8693,6 @@
    "reason": "Licensed 'Access Only' in the BC Data Catalogue, not the Open Government Licence (the recreation sites subset is open and is used)."
   },
   {
-   "name": "National Hydro Network (NHN) names",
-   "licence": "OGL-Canada-2.0",
-   "reason": "Open, but the names come only inside the full hydrography (about 1,300 work units, tens of gigabytes); every named lake and river is already in the CGNDB as a point, so it would add size without names."
-  },
-  {
    "name": "Maryland, Missouri and Illinois state open-data lists (wineries, breweries, farmers' markets, welcome centres, park-and-rides, rest areas)",
    "licence": "No licence stated",
    "reason": "These datasets on opendata.maryland.gov, data.mo.gov and the Illinois portal state no licence (the New York and Pennsylvania lists, which do, are used)."
@@ -7595,6 +8881,31 @@
    "name": "Utah monuments and markers (UGRC)",
    "licence": "No licence stated",
    "reason": "The item has a disclaimer only ('as is', 'informational purposes'); no licence."
+  },
+  {
+   "name": "National Hydro Network (NHN) directly",
+   "licence": "OGL-Canada-2.0",
+   "reason": "Open, but only as about 1,300 work units (tens of gigabytes); its names come through CanVec's 1:50,000 hydrography where that file is small enough."
+  },
+  {
+   "name": "Trans Canada Trail (Sentier Transcanadien) map layers",
+   "licence": "CC-BY-NC-ND-4.0",
+   "reason": "The Trail's own layers are Creative Commons Attribution-NonCommercial-NoDerivatives; a regional copy under OGL-Alberta covers only the Edmonton area."
+  },
+  {
+   "name": "King County food establishment inspections (r878-4sxa)",
+   "licence": "public-domain-marked",
+   "reason": "Open, addresses only; Seattle's businesses now come from its licence list through the geocoder, and King County's inspections would mostly repeat them."
+  },
+  {
+   "name": "Atlanta Regional Commission historic resources survey",
+   "licence": "CC-BY-4.0",
+   "reason": "Open, but 37,000 surveyed buildings, mostly houses, and 34,000 have no recorded use, so homes cannot be left out (privacy). The Commission's historic markers are used."
+  },
+  {
+   "name": "Large US city portals without an open licence (top 50 pass, November 2026)",
+   "licence": "No licence stated",
+   "reason": "Searched the 50 largest cities not yet covered on Socrata and ArcGIS: Phoenix, San Antonio, San Diego, Jacksonville, San Jose, Charlotte, Indianapolis, Nashville, El Paso, Oklahoma City, Las Vegas, Portland, Memphis, Louisville, Milwaukee, Albuquerque, Tucson, Fresno, Mesa, Omaha, Colorado Springs, Raleigh, Long Beach, Virginia Beach, Tulsa, Wichita, Cleveland, Bakersfield, Aurora, Anaheim, Riverside, Corpus Christi, Lexington, St. Louis, Orlando, Durham, Madison, Buffalo, Richmond, Boise and Spokane publish their facility, inspection and landmark layers with a disclaimer only, or not at all with coordinates. Used: Houston (public domain), Fort Worth, Miami and Arlington TX (CC BY 4.0), Sacramento County, Tampa and Oakland (CC0), Saint Paul (public domain), Seattle (public domain, located by address; PDDL districts), Winnipeg (OGL-Canada)."
   }
  ],
  "candidates": [
@@ -7746,27 +9057,17 @@
   {
    "name": "NYPL city directories and \"Navigating the Green Book\"",
    "licence": "To confirm (often CC0)",
-   "note": "No downloadable data with a stated licence was found yet."
-  },
-  {
-   "name": "Who's On First",
-   "licence": "CC0 / CC BY per source (share-alike sources to skip)",
-   "note": "Large per-country SQLite bundles with per-record licences; add with a licence filter."
+   "note": "Checked again in November 2026: NYPL's Space/Time city-directories project publishes scans and extraction code, not a geocoded release with a stated licence; NYPL's CC0 release covers catalogue metadata only. No open Green Book dataset was found."
   },
   {
    "name": "Wikimedia Commons \"depicts\" clusters",
    "licence": "CC0 (structured data)",
-   "note": "Too heavy for the monthly build as it is (millions of files); a candidate for a separate, prepared layer."
+   "note": "Checked again in November 2026: the only bulk source is the full Commons structured-data dump (tens of gigabytes, every file); clustering depicted places by photo position needs its own prepared job, too heavy for the monthly build. Wikidata's filming locations are added instead."
   },
   {
    "name": "Wikidata filming locations (P915)",
    "licence": "CC0",
    "note": "An inverse property (film -> place); needs its own query shape."
-  },
-  {
-   "name": "NCES older school years (CCD back to the 1990s) and IPEDS closed colleges; Census place vintages 1990/2000/2010",
-   "licence": "Public domain",
-   "note": "Seed years like the TIGER address ranges, so closed schools and old town names get their years."
   },
   {
    "name": "NRHP historic district areas (the NPS polygons layer); city neighbourhood and landmark-district boundaries",
@@ -7777,11 +9078,6 @@
    "name": "State boat ramps, fishing access sites and wildlife management areas (NY DEC, PA Fish & Boat, Florida FWC, Minnesota DNR)",
    "licence": "State terms (to confirm)",
    "note": "Most are ArcGIS layers the arcgis method reads; add state by state once each licence is confirmed."
-  },
-  {
-   "name": "City street-renaming histories (Chicago, NYC co-named streets, DC)",
-   "licence": "City licences",
-   "note": "Dated street names: add as dated lines once each dataset is confirmed."
   },
   {
    "name": "Alberta parks (geospatial.alberta.ca), Quebec SEPAQ, Parks Canada visitor sites",
@@ -7797,16 +9093,6 @@
    "name": "State capitol and state building inventories (NY OGS, California DGS, Texas, Washington); state tourism-board attraction lists",
    "licence": "State terms",
    "note": "None found with an open licence and coordinates yet; Wikidata's capitols and tourist attractions cover many."
-  },
-  {
-   "name": "BTS NTAD rail lines (active and abandoned); OHM historic railway lines; America's Byways; NHD rivers; NRN and CanVec lines",
-   "licence": "Public domain / OGL-Canada",
-   "note": "Line support is in; these need names (rail lines carry owner codes, not names) or are large (NHD, NRN)."
-  },
-  {
-   "name": "NTAD National Transit Map stops",
-   "licence": "CC-BY-3.0-US",
-   "note": "673,251 stops under CC BY 3.0 US (the service's own licence). Decided to wait: the stop names come from each agency's GTFS feed, so most would duplicate the GTFS layer's stops one for one; it would fill the agencies whose own feeds have no open licence (Rhode Island). Needs a per-feed filter (feed_id against the GTFS layer's feeds) before it is added."
   },
   {
    "name": "Statistics Canada Canadian Public Transit Network Database (2025)",
@@ -7884,11 +9170,6 @@
    "note": "Open; would link brands to their parent companies. Left for a later round (brands are data only today)."
   },
   {
-   "name": "Wikidata labels in French, Spanish, German, Italian, Dutch, Japanese and Chinese",
-   "licence": "CC0-1.0",
-   "note": "Open, but a side table of 7 languages would add roughly 0.5-1 MB per state (about 40% of a state's Wikidata items have at least one of them); skipped for size, as allowed."
-  },
-  {
    "name": "QLever Wikidata endpoint (qlever.dev)",
    "licence": "CC0-1.0 (data)",
    "note": "Answers fast but stops at about 30 seconds on a box query with English labels and rate-limits (429); no usage policy found. The Wikidata Query Service (wikibase:box tiles) is used instead."
@@ -7896,7 +9177,7 @@
   {
    "name": "Prince Edward Island civic addresses",
    "licence": "Unconfirmed",
-   "note": "82,938 civic address points on the Province's own ArcGIS server, but the layer states no licence and the Province's licence page refused automated access (403)."
+   "note": "82,938 civic address points on the Province's own ArcGIS server, but the layer states no licence and the Province's licence page refused automated access (403). Looked again in November 2026: the layer and the Province's open-data hub state no licence for it (the hub's licence page is a script-only page). PEI's addresses are now covered by NRCan's road-network address ranges (15,643 segments) and the 2021 ODA."
   },
   {
    "name": "Newfoundland and Labrador provincial historic sites",
@@ -7911,7 +9192,22 @@
   {
    "name": "Northwest Territories and Nunavut open data portals",
    "licence": "Unchecked",
-   "note": "opendata.gov.nt.ca returned 502 and gov.nu.ca 403 to automated access; nothing evaluated. Their communities are in the CGNDB, CPCAD and StatCan's census subdivisions."
+   "note": "opendata.gov.nt.ca returned 502 and gov.nu.ca 403 to automated access (not worked around). The territories are covered by federal sources instead: CGNDB names, CPCAD protected areas, StatCan's census subdivisions and postal areas, NRCan's road network with address ranges (3 MB and 1.6 MB), Inuit and First Nations communities, federal property and contaminated sites (4,486 in Nunavut)."
+  },
+  {
+   "name": "CanVec 1:50,000 hydrography for BC, Ontario, Québec, NL, NWT and Nunavut; CanVec trails",
+   "licence": "OGL-Canada-2.0",
+   "note": "Open, but 1.1 to 6.4 GB per province or territory (the 1:250,000 edition carries no names); would need a prepared, cached slice. CanVec's trails carry no names. The National Hydro Network's names reach the packs through CanVec where it is small enough."
+  },
+  {
+   "name": "NCES Common Core of Data before 2015-16 and IPEDS closed colleges",
+   "licence": "US-Government-Work",
+   "note": "Open; the CCD's older directory files have addresses but the EDGE geocodes start in 2015-16, so the older years would need the geocoder."
+  },
+  {
+   "name": "Street-renaming lists of DC, Toronto and Baton Rouge",
+   "licence": "Various",
+   "note": "No open DC or Toronto renaming dataset was found; Baton Rouge's (public domain, 880 changes since the 1950s) has dates but no positions and would need matching to street lines. Chicago's portal terms are rejected."
   }
  ]
 }

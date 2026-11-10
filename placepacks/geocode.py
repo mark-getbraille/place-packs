@@ -3,6 +3,7 @@ organizations, permittee lists) are located against the region's own address poi
 Database slice the build already has), so nothing is sent anywhere.
 
   locate(requests, nad_path, nad_entry) -> {index: (lat, lon, how)}
+  locate_ranges(requests, path, entry, skip) -> {index: (lat, lon, "range")}   address ranges (NRCan's road network)
       requests: [(street address line, city, ZIP)]; how is "address" (the address point, matched with the ZIP or
       the city), or "street" (the address is a home: the NAD marks it residential, so the organization is put at
       the middle of its street's points in that ZIP, "on Elm Street", never at the house).
@@ -106,10 +107,70 @@ def locate(requests, nad_path, nad_entry):
     return out
 
 
+def locate_ranges(requests, path, entry, skip=()):
+    """Locate the requests (as for locate) against an address-range source (a shapes entry of kind "ranges": the
+    street name, the house numbers on each side and the town (fields "city") of each segment, NRCan's road network
+    in Canada; a request's town must match the segment's when both are known): the number is
+    placed along its segment between the side's first and last numbers (odd and even sides kept apart), how
+    "range". skip: request indexes already located. Returns {request index: (lat, lon, "range")}."""
+    import shapefile
+    from placepacks.readers.shapes import _field, _number, _parts, files_of
+    wanted = {}
+    for i, (line, city, zipc) in enumerate(requests):
+        if i in skip:
+            continue
+        parts = split_address(line)
+        if parts and parts[0].isdigit():
+            wanted.setdefault(parts[1], []).append((i, int(parts[0]), norm_city(city)))
+    if not wanted or not path:
+        return {}
+    fields, out = entry["fields"], {}
+    for file in files_of(path, entry.get("shp_member")):
+        with shapefile.Reader(file, encoding=entry.get("encoding", "utf-8"), encodingErrors="replace") as shp:
+            names = [f[0] for f in shp.fields[1:]]
+            for sr in shp.iterShapeRecords():
+                rec = dict(zip(names, sr.record))
+                street = norm_street(str(_field(rec, fields["name"])))
+                if street not in wanted or not sr.shape.points:
+                    continue
+                line_pts = [p for part in _parts(sr.shape) for p in part]
+                places = {norm_city(str(rec.get(c) or "")) for c in fields.get("city", [])} - {"", "NONE"}
+                for side in (("lfrom", "lto"), ("rfrom", "rto")):
+                    a, b = (_number(rec.get(fields[k])) for k in side)
+                    if not a or not b:
+                        continue
+                    lo, hi = min(a, b), max(a, b)
+                    for i, n, town in wanted[street]:
+                        if i in out or not lo <= n <= hi or (n - a) % 2:
+                            continue
+                        if town and places and town not in places:
+                            continue            # the same street name in another town
+                        t = 0.5 if a == b else (n - a) / (b - a)
+                        out[i] = _along(line_pts, t) + ("range",)
+    return out
+
+
+def _along(points, t):
+    """(lat, lon) a fraction t of the way along a line of (lat, lon) points."""
+    from placepacks import fmt
+    if len(points) == 1:
+        return points[0]
+    lengths = [fmt.metres(*points[k], *points[k + 1]) for k in range(len(points) - 1)]
+    goal, run = t * sum(lengths), 0.0
+    for k, step in enumerate(lengths):
+        if run + step >= goal and step > 0:
+            f = (goal - run) / step
+            (y1, x1), (y2, x2) = points[k], points[k + 1]
+            return y1 + f * (y2 - y1), x1 + f * (x2 - x1)
+        run += step
+    return points[-1]
+
+
 def stats(found, total):
     """The line the build prints about a geocoded source."""
     at = sum(1 for v in found.values() if v[2] == "address")
-    street = len(found) - at
+    ranged = sum(1 for v in found.values() if v[2] == "range")
+    street = len(found) - at - ranged
     pct = round(100 * len(found) / total) if total else 0
     return (f"located {len(found):,} of {total:,} addresses ({pct}%): {at:,} at the address, {street:,} on the street "
-            f"(homes)")
+            f"(homes)" + (f", {ranged:,} along an address range" if ranged else ""))

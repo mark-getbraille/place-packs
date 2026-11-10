@@ -8,6 +8,8 @@ text has its file in LICENSES/; every rejection says why. sources_for(region, pa
 import json
 import os
 
+from placepacks import fmt
+
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Licences a source may have to be in a pack (each allows redistribution; none is non-commercial or no-derivatives).
 # ODbL is share-alike, so only OpenStreetMap's own layer has it (see LICENSES.md: each pack is a collective database).
@@ -19,7 +21,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ALLOWED = {"ODbL-1.0", "CDLA-Permissive-2.0", "Apache-2.0", "OGL-Canada-2.0", "OGL-UK-3.0", "CC0-1.0", "CC-BY-4.0",
            "US-Government-Work", "etalab-2.0", "per-feed-open", "per-source-open", "PDDL-1.0", "ODC-By-1.0",
            "NYC-Open-Data", "OPEN-NY", "public-domain-marked", "Newberry-open", "OGL-Toronto", "OGL-BC", "OGL-Ontario",
-           "OGL-Calgary", "Edmonton-Open-Data", "OGL-Nova-Scotia", "OGL-Vancouver", "OGL-NB"}
+           "OGL-Calgary", "Edmonton-Open-Data", "OGL-Nova-Scotia", "OGL-Vancouver", "OGL-NB", "CC-BY-3.0-US"}
 SHARE_ALIKE = {"ODbL-1.0"}
 
 
@@ -61,7 +63,7 @@ def check(cat=None):
             problems.append(f"{where}: a share-alike licence outside the OpenStreetMap layer")
         if e.get("licence") not in licences:
             problems.append(f"{where}: the licence {e.get('licence')} is not described in licences")
-        if e.get("part") not in ("core", "extra"):
+        if e.get("part") not in fmt.PARTS:
             problems.append(f"{where}: the part must be core or extra")
         for rid in e.get("regions", []):
             if rid not in known:

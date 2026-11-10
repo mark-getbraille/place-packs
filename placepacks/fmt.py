@@ -24,7 +24,7 @@ BIG_CELLS = 400                 # a shape touching more fine cells than this is 
 EARTH_M = 6_371_008.8
 SIMPLIFY_M = 5.0
 ATTRIBUTION = "© OpenStreetMap contributors"
-PARTS = ("core", "extra")       # core: OpenStreetMap, addresses, address ranges and Census areas; extra: the rest
+PARTS = ("core", "extra", "names")     # names: optional, other-language names (downloaded on request)       # core: OpenStreetMap, addresses, address ranges and Census areas; extra: the rest
 
 
 # ------------------------------------------------------------------------------------------- months

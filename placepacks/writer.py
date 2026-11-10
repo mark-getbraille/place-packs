@@ -25,7 +25,7 @@ from placepacks import fmt
 
 TABLES = {
     "points": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, name TEXT, cls TEXT, tag TEXT, lat INTEGER, "
-              "lon INTEGER, cell INTEGER, ccell INTEGER, first INTEGER, last INTEGER, type, brand",
+              "lon INTEGER, cell INTEGER, ccell INTEGER, first INTEGER, last INTEGER, type, brand, note",
     "areas": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, name TEXT, cls TEXT, tag TEXT, minlat INTEGER, "
              "minlon INTEGER, maxlat INTEGER, maxlon INTEGER, size REAL, rings BLOB, first INTEGER, last INTEGER, type",
     "lines": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, name TEXT, cls TEXT, tag TEXT, minlat INTEGER, "
@@ -49,7 +49,7 @@ SAME = {
 }
 NEAR = 50                       # microdegrees (about 5 m): the second pass for records without a stable id
 # Points and areas have a "type" phrase (and points a "brand") while a pack is built; finish() moves the phrases to
-# the "types" table (and the brands to "brands") and
+# the "types" table (and the brands to "brands", the notes to "notes") and
 # the links to "point_types" and "area_types" (FORMAT.md), so the tables themselves keep the version 2 columns and
 # readers and merges made before types existed read new packs unchanged.
 TYPED = {"points": "point_types", "areas": "area_types"}
@@ -106,18 +106,21 @@ class PackWriter:
         """The description of a source used in this pack (SOURCE_COLUMNS)."""
         self.sources[fields["id"]] = {c: str(fields.get(c, "") or "") for c in SOURCE_COLUMNS}
 
-    def add_point(self, key, source, name, cls, tag, lat, lon, first=None, last=None, type=None, brand=None):
+    def add_point(self, key, source, name, cls, tag, lat, lon, first=None, last=None, type=None, brand=None,
+                  note=None):
         """A named point; type: its fine type phrase ("pizza restaurant"), if known; brand: (brand name, Wikidata id
-        or "") of a chain's location (data only, like the type)."""
+        or "") of a chain's location (data only, like the type); note: a short note about the place ("filming
+        location of ..."), data only, never spoken."""
         first, last = self._span(first, last)
         self._extend(lat, lon)
         brand_text = None
         if brand and (brand[0] or "").strip():
             brand_text = f"{brand[0].strip()}|{(brand[1] or '').strip()}"
         self.db.execute("INSERT INTO points (key, source, name, cls, tag, lat, lon, cell, ccell, first, last, type, "
-                        "brand) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        "brand, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         (key, source, name, cls, tag, int(round(lat * fmt.SCALE)), int(round(lon * fmt.SCALE)),
-                         fmt.fine_cell(lat, lon), fmt.coarse_cell(lat, lon), first, last, type or None, brand_text))
+                         fmt.fine_cell(lat, lon), fmt.coarse_cell(lat, lon), first, last, type or None, brand_text,
+                         (note or "").strip() or None))
         self._count(source, "points")
 
     def add_area(self, key, source, name, cls, tag, rings, first=None, last=None, type=None):
@@ -174,6 +177,33 @@ class PackWriter:
                                   fmt.pack_points(fmt.micro(points)), self.month, self.month))
         self._count(source, "ranges")
 
+    def drop_duplicates(self, source, against, metres=100):
+        """Remove the points of source that another source in against already has: the same normalised name within
+        metres (the national transit stops against each agency's GTFS feed). Returns the number removed."""
+        from placepacks.lookup import normal_name
+        tol = int(metres / 0.111)                       # microdegrees, about metres at the equator
+        others = {}
+        marks = ",".join("?" * len(against))
+        for name, lat, lon in self.db.execute(f"SELECT name, lat, lon FROM points WHERE source IN ({marks})",
+                                              list(against)):
+            others.setdefault(normal_name(name), []).append((lat, lon))
+        gone = []
+        for pid, name, lat, lon in self.db.execute("SELECT id, name, lat, lon FROM points WHERE source = ?",
+                                                    (source,)).fetchall():
+            near = others.get(normal_name(name), [])
+            if any(abs(lat - a) <= tol and abs(lon - b) <= tol for a, b in near):
+                gone.append((pid,))
+        self.db.executemany("DELETE FROM points WHERE id = ?", gone)
+        return len(gone)
+
+    def add_label(self, key, lang, name):
+        """A place's name in another language (the optional "names" part): the key of the place in the main packs
+        ("wikidata:Q42"), a language code ("fr") and the name. Data only."""
+        if not getattr(self, "_labels", False):
+            self.db.execute("CREATE TABLE labels (key TEXT, lang TEXT, name TEXT, UNIQUE (key, lang))")
+            self._labels = True
+        self.db.execute("INSERT OR REPLACE INTO labels VALUES (?, ?, ?)", (key, lang, " ".join(name.split())))
+
     def add_address(self, source, number, street, city, lat, lon):
         """An address point: house number, street and town only (no unit, no names of people)."""
         number, street = (number or "").strip(), " ".join((street or "").split())
@@ -194,9 +224,11 @@ class PackWriter:
         keys of removals ([{"key", "reason", "date"}]), write the grid, the address cells, the sources and the meta
         table, and put the file in place. Returns the counts {table: rows}."""
         db = self.db
-        # Only the first row of a key this month (a reader may give an object twice).
+        # Only the first row of a key this month (a reader may give an object twice); two sources may share a key
+        # (Wikidata's places and their filming-location notes), so each source keeps its own row.
         for table in TABLES:
-            db.execute(f"DELETE FROM {table} WHERE id NOT IN (SELECT MIN(id) FROM {table} GROUP BY key, name)")
+            db.execute(f"DELETE FROM {table} WHERE id NOT IN (SELECT MIN(id) FROM {table} GROUP BY key, name, "
+                       f"source)")
         previous_month, builds = "", []
         if previous:
             previous_month = merge_history(db, previous, self.month)
@@ -232,6 +264,8 @@ class PackWriter:
             CREATE INDEX points_key ON points (key);
             CREATE INDEX grid_cell ON grid (what, level, cell);
         """)
+        if getattr(self, "_labels", False):
+            db.execute("CREATE INDEX labels_key ON labels (key)")
         db.commit()
         db.execute("VACUUM")
         db.close()
@@ -257,6 +291,12 @@ class PackWriter:
         db.execute("INSERT INTO point_brands SELECT p.id, b.id FROM points p JOIN brands b ON b.name || '|' || "
                    "b.wikidata = p.brand")
         db.execute("ALTER TABLE points DROP COLUMN brand")
+        # Notes about places (filming locations), the same way: each text once, points link to it. Data only.
+        db.execute("CREATE TABLE notes (id INTEGER PRIMARY KEY, text TEXT UNIQUE)")
+        db.execute("INSERT INTO notes (text) SELECT DISTINCT note FROM points WHERE note IS NOT NULL ORDER BY 1")
+        db.execute("CREATE TABLE point_notes (id INTEGER PRIMARY KEY, note INTEGER)")
+        db.execute("INSERT INTO point_notes SELECT p.id, n.id FROM points p JOIN notes n ON n.text = p.note")
+        db.execute("ALTER TABLE points DROP COLUMN note")
 
     def _write_addresses(self):
         """Pack the address rows into one compressed record list per fine cell (address_cells). The cell's street list
@@ -355,7 +395,12 @@ def merge_history(db, previous, month):
                      f"l.brand WHERE l.id = {old}.id)")
         else:
             brand = "NULL"
-        picks = ", ".join(phrase if c == "type" else brand if c == "brand" else c for c in columns)
+        if table == "points" and "point_notes" in typed and "notes" in typed:
+            note = f"(SELECT n.text FROM prev.point_notes l JOIN prev.notes n ON n.id = l.note WHERE l.id = {old}.id)"
+        else:
+            note = "NULL"
+        picks = ", ".join(phrase if c == "type" else brand if c == "brand" else note if c == "note" else c
+                          for c in columns)
         db.execute(f"INSERT INTO {table} ({cols}) SELECT {picks} FROM {old} WHERE id NOT IN (SELECT pid FROM m)")
         db.execute("DROP TABLE m")
     db.execute("DROP TABLE temp.old_addr")

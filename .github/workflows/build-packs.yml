@@ -10,9 +10,10 @@
 #   slice per region; the NAD (found from its data.transportation.gov metadata) is kept in the Actions cache between
 #   runs and downloaded again only when its blobId or rowsUpdatedAt changes. The city and state open-data sources
 #   (Socrata portals) and the federal ArcGIS layers (historic places, PAD-US, bridges, dams, airports, stations,
-#   parks) are fetched by each region's build job, by the region's box or one small grouped query per dataset. build: one job per region (two at a time, so Geofabrik and the other services get
-#   one download at a time from each), core then extra, each merged with the region's previous pack (history is
-#   never rewritten). publish: the new packs under dated names, then packs-previous.json (the list before), then
+#   parks) are fetched by each region's build job, by the region's box or one small grouped query per dataset. build: one job per region (ten at a time; inside a job four sources at a time, at
+#   most two against one host, each stopped at its time limit), core then extra, each merged with the region's
+#   previous pack (history is never rewritten); the TIGER history seed is made once per region and kept in the
+#   "seeds" release. publish: the new packs under dated names, then packs-previous.json (the list before), then
 #   packs.json last; then the files neither list names are deleted. Only the repository's own GITHUB_TOKEN is used.
 # - Keep-alive: GitHub turns off scheduled workflows in a repository with no activity for 60 days, so every run
 #   commits an updated sources-status.md.
@@ -148,10 +149,10 @@ jobs:
     needs: [plan, prepare]
     if: ${{ always() && needs.plan.outputs.regions != '[]' && needs.plan.result == 'success' }}
     runs-on: ubuntu-latest
-    timeout-minutes: 340
+    timeout-minutes: 355   # the hosted maximum is 360
     strategy:
       fail-fast: false
-      max-parallel: 6   # gentle on the source servers and leaves runners for other projects; every region in about 11 hours
+      max-parallel: 10  # each job fetches its sources four at a time with per-host limits (placepacks.fetch)
       matrix:
         region: ${{ fromJSON(needs.plan.outputs.regions) }}
     steps:
@@ -198,15 +199,32 @@ jobs:
         if: ${{ inputs.seed_history && startsWith(matrix.region.id, 'us-') }}
         env:
           REGION: ${{ matrix.region.id }}
+          GH_TOKEN: ${{ github.token }}
         run: |
+          # A finished seed is kept in the "seeds" release as seed-<region>-<fingerprint>.osmpack and reused; it is
+          # made again only when the fingerprint changes (the seed years, the seed sources or their entries).
+          mkdir -p seed
+          FP=$(python -m placepacks.seed fingerprint)
+          NAME="seed-$REGION-$FP.osmpack"
           prev=""
-          SEED=$(python -c "import json; print(','.join(json.load(open('sources.json'))['settings']['tiger_seed_sources']))")
-          for year in $(python -c "import json; print(' '.join(json.load(open('sources.json'))['settings']['tiger_seed_years']))"); do
-            PLACEPACKS_SETTINGS="{\"tiger_year\": \"$year\"}" python -m placepacks.fetch "$REGION" --dir "seed/$year" --part extra --only "$SEED"
-            python -m placepacks.build "$REGION" --part extra --inputs "seed/$year/fetched.json" --out "seed/$year.osmpack" --month "${year}01" --only "$SEED" --previous "$prev"
-            prev="seed/$year.osmpack"
-            rm -rf "seed/$year"
-          done
+          if gh release download seeds --repo "$GITHUB_REPOSITORY" --pattern "$NAME" --dir seed 2>/dev/null && [ -f "seed/$NAME" ]; then
+            echo "Reusing the stored seed $NAME"
+            prev="seed/$NAME"
+          else
+            SEED=$(python -c "import json; print(','.join(json.load(open('sources.json'))['settings']['tiger_seed_sources']))")
+            for year in $(python -c "import json; print(' '.join(json.load(open('sources.json'))['settings']['tiger_seed_years']))"); do
+              PLACEPACKS_SETTINGS="{\"tiger_year\": \"$year\"}" python -m placepacks.fetch "$REGION" --dir "seed/$year" --part extra --only "$SEED"
+              python -m placepacks.build "$REGION" --part extra --inputs "seed/$year/fetched.json" --out "seed/$year.osmpack" --month "${year}01" --only "$SEED" --previous "$prev"
+              prev="seed/$year.osmpack"
+              rm -rf "seed/$year"
+            done
+            if [ -n "$prev" ]; then
+              cp "$prev" "seed/$NAME"
+              gh release view seeds --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1 || gh release create seeds --repo "$GITHUB_REPOSITORY" --title "TIGER history seeds" --notes "One finished TIGER history seed per US region (placepacks.seed), reused by later builds; not for download."
+              gh release upload seeds "seed/$NAME" --repo "$GITHUB_REPOSITORY" --clobber || echo "The seed could not be stored; the next seeded build makes it again."
+              prev="seed/$NAME"
+            fi
+          fi
           if [ ! -f "previous/$REGION-extra.osmpack" ] && [ -n "$prev" ]; then cp "$prev" "previous/$REGION-extra.osmpack"; fi
       - name: Build the core, extra and names packs
         env:
@@ -232,9 +250,12 @@ jobs:
           retention-days: 7
           if-no-files-found: error
 
+  # Published whatever the build legs' result: a leg that times out at the job limit is reported "cancelled" (and
+  # makes needs.build.result "cancelled" or "failure"), but the regions that finished are not wasted. Only a plan
+  # that failed, or a build that never ran, publishes nothing; the step below stops when no pack was built.
   publish:
-    needs: build
-    if: ${{ always() && needs.build.result != 'cancelled' && needs.build.result != 'skipped' }}
+    needs: [plan, build]
+    if: ${{ always() && needs.plan.result == 'success' && needs.build.result != 'skipped' }}
     runs-on: ubuntu-latest
     timeout-minutes: 240
     steps:
@@ -244,6 +265,7 @@ jobs:
           python-version: "3.12"
       - run: python -m pip install -r requirements.txt
       - uses: actions/download-artifact@v4
+        continue-on-error: true
         with:
           pattern: pack-*
           path: built
@@ -252,6 +274,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          if ! ls built/*.osmpack >/dev/null 2>&1; then echo "No pack was built; nothing to publish."; exit 0; fi
           mkdir -p old dist
           if ! gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             gh release create "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --title "Place packs" --notes-file RELEASE_NOTES.md
@@ -278,6 +301,7 @@ jobs:
           done
       - name: Keep the schedule alive (update sources-status.md)
         run: |
+          if [ ! -f packs.json ]; then echo "Nothing was published; sources-status.md is left as it is."; exit 0; fi
           python -m placepacks.status packs.json > sources-status.md
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"

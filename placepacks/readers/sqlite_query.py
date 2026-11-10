@@ -10,6 +10,7 @@ import zipfile
 
 from placepacks import fmt
 from placepacks.readers import reader
+from placepacks.regions import in_region
 
 
 def _open(path, member=".gpkg"):
@@ -31,7 +32,6 @@ def read(path, entry, region, writer):
     """Add the query's points to writer. Returns the number of records."""
     import shutil
     con, tmp = _open(path, entry.get("member", ".gpkg"))
-    west, south, east, north = region["bbox"]
     count = 0
     try:
         cur = con.execute(entry["query"])
@@ -42,7 +42,7 @@ def read(path, entry, region, writer):
                 lat, lon = float(row["lat"]), float(row["lon"])
             except (TypeError, ValueError):
                 continue
-            if not (south - 0.05 <= lat <= north + 0.05 and west - 0.05 <= lon <= east + 0.05) or lat == lon == 0:
+            if not in_region(region, lat, lon, 0.05) or lat == lon == 0:
                 continue
             name = " ".join(str(row.get("name") or "").split())
             if not name:

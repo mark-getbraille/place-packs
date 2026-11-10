@@ -221,9 +221,42 @@ ALL_TILE = 2.0                  # square degrees: the "all" mode starts with til
                                 # degrees can pass the 60-second limit)
 
 
+COUNT_QUERY = """SELECT (COUNT(?item) AS ?n) WHERE {{
+  SERVICE wikibase:box {{ ?item wdt:P625 ?coord .
+    bd:serviceParam wikibase:cornerSouthWest "Point({west} {south})"^^geo:wktLiteral .
+    bd:serviceParam wikibase:cornerNorthEast "Point({east} {north})"^^geo:wktLiteral . }}
+}}"""
+PLAN_TILE = 25.0                # square degrees: the planning starts with tiles this size
+TILE_ITEMS = 8000               # a tile with more items than this is split before it is asked for
+
+
+def count_query(box):
+    """The query counting the items with coordinates in a tile (fast: the box service only)."""
+    west, south, east, north = box
+    return COUNT_QUERY.format(west=west, south=south, east=east, north=north)
+
+
+def plan_tiles(region, count):
+    """The tiles to ask for: the region's boxes in tiles of PLAN_TILE square degrees, each split into four while it
+    holds more than TILE_ITEMS items; tiles with no item at all (open sea, ice) are left out. count(box) -> items
+    (None when the count could not be had: the tile is kept and the fetch splits it if it times out)."""
+    todo, out = list(first_tiles(region, PLAN_TILE)), []
+    while todo:
+        box = todo.pop()
+        n = count(box)
+        if n == 0:
+            continue
+        if n is not None and n > TILE_ITEMS and box[2] - box[0] > MIN_TILE * 2 and box[3] - box[1] > MIN_TILE * 2:
+            todo += split_tile(box)
+        else:
+            out.append(box)
+    return out
+
+
 def first_tiles(region, most=ALL_TILE):
     """The region's box in tiles of at most most square degrees (fetch.py splits a tile further when needed)."""
-    tiles, out = [tuple(region["bbox"])], []
+    from placepacks.regions import boxes_of
+    tiles, out = list(boxes_of(region)), []         # Alaska: two boxes, never a band round the globe
     while tiles:
         w, s_, e, n = tiles.pop()
         if (e - w) * (n - s_) > most:

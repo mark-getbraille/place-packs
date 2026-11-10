@@ -22,6 +22,7 @@ import sys
 import zipfile
 
 from placepacks import catalogue
+from placepacks.regions import boxes_of, touches_region
 from placepacks.readers.tabular import _get, dict_rows, open_texts, parse_point, region_values
 
 
@@ -77,8 +78,8 @@ def _targets(entry, row, by_value, boxes):
             at = lat, lon
     lat, lon = at
     cc = _get(row, spec["country"]).upper() if spec.get("country") else None
-    return [rid for rid, (rcc, (w, s, e, n)) in boxes.items() if (cc is None or cc == rcc) and
-            s - 0.05 <= lat <= n + 0.05 and w - 0.05 <= lon <= e + 0.05]
+    return [rid for rid, (rcc, rboxes) in boxes.items() if (cc is None or cc == rcc) and
+            any(s - 0.05 <= lat <= n + 0.05 and w - 0.05 <= lon <= e + 0.05 for w, s, e, n in rboxes)]
 
 
 def split_tabular(entry, path, out, regions):
@@ -89,7 +90,7 @@ def split_tabular(entry, path, out, regions):
     if entry.get("filter"):
         by_value = {entry["filter"]["equals"].format(**region_values(r)).upper(): rid for rid, r in mine.items()}
     else:
-        boxes = {rid: (catalogue.country_code(r), r["bbox"]) for rid, r in mine.items()}
+        boxes = {rid: (catalogue.country_code(r), boxes_of(r)) for rid, r in mine.items()}
     keep = needed_columns(entry)
     headless = bool(entry.get("fieldnames"))
     writers, files, counts = {}, [], {}
@@ -143,8 +144,7 @@ def split_shapes(entry, path, out, regions):
                 bbox = (min(xs), min(ys), max(xs), max(ys))
             x1, y1, x2, y2 = bbox
             for rid, r in targets.items():
-                w, s, e, n = r["bbox"]
-                if x2 < w or x1 > e or y2 < s or y1 > n:
+                if not touches_region(r, (x1, y1, x2, y2)):
                     continue
                 if rid not in writers:
                     folder = os.path.join(out, rid, entry["id"])
@@ -176,12 +176,12 @@ def split_parquet(entry, path, out, regions):
     for rid, r in regions.items():
         if catalogue.country_code(r) not in entry["countries"]:
             continue
-        west, south, east, north = r["bbox"]
         folder = os.path.join(out, rid, entry["id"])
         os.makedirs(folder, exist_ok=True)
         target = os.path.join(folder, entry["id"] + ".parquet")
-        con.execute(f"COPY (SELECT * FROM read_parquet('{path}') WHERE longitude BETWEEN {west} AND {east} AND "
-                    f"latitude BETWEEN {south} AND {north}) TO '{target}' (FORMAT PARQUET)")
+        where = " OR ".join(f"(longitude BETWEEN {w} AND {e} AND latitude BETWEEN {s_} AND {n})"
+                            for w, s_, e, n in boxes_of(r))
+        con.execute(f"COPY (SELECT * FROM read_parquet('{path}') WHERE {where}) TO '{target}' (FORMAT PARQUET)")
         counts[rid] = con.execute(f"SELECT COUNT(*) FROM read_parquet('{target}')").fetchone()[0]
     con.close()
     return counts

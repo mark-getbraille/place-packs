@@ -27,6 +27,7 @@ import re
 
 from placepacks import fmt, types
 from placepacks.readers import reader
+from placepacks.regions import touches_region
 from placepacks.readers.tabular import class_of, smart_case
 
 
@@ -101,7 +102,6 @@ def read(path, entry, region, writer):
     import shapefile
     fields, source, kind, count = entry["fields"], entry["id"], entry["kind"], 0
     skip = re.compile(entry["skip_names"], re.I) if entry.get("skip_names") else None
-    west, south, east, north = region["bbox"]
     for file in files_of(path, entry.get("shp_member")):
         with shapefile.Reader(file, encoding=entry.get("encoding", "utf-8"), encodingErrors="replace") as shp:
             names = [f[0] for f in shp.fields[1:]]
@@ -112,7 +112,7 @@ def read(path, entry, region, writer):
                 if entry.get("projection"):
                     shape = _Projected(shape, entry["projection"])
                 x1, y1, x2, y2 = shape.bbox if len(shape.points) > 1 else (*shape.points[0], *shape.points[0])
-                if x2 < west or x1 > east or y2 < south or y1 > north:
+                if not touches_region(region, (x1, y1, x2, y2)):
                     continue
                 if entry.get("name_template"):
                     name = entry["name_template"].format(**{k: smart_case(str(v or "")) for k, v in rec.items()})

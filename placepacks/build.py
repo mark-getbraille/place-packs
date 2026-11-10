@@ -75,7 +75,7 @@ def build(region_id, part, fetched, out, previous=None, month=None, only=None, c
     if problems:
         raise SystemExit("The catalogue is not right: " + "; ".join(problems))
     region = dict((regions or catalogue.regions())[region_id])
-    if fetched.get("_bbox"):
+    if fetched.get("_bbox") and not region.get("boxes"):
         region["bbox"] = fetched["_bbox"]           # the extract's own box (fetch.extract_bbox)
     readers = load_all()
     # The local inputs of every source, for readers that use another source (the geocoder reads the NAD slice).

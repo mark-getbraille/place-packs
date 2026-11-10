@@ -63,7 +63,7 @@ How far back each layer goes:
 | Layer | History |
 |---|---|
 | OpenStreetMap | From the first build (November 2026). Full OpenStreetMap history would need about 150 GB, or an OpenStreetMap login for per-state history extracts, so it is not used. |
-| US street names and address ranges (TIGER/Line) | Seeded from the yearly releases of 2011, 2014, 2017, 2020 and 2023 (ADDRFEAT starts in 2011), then every build. This catches street renames, new streets and changed ranges. |
+| US street names and address ranges (TIGER/Line) | Seeded from the yearly releases of 2011, 2016 and 2021 (ADDRFEAT starts in 2011), then every build. This catches street renames, new streets and changed ranges. TIGER's point and area landmarks and military installations are seeded the same way. |
 | US address points (NAD) | From the first build. Earlier NAD releases are added if USDOT keeps them openly downloadable. The NAD is downloaded again only when USDOT publishes a new file (data.transportation.gov). |
 | Restaurant inspections (New York City and State, Austin, Delaware, Montgomery County MD, Boulder County, Cincinnati, Baton Rouge, San Francisco 2016–2019) | Each establishment from its first to its last inspection, one record per permit and name, so a renamed restaurant keeps its old name with its own dates. New York State's go back to 2005. |
 | Liquor licences (New York State, Colorado), New York City storefront licences, San Francisco and Los Angeles business locations | Each licence's issue and expiry dates, or each business location's start and end dates (San Francisco's go back to the 1960s). Only storefront businesses, under their trade names. |
@@ -158,10 +158,10 @@ regions their photos need.
   - **By hand:** Actions, "Build place packs", Run workflow. Inputs:
     - `regions`: for example `us-vermont fr-ile-de-france`; empty means all;
     - `force`: rebuild even when nothing changed;
-    - `seed_history`: seed the US address-range history from older TIGER years. Use it once, on the first build.
+    - `seed_history`: seed the US address-range history from older TIGER years. The finished seed of each region is kept in the "seeds" release and reused, so it is made again only when the seed years or sources change.
 - **What it does:**
   - It downloads the national files once and splits them per region.
-  - It builds each region (two at a time, with polite pauses between downloads), merged with its previous pack.
+  - It builds each region (ten at a time; inside a region four sources at a time, at most two against one server, each stopped after its time limit), merged with its previous pack.
   - It publishes to the release `packs`, in this order:
     1. the new packs, under dated file names;
     2. the previous list, as `packs-previous.json`;

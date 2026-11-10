@@ -71,7 +71,9 @@ def test_the_workflow():
     assert "secrets." not in text and "github.token" in text
     jobs = doc["jobs"]
     assert list(jobs) == ["plan", "prepare", "build", "publish"]
-    assert jobs["build"]["strategy"]["max-parallel"] <= 6 and jobs["build"]["timeout-minutes"] <= 360
+    assert jobs["build"]["strategy"]["max-parallel"] <= 10 and jobs["build"]["timeout-minutes"] <= 360
+    # A leg that times out must not stop the publishing of the regions that finished.
+    assert "needs.build.result != 'cancelled'" not in jobs["publish"]["if"] and "always()" in jobs["publish"]["if"]
     publish = "\n".join(s.get("run", "") for s in jobs["publish"]["steps"])
     a, b, c = (publish.index(x) for x in ('dist/$asset" --repo', "packs-previous.json --repo",
                                            'upload "$RELEASE_TAG" packs.json'))

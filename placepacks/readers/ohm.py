@@ -18,6 +18,7 @@ import re
 
 from placepacks import fmt, types
 from placepacks.readers import reader
+from placepacks.regions import in_region
 from placepacks.readers.osm import main_tag
 
 OPEN = {"cc0", "cc0-1.0", "cc-0", "pd", "public domain", "publicdomain"}
@@ -36,7 +37,6 @@ def read(path, entry, region, writer):
     """Add the dated features of a saved Overpass answer. Returns the number of features."""
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
-    west, south, east, north = region["bbox"]
     count = 0
     for el in data.get("elements", []):
         tags = el.get("tags") or {}
@@ -59,7 +59,7 @@ def read(path, entry, region, writer):
             lat, lon = float(at["lat"]), float(at["lon"])
         except (KeyError, TypeError, ValueError):
             continue
-        if not (south - 0.05 <= lat <= north + 0.05 and west - 0.05 <= lon <= east + 0.05):
+        if not in_region(region, lat, lon, 0.05):
             continue
         first, last = ohm_date(tags.get("start_date")), ohm_date(tags.get("end_date"))
         if first is None and last is None:

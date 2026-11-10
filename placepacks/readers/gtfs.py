@@ -11,6 +11,7 @@ import os
 import zipfile
 
 from placepacks.readers import reader
+from placepacks.regions import in_region
 
 # Licence addresses accepted for a GTFS feed (their text says redistribution is allowed with attribution or freely).
 OPEN_LICENCES = ("creativecommons.org/licenses/by/", "creativecommons.org/publicdomain/zero/",
@@ -32,7 +33,6 @@ def read(path, entry, region, writer):
     """Add the stops of every feed .zip in path (a folder or one file). Returns the number of stops."""
     files = [os.path.join(path, f) for f in sorted(os.listdir(path)) if f.endswith(".zip")] if os.path.isdir(path) \
         else [path]
-    west, south, east, north = region["bbox"]
     count = 0
     for file in files:
         feed = os.path.basename(file)[:-4]
@@ -50,7 +50,7 @@ def read(path, entry, region, writer):
                     lat, lon = float(row["stop_lat"]), float(row["stop_lon"])
                 except (KeyError, ValueError):
                     continue
-                if not (south <= lat <= north and west <= lon <= east):
+                if not in_region(region, lat, lon):
                     continue
                 kind = "station" if row.get("location_type") == "1" else "stop"
                 writer.add_point(f"{entry['id']}:{feed}:{row.get('stop_id', '')}", entry["id"], name, "transit",

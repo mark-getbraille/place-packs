@@ -63,6 +63,7 @@ import re
 import zipfile
 
 from placepacks import fmt, types
+from placepacks.regions import in_region
 from placepacks.readers import reader
 
 csv.field_size_limit(10_000_000)
@@ -273,7 +274,6 @@ def rows_of(path, entry, region):
     cols, values = entry["columns"], region_values(region)
     flt = entry.get("filter")
     skip = {(round(a, 4), round(b, 4)) for a, b in entry.get("skip_points", [])}
-    west, south, east, north = region["bbox"]
     for text in open_texts(path, entry.get("member", "*"), entry.get("encoding", "utf-8-sig")):
         for row in dict_rows(text, entry):
             if flt and _get(row, flt["column"]).upper() != flt["equals"].format(**values).upper():
@@ -284,7 +284,7 @@ def rows_of(path, entry, region):
             if at is None or (round(at[0], 4), round(at[1], 4)) in skip:
                 continue
             lat, lon = at
-            inside = south - 0.05 <= lat <= north + 0.05 and west - 0.05 <= lon <= east + 0.05
+            inside = in_region(region, lat, lon, 0.05)
             if not inside and entry.get("kind") in ("lines", "areas"):
                 # A long line or a big area whose middle is outside the region may still cross it (an Amtrak route).
                 shape = _get(row, cols.get("paths") or cols.get("rings") or "")
@@ -292,8 +292,7 @@ def rows_of(path, entry, region):
                     parts = json.loads(shape) if shape else []
                 except ValueError:
                     parts = []
-                inside = any(south - 0.05 <= p[0] <= north + 0.05 and west - 0.05 <= p[1] <= east + 0.05
-                             for part in parts for p in part)
+                inside = any(in_region(region, p[0], p[1], 0.05) for part in parts for p in part)
             if not inside or (lat == lon == 0):
                 continue
             row["_lat"], row["_lon"] = lat, lon

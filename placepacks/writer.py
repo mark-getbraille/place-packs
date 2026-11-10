@@ -71,6 +71,10 @@ class PackWriter:
         if os.path.exists(self.tmp):
             os.remove(self.tmp)
         self.db = sqlite3.connect(self.tmp)
+        # A pack is built in one go into a temporary file and moved into place at the end: no journal, no waiting
+        # for the disk, a large page cache (a crash only loses the temporary file).
+        self.db.executescript("PRAGMA journal_mode = OFF; PRAGMA synchronous = OFF; PRAGMA cache_size = -262144; "
+                              "PRAGMA temp_store = MEMORY;")
         self.db.execute("CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT)")
         self.db.execute("CREATE TABLE sources (" + ", ".join(f"{c} TEXT" for c in SOURCE_COLUMNS) + ")")
         self.db.execute("CREATE TABLE removals (key TEXT, reason TEXT, date TEXT)")
@@ -366,6 +370,10 @@ def merge_history(db, previous, month):
             match = "p.key = f.key AND " + SAME[table].format(t=TOLERANCE)
         columns = [c.split()[0] for c in TABLES[table].split(", ") if not c.startswith("id ")]
         db.execute("CREATE TEMP TABLE m (fid INTEGER, pid INTEGER, pfirst INTEGER)")
+        if table != "addr":
+            # The matches are looked up by both ids, and this month's rows by key: without these indexes the
+            # update below scans the whole match table for every row (131 s for Vermont's address ranges).
+            db.execute(f"CREATE INDEX IF NOT EXISTS main.{table}_merge_key ON {table} (key)")
         # The same record as an old row when that row was still open at the last build, or when the source gives the
         # record its own end (a closed licence, a demolished building: f.last before this month) and the old row
         # ends no later: the source still lists it, so it continues instead of being copied every month.
@@ -378,6 +386,8 @@ def merge_history(db, previous, month):
                        f"p.cls IS f.cls AND f.id NOT IN (SELECT fid FROM m) AND p.id NOT IN (SELECT pid FROM m)"
                        + (f" AND abs(p.lat - f.lat) <= {NEAR} AND abs(p.lon - f.lon) <= {NEAR}"
                           if table == "points" else " AND 0"), (last_month,))
+        db.execute("CREATE INDEX temp.m_fid ON m (fid)")
+        db.execute("CREATE INDEX temp.m_pid ON m (pid)")
         # A continuing record keeps its old row's first month (and a source's own earlier start date).
         db.execute(f"UPDATE {table} SET first = MIN(first, (SELECT MIN(pfirst) FROM m WHERE fid = {table}.id)) "
                    f"WHERE id IN (SELECT fid FROM m)")
@@ -404,6 +414,8 @@ def merge_history(db, previous, month):
         db.execute(f"INSERT INTO {table} ({cols}) SELECT {picks} FROM {old} WHERE id NOT IN (SELECT pid FROM m)")
         db.execute("DROP TABLE m")
     db.execute("DROP TABLE temp.old_addr")
+    for table in TABLES:
+        db.execute(f"DROP INDEX IF EXISTS main.{table}_merge_key")      # build-time only (the pack has its own)
     db.commit()
     db.execute("DETACH DATABASE prev")
     return str(last_month)

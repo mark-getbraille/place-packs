@@ -4,10 +4,8 @@
   "tiger_year": "2025",
   "tiger_seed_years": [
    "2011",
-   "2014",
-   "2017",
-   "2020",
-   "2023"
+   "2016",
+   "2021"
   ],
   "nad_release": "20",
   "nad_seed_releases": [],
@@ -190,7 +188,8 @@
     "pause": 30,
     "file": "extract.osm.pbf"
    },
-   "history": "From the first build (November 2026) on. OpenStreetMap's full history is open (ODbL), but per-state history extracts need an OpenStreetMap login at Geofabrik and the full planet history is about 150 GB, so it is not used."
+   "history": "From the first build (November 2026) on. OpenStreetMap's full history is open (ODbL), but per-state history extracts need an OpenStreetMap login at Geofabrik and the full planet history is about 150 GB, so it is not used.",
+   "time_limit_min": 60
   },
   {
    "id": "nad",
@@ -428,7 +427,7 @@
     "zip": "ZIPL",
     "zip2": "ZIPR"
    },
-   "history": "Seeded from the yearly releases in tiger_seed_years (every 3 years from 2011, when ADDRFEAT starts), then every year: street renames, new streets and changed ranges. Keyed by TIGER's edge id (TLID)."
+   "history": "Seeded from the yearly releases in tiger_seed_years (2011, when ADDRFEAT starts, then 2016 and 2021), then every year: street renames, new streets and changed ranges. Keyed by TIGER's edge id (TLID). The finished seed is kept and reused (placepacks.seed)."
   },
   {
    "id": "tiger-pointlm",
@@ -529,7 +528,7 @@
    "type_field": "MTFCC",
    "type_map": "mtfcc",
    "notes": "Named point landmarks typed by their MTFCC code: summits, schools, churches, hospitals, cemeteries, airports, post offices, monuments, lookout towers and more. Homes (apartment buildings, trailer courts, dormitories, nursing homes), shelters, survey marks and road features are left out.",
-   "history": "Seeded from the yearly releases in tiger_seed_years (2011, the county files, then every 3 years to 2023), then every year: a landmark missing from a later release is closed at its last release.",
+   "history": "Seeded from the yearly releases in tiger_seed_years (2011, the county files, 2016 and 2021), then every year: a landmark missing from a later release is closed at its last release.",
    "name_words": "tiger_words"
   },
   {
@@ -634,7 +633,7 @@
    "type_field": "MTFCC",
    "type_map": "mtfcc",
    "notes": "Named area landmarks typed by their MTFCC code: parks of every level, national forests, cemeteries, golf courses, airports, colleges, shopping centres, campgrounds, zoos and more; homes and dormitories are left out.",
-   "history": "Seeded from the yearly releases in tiger_seed_years (2011, the county files, then every 3 years to 2023), then every year: a landmark missing from a later release is closed at its last release.",
+   "history": "Seeded from the yearly releases in tiger_seed_years (2011, the county files, 2016 and 2021), then every year: a landmark missing from a later release is closed at its last release.",
    "name_words": "tiger_words"
   },
   {
@@ -665,7 +664,7 @@
     "key": "AREAID"
    },
    "notes": "Military installations, one national file each year (only those touching the region are read); with the seed years, a base closed since 2011 keeps its last-seen year.",
-   "history": "Seeded from the yearly releases in tiger_seed_years (2011, the county files, then every 3 years to 2023), then every year: a landmark missing from a later release is closed at its last release.",
+   "history": "Seeded from the yearly releases in tiger_seed_years (2011, the county files, 2016 and 2021), then every year: a landmark missing from a later release is closed at its last release.",
    "name_words": "tiger_words"
   },
   {
@@ -757,7 +756,8 @@
      "brand.wikidata"
     ]
    },
-   "notes": "Overture renamed its category columns in 2026 (\"categories\" became \"taxonomy\" and \"basic_category\"): the build reads the release's columns first and uses taxonomy.primary, else basic_category, else the old categories.primary. Places whose operating_status is \"permanently_closed\" are left out of the month's data, so their earlier record stays, closed at the last build that listed them open."
+   "notes": "Overture renamed its category columns in 2026 (\"categories\" became \"taxonomy\" and \"basic_category\"): the build reads the release's columns first and uses taxonomy.primary, else basic_category, else the old categories.primary. Places whose operating_status is \"permanently_closed\" are left out of the month's data, so their earlier record stays, closed at the last build that listed them open.",
+   "time_limit_min": 40
   },
   {
    "id": "fsq-places",
@@ -1016,7 +1016,8 @@
     "key": "Source_PAID",
     "first": "Date_Est"
    },
-   "notes": "Read from USGS's PAD-US 4.1 service (no key). Every state park, state recreation area, state historic or cultural area, state wilderness and state forest, of any size; other named areas of at least 10 acres that are owned or designated (no easements, which are often private land) and open or restricted to the public. Outlines simplified to about 50 m. Vermont gets 61 state parks and Ohio 89."
+   "notes": "Read from USGS's PAD-US 4.1 service (no key). Every state park, state recreation area, state historic or cultural area, state wilderness and state forest, of any size; other named areas of at least 10 acres that are owned or designated (no easements, which are often private land) and open or restricted to the public. Outlines simplified to about 50 m. Vermont gets 61 state parks and Ohio 89.",
+   "time_limit_min": 40
   },
   {
    "id": "faa-airports",
@@ -1153,12 +1154,13 @@
    "fetch": {
     "method": "wikidata",
     "url": "https://query.wikidata.org/sparql",
-    "pause": 10,
+    "pause": 3,
     "mode": "all"
    },
    "history": "Wikidata's own start and end dates (inception P571, start P580, dissolved or demolished P576, end P582), often decades back.",
    "notes": "Every Wikidata item with coordinates in the region, asked tile by tile (a tile that times out or fills 50,000 rows is split into four), typed by the English label of its class (\"covered bridge\", \"brewpub\"). Left out by placepacks/wikidata_exclude.json: people, families, trees, survey points, list and disambiguation pages, astronomical objects, taxa, electoral districts, graves and benches; private homes unless they have a heritage designation (P1435). Items that only copy a GNIS record (a GNIS id and no dates or designation) are left to GNIS. Only the id, English label, coordinates, class and dates are used, never Wikipedia text.",
-   "skip_gnis_copies": true
+   "skip_gnis_copies": true,
+   "time_limit_min": 45
   },
   {
    "id": "cgndb",
@@ -7159,10 +7161,11 @@
      "ja",
      "zh"
     ],
-    "pause": 10
+    "pause": 3
    },
    "history": "Current labels; replaced at each build (no history).",
-   "notes": "French, Spanish, German, Italian, Dutch, Japanese and Chinese names of the places with coordinates (people left out), keyed like the Wikidata places of the main packs (\"wikidata:Q...\"). In a separate, optional pack part (\"names\"), downloaded only when a user turns on other languages; the main packs stay as they are. Data only."
+   "notes": "French, Spanish, German, Italian, Dutch, Japanese and Chinese names of the places with coordinates (people left out), keyed like the Wikidata places of the main packs (\"wikidata:Q...\"). In a separate, optional pack part (\"names\"), downloaded only when a user turns on other languages; the main packs stay as they are. Data only.",
+   "time_limit_min": 45
   },
   {
    "id": "ntad-rail-lines",
@@ -7281,7 +7284,8 @@
     "paths": "_paths"
    },
    "history": "From the first build on.",
-   "notes": "Only the stream segments named in GNIS (a GNIS id), at medium resolution (1:100,000), so a picture beside a river gets the river's line, not only GNIS's point (about 15,000 segments in Vermont)."
+   "notes": "Only the stream segments named in GNIS (a GNIS id), at medium resolution (1:100,000), so a picture beside a river gets the river's line, not only GNIS's point (about 15,000 segments in Vermont).",
+   "time_limit_min": 40
   },
   {
    "id": "nhd-named-waterbodies",
@@ -7525,10 +7529,11 @@
     "method": "wikidata",
     "url": "https://query.wikidata.org/sparql",
     "mode": "filming",
-    "pause": 10
+    "pause": 3
    },
    "history": "Current statements, from the first build on.",
-   "notes": "Places that films and series were filmed at (Wikidata's filming location, P915, asked the other way round), each with a note \"filming location of A; B; C\" (up to 8 titles). The note is data only, never spoken; the point has the place's own Wikidata key, so a lookup joins it to the place."
+   "notes": "Places that films and series were filmed at (Wikidata's filming location, P915, asked the other way round), each with a note \"filming location of A; B; C\" (up to 8 titles). The note is data only, never spoken; the point has the place's own Wikidata key, so a lookup joins it to the place.",
+   "time_limit_min": 45
   },
   {
    "id": "whosonfirst-neighbourhoods",

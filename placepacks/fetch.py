@@ -478,11 +478,17 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
     meta = post_json(url, {"f": "json"}, sleep=sleep)
     dates = {fd["name"] for fd in meta.get("fields", []) if fd.get("type") == "esriFieldTypeDate"}
     base = {"f": "json", "where": f.get("where", "1=1")}
-    if f.get("box", True) and meta.get("geometryType"):
-        west, south, east, north = region["bbox"]
-        base.update(geometry=f"{west},{south},{east},{north}", geometryType="esriGeometryEnvelope", inSR="4326",
-                    spatialRel="esriSpatialRelIntersects")
-    ids = sorted(post_json(url + "/query", {**base, "returnIdsOnly": "true"}, sleep=sleep).get("objectIds") or [])
+    from placepacks.regions import boxes_of
+    found = set()
+    for west, south, east, north in (boxes_of(region) if f.get("box", True) and meta.get("geometryType")
+                                     else [(None, None, None, None)]):
+        # One envelope per box of the region (Alaska has two: its bbox alone would be a band round the globe).
+        query = dict(base)
+        if west is not None:
+            query.update(geometry=f"{west},{south},{east},{north}", geometryType="esriGeometryEnvelope", inSR="4326",
+                         spatialRel="esriSpatialRelIntersects")
+        found |= set(post_json(url + "/query", {**query, "returnIdsOnly": "true"}, sleep=sleep).get("objectIds") or [])
+    ids = sorted(found)
     edited = (meta.get("editingInfo") or {}).get("lastEditDate") or ""
     version = f"{edited}:{len(ids)} records"
     if fingerprint:
@@ -1051,18 +1057,31 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
                         raise
                     time.sleep(retries[attempt])
 
+        def count(box):
+            """The number of items with coordinates in a tile (None when the service would not say)."""
+            try:
+                rows = ask(wd.count_query(box), RETRY_WAITS[:1])
+                time.sleep(min(pause, 2))
+                return int(rows[0]["n"]["value"]) if rows else 0
+            except Exception:  # noqa: BLE001 - the tile is asked for anyway, and split if it times out
+                return None
+
+        # The tiles are planned once with fast counts: empty tiles (sea, ice) are skipped, dense ones split, so
+        # Alaska asks for a few dozen tiles and Vermont for a few, not a thousand fixed-size ones.
+        planned = wd.plan_tiles(region, count)
+        print(f"  {entry['id']}: {len(planned)} Wikidata tiles", flush=True)
         bindings = []
         if f.get("mode") == "filming":
-            bindings = wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), wd.first_tiles(region), pause,
+            bindings = wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), planned, pause,
                                       f.get("limit", wd.ALL_LIMIT), query=wd.filming_query)
         elif f.get("mode") == "labels":
             # Other-language names of the items with coordinates, tile by tile (the optional "names" part).
-            bindings = wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), wd.first_tiles(region), pause,
+            bindings = wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), planned, pause,
                                       f.get("limit", wd.ALL_LIMIT), query=lambda box, n: wd.labels_query(box, n,
                                                                                                          f["languages"]))
         elif f.get("mode", "all") == "all":
             # A tile that times out is split at once rather than asked again and again.
-            bindings = wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), wd.first_tiles(region), pause,
+            bindings = wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), planned, pause,
                                       f.get("limit", wd.ALL_LIMIT))
         else:
             # The class query ("mode": "classes"), one group of classes at a time, tile by tile like the others: a
@@ -1070,7 +1089,7 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
             ids = list(wd.CLASSES)
             for i in range(0, len(ids), wd.GROUP):
                 group = " ".join(f"wd:{q}" for q in ids[i:i + wd.GROUP])
-                bindings += wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), wd.first_tiles(region, wd.BIG_BOX),
+                bindings += wikidata_tiles(lambda q: ask(q, RETRY_WAITS[:2]), planned,
                                            pause, f.get("limit", wd.ALL_LIMIT),
                                            query=lambda box, n, g=group: wd.class_query(box, g))
         with open(target, "w", encoding="utf-8") as fh:
@@ -1109,9 +1128,17 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         if fingerprint:
             out["ok"] = bool(names)
             return out
-        for name in names:
-            download(url + name, os.path.join(folder, name), pause)
-        out.update(ok=bool(names), path=folder, date=datetime.date.today().isoformat())
+        # The counties several at a time ("parallel", default 8: polite for www2.census.gov, which serves them as
+        # static files); a file already there (a rerun) is not fetched again.
+        from concurrent.futures import ThreadPoolExecutor
+        todo = [n for n in names if not os.path.exists(os.path.join(folder, n))]
+        with ThreadPoolExecutor(max_workers=max(1, int(f.get("parallel", 8)))) as pool:
+            for _ in pool.map(lambda n: download(url + n, os.path.join(folder, n), pause), todo):
+                pass
+        # A state with no file of this kind (Delaware has no elementary school districts): an empty folder, which
+        # the build reports as "ok (0 in this region)".
+        os.makedirs(folder, exist_ok=True)
+        out.update(ok=True, path=folder, date=datetime.date.today().isoformat())
         return out
     if method == "overpass":
         # One Overpass query for the region's box ({south},{west},{north},{east} in the entry's "query").
@@ -1119,15 +1146,23 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         if fingerprint:
             out["ok"] = True
             return out
-        west, south, east, north = region["bbox"]
-        body = urllib.parse.urlencode({"data": f["query"].format(south=south, west=west, north=north,
-                                                                  east=east)}).encode()
+        from placepacks.regions import boxes_of
         target = os.path.join(folder, entry["id"] + ".json")
         os.makedirs(folder, exist_ok=True)
-        with request(url, "POST", body, {"Content-Type": "application/x-www-form-urlencoded"}, timeout=400) as r, \
-                open(target, "wb") as fh:
-            fh.write(r.read())
-        time.sleep(pause)
+        merged = None
+        for west, south, east, north in boxes_of(region):
+            # One query per box of the region; the answers' elements are put together.
+            body = urllib.parse.urlencode({"data": f["query"].format(south=south, west=west, north=north,
+                                                                      east=east)}).encode()
+            with request(url, "POST", body, {"Content-Type": "application/x-www-form-urlencoded"}, timeout=400) as r:
+                answer = json.loads(r.read().decode("utf-8"))
+            if merged is None:
+                merged = answer
+            else:
+                merged.setdefault("elements", []).extend(answer.get("elements", []))
+            time.sleep(pause)
+        with open(target, "w", encoding="utf-8") as fh:
+            json.dump(merged or {"elements": []}, fh)
         out.update(ok=True, path=target, date=datetime.date.today().isoformat())
         return out
     if method == "gtfs":
@@ -1205,32 +1240,148 @@ def status_line(source, got, rows=None):
     return f"{source}: {got.get('status', 'failed')} ({one_line(got.get('reason', ''))})"
 
 
+FETCH_WORKERS = 4                # sources fetched at the same time in one region's job
+HOST_LIMIT = 2                   # at most this many of them against the same host
+HOST_LIMITS = {"query.wikidata.org": 1, "overpass-api.de": 1, "overpass-api.openhistoricalmap.org": 1,
+               "download.geofabrik.de": 1}
+TIME_LIMIT_MIN = 20              # minutes a source may take (its "time_limit_min" in sources.json)
+FINGERPRINT_LIMIT_MIN = 5        # minutes for a fingerprint (the plan job only asks versions)
+
+
+def host_of(entry, values=None):
+    """The host a source mostly talks to (for the per-host limit)."""
+    f = entry["fetch"]
+    for key in ("url", "metadata", "listing", "domain"):
+        text = f.get(key)
+        if text:
+            text = text if "//" in text else "https://" + text
+            try:
+                return urllib.parse.urlsplit(text.format(**(values or {}))).hostname or ""
+            except (KeyError, IndexError, ValueError):
+                return urllib.parse.urlsplit(text).hostname or ""
+    return f.get("method", "")
+
+
+def _limit_seconds(entry, fingerprint):
+    """The wall-clock limit of one source, in seconds."""
+    if fingerprint:
+        return 60 * FINGERPRINT_LIMIT_MIN
+    return 60 * float(entry.get("time_limit_min", TIME_LIMIT_MIN))
+
+
+def _fetch_one(entry, region, cat, work, national, fingerprint):
+    """fetch_source with its errors as a failed result (run in a child process)."""
+    values = catalogue.settings_for(cat, region)
+    try:
+        return fetch_source(entry, region, values, work, national, fingerprint)
+    except Exception as e:  # noqa: BLE001 - recorded; the build leaves the source out
+        return {"ok": False, "version": "", "path": "", "error": str(e)[:300], "status": "failed",
+                "reason": str(e)[:300]}
+
+
+def _child(queue, entry, region, cat, work, national, fingerprint):
+    """The body of a source's process: its result goes back through the queue."""
+    t = time.time()
+    got = _fetch_one(entry, region, cat, work, national, fingerprint)
+    got["seconds"] = round(time.time() - t, 1)
+    queue.put((entry["id"], got))
+
+
+def _too_long(entry, seconds):
+    """The result of a source stopped at its time limit."""
+    minutes = seconds / 60
+    text = f"took longer than {minutes:.0f} min" if minutes >= 1 else f"took longer than {seconds:.0f} s"
+    return {"ok": False, "version": "", "path": "", "status": "failed", "reason": text, "error": text,
+            "seconds": seconds}
+
+
+def run_with_limit(entry, region, cat, work, national, fingerprint=False):
+    """One source in its own process, stopped after its time limit. Returns its result."""
+    return next(got for _, got in run_parallel([entry], region, cat, work, national, fingerprint, 1))
+
+
+def run_parallel(entries, region, cat, work, national, fingerprint=False, workers=FETCH_WORKERS):
+    """Fetch entries, workers at a time, each in a forked process with its time limit; at most HOST_LIMIT (or
+    HOST_LIMITS[host]) at once against one host. Yields (entry, result) as each one ends."""
+    import multiprocessing
+    import queue as queue_module
+    ctx = multiprocessing.get_context("fork")
+    results = ctx.Queue()
+    values = catalogue.settings_for(cat, region)
+    waiting = list(entries)
+    running = {}                                    # id -> (entry, process, started, host)
+    by_id = {e["id"]: e for e in entries}
+    while waiting or running:
+        # Start what may start: free workers, and a host not already at its limit.
+        busy = {}
+        for _, _, _, host in running.values():
+            busy[host] = busy.get(host, 0) + 1
+        for entry in list(waiting):
+            if len(running) >= max(1, workers):
+                break
+            host = host_of(entry, values)
+            if busy.get(host, 0) >= HOST_LIMITS.get(host, HOST_LIMIT):
+                continue
+            proc = ctx.Process(target=_child, args=(results, entry, region, cat, work, national, fingerprint),
+                               daemon=True)
+            proc.start()
+            running[entry["id"]] = (entry, proc, time.time(), host)
+            busy[host] = busy.get(host, 0) + 1
+            waiting.remove(entry)
+        try:
+            sid, got = results.get(timeout=1)
+        except queue_module.Empty:
+            sid, got = None, None
+        if sid is not None and sid in running:
+            entry, proc, _, _ = running.pop(sid)
+            proc.join(5)
+            yield by_id[sid], got
+        now = time.time()
+        for sid, (entry, proc, started, _) in list(running.items()):
+            limit = _limit_seconds(entry, fingerprint)
+            if now - started > limit:
+                proc.kill()
+                proc.join(5)
+                running.pop(sid)
+                yield entry, _too_long(entry, limit)
+            elif not proc.is_alive() and proc.exitcode not in (None, 0):
+                running.pop(sid)
+                yield entry, {"ok": False, "version": "", "path": "", "status": "failed",
+                              "reason": f"its process stopped (exit code {proc.exitcode})"}
+
+
 def fetch_region(region_id, work, parts=fmt.PARTS, national=None, fingerprint=False, cat=None, only=None):
     """Fetch every source of a region's parts. Returns the fetched dict (also written to work/fetched.json)."""
     cat = cat or catalogue.load()
     region = dict(catalogue.regions()[region_id])
     os.makedirs(work, exist_ok=True)
     result = {}
-    for part in parts:
-        for entry in catalogue.sources_for(region, part, cat, only):
-            values = catalogue.settings_for(cat, region)
-            try:
-                got = fetch_source(entry, region, values, work, national, fingerprint)
-            except Exception as e:  # noqa: BLE001 - recorded; the build leaves the source out
-                got = {"ok": False, "version": "", "path": "", "error": str(e)[:300], "status": "failed",
-                       "reason": str(e)[:300]}
-            if got.get("ok"):
-                got["status"], got["reason"] = "ok", ""
-            got.setdefault("status", "failed")
-            got.setdefault("reason", got.get("error", "") or "nothing was downloaded")
-            result[entry["id"]] = got
-            if not fingerprint:
-                print(status_line(entry["id"], got), flush=True)
-            if entry["id"] == "osm" and result[entry["id"]].get("ok") and not fingerprint:
-                box = extract_bbox(result["osm"]["path"])
-                if box:
-                    region["bbox"] = box            # the later slices use the extract's own box
-                    result["_bbox"] = box
+    entries = [e for part in parts for e in catalogue.sources_for(region, part, cat, only)]
+
+    def finish(entry, got):
+        if got.get("ok"):
+            got["status"], got["reason"] = "ok", ""
+        got.setdefault("status", "failed")
+        got.setdefault("reason", got.get("error", "") or "nothing was downloaded")
+        result[entry["id"]] = got
+        if not fingerprint:
+            print(status_line(entry["id"], got) + (f" [{got['seconds']:.0f} s]" if got.get("seconds") else ""),
+                  flush=True)
+
+    # OpenStreetMap first and alone: the later slices use its extract's own box.
+    for entry in [e for e in entries if e["id"] == "osm"]:
+        finish(entry, run_with_limit(entry, region, cat, work, national, fingerprint))
+        if result["osm"].get("ok") and not fingerprint:
+            box = extract_bbox(result["osm"]["path"])
+            if box and not region.get("boxes"):
+                region["bbox"] = box            # the later slices use the extract's own box
+                result["_bbox"] = box           # (a region with its own boxes, Alaska, keeps them)
+    # The others several at a time, each in its own process with a time limit (a source that hangs is stopped and
+    # reported, and the build goes on), never more than HOST_LIMIT at once against the same host.
+    rest = [e for e in entries if e["id"] != "osm"]
+    workers = int(os.environ.get("PLACEPACKS_FETCH_WORKERS", FETCH_WORKERS))
+    for entry, got in run_parallel(rest, region, cat, work, national, fingerprint, workers):
+        finish(entry, got)
     if not fingerprint:
         with open(os.path.join(work, "fetched.json"), "w", encoding="utf-8") as f:
             json.dump(result, f, indent=1)
@@ -1333,7 +1484,8 @@ def prepare_national(entry, national, values):
     if f.get("convert") == "atp":
         paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
         regions = [r for r in catalogue.regions().values() if catalogue.country_code(r) in entry["countries"]]
-        count = atp_to_csv(paths[0], os.path.join(folder, entry["id"] + ".csv"), [tuple(r["bbox"]) for r in regions])
+        from placepacks.regions import boxes_of
+        count = atp_to_csv(paths[0], os.path.join(folder, entry["id"] + ".csv"), [b for r in regions for b in boxes_of(r)])
         for p in paths:
             os.remove(p)
             if os.path.exists(p + ".version"):

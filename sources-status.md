@@ -1,6 +1,6 @@
 # Place packs status, 2026-11-10
 
-15 packs published, 0.54 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
+24 packs published, 2.82 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
 
 | Pack | Built | Size (MB) | History from | Sources |
 |---|---|---|---|---|
@@ -9,6 +9,15 @@
 | ca-prince-edward-island-names | 2026-11 | 0.5 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | gb-wales | 2026-11 | 37.8 | 2026-11 | fsa-hygiene, geonames, osm, overture-places |
 | gb-wales-extra | 2026-11 | 76.1 | 0055-01 | fsa-hygiene, geonames, osm, overture-places |
+| us-alaska | 2026-11 | 104.0 | 2026-11 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, osm, ourairports, overture-places, padus, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
+| us-alaska-extra | 2026-11 | 205.4 | 1400-01 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, osm, ourairports, overture-places, padus, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
+| us-alaska-names | 2026-11 | 2.2 | 2026-11 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, osm, ourairports, overture-places, padus, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
+| us-arkansas | 2026-11 | 90.7 | 2026-11 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, osm, ourairports, overture-places, padus, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
+| us-arkansas-extra | 2026-11 | 296.5 | 1686-01 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, osm, ourairports, overture-places, padus, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
+| us-arkansas-names | 2026-11 | 1.9 | 2026-11 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, osm, ourairports, overture-places, padus, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
+| us-california | 2026-11 | 374.3 | 2026-11 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, gtfs, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, la-businesses, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-tunnels, oakland-public-art, ohm, osm, ourairports, overture-places, padus, sacramento-county-food-facilities, sf-health-inspections, sf-registered-businesses, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
+| us-california-extra | 2026-11 | 1199.5 | 0014-01 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, gtfs, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, la-businesses, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-tunnels, oakland-public-art, ohm, osm, ourairports, overture-places, padus, sacramento-county-food-facilities, sf-health-inspections, sf-registered-businesses, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
+| us-california-names | 2026-11 | 7.7 | 2026-11 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, gtfs, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, la-businesses, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-tunnels, oakland-public-art, ohm, osm, ourairports, overture-places, padus, sacramento-county-food-facilities, sf-health-inspections, sf-registered-businesses, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
 | us-delaware | 2026-11 | 11.7 | 2026-11 | census-cousub, census-places, census-zcta, delaware-food-inspections, faa-airports, fdic-branches, fuds, gnis, imls-libraries, military-installations, nad, nbi-bridges, nces-postsecondary, nces-private-schools, nces-schools, nid-dams, nps-poi, nrhp, ntad-amtrak, ntad-ferry-terminals, osm, overture-places, tiger-addrfeat, va-national-cemeteries, wikidata |
 | us-delaware-extra | 2026-11 | 69.9 | 1638-01 | census-cousub, census-places, census-zcta, delaware-food-inspections, faa-airports, fdic-branches, fuds, gnis, imls-libraries, military-installations, nad, nbi-bridges, nces-postsecondary, nces-private-schools, nces-schools, nid-dams, nps-poi, nrhp, ntad-amtrak, ntad-ferry-terminals, osm, overture-places, tiger-addrfeat, va-national-cemeteries, wikidata |
 | us-district-of-columbia | 2026-11 | 7.0 | 2026-11 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-unsd, census-zcta, dc-business-licences, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, osm, ourairports, overture-places, padus, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
@@ -71,6 +80,260 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | gb-wales-extra | geonames | ok | 7267 |
 | gb-wales-extra | overture-places | ok | 274461 |
 | gb-wales-extra | wikidata | failed | HTTP Error 504: Gateway Timeout |
+| us-alaska | census-cousub | ok | 37 |
+| us-alaska | census-places | ok | 355 |
+| us-alaska | census-zcta | ok | 245 |
+| us-alaska | nad | ok | 325379 |
+| us-alaska | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/us-alaska |
+| us-alaska | osm | ok | 2026-11-08T21:21:00Z |
+| us-alaska-extra | abpp-battlefields | ok | 0 in this region |
+| us-alaska-extra | alltheplaces | ok | 7214 |
+| us-alaska-extra | bia-land-areas | ok | 1 |
+| us-alaska-extra | census-school-districts-elsd | ok | 0 in this region |
+| us-alaska-extra | census-school-districts-scsd | ok | 0 in this region |
+| us-alaska-extra | census-school-districts-unsd | ok | 52 |
+| us-alaska-extra | epa-beaches | ok | 0 in this region |
+| us-alaska-extra | faa-airports | ok | 412 |
+| us-alaska-extra | faa-special-use-airspace | ok | 93 |
+| us-alaska-extra | fdic-branches | ok | 111 |
+| us-alaska-extra | fhwa-scenic-byways | ok | 5 |
+| us-alaska-extra | fsq-places | failed | no release found in https://fsq-os-places-us-east-1.s3.us-east-1.amazonaws.com |
+| us-alaska-extra | fuds | ok | 553 |
+| us-alaska-extra | fws-fish-hatcheries | ok | 0 in this region |
+| us-alaska-extra | geonames-na | ok | 482 |
+| us-alaska-extra | gnis | ok | 9303 |
+| us-alaska-extra | gnis-variant-names | ok | 20767 |
+| us-alaska-extra | gsa-federal-buildings | ok | 94 |
+| us-alaska-extra | gtfs | skipped | no feed of this region in the Mobility Database lists an open licence |
+| us-alaska-extra | hrsa-health-centers | ok | 220 |
+| us-alaska-extra | imls-libraries | ok | 84 |
+| us-alaska-extra | imls-museums | ok | 83 |
+| us-alaska-extra | irs-exempt-organizations | ok | 2675 |
+| us-alaska-extra | military-installations | ok | 29 |
+| us-alaska-extra | msha-mines | ok | 447 |
+| us-alaska-extra | natural-earth-lines | ok | 2 |
+| us-alaska-extra | natural-earth-regions | ok | 30 |
+| us-alaska-extra | nbi-bridges | ok | 80 |
+| us-alaska-extra | nces-closed-schools | ok | 27 |
+| us-alaska-extra | nces-postsecondary | ok | 11 |
+| us-alaska-extra | nces-private-schools | ok | 25 |
+| us-alaska-extra | nces-schools | ok | 504 |
+| us-alaska-extra | newberry-counties | ok | 189 |
+| us-alaska-extra | nhd-named-flowlines | ok | 0 in this region |
+| us-alaska-extra | nhd-named-waterbodies | ok | 0 in this region |
+| us-alaska-extra | nid-dams | ok | 110 |
+| us-alaska-extra | noaa-marine-sanctuaries | ok | 0 in this region |
+| us-alaska-extra | noaa-nerrs | ok | 1 |
+| us-alaska-extra | noaa-tide-stations | ok | 600 |
+| us-alaska-extra | nps-poi | ok | 285 |
+| us-alaska-extra | nps-trails | ok | 2628 |
+| us-alaska-extra | nrhp | ok | 324 |
+| us-alaska-extra | nrhp-districts | ok | 50 |
+| us-alaska-extra | ntad-amtrak | ok | 0 in this region |
+| us-alaska-extra | ntad-amtrak-routes | ok | 0 in this region |
+| us-alaska-extra | ntad-ferry-terminals | ok | 55 |
+| us-alaska-extra | ntad-passenger-terminals | ok | 301 |
+| us-alaska-extra | ntad-rail-lines | ok | 242 |
+| us-alaska-extra | ntad-rail-yards | ok | 9 |
+| us-alaska-extra | ntad-rest-areas | ok | 0 in this region |
+| us-alaska-extra | ntad-spaceports | ok | 1 |
+| us-alaska-extra | ntad-transit-stations | ok | 20 |
+| us-alaska-extra | ntad-tunnels | ok | 4 |
+| us-alaska-extra | ohm | ok | 74 |
+| us-alaska-extra | ourairports | ok | 1080 |
+| us-alaska-extra | overture-places | ok | 41033 |
+| us-alaska-extra | padus | ok | 777 |
+| us-alaska-extra | tiger-addrfeat | ok | 56309 |
+| us-alaska-extra | tiger-aiannh | ok | 222 |
+| us-alaska-extra | tiger-arealm | ok | 1868 |
+| us-alaska-extra | tiger-mil | ok | 17 |
+| us-alaska-extra | tiger-pointlm | ok | 5940 |
+| us-alaska-extra | us-post-offices | ok | 485 |
+| us-alaska-extra | usace-principal-ports | ok | 4 |
+| us-alaska-extra | uscg-light-list | skipped | could not be downloaded: HTTP Error 403: Forbidden |
+| us-alaska-extra | usfs-offices | ok | 35 |
+| us-alaska-extra | usfs-recreation-sites | ok | 468 |
+| us-alaska-extra | usfs-trails | ok | 5465 |
+| us-alaska-extra | usgs-mrds | ok | 3957 |
+| us-alaska-extra | usgs-structures | ok | 2250 |
+| us-alaska-extra | uswtdb-wind-farms | ok | 40 |
+| us-alaska-extra | va-national-cemeteries | ok | 2 |
+| us-alaska-extra | whosonfirst-neighbourhoods | ok | 72 |
+| us-alaska-extra | wikidata | ok | 13636 |
+| us-alaska-extra | wikidata-filming | ok | 13 |
+| us-alaska-extra | wild-scenic-rivers | ok | 26 |
+| us-alaska-names | wikidata-labels | ok | 12627 |
+| us-arkansas | census-cousub | ok | 1095 |
+| us-arkansas | census-places | ok | 626 |
+| us-arkansas | census-zcta | ok | 893 |
+| us-arkansas | nad | ok | 1780751 |
+| us-arkansas | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/us-arkansas |
+| us-arkansas | osm | ok | 2026-11-08T21:21:00Z |
+| us-arkansas-extra | abpp-battlefields | ok | 21 |
+| us-arkansas-extra | alltheplaces | ok | 13483 |
+| us-arkansas-extra | bia-land-areas | ok | 1 |
+| us-arkansas-extra | census-school-districts-elsd | ok | 0 in this region |
+| us-arkansas-extra | census-school-districts-scsd | ok | 0 in this region |
+| us-arkansas-extra | census-school-districts-unsd | ok | 234 |
+| us-arkansas-extra | epa-beaches | ok | 0 in this region |
+| us-arkansas-extra | faa-airports | ok | 137 |
+| us-arkansas-extra | faa-special-use-airspace | ok | 21 |
+| us-arkansas-extra | fdic-branches | ok | 1342 |
+| us-arkansas-extra | fhwa-scenic-byways | ok | 10 |
+| us-arkansas-extra | fsq-places | failed | no release found in https://fsq-os-places-us-east-1.s3.us-east-1.amazonaws.com |
+| us-arkansas-extra | fuds | ok | 119 |
+| us-arkansas-extra | fws-fish-hatcheries | ok | 3 |
+| us-arkansas-extra | geonames-na | ok | 1674 |
+| us-arkansas-extra | gnis | ok | 3839 |
+| us-arkansas-extra | gnis-variant-names | ok | 5729 |
+| us-arkansas-extra | gsa-federal-buildings | ok | 114 |
+| us-arkansas-extra | gtfs | skipped | no feed of this region in the Mobility Database lists an open licence |
+| us-arkansas-extra | hrsa-health-centers | ok | 362 |
+| us-arkansas-extra | imls-libraries | ok | 226 |
+| us-arkansas-extra | imls-museums | ok | 164 |
+| us-arkansas-extra | irs-exempt-organizations | ok | 9133 |
+| us-arkansas-extra | military-installations | ok | 13 |
+| us-arkansas-extra | msha-mines | ok | 495 |
+| us-arkansas-extra | natural-earth-lines | ok | 1 |
+| us-arkansas-extra | natural-earth-regions | ok | 4 |
+| us-arkansas-extra | nbi-bridges | ok | 1068 |
+| us-arkansas-extra | nces-closed-schools | ok | 268 |
+| us-arkansas-extra | nces-postsecondary | ok | 86 |
+| us-arkansas-extra | nces-private-schools | ok | 213 |
+| us-arkansas-extra | nces-schools | ok | 1723 |
+| us-arkansas-extra | newberry-counties | ok | 980 |
+| us-arkansas-extra | nhd-named-flowlines | ok | 38329 |
+| us-arkansas-extra | nhd-named-waterbodies | ok | 1912 |
+| us-arkansas-extra | nid-dams | ok | 2374 |
+| us-arkansas-extra | noaa-marine-sanctuaries | ok | 0 in this region |
+| us-arkansas-extra | noaa-nerrs | ok | 0 in this region |
+| us-arkansas-extra | noaa-tide-stations | ok | 0 in this region |
+| us-arkansas-extra | nps-poi | ok | 0 in this region |
+| us-arkansas-extra | nps-trails | ok | 151 |
+| us-arkansas-extra | nrhp | ok | 2872 |
+| us-arkansas-extra | nrhp-districts | ok | 311 |
+| us-arkansas-extra | ntad-amtrak | ok | 9 |
+| us-arkansas-extra | ntad-amtrak-routes | ok | 2 |
+| us-arkansas-extra | ntad-ferry-terminals | ok | 2 |
+| us-arkansas-extra | ntad-passenger-terminals | ok | 116 |
+| us-arkansas-extra | ntad-rail-lines | ok | 3090 |
+| us-arkansas-extra | ntad-rail-yards | ok | 54 |
+| us-arkansas-extra | ntad-rest-areas | ok | 32 |
+| us-arkansas-extra | ntad-spaceports | ok | 0 in this region |
+| us-arkansas-extra | ntad-transit-stations | ok | 1126 |
+| us-arkansas-extra | ntad-tunnels | ok | 2 |
+| us-arkansas-extra | ohm | ok | 1240 |
+| us-arkansas-extra | ourairports | ok | 1054 |
+| us-arkansas-extra | overture-places | ok | 207519 |
+| us-arkansas-extra | padus | ok | 1051 |
+| us-arkansas-extra | tiger-addrfeat | ok | 401503 |
+| us-arkansas-extra | tiger-aiannh | ok | 3 |
+| us-arkansas-extra | tiger-arealm | ok | 593 |
+| us-arkansas-extra | tiger-mil | ok | 8 |
+| us-arkansas-extra | tiger-pointlm | ok | 10746 |
+| us-arkansas-extra | us-post-offices | ok | 4073 |
+| us-arkansas-extra | usace-principal-ports | ok | 7 |
+| us-arkansas-extra | uscg-light-list | skipped | could not be downloaded: HTTP Error 403: Forbidden |
+| us-arkansas-extra | usfs-offices | ok | 38 |
+| us-arkansas-extra | usfs-recreation-sites | ok | 221 |
+| us-arkansas-extra | usfs-trails | ok | 481 |
+| us-arkansas-extra | usgs-mrds | ok | 2353 |
+| us-arkansas-extra | usgs-structures | ok | 6089 |
+| us-arkansas-extra | uswtdb-wind-farms | ok | 4 |
+| us-arkansas-extra | va-national-cemeteries | ok | 4 |
+| us-arkansas-extra | whosonfirst-neighbourhoods | ok | 774 |
+| us-arkansas-extra | wikidata | ok | 10732 |
+| us-arkansas-extra | wikidata-filming | ok | 16 |
+| us-arkansas-extra | wild-scenic-rivers | ok | 10 |
+| us-arkansas-names | wikidata-labels | ok | 8432 |
+| us-california | census-cousub | ok | 404 |
+| us-california | census-places | ok | 1619 |
+| us-california | census-zcta | ok | 2028 |
+| us-california | nad | ok | 2534848 |
+| us-california | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/us-california |
+| us-california | osm | ok | 2026-11-08T21:21:00Z |
+| us-california-extra | abpp-battlefields | ok | 0 in this region |
+| us-california-extra | alltheplaces | ok | 126428 |
+| us-california-extra | bia-land-areas | ok | 138 |
+| us-california-extra | census-school-districts-elsd | ok | 517 |
+| us-california-extra | census-school-districts-scsd | ok | 112 |
+| us-california-extra | census-school-districts-unsd | ok | 345 |
+| us-california-extra | epa-beaches | ok | 1018 |
+| us-california-extra | faa-airports | ok | 301 |
+| us-california-extra | faa-special-use-airspace | ok | 254 |
+| us-california-extra | fdic-branches | ok | 5536 |
+| us-california-extra | fhwa-scenic-byways | ok | 16 |
+| us-california-extra | fsq-places | failed | no release found in https://fsq-os-places-us-east-1.s3.us-east-1.amazonaws.com |
+| us-california-extra | fuds | ok | 866 |
+| us-california-extra | fws-fish-hatcheries | ok | 5 |
+| us-california-extra | geonames-na | ok | 11825 |
+| us-california-extra | gnis | ok | 10950 |
+| us-california-extra | gnis-variant-names | ok | 16231 |
+| us-california-extra | gsa-federal-buildings | ok | 695 |
+| us-california-extra | gtfs | ok | 325 |
+| us-california-extra | hrsa-health-centers | ok | 2894 |
+| us-california-extra | imls-libraries | ok | 1171 |
+| us-california-extra | imls-museums | ok | 1439 |
+| us-california-extra | irs-exempt-organizations | ok | 21877 |
+| us-california-extra | la-businesses | ok | 48730 |
+| us-california-extra | military-installations | ok | 89 |
+| us-california-extra | msha-mines | ok | 1447 |
+| us-california-extra | natural-earth-lines | ok | 1 |
+| us-california-extra | natural-earth-regions | ok | 11 |
+| us-california-extra | nbi-bridges | ok | 2243 |
+| us-california-extra | nces-closed-schools | ok | 719 |
+| us-california-extra | nces-postsecondary | ok | 694 |
+| us-california-extra | nces-private-schools | ok | 2437 |
+| us-california-extra | nces-schools | ok | 11291 |
+| us-california-extra | newberry-counties | ok | 631 |
+| us-california-extra | nhd-named-flowlines | ok | 68017 |
+| us-california-extra | nhd-named-waterbodies | ok | 2728 |
+| us-california-extra | nid-dams | ok | 2050 |
+| us-california-extra | noaa-marine-sanctuaries | ok | 6 |
+| us-california-extra | noaa-nerrs | ok | 3 |
+| us-california-extra | noaa-tide-stations | ok | 207 |
+| us-california-extra | nps-poi | ok | 1119 |
+| us-california-extra | nps-trails | ok | 4773 |
+| us-california-extra | nrhp | ok | 2762 |
+| us-california-extra | nrhp-districts | ok | 382 |
+| us-california-extra | ntad-amtrak | ok | 89 |
+| us-california-extra | ntad-amtrak-routes | ok | 8 |
+| us-california-extra | ntad-ferry-terminals | ok | 84 |
+| us-california-extra | ntad-passenger-terminals | ok | 1941 |
+| us-california-extra | ntad-rail-lines | ok | 5515 |
+| us-california-extra | ntad-rail-yards | ok | 180 |
+| us-california-extra | ntad-rest-areas | ok | 121 |
+| us-california-extra | ntad-spaceports | ok | 2 |
+| us-california-extra | ntad-transit-stations | failed | ArcGIS error: |
+| us-california-extra | ntad-tunnels | ok | 114 |
+| us-california-extra | oakland-public-art | ok | 76 |
+| us-california-extra | ohm | ok | 7999 |
+| us-california-extra | ourairports | ok | 2947 |
+| us-california-extra | overture-places | ok | 1779790 |
+| us-california-extra | padus | ok | 9540 |
+| us-california-extra | sacramento-county-food-facilities | ok | 5271 |
+| us-california-extra | sf-health-inspections | ok | 2751 |
+| us-california-extra | sf-registered-businesses | ok | 20128 |
+| us-california-extra | tiger-addrfeat | ok | 1568346 |
+| us-california-extra | tiger-aiannh | ok | 185 |
+| us-california-extra | tiger-arealm | ok | 6934 |
+| us-california-extra | tiger-mil | ok | 95 |
+| us-california-extra | tiger-pointlm | ok | 17165 |
+| us-california-extra | us-post-offices | ok | 3937 |
+| us-california-extra | usace-principal-ports | ok | 10 |
+| us-california-extra | uscg-light-list | skipped | could not be downloaded: HTTP Error 403: Forbidden |
+| us-california-extra | usfs-offices | ok | 417 |
+| us-california-extra | usfs-recreation-sites | ok | 2494 |
+| us-california-extra | usfs-trails | ok | 11911 |
+| us-california-extra | usgs-mrds | ok | 25912 |
+| us-california-extra | usgs-structures | ok | 25250 |
+| us-california-extra | uswtdb-wind-farms | ok | 128 |
+| us-california-extra | va-national-cemeteries | ok | 9 |
+| us-california-extra | whosonfirst-neighbourhoods | ok | 4724 |
+| us-california-extra | wikidata | ok | 40056 |
+| us-california-extra | wikidata-filming | ok | 457 |
+| us-california-extra | wild-scenic-rivers | ok | 35 |
+| us-california-names | wikidata-labels | ok | 33676 |
 | us-delaware | census-cousub | ok | 27 |
 | us-delaware | census-places | ok | 79 |
 | us-delaware | census-zcta | ok | 153 |

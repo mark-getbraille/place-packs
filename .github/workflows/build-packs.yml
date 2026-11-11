@@ -183,7 +183,15 @@ jobs:
       # A sub-region's OpenStreetMap is clipped from its parent's extract (fetch.clip_osm).
       - name: Install osmium-tool for a sub-region
         if: ${{ matrix.region.slice != matrix.region.id }}
-        run: command -v osmium >/dev/null || (sudo apt-get update && sudo apt-get install -y osmium-tool)
+        # Faster clipping; when the package mirrors are unreachable the pack writer clips without it (slower).
+        continue-on-error: true
+        run: |
+          command -v osmium >/dev/null && exit 0
+          for attempt in 1 2 3; do
+            sudo apt-get update && sudo apt-get install -y osmium-tool && exit 0
+            sleep 30
+          done
+          exit 1
       - name: Fetch the region's sources and its previous packs
         env:
           GH_TOKEN: ${{ github.token }}

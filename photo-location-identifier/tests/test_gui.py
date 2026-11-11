@@ -112,7 +112,7 @@ def test_every_window_is_accessible(app, plan, finder):
     """The main window, the review, rename, merge, My places, About and the progress window."""
     frame = mw.MainWindow("", places=Places(finder=finder))
     keys = assert_accessible(frame)
-    assert {"f", "b", "s", "d", "t", "n", "p", "r", "w", "h", "m", "o", "i", "g", "k", "l", "y", "u", "a", "e",
+    assert {"f", "b", "s", "d", "t", "n", "p", "r", "w", "h", "m", "o", "i", "g", "k", "l", "y", "u", "a", "e", "x",
             "c"} == set(keys)
     for w in dialogs.all_windows(frame, plan):
         assert_accessible(w)

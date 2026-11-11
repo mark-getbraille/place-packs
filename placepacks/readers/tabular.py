@@ -69,7 +69,7 @@ from placepacks.readers import reader
 
 # A polygon's rings in one CSV field can be far larger than csv's default limit (128 KB; 10 MB was too small for
 # StatCan's census subdivisions and CPCAD's protected areas): no limit.
-csv.field_size_limit(sys.maxsize)
+csv.field_size_limit(2**31 - 1)   # the largest a C long holds on Windows too (sys.maxsize overflows there)
 
 
 def smart_case(text):

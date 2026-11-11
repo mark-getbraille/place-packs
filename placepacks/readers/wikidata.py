@@ -255,8 +255,8 @@ def plan_tiles(region, count):
 
 def first_tiles(region, most=ALL_TILE):
     """The region's box in tiles of at most most square degrees (fetch.py splits a tile further when needed)."""
-    from placepacks.regions import boxes_of
-    tiles, out = list(boxes_of(region)), []         # Alaska: two boxes, never a band round the globe
+    from placepacks.regions import query_boxes
+    tiles, out = list(query_boxes(region)), []         # Alaska: two boxes, never a band round the globe
     while tiles:
         w, s_, e, n = tiles.pop()
         if (e - w) * (n - s_) > most:

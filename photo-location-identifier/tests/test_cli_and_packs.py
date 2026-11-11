@@ -132,7 +132,7 @@ def test_pack_downloads_ask_auto_never(monkeypatch, tmp_path):
     pytest.importorskip("placepacks.download")
     from placepacks import download
     got = []
-    monkeypatch.setattr(download, "ensure_pack", lambda region, part="core", **k: got.append(region))
+    monkeypatch.setattr(download, "ensure_packs", lambda region, parts=None, **k: got.append(region))
     places = Places(packs_folder=str(tmp_path))
     asked = []
     positions = [(36.03, -75.67), (35.94, -75.61)]
@@ -142,3 +142,52 @@ def test_pack_downloads_ask_auto_never(monkeypatch, tmp_path):
     done, _ = places.get_packs(positions, "auto", catalogue=FakeCatalogue())
     assert got == ["us-north-carolina"] and done == ["North Carolina, United States"]
     assert places.get_packs(positions, "never", ask=lambda *a: 1 / 0) == ([], [])
+
+
+class FullCatalogue:
+    """Stands in for placepacks.download.Catalogue: every part of North Carolina, and the sub-regions of Texas."""
+
+    class Info:
+        def __init__(self, size):
+            self.size = size
+
+    def packs(self):
+        keys = {"us-north-carolina": 12, "us-north-carolina-extra": 30, "us-north-carolina-businesses": 50,
+                "us-north-carolina-addresses": 80, "us-texas-gulf-coast": 60, "us-texas-gulf-coast-extra": 20,
+                "us-texas-south-central": 50, "us-texas-south-central-extra": 20}
+        return {k: self.Info(v * 1_000_000) for k, v in keys.items()}
+
+
+def test_detail_parts_and_sub_regions(monkeypatch, tmp_path):
+    """Core and extra by default; the businesses and address points too for the exact place in the pictures' names
+    or with "Download full detail"; a photo near the border of two parts of Texas gets both, with one question
+    each naming the part and its size."""
+    pytest.importorskip("placepacks.download")
+    from placepacks import download
+    got = []
+    monkeypatch.setattr(download, "ensure_packs", lambda region, parts=None, **k: got.append((region, tuple(parts))))
+    nc = [(36.03, -75.67)]
+    places = Places(packs_folder=str(tmp_path))
+    places.get_packs(nc, "auto", catalogue=FullCatalogue())
+    assert got == [("us-north-carolina", ("core", "extra"))]
+    got.clear()
+    places.get_packs(nc, "auto", catalogue=FullCatalogue(), exact=True)
+    assert got == [("us-north-carolina", ("core", "extra", "businesses", "addresses"))]
+    got.clear()
+    Places(packs_folder=str(tmp_path), full_detail=True).get_packs(nc, "auto", catalogue=FullCatalogue())
+    assert got[0][1] == ("core", "extra", "businesses", "addresses")
+    # Already here: nothing more is downloaded.
+    for part in ("", "-extra"):
+        open(tmp_path / f"us-north-carolina{part}.osmpack", "wb").close()
+    got.clear()
+    assert places.get_packs(nc, "auto", catalogue=FullCatalogue()) == ([], []) and got == []
+    # The border of Texas's Gulf Coast and Central and South parts (sub-regions), about 1 km apart.
+    from placepacks import regions
+    lat, lon = 28.8, -97.3
+    while not regions.in_region(regions.REGIONS["us-texas-gulf-coast"], lat, lon):
+        lon += 0.001
+    asked = []
+    places.get_packs([(lat, lon + 0.005)], "ask", ask=lambda *a: asked.append(a) or True,
+                     catalogue=FullCatalogue())
+    assert [a[0] for a in asked] == ["Texas: Gulf Coast, United States", "Texas: Central and South, United States"]
+    assert asked[0][1] == 80_000_000 and {g[0] for g in got} == {"us-texas-gulf-coast", "us-texas-south-central"}

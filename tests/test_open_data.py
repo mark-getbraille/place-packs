@@ -189,9 +189,12 @@ def test_fsa_xml_files_become_one_csv(tmp_path):
 def test_city_sources_apply_only_to_their_regions():
     """A city's or state's dataset is used only by its region; national ones by every region of the country."""
     regions = catalogue.regions()
-    ny = {e["id"] for e in catalogue.sources_for(regions["us-new-york"], "extra")}
-    vt = {e["id"] for e in catalogue.sources_for(regions[VT], "extra")}
+    ny = {e["id"] for e in catalogue.sources_for(regions["us-new-york"], "businesses")}
+    vt = {e["id"] for e in catalogue.sources_for(regions[VT], "businesses")}
     assert {"nyc-restaurant-inspections", "ny-liquor-licences", "fdic-branches"} <= ny
+    # A sub-region has its parent's city and state sources (New York City is a child of New York).
+    city = {e["id"] for e in catalogue.sources_for(regions["us-new-york-city"], "businesses")}
+    assert {"nyc-restaurant-inspections", "ny-liquor-licences"} <= city
     assert "nyc-restaurant-inspections" not in vt and "fdic-branches" in vt
     bad = dict(catalogue.load())
     bad["accepted"] = bad["accepted"] + [dict(entry_of("ny-liquor-licences"), id="x", regions=["us-atlantis"])]
@@ -329,8 +332,8 @@ def test_dated_records_are_not_copied_every_month(tmp_path):
     prev = None
     for n, m, name in ((1, 202609, "INVENTED BISTRO"), (2, 202610, "INVENTED BISTRO"), (3, 202611, "NEW NAME CAFE")):
         out = tmp_path / f"p{n}.osmpack"
-        build.build(VT, "extra", month(n, name), str(out), previous=prev, month=m, only={entry["id"]}, cat=cat,
-                    removal_list=[])
+        build.build(VT, "businesses", month(n, name), str(out), previous=prev, month=m, only={entry["id"]},
+                    cat=cat, removal_list=[])
         prev = str(out)
     rows = PackReader(prev)._rows("SELECT key, name, first, last FROM points ORDER BY key, first")
     assert [(r["name"], r["first"], r["last"]) for r in rows] == [

@@ -15,6 +15,11 @@
 #   previous pack (history is never rewritten); the TIGER history seed is made once per region and kept in the
 #   "seeds" release. publish: the new packs under dated names, then packs-previous.json (the list before), then
 #   packs.json last; then the files neither list names are deleted. Only the repository's own GITHUB_TOKEN is used.
+# - Parts: core, extra, names, businesses and addresses (placepacks/fmt.py). Sub-regions: a region too large for one
+#   pack (England, Texas, ...) is built as its children (regions.json "children"); each child reads its parent's
+#   national slice and its parent's OpenStreetMap extract, clipped with osmium-tool. A child's first build takes its
+#   history from its parent's older packs. publish then puts each parent's children together again under the
+#   parent's own keys (placepacks.combine), for the programs that know only the parent.
 # - Keep-alive: GitHub turns off scheduled workflows in a repository with no activity for 60 days, so every run
 #   commits an updated sources-status.md.
 
@@ -175,18 +180,25 @@ jobs:
         with:
           name: national-whole
           path: national-whole
+      # A sub-region's OpenStreetMap is clipped from its parent's extract (fetch.clip_osm).
+      - name: Install osmium-tool for a sub-region
+        if: ${{ matrix.region.slice != matrix.region.id }}
+        run: command -v osmium >/dev/null || (sudo apt-get update && sudo apt-get install -y osmium-tool)
       - name: Fetch the region's sources and its previous packs
         env:
           GH_TOKEN: ${{ github.token }}
           REGION: ${{ matrix.region.id }}
+          SLICE: ${{ matrix.region.slice }}
         run: |
           mkdir -p national previous out
-          if [ -d "national-split/$REGION" ]; then cp -r "national-split/$REGION/." national/; fi
+          # A sub-region reads its parent's slice of the national files (the readers keep what is in it).
+          if [ -d "national-split/$SLICE" ]; then cp -r "national-split/$SLICE/." national/; fi
           if [ -d national-whole ]; then cp -r national-whole/. national/; fi
           rm -rf national-split national-whole
           gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern packs.json --dir previous 2>/dev/null || true
           if [ -f previous/packs.json ]; then
-            for key in "$REGION" "$REGION-extra" "$REGION-names"; do
+            # The region's own older packs, and for a sub-region's first build its parent's (build --list-previous).
+            for key in $(python -m placepacks.build "$REGION" --list-previous); do
               name=$(python -c "import json,sys; print(json.load(open('previous/packs.json')).get('packs',{}).get(sys.argv[1],{}).get('name',''))" "$key")
               if [ -n "$name" ]; then
                 gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern "$name" --dir previous
@@ -204,7 +216,7 @@ jobs:
           # A finished seed is kept in the "seeds" release as seed-<region>-<fingerprint>.osmpack and reused; it is
           # made again only when the fingerprint changes (the seed years, the seed sources or their entries).
           mkdir -p seed
-          FP=$(python -m placepacks.seed fingerprint)
+          FP=$(python -m placepacks.seed fingerprint "$REGION")
           NAME="seed-$REGION-$FP.osmpack"
           prev=""
           if gh release download seeds --repo "$GITHUB_REPOSITORY" --pattern "$NAME" --dir seed 2>/dev/null && [ -f "seed/$NAME" ]; then
@@ -213,8 +225,8 @@ jobs:
           else
             SEED=$(python -c "import json; print(','.join(json.load(open('sources.json'))['settings']['tiger_seed_sources']))")
             for year in $(python -c "import json; print(' '.join(json.load(open('sources.json'))['settings']['tiger_seed_years']))"); do
-              PLACEPACKS_SETTINGS="{\"tiger_year\": \"$year\"}" python -m placepacks.fetch "$REGION" --dir "seed/$year" --part extra --only "$SEED"
-              python -m placepacks.build "$REGION" --part extra --inputs "seed/$year/fetched.json" --out "seed/$year.osmpack" --month "${year}01" --only "$SEED" --previous "$prev"
+              PLACEPACKS_SETTINGS="{\"tiger_year\": \"$year\"}" python -m placepacks.fetch "$REGION" --dir "seed/$year" --part all --only "$SEED"
+              python -m placepacks.build "$REGION" --part all --inputs "seed/$year/fetched.json" --out "seed/$year.osmpack" --month "${year}01" --only "$SEED" --previous "$prev"
               prev="seed/$year.osmpack"
               rm -rf "seed/$year"
             done
@@ -225,19 +237,31 @@ jobs:
               prev="seed/$NAME"
             fi
           fi
-          if [ ! -f "previous/$REGION-extra.osmpack" ] && [ -n "$prev" ]; then cp "$prev" "previous/$REGION-extra.osmpack"; fi
-      - name: Build the core, extra and names packs
+          # The seed is the history of the parts that have none yet (build --previous-dir uses previous/seed.osmpack
+          # only when neither the part's own older pack nor the packs it came from are there).
+          if [ -n "$prev" ]; then cp "$prev" previous/seed.osmpack; fi
+          # The seeds of a parent made before its sub-regions are no longer used.
+          PARENT=$(python -c "import sys; from placepacks.regions import parent_of; print(parent_of(sys.argv[1]))" "$REGION")
+          if [ -n "$PARENT" ]; then
+            gh release view seeds --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' 2>/dev/null | grep -E "^seed-$PARENT-[0-9a-f]{12}\.osmpack$" | while read -r old; do
+              gh release delete-asset seeds "$old" --repo "$GITHUB_REPOSITORY" -y || true
+            done
+          fi
+      - name: Build the core, extra, businesses, addresses and names packs
         env:
           REGION: ${{ matrix.region.id }}
         run: |
           # Each source prints one line: "source: ok (version, rows)", "source: skipped (reason)" or "source: failed (error)".
           echo "::group::Sources of $REGION"
-          python -m placepacks.build "$REGION" --part core --inputs "work/$REGION/fetched.json" --previous "previous/$REGION.osmpack" --out "out/$REGION.osmpack"
-          python -m placepacks.build "$REGION" --part extra --inputs "work/$REGION/fetched.json" --previous "previous/$REGION-extra.osmpack" --out "out/$REGION-extra.osmpack"
-          # The optional names part (other-language names), only for regions that have a source for it.
-          if python -c "import sys; from placepacks import catalogue; r = catalogue.regions()[sys.argv[1]]; sys.exit(0 if catalogue.sources_for(r, 'names') else 1)" "$REGION"; then
-            python -m placepacks.build "$REGION" --part names --inputs "work/$REGION/fetched.json" --out "out/$REGION-names.osmpack"
-          fi
+          python -m placepacks.build "$REGION" --part core --inputs "work/$REGION/fetched.json" --previous-dir previous --out "out/$REGION.osmpack"
+          python -m placepacks.build "$REGION" --part extra --inputs "work/$REGION/fetched.json" --previous-dir previous --out "out/$REGION-extra.osmpack"
+          # The other parts only for regions that have a source for them (names: other-language names; businesses:
+          # Overture and the business lists; addresses: address points and ranges, with their history).
+          for part in businesses addresses names; do
+            if python -c "import sys; from placepacks import catalogue; r = catalogue.regions()[sys.argv[1]]; sys.exit(0 if catalogue.sources_for(r, sys.argv[2]) else 1)" "$REGION" "$part"; then
+              python -m placepacks.build "$REGION" --part "$part" --inputs "work/$REGION/fetched.json" --previous-dir previous --out "out/$REGION-$part.osmpack"
+            fi
+          done
           echo "::endgroup::"
           mkdir -p "out/fetched/$REGION"
           cp "work/$REGION/fetched.json" "out/fetched/$REGION/"
@@ -280,6 +304,24 @@ jobs:
             gh release create "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --title "Place packs" --notes-file RELEASE_NOTES.md
           fi
           gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern packs.json --dir old 2>/dev/null || true
+          # 0. Each parent's core and extra put together from its sub-regions' (a child not rebuilt now comes from the
+          #    release), under the parent's keys: the programs that know only the parent still find its towns and streets.
+          mkdir -p children
+          python -m placepacks.combine plan built old/packs.json | while read -r parent part rest; do
+            set -- $rest
+            files=""
+            while [ $# -ge 2 ]; do
+              key="$1"; file="$2"; shift 2
+              if [ ! -f "$file" ]; then
+                gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern "$file" --dir children --clobber
+                file="children/$file"
+              fi
+              files="$files $file"
+            done
+            if [ "$part" = core ]; then out="built/$parent.osmpack"; else out="built/$parent-$part.osmpack"; fi
+            python -m placepacks.combine "$parent" "$part" --out "$out" $files || echo "$parent $part could not be put together; its older pack stays."
+          done
+          rm -rf children
           python -m placepacks.manifest publish --old old/packs.json --built built --fetched-dir built/fetched --output packs.json --uploads uploads.txt
           # 1. The new packs, under dated names (no file a program is downloading is replaced).
           while IFS="$(printf '\t')" read -r path asset; do

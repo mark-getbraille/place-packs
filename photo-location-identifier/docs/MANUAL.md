@@ -7,12 +7,12 @@ as "Outer Banks 2005" and "Outer Banks 2006".
 It uses the location your camera or phone saved in each picture (its GPS position). Nothing is moved until you have
 checked the new folders, and "Undo the last sort" puts everything back.
 
-Version 1.2.0. Free software under the MIT licence, made by Company Maker, LLC.
+Version 1.3.0. Free software under the MIT licence, made by Company Maker, LLC.
 
 ## Installing {#installing}
 
-1. Download "PhotoLocationIdentifier-1.2.0-setup.exe" from the program's release page on GitHub
-   (github.com/mark-getbraille/place-packs, Releases, "photo-location-identifier-v1.2.0").
+1. Download "PhotoLocationIdentifier-1.3.0-setup.exe" from the program's release page on GitHub
+   (github.com/mark-getbraille/place-packs, Releases, "photo-location-identifier-v1.3.0").
 2. Open it. Windows may show "Windows protected your PC" (SmartScreen), because the program is new and not
    signed with a paid certificate. Choose "More info", then "Run anyway".
 3. Follow the installer. Its progress is read by NVDA and JAWS.
@@ -86,7 +86,8 @@ Every choice has a label, and the underlined letter is its Alt key.
   file's own date are never guessed, because copying a file can change that date.
 - **New folders go in (Alt+I):** leave it empty to make the new folders inside the folder of pictures, or choose
   another folder with **Choose where they go (Alt+G)**. Useful with Copy.
-- **Place packs downloads (Alt+K):** see "Place packs" below.
+- **Place packs downloads (Alt+K)** and **Also download full detail: businesses and exact addresses (Alt+X):** see
+  "Place packs" below.
 - **Look at the pictures (Alt+L):** reads every picture and shows the new folders in the review window. Nothing
   moves yet.
 - **My places (Alt+Y)**, **Undo the last sort (Alt+U)**, **About (Alt+A)**, **Help (Alt+E or F1)**, **Close
@@ -229,13 +230,28 @@ else, give the latitude and longitude. A list of 150,000 places takes a few minu
 ## Place packs {#packs}
 
 Place names come from free place packs (made from OpenStreetMap and other open data by this program's sister
-project, place-packs). A pack covers one state, province or country region. They are downloaded only when needed,
-from the project's public releases on GitHub.
+project, place-packs). A pack covers one state, province or country region; a large one, such as England, Texas,
+California or Australia, is split into parts of the region (England's nine regions, groups of Texas counties,
+Australia's states), so you only download the part where your photos were taken. A photo taken within about 2 km
+of the border between two parts gets both. They are downloaded only when needed, from the project's public
+releases on GitHub.
+
+Each pack has the towns, streets and landmarks, and the history of names; this is always downloaded. Two more
+parts are larger: the **businesses** (shops, restaurants and other listings) and the **address points** (house
+numbers). They are downloaded only when they are needed:
+
+- when **Put the exact place in each picture's name (Alt+P)** is on, because the exact place is often a shop or an
+  address;
+- when **Also download full detail: businesses and exact addresses (Alt+X)** is ticked (off by default): then they
+  come with every pack, for the most exact places everywhere;
+- when you import places from a list, because the addresses are found in the address points.
+
+Without them, everything still works: the program names the park, the landmark, the street or the town instead.
 
 **Place packs downloads (Alt+K):**
 
-- *Ask me first, with the size* (the default): before downloading, the program says which region is needed, for how
-  many photos, and its size.
+- *Ask me first, with the size* (the default): before downloading, the program says which region (or part of a
+  region) is needed, for how many photos, and its size (all its parts together).
 - *Download automatically when needed.*
 - *Never download*: use only the packs already on this computer. Photos in other regions are left where they are,
   or go to "Unknown place".
@@ -272,7 +288,8 @@ For power users and scripts (the program is installed in "%LOCALAPPDATA%\Program
 - `--rename` (put the exact place in each picture's name) or `--keep-names`; `--name-pattern
   date-place-name|place-date-name|place-name` chooses the order of the new names and turns renaming on
 - `--unknown leave|unknown|guess`, `--guess-hours 3`, `--no-subfolders`, `--no-videos`
-- `--packs ask|auto|never`, `--packs-folder FOLDER`, `--yes` (say yes to downloads), `--my-places FILE`
+- `--packs ask|auto|never`, `--packs-folder FOLDER`, `--yes` (say yes to downloads), `--full-detail` (also
+  download the businesses and address points), `--my-places FILE`
 - `--dry-run` (show what would happen), `--report FILE`, `--undo-last`, `--version`
 
 Options you leave out use the choices last saved in the main window.

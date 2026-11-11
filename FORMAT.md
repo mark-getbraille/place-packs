@@ -5,7 +5,7 @@ A pack is one SQLite file. Coordinates are whole microdegrees. Months are YYYYMM
 
 | Table | Columns | What |
 |---|---|---|
-| meta | key, value | format (`digital-accessibility-toolkit-osm-place-pack`), version (2), region_id, region_name, country, part (core or extra), built_month, builds (every build month, comma-separated), history_start, bounds (south,west,north,east), counts, notice, sources_used, sources_missing |
+| meta | key, value | format (`digital-accessibility-toolkit-osm-place-pack`), version (2), region_id, region_name, country, part (core, extra, names, businesses or addresses), parent (a sub-region's parent region, else empty), combined_from (a parent's pack put together from its sub-regions: their ids), built_month, builds (every build month, comma-separated), history_start, bounds (south,west,north,east), counts, notice, sources_used, sources_missing |
 | sources | id, name, short, kind, part, licence, licence_url, attribution, url, version, date, history_start, history_note | one row per source of the pack |
 | points | id, key, source, name, cls, tag, lat, lon, cell, ccell, first, last | named points |
 | areas | id, key, source, name, cls, tag, minlat, minlon, maxlat, maxlon, size (m²), rings, first, last | named areas; rings: int32 (lat, lon) pairs, rings separated by (0, 0); even-odd rule |
@@ -77,10 +77,43 @@ Wikidata's filming locations ("filming location of A; B; C") are written as rows
 key (`wikidata:Q...`), so a lookup that names the place gives `Result.note`; the note is data for future programs,
 never spoken.
 
-## Parts: core, extra and names
+## Parts: core, extra, names, businesses and addresses
 
-A region has up to three packs: core (OpenStreetMap, addresses, address ranges, Census areas), extra (everything
-else) and the optional names part (`us-vermont-names.osmpack`, key `us-vermont-names` in packs.json). The names part
+A region has up to five packs, each with the same tables:
+
+| Part | File and key | What | Downloaded |
+|---|---|---|---|
+| core | `us-vermont.osmpack`, `us-vermont` | OpenStreetMap (towns, streets, landmarks) and the Census areas; no address points | always |
+| extra | `us-vermont-extra.osmpack`, `us-vermont-extra` | history and the smaller lists: Wikidata, GNIS, public facilities, landmarks, transit, trails, historic areas | always |
+| businesses | `us-vermont-businesses.osmpack` | Overture places, All the Places, the IRS's exempt organizations and every business list (inspections, licences, bank branches, the UK's food hygiene ratings) | when needed |
+| addresses | `us-vermont-addresses.osmpack` | address points (NAD, ODA, OpenAddresses, BAN, BAG, LINZ, ...) and address ranges (TIGER/Line, NRN), with their history | when needed |
+| names | `us-vermont-names.osmpack` | other-language names (below) | on request |
+
+A program downloads core and extra (`fmt.DEFAULT_PARTS`); businesses and addresses (`fmt.DETAIL_PARTS`) only when a
+lookup needs them, at the detail "address" or for the exact place in a picture's name, or when the user asks for full
+detail (`download.parts_for(detail, full)`, `download.ensure_packs(region, detail=...)`). A lookup works with whatever
+parts are there: without the businesses and the addresses it names the landmark, the street or the town. Programs
+made before businesses and addresses existed know only core and extra and leave the other entries of packs.json
+out.
+
+### Sub-regions
+
+A region whose core and extra together would be larger than about 300 MB is built as sub-regions (regions.json
+"children"): England's nine regions (`gb-england-south-east`), Australia's states and territories
+(`au-new-south-wales`), groups of counties of Texas, California, New York and Florida (`us-texas-gulf-coast`), parts of
+Ontario and Quebec (`ca-ontario-toronto`), and the provinces or counties of the Netherlands, Sweden, Norway and
+Finland, put in two groups each (`nl-netherlands-west`). Each child has its own packs of every part, and meta `parent`. Every
+position of the parent's own land (and the water next to it) belongs to exactly one child (its grid cells,
+`regions.in_region`); a position in a neighbour, even inside the parent's box, belongs to none; a pack also keeps
+what lies within about 2 km of its border (`writer.CLIP_MARGIN`) and every street or area that crosses it, so a
+lookup near a border works with either pack, and `regions.regions_near` gives both. The parent id is still accepted:
+`download.ensure_pack("gb-england")` downloads the children's packs. packs.json also keeps a core and an extra pack
+under the parent's own keys, the children's packs put together (`placepacks.combine`, meta `combined_from`), for
+programs that know only the parent.
+
+### The names part
+
+The names part (`us-vermont-names.osmpack`, key `us-vermont-names` in packs.json)
 holds only the `labels` table: the names of the region's Wikidata places in French, Spanish, German, Italian, Dutch,
 Japanese and Chinese. A program downloads it only when its user turns on other languages
 (`download.ensure_pack(region, part="names")`) and reads it with `PackReader.labels(key)`; the core and extra packs do

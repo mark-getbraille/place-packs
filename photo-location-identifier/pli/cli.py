@@ -17,6 +17,8 @@
                                                            "2005-07-14 Jockey's Ridge State Park (IMG_1234).jpg"
       --no-subfolders  --no-videos
       --packs ask|auto|never  --packs-folder FOLDER  --yes  place packs (ask: asks on the console; --yes says yes)
+      --full-detail                                        also download the businesses and address points (they
+                                                           are downloaded anyway with --rename)
       --my-places FILE                                     My places from this file instead of the saved ones
       --dry-run                                            show what would happen; nothing is moved
       --report FILE                                        also write the report there
@@ -81,6 +83,8 @@ def parser():
     p.add_argument("--no-videos", action="store_true")
     p.add_argument("--packs", choices=settings.PACK_MODES, default=None)
     p.add_argument("--packs-folder", default="")
+    p.add_argument("--full-detail", action="store_true", default=None,
+                   help="also download the businesses and address points of the place packs")
     p.add_argument("--yes", action="store_true", help="answer yes to every download question")
     p.add_argument("--my-places", default="")
     p.add_argument("--dry-run", action="store_true")
@@ -131,7 +135,8 @@ def run_sort(args):
         print(e, file=sys.stderr)
         return 2
     mine = myplaces.MyPlaces.load(args.my_places or settings.my_places_path())
-    places = Places(my_places=mine, packs_folder=args.packs_folder or None)
+    places = Places(my_places=mine, packs_folder=args.packs_folder or None,
+                    full_detail=args.full_detail if args.full_detail is not None else saved.get("full_detail", False))
     last = [""]
 
     def progress(text, done, total):

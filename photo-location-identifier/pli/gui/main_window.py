@@ -8,7 +8,8 @@ Choices (each with a label ending in ":"; see grouping.py for what they do):
                   your own), with examples of the names it makes
   Picture names:  "Put the exact place in each picture's name" (off by default) and the order of the new names
   Trips:          a new trip after this many days without photos; also when the place changes
-  Move or copy, Photos without a location, New folders go in, Place packs downloads
+  Move or copy, Photos without a location, New folders go in, Place packs downloads, and "Also download full
+  detail: businesses and exact addresses" (off by default; they are downloaded anyway for the exact place)
 Buttons: Look at the pictures (then the review window, then Sort now), My places, Undo the last sort, About, Help,
 Close. The choices are saved for next time.
 """
@@ -46,6 +47,9 @@ UNKNOWN_LABELS = ["Leave them where they are",
                   "Guess from photos taken around the same time (marked \"probably\")"]
 PACK_LABELS = ["Ask me first, with the size", "Download automatically when needed",
                "Never download (use only the packs already on this computer)"]
+FULL_DETAIL_TIP = ("Also download each place pack's businesses and address points: bigger downloads, and more exact "
+                   "places. They are downloaded anyway when the exact place is put in each picture's name. Off by "
+                   "default (Alt+X)")
 INTRO = ("Sorts the pictures in a folder into new folders named by where they were taken, and when: for example "
          "Outer Banks 2005 and Outer Banks 2006. It uses the location your camera or phone saved in each picture. "
          "Nothing moves until you have checked the new folders. Everything runs on this computer.")
@@ -111,6 +115,8 @@ class MainWindow(wx.Frame):
         s.Add(row, 0, wx.LEFT, 4)
         self.packs = access.labelled(p, s, "Place pac&ks downloads:", lambda: wx.Choice(p, choices=PACK_LABELS))
         self.packs.SetSelection(settings.PACK_MODES.index(self.saved.get("packs", "ask")))
+        self.full_detail = access.check(p, s, "Also download full detail: businesses and e&xact addresses",
+                                        self.saved.get("full_detail", False), tip=FULL_DETAIL_TIP)
         row = wx.BoxSizer(wx.HORIZONTAL)
         self.look_btn = access.button(p, row, "&Look at the pictures", "Read where each picture was taken and show "
                                                                        "the new folders; nothing moves yet",
@@ -153,6 +159,7 @@ class MainWindow(wx.Frame):
     def save_choices(self):
         """Save the choices for next time."""
         values = {**self.choices(), "packs": settings.PACK_MODES[max(0, self.packs.GetSelection())],
+                  "full_detail": self.full_detail.GetValue(),
                   "last_folder": self.folder.GetValue().strip(), "dest": self.dest.GetValue().strip()}
         try:
             settings.save(values)
@@ -195,8 +202,9 @@ class MainWindow(wx.Frame):
         """The places.Places for a run (My places as saved now)."""
         if self.places_override is not None:
             self.places_override.my_places = self.my_places
+            self.places_override.full_detail = self.full_detail.GetValue()
             return self.places_override
-        return Places(my_places=self.my_places)
+        return Places(my_places=self.my_places, full_detail=self.full_detail.GetValue())
 
     def ask_pack(self, label, size, count):
         """The pack question (in the window thread): True to download."""

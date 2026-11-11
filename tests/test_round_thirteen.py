@@ -72,7 +72,7 @@ def test_the_names_part_holds_other_language_names(tmp_path):
     from placepacks.build import pack_name
     assert pack_name(VT, "names") == "us-vermont-names.osmpack"
     workflow = open(os.path.join(ROOT, ".github", "workflows", "build-packs.yml"), encoding="utf-8").read()
-    assert "--part names" in workflow and '"$REGION-names"' in workflow
+    assert "for part in businesses addresses names" in workflow and '--part "$part"' in workflow
 
 
 def test_transit_stations_that_gtfs_already_has_are_removed(tmp_path):

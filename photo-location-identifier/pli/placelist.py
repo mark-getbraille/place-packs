@@ -1036,6 +1036,8 @@ def region_of_state(code, country=""):
         return ""
     code = (code or "").upper()
     for rid, r in REGIONS.items():
+        if r.get("parent"):
+            continue                        # a sub-region (Texas: Gulf Coast) is found through its state
         if r.get("code", "").upper() == code and r.get("cc") in ("US", "CA") and \
                 (not country or r.get("cc") == country.upper()[:2] or country.upper() in ("USA",)):
             return rid
@@ -1043,7 +1045,8 @@ def region_of_state(code, country=""):
 
 
 def packs_by_region(folder):
-    """{region id: [pack paths, the core part first]} of the place packs in a folder."""
+    """{region id: [pack paths, the core part first]} of the place packs in a folder. The packs of a sub-region
+    (Texas: Gulf Coast) count as their state's (us-texas), whose addresses the list names."""
     out = {}
     if not folder or not os.path.isdir(folder):
         return out
@@ -1057,7 +1060,7 @@ def packs_by_region(folder):
             con.close()
         except (ValueError, sqlite3.Error):
             continue
-        rid = meta.get("region_id") or name.split(".")[0]
+        rid = meta.get("parent") or meta.get("region_id") or name.split(".")[0]
         paths = out.setdefault(rid, [])
         if meta.get("part", "core") == "core":
             paths.insert(0, path)

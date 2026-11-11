@@ -24,7 +24,15 @@ BIG_CELLS = 400                 # a shape touching more fine cells than this is 
 EARTH_M = 6_371_008.8
 SIMPLIFY_M = 5.0
 ATTRIBUTION = "© OpenStreetMap contributors"
-PARTS = ("core", "extra", "names")     # names: optional, other-language names (downloaded on request)       # core: OpenStreetMap, addresses, address ranges and Census areas; extra: the rest
+# The parts of a region's pack. core: OpenStreetMap and the Census areas (towns, streets, landmarks; no address
+# points); extra: history and the smaller lists; names: other-language names (on request); businesses: Overture and
+# the other big business lists; addresses: address points and address ranges with their history. A program gets
+# DEFAULT_PARTS; the businesses and addresses only when a lookup needs them (detail "address", the exact place) or the
+# user asks for full detail. Programs made before businesses and addresses existed know only core and extra (and
+# leave the other parts of packs.json out), so they still find towns and streets.
+PARTS = ("core", "extra", "names", "businesses", "addresses")
+DEFAULT_PARTS = ("core", "extra")
+DETAIL_PARTS = ("businesses", "addresses")
 
 
 # ------------------------------------------------------------------------------------------- months

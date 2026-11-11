@@ -2,6 +2,167 @@
 
 456 packs published, 52.62 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
 
+## Packs by region
+
+Sizes in MB. A program downloads core and extra; businesses and addresses only when a lookup needs them (the exact place, full detail); names on request. A region with sub-regions (England, Texas, ...) is listed with them; its own core and extra are its sub-regions put together, for programs that know only the region.
+
+| Region | Core | Extra | Names | Businesses | Addresses | Core + extra |
+|---|---|---|---|---|---|---|
+| at-austria | 204.7 | 268.7 | 50.1 |  |  | 473.4 |
+| au-australia (before its sub-regions) | 566.9 | 791.9 | 11.4 |  |  | 1358.8 |
+| be-belgium | 164.6 | 258.9 | 33.9 |  |  | 423.5 |
+| ca-alberta | 88.8 | 179.7 | 2.6 |  |  | 268.5 |
+| ca-british-columbia | 143.6 | 306.9 | 7.9 |  |  | 450.5 |
+| ca-manitoba | 39.0 | 94.0 | 2.6 |  |  | 133.1 |
+| ca-new-brunswick | 26.4 | 61.1 | 2.7 |  |  | 87.5 |
+| ca-newfoundland-and-labrador | 37.6 | 123.1 | 6.4 |  |  | 160.7 |
+| ca-northwest-territories | 20.1 | 71.6 | 1.0 |  |  | 91.7 |
+| ca-nova-scotia | 47.2 | 99.8 | 2.8 |  |  | 147.0 |
+| ca-nunavut | 59.8 | 178.9 | 7.5 |  |  | 238.7 |
+| ca-ontario (before its sub-regions) | 247.7 | 833.3 | 21.1 |  |  | 1081.0 |
+| ca-prince-edward-island | 6.5 | 24.6 | 0.5 |  |  | 31.1 |
+| ca-quebec (before its sub-regions) | 221.1 | 318.9 | 20.4 |  |  | 539.9 |
+| ca-saskatchewan | 28.0 | 147.0 | 1.7 |  |  | 175.0 |
+| ca-yukon | 7.5 | 92.2 | 0.6 |  |  | 99.8 |
+| ch-switzerland | 159.4 | 199.8 | 30.2 |  |  | 359.2 |
+| de-baden-wuerttemberg | 196.8 | 231.0 | 31.3 |  |  | 427.8 |
+| de-bayern | 221.8 | 254.4 | 65.1 |  |  | 476.2 |
+| de-berlin | 32.0 | 85.8 | 12.7 |  |  | 117.8 |
+| de-brandenburg | 84.2 | 135.7 | 23.5 |  |  | 219.9 |
+| de-bremen | 6.8 | 51.7 | 1.7 |  |  | 58.5 |
+| de-hamburg | 15.9 | 80.4 | 7.7 |  |  | 96.3 |
+| de-hessen | 100.1 | 164.4 | 30.8 |  |  | 264.5 |
+| de-mecklenburg-vorpommern | 34.9 | 71.4 | 4.9 |  |  | 106.2 |
+| de-niedersachsen | 154.7 | 305.7 | 39.5 |  |  | 460.4 |
+| de-nordrhein-westfalen | 235.4 | 321.7 | 46.2 |  |  | 557.1 |
+| de-rheinland-pfalz | 72.5 | 133.5 | 15.4 |  |  | 206.0 |
+| de-saarland | 14.8 | 26.7 | 1.7 |  |  | 41.6 |
+| de-sachsen | 82.0 | 136.3 | 29.5 |  |  | 218.3 |
+| de-sachsen-anhalt | 48.7 | 99.1 | 15.3 |  |  | 147.8 |
+| de-schleswig-holstein | 48.0 | 114.2 | 12.1 |  |  | 162.1 |
+| de-thueringen | 45.8 | 98.4 | 16.6 |  |  | 144.2 |
+| dk-denmark | 106.9 | 158.9 | 7.5 |  |  | 265.8 |
+| es-andalucia | 94.1 | 94.7 | 9.3 |  |  | 188.8 |
+| es-aragon | 33.1 | 39.7 | 7.1 |  |  | 72.8 |
+| es-asturias | 18.3 | 25.5 | 2.3 |  |  | 43.7 |
+| es-canarias | 22.7 | 33.0 | 1.4 |  |  | 55.7 |
+| es-cantabria | 12.5 | 20.7 | 1.0 |  |  | 33.2 |
+| es-castilla-la-mancha | 47.3 | 83.3 | 7.7 |  |  | 130.6 |
+| es-castilla-y-leon | 93.1 | 94.4 | 12.5 |  |  | 187.5 |
+| es-cataluna | 105.4 | 105.2 | 18.2 |  |  | 210.6 |
+| es-ceuta | 0.4 | 8.9 | 0.2 |  |  | 9.4 |
+| es-extremadura | 22.5 | 23.2 | 2.3 |  |  | 45.7 |
+| es-galicia | 58.7 | 37.1 | 3.6 |  |  | 95.8 |
+| es-islas-baleares | 15.4 | 22.7 | 1.1 |  |  | 38.1 |
+| es-la-rioja | 5.8 | 12.3 | 0.9 |  |  | 18.2 |
+| es-madrid | 38.8 | 58.8 | 3.2 |  |  | 97.6 |
+| es-melilla | 0.5 | 9.0 | 0.2 |  |  | 9.6 |
+| es-murcia | 13.8 | 36.9 | 1.6 |  |  | 50.7 |
+| es-navarra | 17.9 | 24.3 | 3.6 |  |  | 42.1 |
+| es-pais-vasco | 29.6 | 34.6 | 4.5 |  |  | 64.2 |
+| es-valencia | 54.8 | 67.9 | 4.1 |  |  | 122.7 |
+| fi-finland (before its sub-regions) | 228.2 | 171.3 | 7.7 |  |  | 399.5 |
+| fr-alsace | 45.5 | 69.9 | 8.4 |  |  | 115.4 |
+| fr-aquitaine | 130.0 | 81.2 | 12.4 |  |  | 211.2 |
+| fr-auvergne | 68.0 | 38.1 | 5.8 |  |  | 106.1 |
+| fr-basse-normandie | 65.6 | 41.4 | 6.8 |  |  | 107.1 |
+| fr-bourgogne | 72.7 | 40.9 | 7.8 |  |  | 113.6 |
+| fr-bretagne | 112.6 | 61.8 | 10.1 |  |  | 174.4 |
+| fr-centre | 118.9 | 139.2 | 24.8 |  |  | 258.0 |
+| fr-champagne-ardenne | 54.3 | 40.4 | 7.7 |  |  | 94.7 |
+| fr-corse | 11.6 | 12.9 | 1.0 |  |  | 24.5 |
+| fr-franche-comte | 42.7 | 49.9 | 6.8 |  |  | 92.5 |
+| fr-haute-normandie | 44.0 | 33.9 | 4.5 |  |  | 77.9 |
+| fr-ile-de-france | 127.7 | 123.2 | 21.4 |  |  | 250.9 |
+| fr-languedoc-roussillon | 99.4 | 67.8 | 10.5 |  |  | 167.2 |
+| fr-limousin | 36.8 | 25.4 | 2.9 |  |  | 62.2 |
+| fr-lorraine | 73.6 | 62.1 | 9.4 |  |  | 135.7 |
+| fr-midi-pyrenees | 131.2 | 71.9 | 13.3 |  |  | 203.1 |
+| fr-nord-pas-de-calais | 72.5 | 100.2 | 9.8 |  |  | 172.7 |
+| fr-pays-de-la-loire | 127.3 | 71.0 | 11.6 |  |  | 198.4 |
+| fr-picardie | 67.5 | 116.3 | 19.6 |  |  | 183.8 |
+| fr-poitou-charentes | 83.7 | 46.4 | 6.1 |  |  | 130.0 |
+| fr-provence-alpes-cote-d-azur | 119.4 | 108.7 | 11.7 |  |  | 228.0 |
+| fr-rhone-alpes | 192.0 | 112.7 | 17.6 |  |  | 304.7 |
+| gb-england (before its sub-regions) | 573.2 | 895.8 | 25.4 |  |  | 1469.1 |
+| gb-scotland | 74.5 | 201.1 | 5.3 |  |  | 275.6 |
+| gb-wales | 38.9 | 145.9 | 3.1 |  |  | 184.8 |
+| ie-ireland-and-northern-ireland | 178.7 | 118.0 | 3.1 |  |  | 296.7 |
+| is-iceland | 19.7 | 40.2 | 1.1 |  |  | 59.9 |
+| it-centro | 125.6 | 259.2 | 25.4 |  |  | 384.7 |
+| it-isole | 74.1 | 157.7 | 11.3 |  |  | 231.8 |
+| it-nord-est | 178.5 | 282.5 | 36.7 |  |  | 461.0 |
+| it-nord-ovest | 187.4 | 376.2 | 51.9 |  |  | 563.6 |
+| it-sud | 110.3 | 181.5 | 15.2 |  |  | 291.8 |
+| jp-chubu | 86.2 | 495.2 | 17.7 |  |  | 581.4 |
+| jp-chugoku | 36.1 | 101.4 | 4.0 |  |  | 137.5 |
+| jp-hokkaido | 35.9 | 45.2 | 1.7 |  |  | 81.2 |
+| jp-kansai | 95.2 | 231.3 | 9.3 |  |  | 326.4 |
+| jp-kanto | 138.0 | 675.3 | 21.8 |  |  | 813.3 |
+| jp-kyushu | 53.9 | 228.8 | 5.3 |  |  | 282.7 |
+| jp-shikoku | 18.9 | 65.9 | 2.6 |  |  | 84.8 |
+| jp-tohoku | 60.0 | 82.4 | 3.8 |  |  | 142.4 |
+| lu-luxembourg | 11.2 | 21.6 | 1.2 |  |  | 32.8 |
+| nl-netherlands (before its sub-regions) | 266.3 | 450.0 | 82.2 |  |  | 716.3 |
+| no-norway (before its sub-regions) | 251.9 | 304.9 | 0.1 |  |  | 556.9 |
+| nz-new-zealand | 96.0 | 699.2 | 0.1 |  |  | 795.2 |
+| pt-portugal | 149.9 | 125.4 | 8.6 |  |  | 275.3 |
+| se-sweden (before its sub-regions) | 239.3 | 291.8 | 26.4 |  |  | 531.1 |
+| us-alabama | 117.2 | 366.0 | 1.6 |  |  | 483.2 |
+| us-alaska | 104.0 | 205.4 | 2.2 |  |  | 309.4 |
+| us-arizona | 138.1 | 299.7 | 2.1 |  |  | 437.8 |
+| us-arkansas | 90.7 | 296.6 | 1.9 |  |  | 387.2 |
+| us-california (before its sub-regions) | 374.3 | 1200.0 | 7.7 |  |  | 1574.3 |
+| us-colorado | 97.8 | 340.4 | 1.9 |  |  | 438.2 |
+| us-connecticut | 49.6 | 142.1 | 1.0 |  |  | 191.7 |
+| us-delaware | 17.8 | 95.9 | 1.0 |  |  | 113.7 |
+| us-district-of-columbia | 7.0 | 125.4 | 0.9 |  |  | 132.4 |
+| us-florida (before its sub-regions) | 202.9 | 873.2 | 2.5 |  |  | 1076.1 |
+| us-georgia | 131.9 | 553.6 | 2.2 |  |  | 685.4 |
+| us-hawaii | 16.5 | 151.9 | 0.7 |  |  | 168.4 |
+| us-idaho | 50.9 | 202.4 | 1.7 |  |  | 253.3 |
+| us-illinois | 146.5 | 627.5 | 4.8 |  |  | 774.0 |
+| us-indiana | 125.9 | 455.1 | 3.3 |  |  | 581.1 |
+| us-iowa | 100.4 | 339.7 | 2.6 |  |  | 440.1 |
+| us-kansas | 58.6 | 448.1 | 4.5 |  |  | 506.7 |
+| us-kentucky | 105.2 | 361.5 | 3.1 |  |  | 466.8 |
+| us-louisiana | 60.8 | 300.4 | 1.5 |  |  | 361.1 |
+| us-maine | 64.6 | 150.9 | 3.5 |  |  | 215.5 |
+| us-maryland | 69.9 | 460.2 | 4.1 |  |  | 530.0 |
+| us-massachusetts | 105.8 | 344.2 | 3.0 |  |  | 450.0 |
+| us-michigan | 141.4 | 763.5 | 8.8 |  |  | 904.9 |
+| us-minnesota | 118.1 | 472.3 | 4.0 |  |  | 590.4 |
+| us-mississippi | 49.0 | 274.2 | 1.2 |  |  | 323.2 |
+| us-missouri | 125.1 | 511.6 | 4.4 |  |  | 636.7 |
+| us-montana | 57.3 | 182.2 | 1.7 |  |  | 239.5 |
+| us-nebraska | 61.2 | 217.2 | 1.5 |  |  | 278.5 |
+| us-nevada | 42.7 | 189.7 | 1.7 |  |  | 232.4 |
+| us-new-hampshire | 33.4 | 106.9 | 1.2 |  |  | 140.3 |
+| us-new-jersey | 103.7 | 481.6 | 5.7 |  |  | 585.3 |
+| us-new-mexico | 61.9 | 487.3 | 7.2 |  |  | 549.1 |
+| us-new-york (before its sub-regions) | 240.1 | 962.7 | 11.4 |  |  | 1202.8 |
+| us-north-carolina | 224.9 | 764.2 | 3.7 |  |  | 989.1 |
+| us-north-dakota | 35.9 | 148.2 | 1.3 |  |  | 184.0 |
+| us-ohio | 197.3 | 756.8 | 5.6 |  |  | 954.1 |
+| us-oklahoma | 91.6 | 318.8 | 1.5 |  |  | 410.4 |
+| us-oregon | 91.7 | 290.7 | 1.9 |  |  | 382.4 |
+| us-pennsylvania | 191.1 | 773.4 | 6.8 |  |  | 964.4 |
+| us-puerto-rico | 27.2 | 153.5 | 0.6 |  |  | 180.7 |
+| us-rhode-island | 16.3 | 58.8 | 0.5 |  |  | 75.1 |
+| us-south-carolina | 78.0 | 357.5 | 1.4 |  |  | 435.5 |
+| us-south-dakota | 36.1 | 137.9 | 0.9 |  |  | 174.0 |
+| us-tennessee | 142.3 | 421.6 | 1.8 |  |  | 563.9 |
+| us-texas (before its sub-regions) | 433.4 | 1337.6 | 8.7 |  |  | 1771.0 |
+| us-utah | 72.6 | 190.5 | 1.1 |  |  | 263.2 |
+| us-vermont | 29.5 | 94.3 | 1.0 |  |  | 123.8 |
+| us-virginia | 173.8 | 702.2 | 5.1 |  |  | 876.1 |
+| us-washington | 157.9 | 371.7 | 2.4 |  |  | 529.6 |
+| us-west-virginia | 64.8 | 283.7 | 3.6 |  |  | 348.5 |
+| us-wisconsin | 146.9 | 402.6 | 2.5 |  |  | 549.5 |
+| us-wyoming | 30.2 | 147.5 | 0.8 |  |  | 177.7 |
+
+## Every pack
+
 | Pack | Built | Size (MB) | History from | Sources |
 |---|---|---|---|---|
 | at-austria | 2026-11 | 204.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |

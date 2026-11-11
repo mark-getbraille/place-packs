@@ -215,6 +215,9 @@ def main(argv=None):
     p.add_argument("--out", required=True)
     a = p.parse_args(argv)
     cat, regions = catalogue.load(), catalogue.regions()
+    # Slices are made for the regions as they were before sub-regions: a sub-region reads its parent's slice (the
+    # workflow's "slice") and keeps what is in it.
+    regions = {rid: r for rid, r in regions.items() if not r.get("parent")}
     for entry in cat["accepted"]:
         if entry["fetch"]["method"] not in ("national", "duckdb_national"):
             continue

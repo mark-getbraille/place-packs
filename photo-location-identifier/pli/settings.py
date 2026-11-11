@@ -15,7 +15,9 @@ from pli import APP_NAME
 from pli.grouping import DEFAULT_OPTIONS, NAME_PATTERNS
 
 PACK_MODES = ("ask", "auto", "never")
-DEFAULTS = {**DEFAULT_OPTIONS, "packs": "ask", "last_folder": "", "dest": ""}
+# full_detail: also download the businesses and address points of each place pack ("Download full detail"); they are
+# downloaded anyway when the exact place is put in the pictures' names.
+DEFAULTS = {**DEFAULT_OPTIONS, "packs": "ask", "full_detail": False, "last_folder": "", "dest": ""}
 
 
 def home():
@@ -51,6 +53,7 @@ def load():
         pass
     if out.get("packs") not in PACK_MODES:
         out["packs"] = "ask"
+    out["full_detail"] = bool(out.get("full_detail"))
     if out.get("name_pattern") not in NAME_PATTERNS:
         out["name_pattern"] = NAME_PATTERNS[0]
     return out

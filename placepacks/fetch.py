@@ -528,9 +528,9 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
     meta = post_json(url, {"f": "json"}, sleep=sleep)
     dates = {fd["name"] for fd in meta.get("fields", []) if fd.get("type") == "esriFieldTypeDate"}
     base = {"f": "json", "where": f.get("where", "1=1")}
-    from placepacks.regions import boxes_of
+    from placepacks.regions import query_boxes
     found = set()
-    for west, south, east, north in (boxes_of(region) if f.get("box", True) and meta.get("geometryType")
+    for west, south, east, north in (query_boxes(region) if f.get("box", True) and meta.get("geometryType")
                                      else [(None, None, None, None)]):
         # One envelope per box of the region (Alaska has two: its bbox alone would be a band round the globe).
         query = dict(base)
@@ -1211,6 +1211,11 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         with request(url) as r:
             listing = r.read().decode("utf-8", "replace")
         names = sorted(set(re.findall(rf'href="({re.escape(prefix)}\d*{re.escape(suffix)})"', listing)))
+        if region.get("counties"):
+            # A sub-region of a state: only its counties' files (and those next to it; regions.json "counties").
+            mine = set(region["counties"])
+            names = [n for n in names if len(n) - len(prefix) - len(suffix) != 3 or
+                     n[len(prefix):len(prefix) + 3] in mine]
         out["version"] = f"{url} ({len(names)} files)"
         if fingerprint:
             out["ok"] = bool(names)
@@ -1233,11 +1238,11 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         if fingerprint:
             out["ok"] = True
             return out
-        from placepacks.regions import boxes_of
+        from placepacks.regions import query_boxes
         target = os.path.join(folder, entry["id"] + ".json")
         os.makedirs(folder, exist_ok=True)
         merged = None
-        for west, south, east, north in boxes_of(region):
+        for west, south, east, north in query_boxes(region):
             # One query per box of the region; the answers' elements are put together.
             body = urllib.parse.urlencode({"data": f["query"].format(south=south, west=west, north=north,
                                                                       east=east)}).encode()
@@ -1295,7 +1300,8 @@ def fetch_gtfs(entry, region, url, folder, pause, fingerprint):
             continue
         if row.get("location.country_code") != catalogue.country_code(region):
             continue
-        if (row.get("location.subdivision_name") or "").lower() != region["name"].lower():
+        state = catalogue.parent_values(region).get("name") or region["name"]      # a sub-region: its state's
+        if (row.get("location.subdivision_name") or "").lower() != state.lower():
             continue
         if not licence_ok(row.get("urls.license")) or not row.get("urls.latest"):
             continue
@@ -1460,6 +1466,8 @@ def fetch_region(region_id, work, parts=fmt.PARTS, national=None, fingerprint=Fa
     # OpenStreetMap first and alone: the later slices use its extract's own box.
     for entry in [e for e in entries if e["id"] == "osm"]:
         finish(entry, run_with_limit(entry, region, cat, work, national, fingerprint))
+        if result["osm"].get("ok") and not fingerprint and region.get("parent"):
+            result["osm"]["path"] = clip_osm(result["osm"]["path"], region)
         if result["osm"].get("ok") and not fingerprint:
             box = extract_bbox(result["osm"]["path"])
             if box and not region.get("boxes"):
@@ -1475,6 +1483,27 @@ def fetch_region(region_id, work, parts=fmt.PARTS, national=None, fingerprint=Fa
         with open(os.path.join(work, "fetched.json"), "w", encoding="utf-8") as f:
             json.dump(result, f, indent=1)
     return result
+
+
+def clip_osm(path, region):
+    """A sub-region's part of its parent's OpenStreetMap extract (osmium extract, "smart": a street or an area that
+    crosses the border is kept whole), next to the extract. When osmium-tool is not installed the whole extract is
+    used: the pack writer keeps only what is in the sub-region (PackWriter clip), only more slowly."""
+    import shutil
+    import subprocess
+    if not shutil.which("osmium"):
+        print(f"  osm: osmium-tool is not installed; the whole extract of {region['parent']} is read", flush=True)
+        return path
+    west, south, east, north = region["bbox"]
+    m = 0.05                            # a little more than the sub-region (the packs overlap at the border)
+    target = os.path.join(os.path.dirname(path), "clipped.osm.pbf")
+    t = time.time()
+    subprocess.run(["osmium", "extract", "--bbox", f"{west - m},{south - m},{east + m},{north + m}",
+                    "--strategy", "smart", "--overwrite", "--output", target, path], check=True)
+    print(f"  osm: clipped to {region['id']} in {time.time() - t:.0f} s "
+          f"({os.path.getsize(target) / 1e6:.0f} MB of {os.path.getsize(path) / 1e6:.0f} MB)", flush=True)
+    os.remove(path)
+    return target
 
 
 def prepare(national, cat=None):
@@ -1572,7 +1601,8 @@ def prepare_national(entry, national, values):
         print(f"{entry['id']}: {count:,} records")
     if f.get("convert") == "atp":
         paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
-        regions = [r for r in catalogue.regions().values() if catalogue.country_code(r) in entry["countries"]]
+        regions = [r for r in catalogue.regions().values() if catalogue.country_code(r) in entry["countries"] and
+                   not r.get("parent")]         # a sub-region's cells are inside its parent's box
         from placepacks.regions import boxes_of
         count = atp_to_csv(paths[0], os.path.join(folder, entry["id"] + ".csv"), [b for r in regions for b in boxes_of(r)])
         for p in paths:
@@ -1643,7 +1673,9 @@ def main(argv=None):
         return 0
     if a.fingerprint_all is not None and a.region is None:
         from placepacks.manifest import fingerprint
-        ids = a.fingerprint_all.replace(",", " ").split() or list(catalogue.regions())
+        from placepacks.regions import expand, leaves
+        # The regions packs are made for: a parent typed (England, Texas) is its children.
+        ids = [c for r in a.fingerprint_all.replace(",", " ").split() for c in expand(r)] or leaves()
         prints = {r: fingerprint(fetch_region(r, os.path.join("work", r), fmt.PARTS, a.national, True))
                   for r in ids}
         with open(a.out, "w", encoding="utf-8") as f:

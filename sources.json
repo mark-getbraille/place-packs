@@ -195,7 +195,7 @@
    "id": "nad",
    "name": "National Address Database (USDOT)",
    "short": "the National Address Database",
-   "part": "core",
+   "part": "addresses",
    "countries": [
     "US"
    ],
@@ -261,7 +261,7 @@
    "id": "oda",
    "name": "Open Database of Addresses (Statistics Canada)",
    "short": "Statistics Canada's Open Database of Addresses",
-   "part": "core",
+   "part": "addresses",
    "countries": [
     "CA"
    ],
@@ -307,7 +307,7 @@
    "id": "openaddresses",
    "name": "OpenAddresses",
    "short": "OpenAddresses",
-   "part": "core",
+   "part": "addresses",
    "countries": [
     "US",
     "CA"
@@ -414,7 +414,7 @@
    "id": "tiger-addrfeat",
    "name": "US Census Bureau TIGER/Line address ranges",
    "short": "the US Census Bureau's address ranges",
-   "part": "extra",
+   "part": "addresses",
    "countries": [
     "US"
    ],
@@ -684,7 +684,7 @@
    "id": "overture-places",
    "name": "Overture Maps Foundation places",
    "short": "Overture Maps",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US",
     "CA",
@@ -776,7 +776,7 @@
    "id": "fsq-places",
    "name": "Foursquare Open Source Places",
    "short": "Foursquare Open Source Places",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US",
     "CA",
@@ -1297,7 +1297,7 @@
    "id": "ban",
    "name": "Base Adresse Nationale (France)",
    "short": "the Base Adresse Nationale",
-   "part": "core",
+   "part": "addresses",
    "countries": [
     "FR"
    ],
@@ -1329,7 +1329,7 @@
    "id": "bag",
    "name": "Basisregistratie Adressen en Gebouwen (Netherlands)",
    "short": "the Dutch BAG",
-   "part": "core",
+   "part": "addresses",
    "countries": [
     "NL"
    ],
@@ -1399,7 +1399,7 @@
    "id": "linz-addresses",
    "name": "NZ Addresses (Toitū Te Whenua LINZ)",
    "short": "Toitū Te Whenua LINZ",
-   "part": "core",
+   "part": "addresses",
    "countries": [
     "NZ"
    ],
@@ -1469,7 +1469,7 @@
    "id": "cartociudad",
    "name": "CartoCiudad (Spain)",
    "short": "CartoCiudad (IGN Spain)",
-   "part": "core",
+   "part": "addresses",
    "countries": [
     "ES"
    ],
@@ -1533,7 +1533,7 @@
    "id": "nyc-restaurant-inspections",
    "name": "New York City restaurant inspections (DOHMH)",
    "short": "New York City's health inspections",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -1581,7 +1581,7 @@
    "id": "nys-food-service-inspections",
    "name": "New York State food service establishment inspections (NYSDOH)",
    "short": "the New York State Department of Health",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -1635,7 +1635,7 @@
    "id": "austin-food-inspections",
    "name": "Austin, Texas food establishment inspection scores",
    "short": "the City of Austin",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -1680,7 +1680,7 @@
    "id": "delaware-food-inspections",
    "name": "Delaware food establishment inspections",
    "short": "the Delaware Division of Public Health",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -1729,7 +1729,7 @@
    "id": "montgomery-md-food-inspections",
    "name": "Montgomery County, Maryland food inspections",
    "short": "Montgomery County, Maryland",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -1775,7 +1775,7 @@
    "id": "boulder-food-inspections",
    "name": "Boulder County, Colorado restaurant inspections 2013-2025",
    "short": "Boulder County",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -1820,7 +1820,7 @@
    "id": "cincinnati-food-inspections",
    "name": "Cincinnati food safety program inspections",
    "short": "the City of Cincinnati",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -1865,7 +1865,7 @@
    "id": "baton-rouge-food-inspections",
    "name": "Baton Rouge retail food inspections",
    "short": "the Louisiana Department of Health",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -1910,7 +1910,7 @@
    "id": "sf-health-inspections",
    "name": "San Francisco health inspection scores 2016-2019",
    "short": "San Francisco's Department of Public Health",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -1955,7 +1955,7 @@
    "id": "ny-liquor-licences",
    "name": "New York State Liquor Authority licences (active and inactive)",
    "short": "the New York State Liquor Authority",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -2035,7 +2035,7 @@
    "id": "colorado-liquor-licences",
    "name": "Colorado liquor licences (current and recently expired)",
    "short": "the Colorado Department of Revenue",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -2105,7 +2105,7 @@
    "id": "sf-registered-businesses",
    "name": "San Francisco registered business locations",
    "short": "the City and County of San Francisco",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -2175,7 +2175,7 @@
    "id": "la-businesses",
    "name": "Los Angeles businesses (active and closed)",
    "short": "the City of Los Angeles",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -2251,7 +2251,7 @@
    "id": "nyc-dcwp-licences",
    "name": "New York City consumer licences of storefront businesses (DCWP)",
    "short": "New York City's Department of Consumer and Worker Protection",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -2314,7 +2314,7 @@
    "id": "fdic-branches",
    "name": "FDIC bank branch locations",
    "short": "the FDIC",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -2352,7 +2352,7 @@
    "id": "fsa-hygiene",
    "name": "Food Standards Agency food hygiene ratings (UK)",
    "short": "the Food Standards Agency",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "GB",
     "IE"
@@ -2410,7 +2410,7 @@
    "id": "vic-sands-mcdougall",
    "name": "Sands & McDougall business directories of Victoria, 1896-1974",
    "short": "the Sands & McDougall directories (Victoria)",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "AU"
    ],
@@ -3090,7 +3090,7 @@
    "id": "dc-business-licences",
    "name": "Washington, DC basic business licences (storefronts)",
    "short": "the District of Columbia",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -3149,7 +3149,7 @@
    "id": "minneapolis-food-inspections",
    "name": "Minneapolis food inspections",
    "short": "the City of Minneapolis",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -3405,7 +3405,7 @@
    "id": "toronto-dinesafe",
    "name": "Toronto DineSafe food premises inspections",
    "short": "the City of Toronto",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "CA"
    ],
@@ -3444,7 +3444,7 @@
    "id": "boston-food-establishments",
    "name": "Boston food establishment licences and inspections",
    "short": "the City of Boston",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -3704,7 +3704,7 @@
    "id": "irs-exempt-organizations",
    "name": "IRS Exempt Organizations Business Master File",
    "short": "the IRS",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -3850,7 +3850,7 @@
    "id": "alltheplaces",
    "name": "All The Places (chain store locations)",
    "short": "All The Places",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US",
     "CA",
@@ -5040,7 +5040,7 @@
    "id": "ns-civic-addresses",
    "name": "Nova Scotia Civic Address File (civic points)",
    "short": "the Province of Nova Scotia",
-   "part": "extra",
+   "part": "addresses",
    "countries": [
     "CA"
    ],
@@ -7355,7 +7355,7 @@
    "id": "nrn-address-ranges",
    "name": "NRCan National Road Network: street names and address ranges",
    "short": "Natural Resources Canada",
-   "part": "extra",
+   "part": "addresses",
    "countries": [
     "CA"
    ],
@@ -8217,7 +8217,7 @@
    "id": "seattle-business-licences",
    "name": "Seattle active business licence tax certificates (located by address)",
    "short": "the City of Seattle",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "US"
    ],
@@ -8268,7 +8268,7 @@
    "id": "winnipeg-business-licences",
    "name": "Winnipeg business licences (personal sales and services)",
    "short": "the City of Winnipeg",
-   "part": "extra",
+   "part": "businesses",
    "countries": [
     "CA"
    ],

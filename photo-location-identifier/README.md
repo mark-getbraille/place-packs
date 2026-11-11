@@ -22,6 +22,9 @@ taken. Point it at your photo album, and if your family goes to the Outer Banks 
   around the same time (marked "probably").
 - **Made for screen readers:** every window works with NVDA and JAWS: labels on every field, Alt keys on every
   button, Escape to close, F1 for the manual, and progress announced as it goes.
+- **Place packs in parts:** towns, streets and landmarks always; businesses and house-number addresses only when
+  the exact place is put in the pictures' names, or with **Also download full detail**. Large regions (England,
+  Texas, California, Australia, ...) come in smaller parts, so you download only where your photos were taken.
 - **Private:** everything runs on your computer. The only internet use is downloading the free place packs
   (OpenStreetMap and other open data, from this repository's releases), and only when you allow it. No photo data
   is ever sent.
@@ -30,7 +33,7 @@ Reads JPEG, PNG, TIFF, WebP, HEIC/HEIF, AVIF and most RAW files; videos too when
 
 ## Download and install
 
-Download `PhotoLocationIdentifier-1.2.0-setup.exe` from the release **photo-location-identifier-v1.2.0** on this
+Download `PhotoLocationIdentifier-1.3.0-setup.exe` from the release **photo-location-identifier-v1.3.0** on this
 repository's Releases page and open it.
 
 The installer is not signed with a paid certificate, so Windows **SmartScreen** may say "Windows protected your PC".

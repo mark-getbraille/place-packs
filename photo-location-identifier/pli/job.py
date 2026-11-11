@@ -2,7 +2,8 @@
 
   1. find the photos (and their companion files)
   2. read where and when each was taken
-  3. get the place packs the positions need (ask first, automatically, or never: the setting)
+  3. get the place packs the positions need (ask first, automatically, or never: the setting): core and extra, and
+     the businesses and address points too with "Put the exact place in each picture's name" or full detail
   4. look up the places and work out the folders (grouping.make_plan)
   5. with "Put the exact place in each picture's name", look up the exact place of each photo (look_up_spots)
 
@@ -21,7 +22,8 @@ def build_plan(folder, opts, places=None, packs="ask", ask=None, progress=None, 
     "never". Returns (plan, notes): notes are things to tell the user (packs downloaded or not)."""
     if places is None:
         from pli import myplaces, settings
-        places = Places(my_places=myplaces.MyPlaces.load(settings.my_places_path()))
+        places = Places(my_places=myplaces.MyPlaces.load(settings.my_places_path()),
+                        full_detail=settings.load().get("full_detail", False))
 
     def say(text, done=0, total=0):
         if progress:
@@ -37,7 +39,8 @@ def build_plan(folder, opts, places=None, packs="ask", ask=None, progress=None, 
         say("Checking the place packs")
         got, problems = places.get_packs(positions, packs, ask=ask,
                                          progress=lambda label, d=0, t=0: say(f"Downloading the place pack for "
-                                                                              f"{label}", d, t))
+                                                                              f"{label}", d, t),
+                                         exact=bool(opts.get("rename")))
         notes += [f"Downloaded the place pack for {g}." for g in got] + problems
     plan = grouping.make_plan(folder, found, places, opts,
                               progress=lambda d, t, p: say("Looking up the places", d, t), stop=stop)

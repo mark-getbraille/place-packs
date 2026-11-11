@@ -2,8 +2,10 @@
 
 Free, offline place-name packs for photos: what is at a position, as it was named when the picture was taken.
 Each pack covers one region: a US state, a Canadian province, or a Geofabrik region of Western Europe, Australia,
-New Zealand or Japan. Programs download a region's pack the first time a picture from there needs it. After that,
-nothing is sent anywhere when a place is looked up.
+New Zealand or Japan; the largest (England, Texas, California, New York, Florida, Ontario, Quebec, Australia,
+the Netherlands, Sweden, Norway, Finland) are split into sub-regions, such as England's nine regions and Australia's states. Programs download
+a region's pack the first time a picture from there needs it. After that, nothing is sent anywhere when a place is
+looked up.
 
 The packs are built from OpenStreetMap and other open data: national address databases, government names and
 facilities, Overture Maps and Foursquare Open Source Places, Wikidata, GeoNames and public transit feeds, and dated
@@ -94,12 +96,13 @@ date range (an old scanned photo, 1950–1960) gives the names valid in that ran
 The `placepacks` package (MIT) reads packs with the Python standard library only:
 
 ```python
-from placepacks.download import ensure_pack
+from placepacks.download import ensure_packs
 from placepacks.lookup import Finder
-from placepacks.regions import regions_for
+from placepacks.regions import regions_near
 
-region = regions_for(44.26, -72.58)[0]          # "us-vermont"
-ensure_pack(region)                              # downloads it once; ask= and progress= are optional
+for region in regions_near(44.26, -72.58):      # ["us-vermont"] (and a neighbour within 2 km of its border)
+    ensure_packs(region)                         # core and extra, once; detail="address" adds businesses and
+                                                 # addresses; ask= and progress= are optional
 f = Finder()
 r = f.lookup(44.26, -72.58, when=(2005, 2006), detail="street", altitude=None)
 print(r.phrase(units="miles"), "|", r.short("street"), "|", r.details())
@@ -116,37 +119,66 @@ The API:
   `as_listed_now`, `no_older_record`, `sources`, `source_names`, `attributions`. Its methods are `phrase(detail,
   units)`, `short(detail)`, `details()` and `source_text()`.
 - `placepacks.when`: `When.parse(None | YYYYMM | date | "YYYY-MM" | (start, end))`.
-- `placepacks.regions`: `REGIONS`, `regions_for(lat, lon, resolver=None)`, `region_label(id)` and `tree()`.
+- `placepacks.regions`: `REGIONS`, `regions_for(lat, lon, resolver=None)`, `regions_near(lat, lon, km=2)`,
+  `region_label(id)`, `tree()`, `expand(id)` (a parent's sub-regions) and `parent_of(id)`.
 - `placepacks.download`: `PUBLIC_RELEASE`, `Catalogue()`, `ensure_pack(region, part="core", folder=None,
-  ask=None, progress=None)`, `updates_available()`, `installed()`, `remove_pack(key)` and `add_pack_file(path)`.
+  ask=None, progress=None)` (a parent id downloads its sub-regions' packs), `ensure_packs(region, parts=None,
+  detail=None, full=False)`, `parts_for(detail=None, full=False)`, `updates_available()`, `installed()`,
+  `remove_pack(key)` and `add_pack_file(path)`.
 - `placepacks.water`: `WaterLayer().describe(lat, lon, altitude=None, nearest=None)`.
 
-Each region has two parts: **core** (`us-vermont.osmpack`: OpenStreetMap, address points, Census towns and ZIP
-areas) and **extra** (`us-vermont-extra.osmpack`: address ranges, businesses, public facilities, landmarks,
-transit stops and Wikidata). The file format is described in [FORMAT.md](FORMAT.md).
+Each region has these parts:
 
-## Sizes (estimates)
+- **core** (`us-vermont.osmpack`): OpenStreetMap, Census towns and ZIP areas: the towns, streets and landmarks.
+  No address points.
+- **extra** (`us-vermont-extra.osmpack`): the history and the smaller lists: public facilities, landmarks, transit
+  stops, trails, historic areas and Wikidata.
+- **businesses** (`us-vermont-businesses.osmpack`): Overture Maps places, All the Places, the IRS's exempt
+  organizations and the business lists (inspections, licences, bank branches, food hygiene ratings).
+- **addresses** (`us-vermont-addresses.osmpack`): address points and address ranges, with their history.
+- **names** (`us-vermont-names.osmpack`, optional): other-language names.
 
-Estimated, not yet measured. Geofabrik could not be reached from the development machine. A test on a real small
-extract (Liechtenstein) gave a pack about half its extract's size, but today's extracts are mostly unnamed buildings
-and house numbers, which packs leave out. The first build's `sources-status.md` will give the real numbers.
+Programs download core and extra. They get businesses and addresses only when a lookup needs them (the detail
+"address", or the exact place in a picture's name) or the user turns on full detail. A lookup never fails without
+them: it names the landmark, the street or the town instead. Programs made before these parts existed still find
+the towns and streets in core and extra.
 
-| Area | Core | Extra |
-|---|---|---|
-| A typical US state | 60–150 MB | 70–200 MB |
-| All US states, DC and Puerto Rico | 3–6 GB | 4–7 GB |
-| All of Canada | 0.6–1.2 GB | 0.5–1 GB |
-| Germany (16 Länder) | 0.6–1.4 GB | 0.3–0.6 GB |
-| France (22 regions) | 0.9–1.8 GB | 0.3–0.6 GB |
-| United Kingdom | 0.3–0.7 GB | 0.2–0.4 GB |
-| Spain, Italy | 0.2–0.7 GB each | 0.1–0.3 GB each |
-| Netherlands, Belgium, Switzerland, Austria, Ireland, the Nordic countries, Portugal | 0.05–0.5 GB each | 0.05–0.2 GB each |
-| Australia | 0.15–0.35 GB | 0.1–0.3 GB |
-| New Zealand | 0.05–0.15 GB | 0.03–0.1 GB |
-| Japan (8 regions) | 0.3–0.7 GB | 0.2–0.5 GB |
+**Sub-regions.** A region whose core and extra together would be over about 300 MB is built as sub-regions:
+England's nine regions (`gb-england-london`, `gb-england-south-east`, ...), Australia's states and territories
+(`au-new-south-wales`, ...), groups of counties of Texas (`us-texas-north`, `us-texas-gulf-coast`,
+`us-texas-south-central`, `us-texas-west`), California (`us-california-los-angeles`, `-south`, `-bay-area`,
+`-central`, `-north`), New York (`us-new-york-city`, `-downstate`, `-upstate`) and Florida (`us-florida-south`,
+`-central`, `-north`), Ontario (`ca-ontario-toronto`, `-south-west`, `-east`, `-north`), Quebec
+(`ca-quebec-montreal`, `-east-and-north`), the Netherlands (`nl-netherlands-west`, `-north-east-south`), Sweden
+(`se-sweden-south-and-west`, `-stockholm-and-north`), Norway (`no-norway-east-and-south`, `-west-and-north`) and
+Finland (`fi-finland-south`, `-centre-and-north`). A sub-region covers only its parent's own land and the water
+next to it, never a neighbour's (Vermont is not in New York's). Each pack also holds
+what lies within about 2 km of its border and every street that crosses it, so a lookup near a border works, and
+`regions_near` gives both sub-regions there. The parent id still works: `ensure_pack("gb-england")` downloads every
+sub-region's pack. For programs that know only the parent, packs.json keeps the parent's core and extra too, the
+sub-regions' packs put together. The sub-regions are made by `tools/make_subregions.py`.
 
-GitHub allows release files up to 2 GB each with no total limit, so every pack fits. A user downloads only the
-regions their photos need.
+The file format is described in [FORMAT.md](FORMAT.md).
+
+## Sizes
+
+The first full build (November 2026) published 453 packs, 52 GB in all, before the parts and sub-regions; each
+pack's size is in [sources-status.md](sources-status.md). Measured from those packs, the largest regions in the new
+parts (MB; a sub-region's share is estimated from its population, and its packs are a few per cent larger for
+the overlap at its borders):
+
+| Region | Core | Extra | Businesses | Addresses | Core + extra of the largest sub-region |
+|---|---|---|---|---|---|
+| Texas (4 sub-regions) | 297 | 113 | 501 | 757 | 145 (North and East) |
+| California (5) | 351 | 150 | 492 | 576 | 175 (Los Angeles Area) |
+| England (9) | 573 | 18 | 843 | 0 | 97 (South East) |
+| Australia (8) | 567 | 81 | 542 | 0 | about 200 (New South Wales) |
+| New York (3) | 178 | 126 | 527 | 359 | about 130 (New York City) |
+| Ontario (4) | 216 | 141 | 569 | 121 | about 170 (Toronto) |
+| A typical US state (not split) | 60–200 | 40–110 | 100–300 | 150–450 | |
+
+Core and extra, what a program downloads by default, stay under about 300 MB for every pack. GitHub allows release
+files up to 2 GB each with no total limit. A user downloads only the regions their photos need.
 
 ## How the packs are built
 
@@ -161,7 +193,8 @@ regions their photos need.
     - `seed_history`: seed the US address-range history from older TIGER years. The finished seed of each region is kept in the "seeds" release and reused, so it is made again only when the seed years or sources change.
 - **What it does:**
   - It downloads the national files once and splits them per region.
-  - It builds each region (ten at a time; inside a region four sources at a time, at most two against one server, each stopped after its time limit), merged with its previous pack.
+  - It builds each region (ten at a time; inside a region four sources at a time, at most two against one server, each stopped after its time limit), merged with its previous pack. Each part is its own pack (core, extra, businesses, addresses, names).
+  - A sub-region reads its parent's slice of the national files and its parent's OpenStreetMap extract, clipped with osmium-tool. Its first build takes its history from its parent's older packs (only its own area). The publish job then puts each parent's sub-regions together again under the parent's keys (`placepacks.combine`).
   - It publishes to the release `packs`, in this order:
     1. the new packs, under dated file names;
     2. the previous list, as `packs-previous.json`;
@@ -178,6 +211,8 @@ pip install -r requirements.txt
 python -m placepacks.fetch us-rhode-island --dir work/us-rhode-island
 python -m placepacks.build us-rhode-island --part core --inputs work/us-rhode-island/fetched.json --out us-rhode-island.osmpack
 python -m placepacks.build us-rhode-island --part extra --inputs work/us-rhode-island/fetched.json --out us-rhode-island-extra.osmpack
+python -m placepacks.build us-rhode-island --part addresses --inputs work/us-rhode-island/fetched.json --out us-rhode-island-addresses.osmpack
+python -m placepacks.build us-rhode-island --part businesses --inputs work/us-rhode-island/fetched.json --out us-rhode-island-businesses.osmpack
 ```
 
 Some sources need a file put in `inputs/` by hand: their downloads need an account or change address. `SOURCES.md`

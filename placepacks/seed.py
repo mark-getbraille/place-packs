@@ -1,11 +1,14 @@
 """The TIGER history seed (the workflow's "seed_history"): one pack per US region built from the older TIGER/Line
 releases (settings tiger_seed_years x tiger_seed_sources), oldest first, each the previous pack of the next.
 
-    python -m placepacks.seed fingerprint      the seed's fingerprint (12 hex characters)
+    python -m placepacks.seed fingerprint [REGION]   the seed's fingerprint (12 hex characters)
 
 A finished seed is kept as a release asset (seed-<region>-<fingerprint>.osmpack in the "seeds" release) and reused
 by later builds; it is made again only when the fingerprint changes: the seed years, the seed sources, their
-catalogue entries or the pack format.
+catalogue entries, the pack format or, given a region, the region's own definition (a sub-region's counties and
+cells). Seeds are stored per region id: a sub-region (us-texas-gulf-coast) has its own, made from its own counties;
+the seeds of the parents (us-texas) are no longer used and can be deleted from the release.
+The seed pack holds every part's seed sources (build --part all); each part takes its own sources' rows from it.
 """
 
 import hashlib
@@ -15,14 +18,17 @@ import sys
 from placepacks import catalogue, fmt
 
 
-def fingerprint(cat=None):
-    """The seed's fingerprint: a hash of the seed years, the seed sources' catalogue entries and the pack format."""
+def fingerprint(cat=None, region_id=None):
+    """The seed's fingerprint: a hash of the seed years, the seed sources' catalogue entries and the pack format
+    (and, given region_id, its regions.json entry)."""
     cat = cat or catalogue.load()
     settings = cat["settings"]
     sources = settings.get("tiger_seed_sources", [])
     entries = {e["id"]: e for e in cat["accepted"] if e["id"] in sources}
     data = {"years": settings.get("tiger_seed_years", []), "sources": sources,
             "entries": [entries.get(s) for s in sources], "format": [fmt.PACK_FORMAT, fmt.PACK_VERSION]}
+    if region_id:
+        data["region"] = catalogue.regions().get(region_id)
     return hashlib.sha256(json.dumps(data, sort_keys=True).encode()).hexdigest()[:12]
 
 
@@ -30,7 +36,7 @@ def main(argv=None):
     """The command line (see the module docstring)."""
     argv = argv if argv is not None else sys.argv[1:]
     if argv[:1] == ["fingerprint"]:
-        print(fingerprint())
+        print(fingerprint(region_id=argv[1] if len(argv) > 1 else None))
         return 0
     print(__doc__)
     return 1

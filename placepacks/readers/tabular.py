@@ -91,9 +91,11 @@ def smart_case(text):
 
 
 def region_values(region):
-    """The placeholders of filters."""
+    """The placeholders of filters (a sub-region's name and id are its parent's: catalogue.parent_values)."""
+    from placepacks.catalogue import parent_values
     return {"code": region.get("code", ""), "fips": region.get("fips", ""), "pruid": region.get("pruid", ""),
-            "name": region.get("name", ""), "id": region["id"], "cc": region.get("cc", "")}
+            "name": region.get("name", ""), "id": region["id"], "cc": region.get("cc", ""),
+            **parent_values(region)}
 
 
 # Compression methods zipfile names but cannot read (9 = Deflate64).

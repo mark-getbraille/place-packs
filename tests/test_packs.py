@@ -27,13 +27,26 @@ def fetched(**paths):
     return {sid: {"path": str(p), "ok": True, "version": "test"} for sid, p in paths.items()}
 
 
+def addresses_of(path):
+    """The addresses part next to a core pack built by core(): "p.osmpack" -> "p-addresses.osmpack"."""
+    return str(path)[:-len(".osmpack")] + "-addresses.osmpack"
+
+
+def readers(path):
+    """PackReaders of a core pack and, when core() built one, its addresses part."""
+    return [PackReader(str(path))] + ([PackReader(addresses_of(path))] if os.path.exists(addresses_of(path)) else [])
+
+
 def core(tmp_path, out, month, previous=None, cafe="Joe's Diner", street="Main Street", nad=None, removals=()):
-    """Build a core pack of the made-up region."""
+    """Build a core pack of the made-up region (and, with nad, its addresses part next to it)."""
     work = tmp_path / f"w{month}"
     work.mkdir(exist_ok=True)
     inputs = {"osm": samples.osm_file(str(work), cafe, street)}
     if nad is not None:
         inputs["nad"] = samples.nad_file(str(work), nad)
+        old = addresses_of(previous) if previous and os.path.exists(addresses_of(previous)) else None
+        build.build(VT, "addresses", fetched(**inputs), addresses_of(out), previous=old, month=month,
+                    removal_list=list(removals))
     return build.build(VT, "core", fetched(**inputs), str(out), previous=previous, month=month,
                        removal_list=list(removals))
 
@@ -67,14 +80,17 @@ def test_the_catalogue_is_complete():
 # ------------------------------------------------------------------------------------------- readers
 
 def test_core_pack_from_osm_and_addresses(tmp_path):
-    """OpenStreetMap and NAD address points in one core pack; excluded NAD states and other states are left out;
-    capitals are made ordinary."""
+    """OpenStreetMap in the core pack, the NAD's address points in the addresses part (not in core); excluded NAD
+    states and other states are left out; capitals are made ordinary."""
     nad = [("120", "MAIN STREET", "TESTVILLE", "VT", 44.0007, -71.9990), ("9", "Elm St", "X", "MI", 44.0, -72.0),
            ("1", "Far Rd", "Y", "NH", 44.0, -72.0)]
     meta = core(tmp_path, tmp_path / "p.osmpack", 202611, nad=nad)
-    assert meta["sources_used"].startswith("osm=") and "nad=1" in meta["sources_used"]
+    assert meta["sources_used"].startswith("osm=") and "nad" not in meta["sources_used"]
+    assert PackReader(str(tmp_path / "p.osmpack")).addresses_near(*MAIN, 40) == []
+    addresses = PackReader(addresses_of(tmp_path / "p.osmpack"))
+    assert addresses.part == "addresses" and "nad=1" in addresses.meta["sources_used"]
+    a = addresses.addresses_near(*MAIN, 40)
     p = PackReader(str(tmp_path / "p.osmpack"))
-    a = p.addresses_near(*MAIN, 40)
     assert [(x["number"], x["street"], x["city"], x["source"]) for x in a] == [("120", "Main Street", "Testville",
                                                                                "nad")]
     assert p.sources["osm"]["licence"] == "ODbL-1.0" and "OpenStreetMap" in p.sources["osm"]["attribution"]
@@ -82,8 +98,8 @@ def test_core_pack_from_osm_and_addresses(tmp_path):
 
 
 def test_extra_layers(tmp_path):
-    """GNIS (pipe text), TIGER address ranges (shapefile), Overture places (Parquet), Wikidata (with dates) and a
-    GTFS stop, each with its source."""
+    """GNIS (pipe text), Wikidata (with dates) and a GTFS stop in the extra pack, Overture places (Parquet) in the
+    businesses part and TIGER address ranges (shapefile) in the addresses part, each with its source."""
     pytest.importorskip("shapefile")
     pytest.importorskip("duckdb")
     inputs = fetched(**{"gnis": samples.gnis_file(str(tmp_path)),
@@ -91,11 +107,14 @@ def test_extra_layers(tmp_path):
                         "overture-places": samples.places_parquet(str(tmp_path), [("g1", "Tony''s Pizza", "pizza",
                                                                                        44.0003, -71.9999)]),
                         "wikidata": samples.wikidata_file(str(tmp_path)), "gtfs": samples.gtfs_file(str(tmp_path))})
-    meta = build.build(VT, "extra", inputs, str(tmp_path / "x.osmpack"), month=202611, removal_list=[])
-    used = dict(u.split("=") for u in meta["sources_used"].split(","))
-    assert used == {"tiger-addrfeat": "1", "overture-places": "1", "gnis": "2", "gtfs": "1", "wikidata": "1"}
-    p = PackReader(str(tmp_path / "x.osmpack"))
-    r = p.ranges_near(*MAIN, 40)[0]
+    used = {}
+    for part in ("extra", "businesses", "addresses"):
+        meta = build.build(VT, part, inputs, str(tmp_path / f"x-{part}.osmpack"), month=202611, removal_list=[])
+        used[part] = dict(u.split("=") for u in meta["sources_used"].split(","))
+    assert used["extra"] == {"gnis": "2", "gtfs": "1", "wikidata": "1"}
+    assert used["businesses"] == {"overture-places": "1"} and used["addresses"] == {"tiger-addrfeat": "1"}
+    p = PackReader(str(tmp_path / "x-extra.osmpack"))
+    r = PackReader(str(tmp_path / "x-addresses.osmpack")).ranges_near(*MAIN, 40)[0]
     assert r["name"] == "Main St" and r["number"] == 162 and r["source"] == "tiger-addrfeat"
     mill = [x for x in p.points_near(44.0041, -71.9990, 20) if x["source"] == "wikidata"][0]
     assert (mill["first"], mill["last"]) == (192305, 199801)
@@ -159,7 +178,7 @@ def test_street_and_address_history(tmp_path):
     core(tmp_path, p1, 201501, street="Main St", nad=[("120", "Main St", "Testville", "VT", 44.0007, -71.9990)])
     core(tmp_path, p2, 202611, previous=str(p1), street="Martin Luther King Jr. Blvd",
          nad=[("120", "Martin Luther King Jr. Blvd", "Testville", "VT", 44.0007, -71.9990)])
-    f = Finder(packs=[PackReader(str(p2))], water=False)
+    f = Finder(packs=readers(p2), water=False)
     old = f.lookup(*MAIN, when=201506, detail="address")
     assert old.house_number == "120" and old.street == "Main St" and old.street_now == "Martin Luther King Jr. Blvd"
     assert old.phrase("address").startswith("near 120 Main St (now Martin Luther King Jr. Blvd)")
@@ -202,7 +221,7 @@ def test_order_of_answers_and_attribution(tmp_path):
     point (NAD) with "near"; at street detail: the street; the details give the dates and the attributions."""
     p = tmp_path / "o.osmpack"
     core(tmp_path, p, 202611, nad=[("120", "Main Street", "Testville", "VT", 44.0007, -71.9990)])
-    f = Finder(packs=[PackReader(str(p))], water=False)
+    f = Finder(packs=readers(p), water=False)
     assert f.lookup(*PARK).phrase() == "at Riverside Park, Testville"
     near = f.lookup(44.00066, -71.99900, detail="address")
     assert near.kind == "address" and near.phrase("address") == "near 120 Main Street, Testville"
@@ -289,12 +308,13 @@ def test_every_source_gets_a_status_line(tmp_path, capsys):
               "openaddresses": {"ok": False, "status": "skipped",
                                 "reason": "needs a hand-supplied file in inputs/openaddresses/us-vermont"}}
     build.build(VT, "core", inputs, str(tmp_path / "p.osmpack"), month=202611, removal_list=[])
+    build.build(VT, "addresses", inputs, str(tmp_path / "a.osmpack"), month=202611, removal_list=[])
     out = capsys.readouterr().out
     assert "osm: ok (v1, " in out and "rows)" in out
     assert "nad: failed (read, but no rows matched" in out
     assert "openaddresses: skipped (needs a hand-supplied file in inputs/openaddresses/us-vermont)" in out
-    p = PackReader(str(tmp_path / "p.osmpack"))
-    st = json.loads(p.meta["source_status"])
+    st = {**json.loads(PackReader(str(tmp_path / "p.osmpack")).meta["source_status"]),
+          **json.loads(PackReader(str(tmp_path / "a.osmpack")).meta["source_status"])}
     assert st["osm"]["status"] == "ok" and st["nad"]["status"] == "failed" and st["openaddresses"]["status"] == \
         "skipped"
     text = status_mod.status({"packs": {VT: {"size": 1, "built_month": 202611, "history_start": 202611,
@@ -359,16 +379,16 @@ def test_old_wikidata_dates_do_not_change_modern_lookups(tmp_path):
     assert f.lookup(44.0100, -72.0, when=195006).name == "Gone Mill"
 
 
-def test_address_range_history_is_in_the_extra_pack(tmp_path):
-    """Seeded TIGER years live in the extra pack (its builds start in 2011) while the core pack starts now; the
+def test_address_range_history_is_in_the_addresses_pack(tmp_path):
+    """Seeded TIGER years live in the addresses pack (its builds start in 2011) while the core pack starts now; the
     lookup over both packs uses the range valid in 2015 and today's street name with it."""
     pytest.importorskip("shapefile")
     seed = tmp_path / "seed.osmpack"
-    build.build(VT, "extra", fetched(**{"tiger-addrfeat": samples.addrfeat_folder(str(tmp_path / "t1"),
+    build.build(VT, "addresses", fetched(**{"tiger-addrfeat": samples.addrfeat_folder(str(tmp_path / "t1"),
                                                                                   name="Main St")}),
                 str(seed), month=201101, only={"tiger-addrfeat"}, removal_list=[])
     extra = tmp_path / "x.osmpack"
-    build.build(VT, "extra", fetched(**{"tiger-addrfeat": samples.addrfeat_folder(
+    build.build(VT, "addresses", fetched(**{"tiger-addrfeat": samples.addrfeat_folder(
         str(tmp_path / "t2"), name="Martin Luther King Jr. Blvd")}), str(extra), previous=str(seed), month=202611,
         only={"tiger-addrfeat"}, removal_list=[])
     corep = tmp_path / "c.osmpack"

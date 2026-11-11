@@ -160,12 +160,14 @@ class ImportListWindow(wx.Dialog):
             folder = finder.packs_folder or finder.default_packs_folder()
             locator = placelist.Locator(folder)
             needed = locator.regions_needed(rows)
-            missing = {rid: n for rid, n in needed.items() if rid not in locator.packs}
-            if missing and not stop():
+            if needed and not stop():
+                # The address points are needed to find addresses: core, extra and the addresses part (only what is
+                # not here yet is downloaded).
                 progress("Getting the place packs needed")
-                finder.get_region_packs(missing, mode, ask=lambda label, size, count: ask(
-                    lambda: self.ask_pack(label, size, count)))
-                locator = placelist.Locator(folder)
+                got, _ = finder.get_region_packs(needed, mode, ask=lambda label, size, count: ask(
+                    lambda: self.ask_pack(label, size, count)), parts=finder.parts_wanted(exact=True))
+                if got:
+                    locator = placelist.Locator(folder)
             if not stop():
                 locator.locate(rows, progress=progress, stop=stop)
             placelist.find_duplicates(rows, places.existing())

@@ -62,11 +62,40 @@ def location_key(source, cls, lat, lon):
     return f"loc:{source}:{cls}:{lat:.4f}:{lon:.4f}"
 
 
-class PackWriter:
-    """See the module docstring. path: the pack to write; month: this build's month (YYYYMM, default now)."""
+CLIP_MARGIN = 0.02              # degrees (about 2 km): a sub-region's packs overlap their neighbours' this much
 
-    def __init__(self, path, month=None):
+
+class Keep:
+    """Which rows of an older pack this pack takes as its history (merge_history): not the rows of a source that
+    now belongs to another part (Overture moved from extra to businesses: the new extra does not keep it), and for a
+    sub-region only the rows in it (with CLIP_MARGIN). drop_sources: source ids; clip: a region dict or None."""
+
+    def __init__(self, drop_sources=(), clip=None):
+        self.drop_sources, self.clip = set(drop_sources), clip
+
+    def box(self, south, west, north, east):
+        """True when a row with these bounds (microdegrees) is kept by the clip."""
+        if self.clip is None:
+            return True
+        from placepacks.regions import touches_region
+        s = fmt.SCALE
+        return touches_region(self.clip, (west / s, south / s, east / s, north / s), CLIP_MARGIN)
+
+    def row(self, source, south, west, north=None, east=None):
+        """True when a row of source with these bounds (or this position) is kept."""
+        if source in self.drop_sources:
+            return False
+        return self.box(south, west, south if north is None else north, west if east is None else east)
+
+
+class PackWriter:
+    """See the module docstring. path: the pack to write; month: this build's month (YYYYMM, default now); clip: a
+    sub-region (regions.json "parent"): only the records in it are kept (within CLIP_MARGIN), whatever the readers
+    give (a source read from the parent's file, OpenStreetMap when the extract could not be clipped)."""
+
+    def __init__(self, path, month=None, clip=None):
         self.path, self.month = path, month or fmt.month_of()
+        self.clip = clip
         self.tmp = path + ".partial"
         if os.path.exists(self.tmp):
             os.remove(self.tmp)
@@ -102,6 +131,16 @@ class PackWriter:
         b = self.bounds
         b[0], b[1], b[2], b[3] = min(b[0], south), min(b[1], west), max(b[2], north), max(b[3], east)
 
+    def _inside(self, lat, lon):
+        """True when a position is in the clip region (with CLIP_MARGIN)."""
+        from placepacks.regions import in_region
+        return in_region(self.clip, lat, lon, CLIP_MARGIN)
+
+    def _touches(self, south, west, north, east):
+        """True when a shape's bounds touch the clip region (with CLIP_MARGIN)."""
+        from placepacks.regions import touches_region
+        return touches_region(self.clip, (west, south, east, north), CLIP_MARGIN)
+
     def _count(self, source, table):
         """Count one record of a source."""
         self.counts[(source, table)] = self.counts.get((source, table), 0) + 1
@@ -115,6 +154,8 @@ class PackWriter:
         """A named point; type: its fine type phrase ("pizza restaurant"), if known; brand: (brand name, Wikidata id
         or "") of a chain's location (data only, like the type); note: a short note about the place ("filming
         location of ..."), data only, never spoken."""
+        if self.clip is not None and not self._inside(lat, lon):
+            return
         first, last = self._span(first, last)
         self._extend(lat, lon)
         brand_text = None
@@ -138,6 +179,8 @@ class PackWriter:
         lats = [p[0] for r in rings for p in r]
         lons = [p[1] for r in rings for p in r]
         s, w, n, e = min(lats), min(lons), max(lats), max(lons)
+        if self.clip is not None and not self._touches(s, w, n, e):
+            return
         self._extend(s, w, n, e)
         first, last = self._span(first, last)
         self.db.execute("INSERT INTO areas (key, source, name, cls, tag, minlat, minlon, maxlat, maxlon, size, rings, "
@@ -154,6 +197,8 @@ class PackWriter:
             return None
         lats, lons = [p[0] for p in points], [p[1] for p in points]
         s, w, n, e = min(lats), min(lons), max(lats), max(lons)
+        if self.clip is not None and not self._touches(s, w, n, e):
+            return None
         self._extend(s, w, n, e)
         return points, (*fmt.micro([(s, w)])[0], *fmt.micro([(n, e)])[0])
 
@@ -213,6 +258,8 @@ class PackWriter:
         number, street = (number or "").strip(), " ".join((street or "").split())
         if not number or not street:
             return
+        if self.clip is not None and not self._inside(lat, lon):
+            return
         self._extend(lat, lon)
         name = f"{number} {street}"
         self.db.execute("INSERT INTO addr (key, source, name, cls, street, city, lat, lon, first, last) VALUES "
@@ -223,22 +270,26 @@ class PackWriter:
 
     # -- finishing
 
-    def finish(self, meta, previous=None, removals=()):
-        """Merge with the previous pack's history (previous: its path, or None for the first build), remove the
-        keys of removals ([{"key", "reason", "date"}]), write the grid, the address cells, the sources and the meta
-        table, and put the file in place. Returns the counts {table: rows}."""
+    def finish(self, meta, previous=None, removals=(), keep=None, dedupe=True):
+        """Merge with the previous pack's history (previous: its path, a list of paths, or None for the first build;
+        keep: a Keep, which of their rows to take), remove the keys of removals ([{"key", "reason", "date"}]), write
+        the grid, the address cells, the sources and the meta table, and put the file in place. dedupe: False when
+        the rows are already a pack's (placepacks.combine). Returns the counts {table: rows}."""
         db = self.db
         # Only the first row of a key this month (a reader may give an object twice); two sources may share a key
         # (Wikidata's places and their filming-location notes), so each source keeps its own row.
-        for table in TABLES:
+        for table in TABLES if dedupe else ():
             db.execute(f"DELETE FROM {table} WHERE id NOT IN (SELECT MIN(id) FROM {table} GROUP BY key, name, "
                        f"source)")
         previous_month, builds = "", []
-        if previous:
-            previous_month = merge_history(db, previous, self.month)
-            prev = sqlite3.connect(f"file:{previous}?mode=ro", uri=True)
-            builds = [int(b) for b in dict(prev.execute("SELECT key, value FROM meta").fetchall()).get(
-                "builds", previous_month).split(",") if b.strip()]
+        for path in ([previous] if isinstance(previous, str) else list(previous or [])):
+            # Several older packs: a region's first build in new parts takes its history from the packs it had
+            # before (the addresses from core and extra), a sub-region from its parent's (keep says which rows).
+            month_text = merge_history(db, path, self.month, keep)
+            previous_month = max(previous_month, month_text)
+            prev = sqlite3.connect(f"file:{path}?mode=ro", uri=True)
+            builds += [int(b) for b in dict(prev.execute("SELECT key, value FROM meta").fetchall()).get(
+                "builds", month_text).split(",") if b.strip()]
             prev.close()
         builds = sorted(set(builds) | {self.month})
         for r in removals:
@@ -348,15 +399,18 @@ def previous_addresses(prev):
     return rows
 
 
-def merge_history(db, previous, month):
-    """Merge the rows of the previous pack (path) into this month's rows in db (see the module docstring).
+def merge_history(db, previous, month, keep=None):
+    """Merge the rows of the previous pack (path) into this month's rows in db (see the module docstring). keep: a
+    Keep (which old rows this pack takes: its own part's sources, its own area), None for all.
     Returns the previous pack's month (text)."""
+    keep = keep or Keep()
     prev = sqlite3.connect(f"file:{previous}?mode=ro", uri=True)
     try:
         last_month = int(dict(prev.execute("SELECT key, value FROM meta").fetchall()).get("built_month", "0"))
         db.execute("CREATE TEMP TABLE old_addr AS SELECT * FROM addr WHERE 0")
         db.executemany("INSERT INTO old_addr (key, source, name, cls, street, city, lat, lon, first, last) VALUES "
-                       "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", previous_addresses(prev))
+                       "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                       (r for r in previous_addresses(prev) if keep.row(r[1], r[6], r[7])))
     finally:
         prev.close()
     db.execute("ATTACH DATABASE ? AS prev", (previous,))
@@ -414,8 +468,16 @@ def merge_history(db, previous, month):
         # Not an old row more than 180° wide that does not continue: a shape across 180° kept in every pack by its
         # world-wide box (the first full build; shapes.py now keeps only the parts in the region), not history.
         wide = (f" AND (maxlon - minlon) <= {180 * fmt.SCALE}" if "minlon" in columns else "")
+        # Only the rows this pack keeps (keep): its part's sources, its area.
+        if keep.drop_sources:
+            wide += f" AND source NOT IN ({', '.join('?' * len(keep.drop_sources))})"
+        if keep.clip is not None and table != "addr":
+            db.create_function("keep_box", 4, lambda s_, w_, n_, e_: 1 if keep.box(s_, w_, n_, e_) else 0,
+                               deterministic=True)
+            wide += (" AND keep_box(minlat, minlon, maxlat, maxlon)" if "minlon" in columns else
+                     " AND keep_box(lat, lon, lat, lon)")
         db.execute(f"INSERT INTO {table} ({cols}) SELECT {picks} FROM {old} WHERE id NOT IN (SELECT pid FROM m)"
-                   + wide)
+                   + wide, sorted(keep.drop_sources))
         db.execute("DROP TABLE m")
     db.execute("DROP TABLE temp.old_addr")
     for table in TABLES:

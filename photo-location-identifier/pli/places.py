@@ -21,8 +21,14 @@ placepacks calls used (all on this computer, except ensure_pack, which downloads
       (detail "area" names the folders; detail "address" gives the exact place for the file names: a business,
       building, school or landmark at the point, else the address point or street, with the neighbourhood and town)
   Finder.areas_at(lat, lon, when=None) -> [(name, cls, size_m2, source)], smallest first (when it exists)
-  placepacks.regions.regions_for(lat, lon) -> [region id, best first]; region_label(id)
-  placepacks.download.Catalogue().packs() -> {key: PackInfo}; ensure_pack(region, ...); default_folder()
+  placepacks.regions.regions_near(lat, lon) -> [region id, the one holding it first, then neighbours within 2 km]
+      (regions_for when regions_near is missing); expand(id) -> a parent's sub-regions; region_label(id)
+  placepacks.download.Catalogue().packs() -> {key: PackInfo}; ensure_packs(region, parts=...) (ensure_pack when it
+      is missing); parts_for(detail, full) -> the parts to download; default_folder()
+Parts: each region's pack has a core part (towns, streets, landmarks) and an extra part (history and smaller lists),
+always downloaded; and businesses and address points, downloaded only when the exact place is put in the pictures'
+names or with "Download full detail". A large region (England, Texas) is several packs (its sub-regions): a
+photo near the border of two gets both.
   placepacks.when.When.parse(datetime)
 No photo data is ever sent anywhere: a pack download asks only for the pack's file.
 """
@@ -311,11 +317,13 @@ class Places:
 
     CACHE_DIGITS = 3            # positions within about 100 metres share one lookup
 
-    def __init__(self, finder=None, my_places=None, packs_folder=None):
-        """Store the parts; nothing is opened yet."""
+    def __init__(self, finder=None, my_places=None, packs_folder=None, full_detail=False):
+        """Store the parts; nothing is opened yet. full_detail: also download every pack's businesses and address
+        points (the "Download full detail" setting)."""
         self._finder = finder
         self.my_places = my_places or mp.MyPlaces()
         self.packs_folder = packs_folder
+        self.full_detail = bool(full_detail)
         self.cache = {}
         self.exact_cache = {}
         self.attributions = set()
@@ -465,46 +473,64 @@ class Places:
     # ------------------------------------------------------------ packs
 
     def regions_needed(self, positions):
-        """{region id: number of photos} for the positions [(lat, lon)], from placepacks' regions_for (the best
-        region of each). {} without placepacks."""
+        """{region id: number of photos} for the positions [(lat, lon)]: the region holding each, and a neighbouring
+        region (a sub-region of England or Texas, a state) whose border is within 2 km of it, from placepacks'
+        regions_near. {} without placepacks."""
         try:
             _ensure_import_path()
-            from placepacks.regions import regions_for
+            from placepacks import regions as rg
         except Exception:  # noqa: BLE001
             return {}
+        near = getattr(rg, "regions_near", None) or rg.regions_for
         seen, out = {}, {}
         for lat, lon in positions:
-            key = (round(lat, 1), round(lon, 1))
+            key = (round(lat, 2), round(lon, 2))
             if key not in seen:
                 try:
-                    found = regions_for(lat, lon)
+                    seen[key] = list(near(lat, lon))
                 except Exception:  # noqa: BLE001
-                    found = []
-                seen[key] = found[0] if found else None
-            if seen[key]:
-                out[seen[key]] = out.get(seen[key], 0) + 1
+                    seen[key] = []
+            for rid in seen[key]:
+                out[rid] = out.get(rid, 0) + 1
         return out
 
-    def get_packs(self, positions, mode="ask", ask=None, progress=None, catalogue=None):
+    def parts_wanted(self, exact=False):
+        """The pack parts to get: core and extra; businesses and address points too for the exact place (the
+        pictures' names) or with full detail."""
+        try:
+            _ensure_import_path()
+            from placepacks.download import parts_for
+            return tuple(parts_for("exact" if exact else None, self.full_detail))
+        except Exception:  # noqa: BLE001 - an older placepacks: core only
+            return ("core",)
+
+    def get_packs(self, positions, mode="ask", ask=None, progress=None, catalogue=None, exact=False):
         """Make sure the packs for the positions are on this computer. mode: "ask" (ask(label, size_bytes, count)
-        -> True to download), "auto" (download without asking) or "never" (use only packs already here).
+        -> True to download), "auto" (download without asking) or "never" (use only packs already here). exact:
+        the exact place goes in the pictures' names (the businesses and address points are needed too).
         progress(text, done_bytes, total_bytes) is passed to the download. Returns (downloaded labels, problems).
         Already downloaded packs are used offline; nothing is sent but the request for the pack's file."""
         if mode == "never":
             return [], []
-        return self.get_region_packs(self.regions_needed(positions), mode, ask, progress, catalogue)
+        return self.get_region_packs(self.regions_needed(positions), mode, ask, progress, catalogue,
+                                     parts=self.parts_wanted(exact))
 
-    def get_region_packs(self, needed, mode="ask", ask=None, progress=None, catalogue=None):
+    def get_region_packs(self, needed, mode="ask", ask=None, progress=None, catalogue=None, parts=None):
         """Make sure the packs of the regions in needed ({region id: count}) are on this computer, as get_packs
-        does (count is said in the question: photos, or places of a list)."""
+        does (count is said in the question: photos, or places of a list). parts: the parts to get (default
+        parts_wanted()); core is needed, any other part not published for a region is left out. A parent region
+        (England) gets its sub-regions' packs, with one question for them all."""
         if mode == "never" or not needed:
             return [], []
         try:
             _ensure_import_path()
-            from placepacks import download
+            from placepacks import download, manifest
             from placepacks.regions import region_label
+            from placepacks import regions as rg
         except Exception as e:  # noqa: BLE001
             return [], [f"The place packs cannot be downloaded ({e})."]
+        parts = tuple(parts or self.parts_wanted())
+        expand = getattr(rg, "expand", lambda rid: [rid])
         folder = self.packs_folder or self.default_packs_folder()
         done, problems = [], []
         infos = {}
@@ -516,19 +542,27 @@ class Places:
             problems.append(f"The list of place packs could not be fetched, so only packs already on this computer "
                             f"are used ({e}).")
         for region, count in sorted(needed.items(), key=lambda kv: -kv[1]):
-            if self._have_pack(folder, region):
+            # The packs of the region (of a parent, its sub-regions'; while those are not published yet, its own).
+            areas = [r for r in expand(region) if manifest.key_of(r, "core") in infos]
+            parent = getattr(rg, "parent_of", lambda rid: "")(region)
+            if not areas:
+                areas = [parent] if parent and manifest.key_of(parent, "core") in infos else [region]
+            missing = [(r, p) for r in areas for p in parts if not self._have_pack(folder, r, p)]
+            if infos:
+                # Only what is published (a region without address points has no addresses part; the lookup
+                # works without it).
+                missing = [(r, p) for r, p in missing if manifest.key_of(r, p) in infos]
+            if not missing:
                 continue
-            info = infos.get(region)
-            if infos and info is None:
-                continue                        # no pack is published for that region
             label = region_label(region)
-            size = int(getattr(info, "size", 0) or 0)
+            size = sum(int(getattr(infos.get(manifest.key_of(r, p)), "size", 0) or 0) for r, p in missing)
             if mode == "ask" and (ask is None or not ask(label, size, count)):
                 continue
             try:
-                download.ensure_pack(region, "core", folder=folder, ask=lambda *a, **k: True,
-                                     progress=(lambda *a, **k: progress(label, *a)) if progress else None,
-                                     catalogue=cat)
+                for r in sorted({r for r, _ in missing}, key=areas.index):
+                    download.ensure_packs(r, parts=[p for rr, p in missing if rr == r], folder=folder,
+                                          ask=None, catalogue=cat,
+                                          progress=(lambda *a, **k: progress(label, *a)) if progress else None)
                 done.append(label)
             except Exception as e:  # noqa: BLE001
                 problems.append(f"The place pack for {label} could not be downloaded ({e}).")
@@ -543,15 +577,15 @@ class Places:
         return done, problems
 
     @staticmethod
-    def _have_pack(folder, region):
-        """True if region's core pack is already in folder."""
+    def _have_pack(folder, region, part="core"):
+        """True if region's pack part is already in folder."""
         if not folder:
             return False
         try:
             from placepacks import download, manifest
-            name = download.local_name(manifest.key_of(region, "core"))
+            name = download.local_name(manifest.key_of(region, part))
         except Exception:  # noqa: BLE001
-            name = region + ".osmpack"
+            name = region + ("" if part == "core" else f"-{part}") + ".osmpack"
         return os.path.exists(os.path.join(folder, name))
 
 

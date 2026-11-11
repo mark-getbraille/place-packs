@@ -16,7 +16,12 @@ and version checked, and each entry's region, part, file name, size and SHA-256 
 python -m placepacks.manifest publish --old packs.json --built out/ --fetched-dir work/ --output packs.json
     writes the new manifest (the old entries kept for regions not rebuilt) and prints the asset list.
 python -m placepacks.manifest plan --manifest packs.json --fingerprints prints.json --regions "..." [--force]
-    prints regions=<JSON> of the regions whose sources changed (ETag, Last-Modified or release names differ).
+    prints regions=<JSON> of the regions whose sources changed (ETag, Last-Modified or release names differ). Only
+    regions without children are built (a parent typed is its sub-regions); a parent's packs are its children's put
+    together (placepacks.combine), published under its own keys for the programs that know only the parent.
+
+Parts: core, extra, names, businesses, addresses (fmt.PARTS). A program made before businesses and addresses parses
+only the parts it knows and only the regions in its regions.json: it leaves the new entries out and keeps working.
 """
 
 import argparse
@@ -54,6 +59,18 @@ class PackInfo:
 def key_of(region, part):
     """"us-vermont" for core, "us-vermont-extra" for extra."""
     return region if part == "core" else f"{region}-{part}"
+
+
+def split_key(key, regions=None):
+    """(region, part) of a pack key ("us-texas-extra" -> ("us-texas", "extra")), or None when it is not a known
+    region's."""
+    if regions is None:
+        from placepacks.regions import REGIONS as regions
+    for part in fmt.PARTS:
+        region = key if part == "core" else key[:-len(part) - 1] if key.endswith("-" + part) else None
+        if region in regions and key_of(region, part) == key:
+            return region, part
+    return None
 
 
 def parse(data, regions=None):
@@ -154,6 +171,8 @@ def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
                       "history_start": int(meta.get("history_start", "0") or 0),
                       "sources": {s: {"version": str(v.get("version", "")), "date": str(v.get("date", ""))}
                                   for s, v in fetched.items() if isinstance(v, dict) and v.get("ok")}}
+        if meta.get("combined_from"):
+            packs[key]["combined_from"] = meta["combined_from"].split(",")     # a parent's sub-regions put together
         uploads.append((path, asset))
     manifest = {"format": FORMAT, "version": 2, "made": today.isoformat(), "release": "packs",
                 "sources": {e["id"]: {"name": e["name"], "licence": e["licence"],
@@ -208,11 +227,13 @@ def main(argv=None):
             f.writelines(f"{path}\t{asset}\n" for path, asset in uploads)
         print(f"{len(uploads)} packs to upload; {len(manifest['packs'])} in the list.")
         return 0
-    from placepacks.regions import REGIONS
-    wanted = [r for r in args.regions.replace(",", " ").split() if r] or list(REGIONS)
-    unknown = [r for r in wanted if r not in REGIONS]
+    from placepacks.regions import REGIONS, expand, leaves
+    typed = [r for r in args.regions.replace(",", " ").split() if r]
+    unknown = [r for r in typed if r not in REGIONS]
     if unknown:
         raise SystemExit(f"Unknown region ids: {', '.join(unknown)}")
+    # Packs are built for the regions without children: a parent typed (gb-england) is its sub-regions.
+    wanted = [c for r in typed for c in expand(r)] or leaves()
     old = {}
     if args.manifest and os.path.exists(args.manifest):
         with open(args.manifest, encoding="utf-8") as f:
@@ -223,7 +244,9 @@ def main(argv=None):
             prints = json.load(f)
     todo = [r for r in wanted if args.force or r not in prints or
             changed(old.get(r, {}).get("sources"), prints.get(r, {}))]
-    print("regions=" + json.dumps([{"id": r, "geofabrik": REGIONS[r]["geofabrik"]} for r in todo],
+    # slice: the folder of national-split the region reads (a sub-region reads its parent's slice).
+    print("regions=" + json.dumps([{"id": r, "geofabrik": REGIONS[r]["geofabrik"],
+                                    "slice": REGIONS[r].get("parent") or r} for r in todo],
                                   separators=(",", ":")))
     return 0
 

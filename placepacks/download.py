@@ -5,8 +5,17 @@
   ensure_pack(region_id, part="core", folder=None, ask=None, progress=None, catalogue=None) -> path
       ask(question) -> True to download (None: yes); progress(done, total). The file must have exactly the size and
       SHA-256 of packs.json, otherwise it is deleted. When a pack of the region is already there (an older one), the
-      new file is merged with it first (merge_local): every row the older one had is kept.
+      new file is merged with it first (merge_local): every row the older one had is kept. A parent region
+      (gb-england, us-texas: regions.json "children") is its sub-regions: each child's part is downloaded (one
+      question for all) and the first child's path is returned; the parent's own older file of that part, if any,
+      is removed once every child's is there (the children hold the same and more).
+  ensure_packs(region_id, parts=None, detail=None, full=False, ...) -> [paths]   the parts a lookup needs:
+      parts_for(detail, full) unless parts are given; a detail part that is not published (a region without address
+      points) is left out quietly, and a failed detail part never stops the others (the lookup works without it).
+  parts_for(detail=None, full=False) -> ("core", "extra"[, "businesses", "addresses"])   the businesses and the
+      addresses only for the detail "address" or "exact" (the exact place in a picture's name), or full detail.
   updates_available(folder=None, catalogue=None) -> [PackInfo]    newer versions of the packs that are installed
+      (an installed parent pack is updated as its children's packs)
   installed(folder=None) -> {key: {"sha256", "name", "built_month"}}   (installed.json in the pack folder)
 Standard library only (urllib). Only the pack's file is requested; nothing about the user is sent.
 """
@@ -167,21 +176,130 @@ def merge_local(new_path, old_path):
         con.close()
 
 
-def ensure_pack(region_id, part="core", folder=None, ask=None, progress=None, catalogue=None, update=False):
-    """The path of a region's pack, downloading it when it is not there (or, with update, when a newer one is
-    published). See the module docstring. Raises PackError when it is not published or not wanted."""
+DETAILS_NEEDING_PARTS = ("address", "exact")
+
+
+def parts_for(detail=None, full=False):
+    """The parts a lookup needs: core and extra; the businesses and the addresses too for the detail "address" or
+    "exact" (the exact place in a picture's name, Describe this picture), or when the user asked for full detail."""
+    if full or detail in DETAILS_NEEDING_PARTS:
+        return fmt.DEFAULT_PARTS + fmt.DETAIL_PARTS
+    return fmt.DEFAULT_PARTS
+
+
+def _children(region_id):
+    """The sub-regions of a parent region ([] for any other region)."""
+    from placepacks.regions import REGIONS
+    r = REGIONS.get(region_id) or {}
+    return list(r.get("children") or [])
+
+
+def _ensure_children(region_id, children, part, folder, ask, progress, catalogue, update):
+    """ensure_pack for a parent: every child's part, after one question for all of them."""
+    from placepacks.regions import region_label
+    cat = catalogue or Catalogue(cache_path=os.path.join(folder, MANIFEST))
+    published = cat.packs()
+    keys = [(c, manifest.key_of(c, part)) for c in children]
+    infos = [(c, published[k]) for c, k in keys if k in published]
+    if not infos:
+        raise PackError(f"No place pack is published for {region_label(region_id)} ({part}) yet.")
+    have = installed(folder)
+    todo = [(c, i) for c, i in infos if not os.path.exists(os.path.join(folder, local_name(i.key))) or
+            (update and have.get(i.key, {}).get("sha256") != i.sha256)]
+    if todo and ask is not None and not ask(
+            f"The place packs for {region_label(region_id)} are available ({len(todo)} areas, "
+            f"{sum(i.size for _, i in todo) / 1e6:.0f} MB). Download now?"):
+        raise PackError("Not downloaded.")
+    paths = []
+    for child, info in infos:
+        paths.append(ensure_pack(child, part, folder, None, progress, cat, update))
+    if len(infos) == len(keys):
+        _drop_parent(region_id, part, folder)
+    return paths
+
+
+def _drop_parent(region_id, part, folder):
+    """Remove a parent's own older pack of a part once every child's is here: it holds nothing they lack (the
+    combined pack is published for programs that know only the parent)."""
+    key = manifest.key_of(region_id, part)
+    if part in fmt.DEFAULT_PARTS and os.path.exists(os.path.join(folder, local_name(key))):
+        remove_pack(key, folder)
+
+
+def ensure_packs(region_id, parts=None, detail=None, full=False, folder=None, ask=None, progress=None,
+                 catalogue=None, update=False):
+    """[paths] of the parts of a region (or of a parent's sub-regions) a lookup needs (see the module docstring).
+    Raises PackError only when core cannot be had."""
     folder = folder or default_folder()
+    paths = []
+    for part in parts or parts_for(detail, full):
+        try:
+            got = ensure_pack(region_id, part, folder, ask, progress, catalogue, update, all_paths=True)
+        except PackError:
+            if part == "core":
+                raise
+            continue                        # a lookup works without the other parts
+        except OSError:
+            if part == "core":
+                raise
+            continue
+        paths += got
+    return paths
+
+
+def ensure_pack(region_id, part="core", folder=None, ask=None, progress=None, catalogue=None, update=False,
+                all_paths=False):
+    """The path of a region's pack, downloading it when it is not there (or, with update, when a newer one is
+    published). See the module docstring. all_paths: return [paths] (a parent's children). Raises PackError when it
+    is not published or not wanted.
+
+    While packs.json does not list a parent's sub-regions yet (a program newer than the published packs), the
+    parent's own pack is used for the parent and for each of its children; with no list at all (offline), the packs
+    already here."""
+    from placepacks.regions import parent_of
+    folder = folder or default_folder()
+    children = _children(region_id)
+    here = lambda rid: os.path.join(folder, local_name(manifest.key_of(rid, part)))  # noqa: E731
+    if children:
+        local = [here(c) for c in children if os.path.exists(here(c))]
+        if local and len(local) == len(children) and not update:
+            _drop_parent(region_id, part, folder)
+            return local if all_paths else local[0]
+        cat = catalogue or Catalogue(cache_path=os.path.join(folder, MANIFEST))
+        try:
+            published = cat.packs()
+        except PackError:
+            found = local or ([here(region_id)] if os.path.exists(here(region_id)) else [])
+            if found:
+                return found if all_paths else found[0]
+            raise
+        if any(manifest.key_of(c, part) in published for c in children):
+            paths = _ensure_children(region_id, children, part, folder, ask, progress, cat, update)
+            return paths if all_paths else paths[0]
+        catalogue = cat                         # not listed yet: the parent's own pack
+    elif parent_of(region_id) and not os.path.exists(here(region_id)):
+        cat = catalogue or Catalogue(cache_path=os.path.join(folder, MANIFEST))
+        try:
+            published = cat.packs()
+        except PackError:
+            published = {}
+            if os.path.exists(here(parent_of(region_id))):
+                return [here(parent_of(region_id))] if all_paths else here(parent_of(region_id))
+        if manifest.key_of(region_id, part) not in published and \
+                manifest.key_of(parent_of(region_id), part) in published:
+            region_id = parent_of(region_id)    # not listed yet: the parent's own pack holds it
+        catalogue = cat
     key = manifest.key_of(region_id, part)
     target = os.path.join(folder, local_name(key))
     if os.path.exists(target) and not update:
-        return target
+        return [target] if all_paths else target
     cat = catalogue or Catalogue(cache_path=os.path.join(folder, MANIFEST))
     info = cat.packs().get(key)
     if info is None:
         raise PackError(f"No place pack is published for {region_id} ({part}) yet.")
     have = installed(folder).get(key, {})
     if os.path.exists(target) and have.get("sha256") == info.sha256:
-        return target
+        return [target] if all_paths else target
     if ask is not None and not ask(f"{'A newer place pack' if os.path.exists(target) else 'The place pack'} for "
                                    f"{region_id} is available ({info.size / 1e6:.0f} MB). Download now?"):
         raise PackError("Not downloaded.")
@@ -211,17 +329,31 @@ def ensure_pack(region_id, part="core", folder=None, ask=None, progress=None, ca
     data = installed(folder)
     data[key] = {"sha256": info.sha256, "name": info.name, "built_month": info.built_month}
     _save_installed(folder, data)
-    return target
+    return [target] if all_paths else target
 
 
 def updates_available(folder=None, catalogue=None):
-    """[PackInfo] of installed packs with a newer published version."""
+    """[PackInfo] of installed packs with a newer published version. An installed pack of a parent region (made
+    before it had sub-regions) is updated as its children's packs: their PackInfos are given instead."""
     folder = folder or default_folder()
     cat = catalogue or Catalogue(cache_path=os.path.join(folder, MANIFEST))
     have = installed(folder)
     packs = cat.packs()
-    return [packs[k] for k, v in have.items() if k in packs and packs[k].sha256 != v.get("sha256") and
-            os.path.exists(os.path.join(folder, local_name(k)))]
+    out = []
+    for k, v in have.items():
+        info = packs.get(k)
+        if not os.path.exists(os.path.join(folder, local_name(k))):
+            continue
+        region, part = manifest.split_key(k) or ("", "")
+        children = _children(region)
+        if children:
+            for child in children:
+                ck = manifest.key_of(child, part)
+                if ck in packs and ck not in have and packs[ck] not in out:
+                    out.append(packs[ck])
+        elif info is not None and info.sha256 != v.get("sha256"):
+            out.append(info)
+    return out
 
 
 def remove_pack(key, folder=None):

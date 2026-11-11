@@ -1,7 +1,7 @@
 """The source catalogue (sources.json) and the regions (regions.json): loading, checking and choosing.
 
 check() is what the tests and the build run first: every accepted source has a licence from ALLOWED (open, allows
-redistribution), an attribution, a licence address, a part ("core" or "extra") and a reader; every licence with a
+redistribution), an attribution, a licence address, a part (fmt.PARTS) and a reader; every licence with a
 text has its file in LICENSES/; every rejection says why. sources_for(region, part) gives the sources of a pack.
 """
 
@@ -64,7 +64,7 @@ def check(cat=None):
         if e.get("licence") not in licences:
             problems.append(f"{where}: the licence {e.get('licence')} is not described in licences")
         if e.get("part") not in fmt.PARTS:
-            problems.append(f"{where}: the part must be core or extra")
+            problems.append(f"{where}: the part must be one of core, extra, names, businesses, addresses")
         for rid in e.get("regions", []):
             if rid not in known:
                 problems.append(f"{where}: the region {rid} is not in regions.json")
@@ -79,6 +79,15 @@ def check(cat=None):
     return problems
 
 
+def parent_values(region):
+    """A sub-region's "name" and "id" placeholders: its parent's ("Ontario", not "Ontario: North"), as the
+    sources' filters and hand-supplied input folders name the state or province. {} for any other region."""
+    if not region.get("parent"):
+        return {}
+    parent = regions().get(region["parent"], {})
+    return {"name": parent.get("name", region["name"]), "id": region["parent"]}
+
+
 def settings_for(cat, region, extra=None):
     """The placeholders of a region's addresses and filters (the catalogue's settings and the region's fields)."""
     values = dict(cat.get("settings", {}))
@@ -86,6 +95,7 @@ def settings_for(cat, region, extra=None):
     if os.environ.get("PLACEPACKS_SETTINGS"):
         values.update(json.loads(os.environ["PLACEPACKS_SETTINGS"]))
     values.update({k: v for k, v in region.items() if isinstance(v, str)})
+    values.update(parent_values(region))
     values["code_lower"] = str(region.get("code", "")).lower()       # the IRS's eo_vt.csv
     values.update(extra or {})
     return values
@@ -93,8 +103,15 @@ def settings_for(cat, region, extra=None):
 
 def sources_for(region, part, cat=None, only=None):
     """The accepted sources of a region's part (the region's country is in the source's countries and, for a source
-    of one city or state, the region is in its "regions")."""
+    of one city or state, the region or its parent is in its "regions"). part "all": every part's sources (a seed
+    run, whose pack is the history of several parts)."""
     cat = cat or load()
     cc = country_code(region)
-    return [e for e in cat["accepted"] if e["part"] == part and cc in e["countries"] and
-            (not e.get("regions") or region["id"] in e["regions"]) and (only is None or e["id"] in only)]
+    ids = {region["id"], region.get("parent", "")}
+    return [e for e in cat["accepted"] if (part == "all" or e["part"] == part) and cc in e["countries"] and
+            (not e.get("regions") or ids & set(e["regions"])) and (only is None or e["id"] in only)]
+
+
+def part_of(cat=None):
+    """{source id: its part}."""
+    return {e["id"]: e["part"] for e in (cat or load())["accepted"]}

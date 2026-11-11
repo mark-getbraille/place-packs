@@ -53,14 +53,14 @@ def picked(entry, con, src, read):
 
 def sql(entry, src, region, con=None):
     """The entry's query for an input and a region (con: a DuckDB connection, needed for "pick")."""
-    from placepacks.regions import boxes_of
+    from placepacks.regions import query_boxes
     if os.path.isdir(str(src)):
         src = os.path.join(str(src), "*.parquet")
     src = str(src).replace("'", "''")
     extra = picked(entry, con, src, f"read_parquet('{src}', hive_partitioning = 1)") if con is not None else {}
     # One query per box of the region, joined (Alaska's Aleutians past 180° are a second box).
     parts = [entry["query"].format(src=src, west=w, south=s, east=e, north=n, **extra)
-             for w, s, e, n in boxes_of(region)]
+             for w, s, e, n in query_boxes(region)]
     return parts[0] if len(parts) == 1 else " UNION ALL ".join(f"({q})" for q in parts)
 
 

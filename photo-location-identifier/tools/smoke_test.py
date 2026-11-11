@@ -1,6 +1,6 @@
 """The installer's smoke test (Windows, run by the workflow after the installer is built):
 
-    python tools/smoke_test.py dist/PhotoLocationIdentifier-1.2.0-setup.exe
+    python tools/smoke_test.py dist/PhotoLocationIdentifier-1.3.0-setup.exe
 
 1. Installs the program silently for the current user into a temporary folder.
 2. Checks File Explorer's "Sort pictures by location" entries (folder and folder background) are in the registry.

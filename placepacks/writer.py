@@ -411,7 +411,11 @@ def merge_history(db, previous, month):
             note = "NULL"
         picks = ", ".join(phrase if c == "type" else brand if c == "brand" else note if c == "note" else c
                           for c in columns)
-        db.execute(f"INSERT INTO {table} ({cols}) SELECT {picks} FROM {old} WHERE id NOT IN (SELECT pid FROM m)")
+        # Not an old row more than 180° wide that does not continue: a shape across 180° kept in every pack by its
+        # world-wide box (the first full build; shapes.py now keeps only the parts in the region), not history.
+        wide = (f" AND (maxlon - minlon) <= {180 * fmt.SCALE}" if "minlon" in columns else "")
+        db.execute(f"INSERT INTO {table} ({cols}) SELECT {picks} FROM {old} WHERE id NOT IN (SELECT pid FROM m)"
+                   + wide)
         db.execute("DROP TABLE m")
     db.execute("DROP TABLE temp.old_addr")
     for table in TABLES:

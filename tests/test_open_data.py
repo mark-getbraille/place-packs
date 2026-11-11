@@ -96,15 +96,22 @@ def test_a_dropped_download_continues_with_a_range_request(monkeypatch, tmp_path
                 raise ConnectionError("connection reset")
             return data
 
+    import io
+    import zipfile
+    buf = io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        z.writestr("made-up.txt", "a made-up file " * 20)
+    whole = buf.getvalue()                  # a real zip, cut after its first 10 bytes by the dropped connection
+
     def answer(url, *a, headers=None, **k):
         asked.append((headers or {}).get("Range"))
         if len(asked) == 1:
-            return Dropping(b"PK\x03\x04first-")
-        return Answer(b"second", status=206, headers={"ETag": "e"})
+            return Dropping(whole[:10])
+        return Answer(whole[10:], status=206, headers={"ETag": "e"})
     monkeypatch.setattr(fetch, "request", answer)
     target = str(tmp_path / "big.zip")
     fetch.download("https://x/big.zip", target, sleep=lambda s: None)
-    assert asked == [None, "bytes=10-"] and open(target, "rb").read() == b"PK\x03\x04first-second"
+    assert asked == [None, "bytes=10-"] and open(target, "rb").read() == whole
 
 
 # ------------------------------------------------------------------------------------------- Socrata and WFS

@@ -288,7 +288,20 @@
      ]
     }
    },
-   "history": "One release (2021); later releases are merged as they come."
+   "history": "One release (2021); later releases are merged as they come.",
+   "regions": [
+    "ca-alberta",
+    "ca-british-columbia",
+    "ca-manitoba",
+    "ca-new-brunswick",
+    "ca-nova-scotia",
+    "ca-northwest-territories",
+    "ca-ontario",
+    "ca-prince-edward-island",
+    "ca-quebec",
+    "ca-saskatchewan"
+   ],
+   "notes": " Statistics Canada publishes no ODA file for Newfoundland and Labrador, Nunavut or Yukon (404); their addresses come from NRCan's road-network ranges."
   },
   {
    "id": "openaddresses",
@@ -817,7 +830,8 @@
    },
    "prepare_query": "SELECT fsq_place_id, name, fsq_category_labels, latitude, longitude, date_created, date_closed FROM read_parquet('{src}') WHERE country IN ({countries})",
    "local_query": "SELECT fsq_place_id AS key, name, COALESCE(fsq_category_labels[1], '') AS cls, latitude AS lat, longitude AS lon, CAST(date_created AS VARCHAR) AS first, CAST(date_closed AS VARCHAR) AS last FROM read_parquet('{src}') WHERE longitude BETWEEN {west} AND {east} AND latitude BETWEEN {south} AND {north}",
-   "notes": "Foursquare's files are not sorted by place, so the prepare job reads them once for every covered country and each region takes its box from that local copy (one download instead of one per region)."
+   "notes": "Foursquare's files are not sorted by place, so the prepare job reads them once for every covered country and each region takes its box from that local copy (one download instead of one per region).",
+   "unavailable_reason": "Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE)"
   },
   {
    "id": "gnis",
@@ -1003,9 +1017,9 @@
     "url": "https://services.arcgis.com/v01gqwM5QqNysAAi/arcgis/rest/services/Manager_Name_PADUS/FeatureServer/0",
     "where": "Unit_Nm IS NOT NULL AND Unit_Nm <> '' AND ((Category IN ('Fee','Designation') AND Pub_Access IN ('OA','RA') AND GIS_Acres >= 10) OR Des_Tp IN ('SP','SREC','SHCA','SW') OR Unit_Nm LIKE '%State Forest%')",
     "fields": "Source_PAID,Unit_Nm,Des_Tp,Date_Est",
-    "page": 200,
+    "page": 50,
     "pause": 0.5,
-    "simplify": 0.0005
+    "simplify": 0.001
    },
    "member": "*.csv",
    "columns": {
@@ -1017,7 +1031,7 @@
     "first": "Date_Est"
    },
    "notes": "Read from USGS's PAD-US 4.1 service (no key). Every state park, state recreation area, state historic or cultural area, state wilderness and state forest, of any size; other named areas of at least 10 acres that are owned or designated (no easements, which are often private land) and open or restricted to the public. Outlines simplified to about 50 m. Vermont gets 61 state parks and Ohio 89.",
-   "time_limit_min": 40
+   "time_limit_min": 90
   },
   {
    "id": "faa-airports",
@@ -1160,7 +1174,7 @@
    "history": "Wikidata's own start and end dates (inception P571, start P580, dissolved or demolished P576, end P582), often decades back.",
    "notes": "Every Wikidata item with coordinates in the region, asked tile by tile (a tile that times out or fills 50,000 rows is split into four), typed by the English label of its class (\"covered bridge\", \"brewpub\"). Left out by placepacks/wikidata_exclude.json: people, families, trees, survey points, list and disambiguation pages, astronomical objects, taxa, electoral districts, graves and benches; private homes unless they have a heritage designation (P1435). Items that only copy a GNIS record (a GNIS id and no dates or designation) are left to GNIS. Only the id, English label, coordinates, class and dates are used, never Wikipedia text.",
    "skip_gnis_copies": true,
-   "time_limit_min": 45
+   "time_limit_min": 90
   },
   {
    "id": "cgndb",
@@ -2313,7 +2327,7 @@
    "tag": "bank",
    "fetch": {
     "method": "http",
-    "url": "https://api.fdic.gov/banks/locations?filters=STALP:{code}&fields=UNINUM,NAME,OFFNAME,LATITUDE,LONGITUDE,ESTYMD,ACQDATE&limit=10000&format=csv",
+    "url": "https://api.fdic.gov/banks/locations?filters=STALP:%22{code}%22&fields=UNINUM,NAME,OFFNAME,LATITUDE,LONGITUDE,ESTYMD,ACQDATE&limit=10000&format=csv",
     "file": "fdic-branches.csv",
     "no_head": true,
     "pause": 2
@@ -4594,10 +4608,10 @@
     "method": "arcgis",
     "where": "1=1",
     "fields": "OBJECTID,NAME_E,TYPE_E,ESTYEAR",
-    "page": 200,
+    "page": 50,
     "pause": 0.5,
     "url": "https://maps-cartes.ec.gc.ca/arcgis/rest/services/CWS_SCF/CPCAD/MapServer/0",
-    "simplify": 0.0005
+    "simplify": 0.001
    },
    "member": "*.csv",
    "columns": {
@@ -4609,7 +4623,8 @@
     "rings": "_rings"
    },
    "type_column": "TYPE_E",
-   "type_map": "humanise"
+   "type_map": "humanise",
+   "time_limit_min": 60
   },
   {
    "id": "ourairports",
@@ -4730,10 +4745,10 @@
     "method": "arcgis",
     "where": "1=1",
     "fields": "CSDUID,CSDNAME,CSDTYPE",
-    "page": 200,
+    "page": 50,
     "pause": 0.5,
     "url": "https://geo.statcan.gc.ca/geo_wa/rest/services/2021/Cartographic_boundary_files/MapServer/9",
-    "simplify": 0.0005
+    "simplify": 0.001
    },
    "member": "*.csv",
    "columns": {
@@ -4800,10 +4815,10 @@
     "method": "arcgis",
     "where": "1=1",
     "fields": "CFSAUID,PRUID",
-    "page": 200,
+    "page": 50,
     "pause": 0.5,
     "url": "https://geo.statcan.gc.ca/geo_wa/rest/services/2021/Cartographic_boundary_files/MapServer/14",
-    "simplify": 0.0005
+    "simplify": 0.001
    },
    "member": "*.csv",
    "columns": {
@@ -6353,7 +6368,7 @@
     "where": "1=1",
     "fields": "OBJECTID,GLOBAL_ID,NAME,TYPE_CODE",
     "page": 200,
-    "pause": 0.5,
+    "pause": 2,
     "url": "https://services6.arcgis.com/ssFJjBXIUyZDrSYZ/arcgis/rest/services/Special_Use_Airspace/FeatureServer/0",
     "simplify": 0.0005
    },
@@ -7165,7 +7180,7 @@
    },
    "history": "Current labels; replaced at each build (no history).",
    "notes": "French, Spanish, German, Italian, Dutch, Japanese and Chinese names of the places with coordinates (people left out), keyed like the Wikidata places of the main packs (\"wikidata:Q...\"). In a separate, optional pack part (\"names\"), downloaded only when a user turns on other languages; the main packs stay as they are. Data only.",
-   "time_limit_min": 45
+   "time_limit_min": 90
   },
   {
    "id": "ntad-rail-lines",
@@ -7271,9 +7286,10 @@
     "url": "https://hydro.nationalmap.gov/arcgis/rest/services/nhd/MapServer/4",
     "where": "GNIS_ID IS NOT NULL",
     "fields": "OBJECTID,COMID,GNIS_NAME",
-    "page": 500,
+    "page": 300,
     "pause": 0.5,
-    "simplify": 0.0003
+    "simplify": 0.0005,
+    "parallel": 3
    },
    "member": "*.csv",
    "columns": {
@@ -7285,7 +7301,7 @@
    },
    "history": "From the first build on.",
    "notes": "Only the stream segments named in GNIS (a GNIS id), at medium resolution (1:100,000), so a picture beside a river gets the river's line, not only GNIS's point (about 15,000 segments in Vermont).",
-   "time_limit_min": 40
+   "time_limit_min": 150
   },
   {
    "id": "nhd-named-waterbodies",
@@ -7309,7 +7325,8 @@
     "fields": "OBJECTID,COMID,GNIS_NAME,FTYPE",
     "page": 200,
     "pause": 0.5,
-    "simplify": 0.0003
+    "simplify": 0.0003,
+    "parallel": 3
    },
    "member": "*.csv",
    "columns": {
@@ -7331,7 +7348,8 @@
     "IceMass": "nature:glacier",
     "Estuary": "water:estuary",
     "*": "water"
-   }
+   },
+   "time_limit_min": 90
   },
   {
    "id": "nrn-address-ranges",
@@ -7533,7 +7551,7 @@
    },
    "history": "Current statements, from the first build on.",
    "notes": "Places that films and series were filmed at (Wikidata's filming location, P915, asked the other way round), each with a note \"filming location of A; B; C\" (up to 8 titles). The note is data only, never spoken; the point has the place's own Wikidata key, so a lookup joins it to the place.",
-   "time_limit_min": 45
+   "time_limit_min": 90
   },
   {
    "id": "whosonfirst-neighbourhoods",

@@ -96,6 +96,19 @@ def _parts(shape):
     return [[(y, x) for x, y in shape.points[a:b]] for a, b in zip(starts, starts[1:])]
 
 
+def _parts_in_region(shape, region):
+    """The parts of a shape that touch the region (by each part's own box), plus the holes inside a kept part. A
+    shape whose parts lie on both sides of 180° (Natural Earth's "Polynesia", "Aleutian Islands") has a box around
+    the whole globe: tested as one, it was kept in every pack, with millions of grid cells and world-wide bounds."""
+    parts = _parts(shape)
+    boxes = [(min(p[1] for p in part), min(p[0] for p in part), max(p[1] for p in part), max(p[0] for p in part))
+             for part in parts]
+    kept = [i for i, box in enumerate(boxes) if touches_region(region, box)]
+    inside = [i for i, (x1, y1, x2, y2) in enumerate(boxes) if i not in kept and any(
+        boxes[k][0] <= x1 and boxes[k][1] <= y1 and x2 <= boxes[k][2] and y2 <= boxes[k][3] for k in kept)]
+    return [parts[i] for i in sorted(kept + inside)]
+
+
 @reader("shapes")
 def read(path, entry, region, writer):
     """Add the source's ranges, areas, lines or points to writer. Returns the number of records."""
@@ -113,6 +126,9 @@ def read(path, entry, region, writer):
                     shape = _Projected(shape, entry["projection"])
                 x1, y1, x2, y2 = shape.bbox if len(shape.points) > 1 else (*shape.points[0], *shape.points[0])
                 if not touches_region(region, (x1, y1, x2, y2)):
+                    continue
+                parts = _parts_in_region(shape, region) if len(shape.points) > 1 else []
+                if len(shape.points) > 1 and not parts:
                     continue
                 if entry.get("name_template"):
                     name = entry["name_template"].format(**{k: smart_case(str(v or "")) for k, v in rec.items()})
@@ -140,13 +156,13 @@ def read(path, entry, region, writer):
                     if all(n is None for n in nums):
                         continue
                     zip_code = str(rec.get(fields.get("zip", ""), "") or rec.get(fields.get("zip2", ""), "") or "")
-                    for part in _parts(shape):
+                    for part in parts:
                         writer.add_range(key or f"{source}:{name}:{part[0]}", source, name, *nums, zip_code, part)
                 elif kind == "areas":
                     writer.add_area(key or f"{source}:{name}", source, name, cls, tag,
-                                    _parts(shape), first, last, type=phrase)
+                                    parts, first, last, type=phrase)
                 elif kind == "lines":
-                    for i, part in enumerate(_parts(shape)):
+                    for i, part in enumerate(parts):
                         writer.add_line(f"{key or source + ':' + name}:{i}", source, name, cls, tag, part)
                 else:
                     lon, lat = shape.points[0]

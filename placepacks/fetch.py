@@ -55,6 +55,8 @@ import time
 import urllib.parse
 import urllib.request
 
+
+csv.field_size_limit(sys.maxsize)        # polygon rings in one field can be many megabytes
 from placepacks import catalogue, fmt
 
 USER_AGENT = "place-packs-builder/1 (+https://github.com/mark-getbraille/place-packs)"
@@ -110,6 +112,14 @@ def download(url, target, pause=0, waits=RETRY_WAITS, sleep=time.sleep):
                         break
                     f.write(block)
                 version, modified = version_of(r.headers), r.headers.get("Last-Modified", "")
+            if target.lower().endswith(".zip"):
+                import zipfile
+                with open(partial, "rb") as fh:
+                    head = fh.read(512).lstrip()
+                if (head.startswith(b"PK") and not zipfile.is_zipfile(partial)) or head[:1] == b"<":
+                    # A cut-off download or an error page in place of the file: tried again from the start.
+                    os.remove(partial)
+                    raise ConnectionError("the download is not a complete zip file")
             break
         except Exception as e:  # noqa: BLE001 - tried again when it is temporary
             if attempt >= len(waits) or not retryable(e):
@@ -435,10 +445,50 @@ def _arcgis_geometry(geom):
     return None, None, None
 
 
+def arcgis_busy(error):
+    """True for an answer that means "too much at once, ask again later": an ArcGIS busy message, a 429 or 5xx (a 504
+    on a big page), a timeout or a dropped connection after post_json's own retries."""
+    import urllib.error
+    if isinstance(error, ValueError):
+        return bool(ARCGIS_BUSY.search(str(error))) or str(error).strip() == "ArcGIS error:"
+    if isinstance(error, urllib.error.HTTPError):
+        return error.code == 429 or error.code >= 500
+    return isinstance(error, (urllib.error.URLError, ConnectionError, TimeoutError, OSError))
+
+
+def arcgis_ids(url, query, box, sleep, source, depth=0):
+    """The object ids of a query. A busy server is asked again after a pause; a query that still fails (a big
+    state's box over a large layer: an empty "ArcGIS error:" or a 504) is asked as the box's four quarters, down to
+    three levels."""
+    for attempt in range(len(ARCGIS_WAITS)):
+        try:
+            return set(post_json(url + "/query", {**query, "returnIdsOnly": "true"}, sleep=sleep).get("objectIds")
+                       or [])
+        except Exception as e:  # noqa: BLE001 - a busy server: again, then smaller boxes
+            if not arcgis_busy(e):
+                raise
+            error = e
+            if box is not None and depth < 3:
+                break                       # a box can be cut: quarters at once rather than waiting
+            print(f"  {source}: the id query was refused ({str(e)[:60]}); again in {ARCGIS_WAITS[attempt]} s",
+                  flush=True)
+            sleep(ARCGIS_WAITS[attempt])
+    else:
+        raise error
+    w, s_, e, n = box
+    mx, my = (w + e) / 2, (s_ + n) / 2
+    print(f"  {source}: the id query was refused ({str(error)[:60]}); asking for the box in quarters", flush=True)
+    out = set()
+    for quarter in ((w, s_, mx, my), (mx, s_, e, my), (w, my, mx, n), (mx, my, e, n)):
+        q = dict(query, geometry=",".join(str(v) for v in quarter))
+        out |= arcgis_ids(url, q, quarter, sleep, source, depth + 1)
+    return out
+
+
 # ArcGIS answers that mean "too much at once, ask again later": treated like a 429 (fetch_arcgis splits the request).
 ARCGIS_BUSY = re.compile(r"too many|non-cacheable|unable to perform operation|exceeded|timeout|timed out|busy", re.I)
-ARCGIS_WAITS = (20, 60, 120, 240)
-ARCGIS_SPLITS = 6                       # halvings of one chunk before giving up
+ARCGIS_WAITS = (20, 60, 120, 240, 300)
+ARCGIS_SPLITS = 8                       # halvings of one chunk before a single record is left out
 
 
 def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
@@ -487,7 +537,7 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
         if west is not None:
             query.update(geometry=f"{west},{south},{east},{north}", geometryType="esriGeometryEnvelope", inSR="4326",
                          spatialRel="esriSpatialRelIntersects")
-        found |= set(post_json(url + "/query", {**query, "returnIdsOnly": "true"}, sleep=sleep).get("objectIds") or [])
+        found |= arcgis_ids(url, query, (west, south, east, north) if west is not None else None, sleep, entry["id"])
     ids = sorted(found)
     edited = (meta.get("editingInfo") or {}).get("lastEditDate") or ""
     version = f"{edited}:{len(ids)} records"
@@ -515,10 +565,18 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
                 params["maxAllowableOffset"] = simplify
             try:
                 return post_json(url + "/query", params, sleep=sleep, pause=f.get("pause", 0.5)).get("features", [])
-            except ValueError as e:
-                if not ARCGIS_BUSY.search(str(e)) or tries >= ARCGIS_SPLITS:
+            except Exception as e:  # noqa: BLE001 - a busy or overloaded server: fewer and simpler, below
+                if not arcgis_busy(e):
                     raise
-            print(f"  {entry['id']}: the server refused {len(chunk)} records (heavy geometry); trying again in "
+                why = str(e)[:60]
+                if tries >= ARCGIS_SPLITS:
+                    if len(chunk) == 1:
+                        # One record the server will not give even alone and simplified: left out, not the layer.
+                        print(f"  {entry['id']}: record {chunk[0]} left out ({why})", flush=True)
+                        skipped.append(chunk[0])
+                        return []
+                    raise
+            print(f"  {entry['id']}: the server refused {len(chunk)} records ({why}); trying again in "
                   f"{ARCGIS_WAITS[min(tries, len(ARCGIS_WAITS) - 1)]} s with fewer and simpler", flush=True)
             sleep(ARCGIS_WAITS[min(tries, len(ARCGIS_WAITS) - 1)])
             simpler = max(simplify or 0, 0.0002) * 2 if (polygons or polylines) else simplify
@@ -527,8 +585,14 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
             half = len(chunk) // 2
             return features(chunk[:half], simpler, tries + 1) + features(chunk[half:], simpler, tries + 1)
 
-        for i in range(0, len(ids), page):
-            for feat in features(ids[i:i + page], f.get("simplify")):
+        skipped = []
+        chunks = [ids[i:i + page] for i in range(0, len(ids), page)]
+        # "parallel": pages asked for several at a time (the large NHD layers), written in order.
+        from concurrent.futures import ThreadPoolExecutor
+        with ThreadPoolExecutor(max_workers=max(1, int(f.get("parallel", 1)))) as pool:
+            pages = pool.map(lambda c: features(c, f.get("simplify")), chunks)
+            all_features = (feat for got in pages for feat in got)
+            for feat in all_features:
                 attrs = feat.get("attributes") or {}
                 lat, lon, rings = _arcgis_geometry(feat.get("geometry"))
                 row = [_arcgis_value(attrs.get(name), name in dates) for name in fields]
@@ -971,8 +1035,17 @@ def resolve(entry, values, opener=None):
     values = dict(values)
     for key in ("overture_release", "fsq_release"):
         if values.get(key) == "latest" and entry.get("release_setting") == key:
-            values[key] = latest_release(entry, opener)
+            try:
+                values[key] = latest_release(entry, opener)
+            except ValueError as e:
+                if entry.get("unavailable_reason") and "no release found" in str(e):
+                    raise SourceUnavailable(entry["unavailable_reason"]) from e
+                raise
     return values
+
+
+class SourceUnavailable(Exception):
+    """A source that its publisher no longer offers openly: reported as skipped (its "unavailable_reason")."""
 
 
 def extract_bbox(path):
@@ -1068,7 +1141,21 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
 
         # The tiles are planned once with fast counts: empty tiles (sea, ice) are skipped, dense ones split, so
         # Alaska asks for a few dozen tiles and Vermont for a few, not a thousand fixed-size ones.
-        planned = wd.plan_tiles(region, count)
+        # The plan is made once per region and shared by the Wikidata sources (places, names, filming locations).
+        plan_file = os.path.join(os.path.dirname(folder), "_wikidata_tiles.json")
+        planned = None
+        if os.path.exists(plan_file):
+            try:
+                planned = [tuple(t) for t in json.load(open(plan_file, encoding="utf-8"))]
+            except ValueError:
+                planned = None
+        if planned is None:
+            planned = wd.plan_tiles(region, count)
+            try:
+                with open(plan_file, "w", encoding="utf-8") as fh:
+                    json.dump(planned, fh)
+            except OSError:
+                pass
         print(f"  {entry['id']}: {len(planned)} Wikidata tiles", flush=True)
         bindings = []
         if f.get("mode") == "filming":
@@ -1274,6 +1361,8 @@ def _fetch_one(entry, region, cat, work, national, fingerprint):
     values = catalogue.settings_for(cat, region)
     try:
         return fetch_source(entry, region, values, work, national, fingerprint)
+    except SourceUnavailable as e:
+        return {"ok": False, "version": "", "path": "", "status": "skipped", "reason": str(e)}
     except Exception as e:  # noqa: BLE001 - recorded; the build leaves the source out
         return {"ok": False, "version": "", "path": "", "error": str(e)[:300], "status": "failed",
                 "reason": str(e)[:300]}

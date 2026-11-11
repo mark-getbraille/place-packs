@@ -56,6 +56,7 @@ region's bounding box, are left out. Text that is all capitals is written in ord
 
 import csv
 import fnmatch
+import sys
 import io
 import json
 import os
@@ -66,7 +67,9 @@ from placepacks import fmt, types
 from placepacks.regions import in_region
 from placepacks.readers import reader
 
-csv.field_size_limit(10_000_000)
+# A polygon's rings in one CSV field can be far larger than csv's default limit (128 KB; 10 MB was too small for
+# StatCan's census subdivisions and CPCAD's protected areas): no limit.
+csv.field_size_limit(sys.maxsize)
 
 
 def smart_case(text):

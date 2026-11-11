@@ -302,10 +302,15 @@ jobs:
       - name: Keep the schedule alive (update sources-status.md)
         run: |
           if [ ! -f packs.json ]; then echo "Nothing was published; sources-status.md is left as it is."; exit 0; fi
-          python -m placepacks.status packs.json > sources-status.md
+          python -m placepacks.status packs.json > "$RUNNER_TEMP/sources-status.md"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add sources-status.md
-          git commit -m "Monthly place packs status" || echo "Nothing to commit"
-          git pull --rebase origin main || true   # main may have moved while the packs were building
-          git push || echo "The status could not be pushed (the packs are published)."
+          # main may have moved while the packs were building: start from its newest commit, then write the file.
+          for attempt in 1 2 3; do
+            git fetch origin main && git reset --hard origin/main
+            cp "$RUNNER_TEMP/sources-status.md" sources-status.md
+            git add sources-status.md
+            git commit -m "Monthly place packs status" || { echo "Nothing to commit"; break; }
+            git push origin HEAD:main && break
+            echo "The push was refused; trying again."
+          done

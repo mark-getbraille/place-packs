@@ -56,7 +56,7 @@ import urllib.parse
 import urllib.request
 
 
-csv.field_size_limit(sys.maxsize)        # polygon rings in one field can be many megabytes
+csv.field_size_limit(2**31 - 1)   # polygon rings in one field can be many megabytes (sys.maxsize overflows on Windows)
 from placepacks import catalogue, fmt
 
 USER_AGENT = "place-packs-builder/1 (+https://github.com/mark-getbraille/place-packs)"

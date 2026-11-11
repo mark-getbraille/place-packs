@@ -22,7 +22,7 @@ import sys
 import zipfile
 
 
-csv.field_size_limit(sys.maxsize)        # polygon rings in one field can be many megabytes
+csv.field_size_limit(2**31 - 1)   # polygon rings in one field can be many megabytes (sys.maxsize overflows on Windows)
 from placepacks import catalogue
 from placepacks.regions import boxes_of, touches_region
 from placepacks.readers.tabular import _get, dict_rows, open_texts, parse_point, region_values

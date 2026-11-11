@@ -1,6 +1,6 @@
 # Place packs status, 2026-11-11
 
-458 packs published, 52.62 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
+466 packs published, 52.85 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
 
 ## Packs by region
 
@@ -61,7 +61,9 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | es-navarra | 17.9 | 24.3 | 3.6 |  |  | 42.1 |
 | es-pais-vasco | 29.6 | 34.6 | 4.5 |  |  | 64.2 |
 | es-valencia | 54.8 | 67.9 | 4.1 |  |  | 122.7 |
-| fi-finland (before its sub-regions) | 228.2 | 171.3 | 7.7 |  |  | 399.5 |
+| fi-finland (its sub-regions put together) | 228.2 | 51.7 | 7.7 |  |  | 279.9 |
+| fi-finland-centre-and-north | 122.3 | 35.2 | 3.7 | 17.3 |  | 157.6 |
+| fi-finland-south | 106.1 | 25.1 | 2.1 | 36.5 |  | 131.2 |
 | fr-alsace | 45.5 | 69.9 | 8.4 |  |  | 115.4 |
 | fr-aquitaine | 130.0 | 81.2 | 12.4 |  |  | 211.2 |
 | fr-auvergne | 68.0 | 38.1 | 5.8 |  |  | 106.1 |
@@ -325,8 +327,16 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | es-valencia-extra | 2026-11 | 67.9 | 0001-01 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-valencia-names | 2026-11 | 4.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | fi-finland | 2026-11 | 228.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fi-finland-extra | 2026-11 | 171.3 | 1100-01 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fi-finland-centre-and-north | 2026-11 | 122.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fi-finland-centre-and-north-businesses | 2026-11 | 17.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fi-finland-centre-and-north-extra | 2026-11 | 35.2 | 1475-01 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fi-finland-centre-and-north-names | 2026-11 | 3.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fi-finland-extra | 2026-11 | 51.7 | 1201-01 |  |
 | fi-finland-names | 2026-11 | 7.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fi-finland-south | 2026-11 | 106.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fi-finland-south-businesses | 2026-11 | 36.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fi-finland-south-extra | 2026-11 | 25.1 | 1201-01 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fi-finland-south-names | 2026-11 | 2.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | fr-alsace | 2026-11 | 45.5 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | fr-alsace-extra | 2026-11 | 69.9 | 0083-01 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | fr-alsace-names | 2026-11 | 8.4 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
@@ -1591,16 +1601,35 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | es-valencia-extra | wikidata-filming | ok | 51 |
 | es-valencia-names | wikidata-labels | ok | 23223 |
 | fi-finland | osm | ok | 2026-11-08T21:21:00Z |
-| fi-finland-extra | alltheplaces | ok | 39203 |
-| fi-finland-extra | fsq-places | failed | no release found in https://fsq-os-places-us-east-1.s3.us-east-1.amazonaws.com |
-| fi-finland-extra | geonames | ok | 187038 |
-| fi-finland-extra | natural-earth-lines | ok | 2 |
-| fi-finland-extra | natural-earth-regions | ok | 10 |
-| fi-finland-extra | ourairports | ok | 124 |
-| fi-finland-extra | overture-places | ok | 284105 |
-| fi-finland-extra | wikidata | ok | 145074 |
-| fi-finland-extra | wikidata-filming | ok | 419 |
+| fi-finland-centre-and-north | osm | ok | 2026-11-08T21:21:00Z |
+| fi-finland-centre-and-north-businesses | alltheplaces | ok | 7475 |
+| fi-finland-centre-and-north-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
+| fi-finland-centre-and-north-businesses | overture-places | ok | 106172 |
+| fi-finland-centre-and-north-extra | geonames | ok | 123302 |
+| fi-finland-centre-and-north-extra | natural-earth-lines | ok | 1 |
+| fi-finland-centre-and-north-extra | natural-earth-regions | ok | 7 |
+| fi-finland-centre-and-north-extra | ourairports | ok | 75 |
+| fi-finland-centre-and-north-extra | wikidata | ok | 86684 |
+| fi-finland-centre-and-north-extra | wikidata-filming | ok | 168 |
+| fi-finland-centre-and-north-names | wikidata-labels | ok | 26188 |
+| fi-finland-extra | geonames | ok | 193385 |
+| fi-finland-extra | natural-earth-lines | ok | 0 in this region |
+| fi-finland-extra | natural-earth-regions | ok | 13 |
+| fi-finland-extra | ourairports | ok | 127 |
+| fi-finland-extra | wikidata | ok | 143286 |
+| fi-finland-extra | wikidata-filming | ok | 360 |
 | fi-finland-names | wikidata-labels | ok | 50697 |
+| fi-finland-south | osm | ok | 2026-11-08T21:21:00Z |
+| fi-finland-south-businesses | alltheplaces | ok | 25447 |
+| fi-finland-south-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
+| fi-finland-south-businesses | overture-places | ok | 140597 |
+| fi-finland-south-extra | geonames | ok | 70083 |
+| fi-finland-south-extra | natural-earth-lines | ok | 0 in this region |
+| fi-finland-south-extra | natural-earth-regions | ok | 6 |
+| fi-finland-south-extra | ourairports | ok | 52 |
+| fi-finland-south-extra | wikidata | ok | 56602 |
+| fi-finland-south-extra | wikidata-filming | ok | 192 |
+| fi-finland-south-names | wikidata-labels | ok | 11617 |
 | fr-alsace | ban | ok | 853416 |
 | fr-alsace | osm | ok | 2026-11-08T21:21:00Z |
 | fr-alsace-extra | alltheplaces | ok | 29392 |

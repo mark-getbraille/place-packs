@@ -7,12 +7,12 @@ as "Outer Banks 2005" and "Outer Banks 2006".
 It uses the location your camera or phone saved in each picture (its GPS position). Nothing is moved until you have
 checked the new folders, and "Undo the last sort" puts everything back.
 
-Version 1.3.0. Free software under the MIT licence, made by Company Maker, LLC.
+Version 1.3.1. Free software under the MIT licence, made by Company Maker, LLC.
 
 ## Installing {#installing}
 
-1. Download "PhotoLocationIdentifier-1.3.0-setup.exe" from the program's release page on GitHub
-   (github.com/mark-getbraille/place-packs, Releases, "photo-location-identifier-v1.3.0").
+1. Download "PhotoLocationIdentifier-1.3.1-setup.exe" from the program's release page on GitHub
+   (github.com/mark-getbraille/place-packs, Releases, "photo-location-identifier-v1.3.1").
 2. Open it. Windows may show "Windows protected your PC" (SmartScreen), because the program is new and not
    signed with a paid certificate. Choose "More info", then "Run anyway".
 3. Follow the installer. Its progress is read by NVDA and JAWS.

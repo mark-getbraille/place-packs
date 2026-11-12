@@ -157,9 +157,15 @@ def publish(tmp_path, packs, today=datetime.date(2026, 11, 2)):
         pack(built / (manifest.key_of(region_id, part) + fmt.PACK_SUFFIX), region_id, part,
              points=[(f"{region_id}:{part}", "osm", f"Made-up {part} place", "landmark", lat, lon, None)])
     m, uploads = manifest.publish("", str(built), str(tmp_path), today=today)
-    files = {download.PUBLIC_RELEASE + asset: open(path, "rb").read() for path, asset in uploads}
+    files = {release_url(release) + asset: open(path, "rb").read() for path, asset, release in uploads}
     files[download.PUBLIC_RELEASE + "packs.json"] = json.dumps(m).encode()
     return m, files
+
+
+def release_url(release):
+    """The download folder of a release (the detail releases are beside "packs")."""
+    root = download.PUBLIC_RELEASE.rstrip("/").rsplit("/", 1)[0]
+    return f"{root}/{release}/"
 
 
 def catalogue_of(folder, files):
@@ -388,3 +394,44 @@ def test_a_sub_regions_pack_says_its_state(tmp_path):
                        removal_list=[])
     assert meta["state"] == "Texas" and meta["region_name"] == "Texas: Gulf Coast"
     assert meta["parent"] == "us-texas"
+
+
+def test_detail_parts_go_in_a_release_of_their_own(tmp_path):
+    """GitHub allows 1000 files in a release: core and extra stay in "packs" (where programs made before this find
+    them), the names, businesses and addresses of a publish go in "packs-detail-YYYYMMDD", and the programs download
+    each pack from its release."""
+    m, files = publish(tmp_path, [(SOUTH, "core"), (SOUTH, "extra"), (SOUTH, "businesses"), (SOUTH, "addresses")])
+    assert {e["part"]: e["release"] for e in m["packs"].values()} == {
+        "core": "packs", "extra": "packs", "businesses": "packs-detail-20261102", "addresses": "packs-detail-20261102"}
+    infos = manifest.parse(json.dumps(m).encode())
+    assert infos[f"{SOUTH}-addresses"].release == "packs-detail-20261102" and infos[SOUTH].release == "packs"
+    cat = catalogue_of(tmp_path / "packs", files)
+    assert cat.url_for(infos[f"{SOUTH}-businesses"]).endswith(
+        "/releases/download/packs-detail-20261102/" + infos[f"{SOUTH}-businesses"].name)
+    paths = download.ensure_packs(SOUTH, detail="exact", folder=str(tmp_path / "packs"), catalogue=cat)
+    assert len(paths) == 4
+    # A list that names another release than these two kinds is not followed (an entry's release is checked).
+    bad = json.loads(json.dumps(m))
+    bad["packs"][f"{SOUTH}-addresses"]["release"] = "../evil"
+    assert manifest.parse(json.dumps(bad).encode())[f"{SOUTH}-addresses"].release == "packs"
+    keep = manifest.referenced_in(m)
+    assert f"packs\t{m['packs'][SOUTH]['name']}" in keep
+    assert f"packs-detail-20261102\t{m['packs'][SOUTH + '-addresses']['name']}" in keep
+
+
+def test_a_pack_replaced_since_the_list_was_read_is_downloaded_from_the_new_list(tmp_path):
+    """The cached list names a file a newer publish removed (404): the list is read again and the new pack comes."""
+    import urllib.error
+    m1, files1 = publish(tmp_path, [(SOUTH, "core")], today=datetime.date(2026, 11, 2))
+    m2, files2 = publish(tmp_path, [(SOUTH, "core")], today=datetime.date(2026, 12, 2))
+    folder = tmp_path / "packs"
+    folder.mkdir()
+    (folder / "packs.json").write_bytes(json.dumps(m1).encode())        # the old list, fresh in the cache
+
+    def opener(url):
+        if url not in files2:
+            raise urllib.error.HTTPError(url, 404, "Not Found", {}, None)
+        return io.BytesIO(files2[url])
+    cat = download.Catalogue(cache_path=str(folder / "packs.json"), opener=opener)
+    path = download.ensure_pack(SOUTH, "core", folder=str(folder), catalogue=cat)
+    assert download.installed(str(folder))[SOUTH]["name"] == m2["packs"][SOUTH]["name"] and os.path.exists(path)

@@ -42,9 +42,14 @@ on:
         description: "Seed the US address-range history from older TIGER years (slow; first build only)"
         type: boolean
         default: false
+      also_from_run:
+        description: "Also publish the packs built by this earlier run id (its publish failed); empty: none"
+        required: false
+        default: ""
 
 permissions:
   contents: write
+  actions: read
 
 concurrency:
   group: build-place-packs
@@ -302,6 +307,23 @@ jobs:
           pattern: pack-*
           path: built
           merge-multiple: true
+      # The packs an earlier run built when its publish failed (also_from_run): this run's own packs, downloaded
+      # above, come first and are not replaced.
+      - uses: actions/download-artifact@v4
+        if: ${{ inputs.also_from_run != '' }}
+        continue-on-error: true
+        with:
+          pattern: pack-*
+          path: earlier
+          merge-multiple: true
+          run-id: ${{ inputs.also_from_run }}
+          github-token: ${{ github.token }}
+      - name: Add the earlier run's packs
+        if: ${{ inputs.also_from_run != '' }}
+        run: |
+          mkdir -p built built/fetched
+          if [ -d earlier ]; then cp -rn earlier/. built/; fi
+          ls built | grep -c '\.osmpack$' || true
       - name: Publish the packs, then the lists
         env:
           GH_TOKEN: ${{ github.token }}
@@ -331,10 +353,33 @@ jobs:
           done
           rm -rf children
           python -m placepacks.manifest publish --old old/packs.json --built built --fetched-dir built/fetched --output packs.json --uploads uploads.txt
-          # 1. The new packs, under dated names (no file a program is downloading is replaced).
-          while IFS="$(printf '\t')" read -r path asset; do
+          # The pack releases: "packs" (core and extra, the lists, the licences) and "packs-detail-YYYYMMDD" (the
+          # names, businesses and addresses of one publish). GitHub allows 1000 files in a release.
+          gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --paginate --jq '.[].tag_name' | grep -E '^packs(-detail-[0-9]{8})?$' > releases.txt || true
+          # 0b. Pack files that no list names (left by a publish that stopped before its list) are deleted first:
+          #     no program knows them, and they would take the room of the new ones.
+          #     Only with the list before in hand (without it nothing is deleted here).
+          if [ -s old/packs.json ]; then
+            python -c "import json,sys; sys.path.insert(0,'.'); from placepacks.manifest import referenced_in; print('\n'.join(sorted(referenced_in(json.load(open('old/packs.json'))))))" > known.txt
+            while read -r tag; do
+              id=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$tag" --jq '.id')
+              for page in $(seq 1 10); do
+                gh api "repos/$GITHUB_REPOSITORY/releases/$id/assets?per_page=100&page=$page" --jq '.[].name'
+              done | grep '\.osmpack$' > names.txt || true
+              while read -r name; do
+                if ! grep -qxF "$(printf '%s\t%s' "$tag" "$name")" known.txt; then gh release delete-asset "$tag" "$name" --repo "$GITHUB_REPOSITORY" -y; fi
+              done < names.txt
+            done < releases.txt
+          fi
+          # 1. The new packs, under dated names (no file a program is downloading is replaced), each in its release.
+          while IFS="$(printf '\t')" read -r path asset release; do
+            release="${release:-$RELEASE_TAG}"
+            if ! grep -qxF "$release" releases.txt; then
+              gh release create "$release" --repo "$GITHUB_REPOSITORY" --title "Place packs: detail parts ($release)" --notes "The names, businesses and addresses parts of one publish of the place packs. packs.json in the release \"packs\" lists them." --latest=false
+              echo "$release" >> releases.txt
+            fi
             cp "$path" "dist/$asset"
-            gh release upload "$RELEASE_TAG" "dist/$asset" --repo "$GITHUB_REPOSITORY" --clobber
+            gh release upload "$release" "dist/$asset" --repo "$GITHUB_REPOSITORY" --clobber
             rm "dist/$asset"
           done < uploads.txt
           # 2. The licences, then the list before (packs-previous.json), then the new list last.
@@ -344,11 +389,21 @@ jobs:
             gh release upload "$RELEASE_TAG" dist/packs-previous.json --repo "$GITHUB_REPOSITORY" --clobber
           fi
           gh release upload "$RELEASE_TAG" packs.json --repo "$GITHUB_REPOSITORY" --clobber
-          # 3. Packs neither list names are deleted (older months stay in packs-previous.json for a month).
-          python -c "import json,sys; sys.path.insert(0,'.'); from placepacks.manifest import referenced; ms=[json.load(open(p)) for p in ('packs.json','dist/packs-previous.json') if __import__('os').path.exists(p)]; print('\n'.join(sorted(referenced(*ms))))" > keep.txt
-          gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --json assets --jq '.assets[].name' | grep '\.osmpack$' | while read -r name; do
-            if ! grep -qxF "$name" keep.txt; then gh release delete-asset "$RELEASE_TAG" "$name" --repo "$GITHUB_REPOSITORY" -y; fi
-          done
+          # 3. Packs neither list names are deleted (older months stay in packs-previous.json for a month), and a
+          #    detail release left with no pack is deleted with its tag.
+          python -c "import json,sys; sys.path.insert(0,'.'); from placepacks.manifest import referenced_in; ms=[json.load(open(p)) for p in ('packs.json','dist/packs-previous.json') if __import__('os').path.exists(p)]; print('\n'.join(sorted(referenced_in(*ms))))" > keep.txt
+          while read -r tag; do
+            id=$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$tag" --jq '.id')
+            for page in $(seq 1 10); do
+              gh api "repos/$GITHUB_REPOSITORY/releases/$id/assets?per_page=100&page=$page" --jq '.[].name'
+            done | grep '\.osmpack$' > names.txt || true
+            while read -r name; do
+              if ! grep -qxF "$(printf '%s\t%s' "$tag" "$name")" keep.txt; then gh release delete-asset "$tag" "$name" --repo "$GITHUB_REPOSITORY" -y; fi
+            done < names.txt
+            if [ "$tag" != "$RELEASE_TAG" ] && ! grep -q "^$tag$(printf '\t')" keep.txt; then
+              gh release delete "$tag" --repo "$GITHUB_REPOSITORY" --cleanup-tag -y
+            fi
+          done < releases.txt
       - name: Keep the schedule alive (update sources-status.md)
         run: |
           if [ ! -f packs.json ]; then echo "Nothing was published; sources-status.md is left as it is."; exit 0; fi

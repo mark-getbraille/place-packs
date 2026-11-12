@@ -17,6 +17,9 @@
   updates_available(folder=None, catalogue=None) -> [PackInfo]    newer versions of the packs that are installed
       (an installed parent pack is updated as its children's packs)
   installed(folder=None) -> {key: {"sha256", "name", "built_month"}}   (installed.json in the pack folder)
+  Catalogue.url_for(info)   where a pack is: the release "packs" (core and extra), or its detail release beside it
+      (names, businesses and addresses: manifest.release_for). A pack that is gone (a newer publish replaced it
+      while the list in the cache was older) makes the list be read again, and the newer pack is downloaded.
 Standard library only (urllib). Only the pack's file is requested; nothing about the user is sent.
 """
 
@@ -26,6 +29,7 @@ import os
 import shutil
 import sqlite3
 import time
+import urllib.error
 import urllib.request
 
 from placepacks import fmt, manifest
@@ -69,6 +73,15 @@ class Catalogue:
             return self.now() - os.path.getmtime(self.cache_path) < self.max_age
         except OSError:
             return False
+
+    def url_for(self, info):
+        """The download address of a pack: base_url names the release "packs"; a pack in another release (a detail
+        release, PackInfo.release) is in the folder of that release beside it."""
+        release = getattr(info, "release", manifest.MAIN_RELEASE) or manifest.MAIN_RELEASE
+        if release == manifest.MAIN_RELEASE:
+            return self.base_url + info.name
+        root = self.base_url.rstrip("/").rsplit("/", 1)[0]
+        return f"{root}/{release}/{info.name}"
 
     def packs(self, refresh=False):
         """{key: PackInfo}: the cache when it is fresh, else packs.json from the release (kept in the cache).
@@ -306,7 +319,18 @@ def ensure_pack(region_id, part="core", folder=None, ask=None, progress=None, ca
     os.makedirs(folder, exist_ok=True)
     part_file = target + ".download"
     digest, done = hashlib.sha256(), 0
-    with cat.open(cat.base_url + info.name) as r, open(part_file, "wb") as f:
+    try:
+        response = cat.open(cat.url_for(info))
+    except urllib.error.HTTPError as e:
+        if e.code != 404:
+            raise
+        # The list in the cache is older than the release (a newer publish removed this file): read the list again.
+        fresh = cat.packs(refresh=True).get(key)
+        if fresh is None or (fresh.name == info.name and fresh.release == info.release):
+            raise PackError(f"The place pack for {region_id} is being updated. Try again in an hour.") from None
+        info = fresh
+        response = cat.open(cat.url_for(info))
+    with response as r, open(part_file, "wb") as f:
         while True:
             block = r.read(1 << 20)
             if not block:

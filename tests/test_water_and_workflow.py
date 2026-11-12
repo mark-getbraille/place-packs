@@ -66,8 +66,8 @@ def test_the_workflow():
     doc = yaml.safe_load(text)
     on = doc.get("on", doc.get(True))
     assert on["schedule"][0]["cron"].split()[2] == "2"
-    assert set(on["workflow_dispatch"]["inputs"]) == {"regions", "force", "seed_history"}
-    assert doc["permissions"] == {"contents": "write"}
+    assert set(on["workflow_dispatch"]["inputs"]) == {"regions", "force", "seed_history", "also_from_run"}
+    assert doc["permissions"] == {"contents": "write", "actions": "read"}      # actions: an earlier run's packs
     assert "secrets." not in text and "github.token" in text
     jobs = doc["jobs"]
     assert list(jobs) == ["plan", "prepare", "build", "publish"]
@@ -78,6 +78,11 @@ def test_the_workflow():
     a, b, c = (publish.index(x) for x in ('dist/$asset" --repo', "packs-previous.json --repo",
                                            'upload "$RELEASE_TAG" packs.json'))
     assert a < b < c and "delete-asset" in publish[c:]
+    # The detail parts' releases: made when needed, left-over files deleted before the uploads (only with the list
+    # before), and an empty detail release deleted after.
+    assert "gh release create \"$release\"" in publish and "known.txt" in publish[:a] and "old/packs.json" in publish
+    assert "--cleanup-tag" in publish[c:] and "referenced_in" in publish
+    assert "also_from_run" in text and "run-id: ${{ inputs.also_from_run }}" in text
     assert "sources-status.md" in publish and "git push" in publish
     for job in jobs.values():
         for step in job["steps"]:

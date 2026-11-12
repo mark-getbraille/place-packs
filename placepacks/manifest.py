@@ -3,14 +3,17 @@
     {"format": "place-packs", "version": 2, "made": "2026-11-09", "release": "packs",
      "sources": {"osm": {"name", "licence", "licence_url", "attribution", "url"}, ...},
      "packs": {"us-vermont": {"region": "us-vermont", "part": "core", "name": "us-vermont-20261102.osmpack",
-                              "size": 12345678, "sha256": "<64 hex>", "built_month": 202611,
+                              "release": "packs", "size": 12345678, "sha256": "<64 hex>", "built_month": 202611,
                               "bounds": [west, south, east, north],
                               "history_start": 201101, "sources": {"osm": {"version": "...", "date": "..."}}},
                "us-vermont-extra": {...}}}
 
 Asset names carry the build date, so a new pack never replaces a file a program may be downloading: the workflow
 uploads the new files, then packs-previous.json (the manifest before), then packs.json, and only then deletes the
-files neither manifest names. parse() treats the file as untrusted data: JSON only, at most LIMIT bytes, the format
+files neither manifest names. The core and extra parts are in the release "packs"; the names, businesses and
+addresses parts of each publish in a release of their own, "packs-detail-YYYYMMDD" (an entry's "release"; GitHub
+allows 1000 files in one release, too few for two lists of every part). A program made before "release" downloads
+everything from "packs": its core and extra packs still come from there. parse() treats the file as untrusted data: JSON only, at most LIMIT bytes, the format
 and version checked, and each entry's region, part, file name, size and SHA-256 checked; a bad entry is left out.
 
 python -m placepacks.manifest publish --old packs.json --built out/ --fetched-dir work/ --output packs.json
@@ -38,15 +41,28 @@ VERSIONS = (1, 2)
 LIMIT = 4_000_000
 MAX_PACK_BYTES = 2_000_000_000          # GitHub's per-file limit for release assets
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
+# The release that holds a pack: "packs" (the core and extra parts, and every pack of a list without "release"), or
+# "packs-detail-YYYYMMDD" (the names, businesses and addresses parts of one publish). GitHub allows 1000 files in
+# one release, and a publish keeps the packs of the list before it until the next one: two lists of every part do
+# not fit in one release, so the detail parts of each publish have a release of their own.
+MAIN_RELEASE = "packs"
+_RELEASE = re.compile(r"^packs(?:-detail-\d{8})?$")
+
+
+def release_for(part, today):
+    """The release a new pack of part goes in (see MAIN_RELEASE)."""
+    return MAIN_RELEASE if part in fmt.DEFAULT_PARTS else f"{MAIN_RELEASE}-detail-{today:%Y%m%d}"
 
 
 class PackInfo:
     """One published pack: key ("us-vermont", "us-vermont-extra"), region, part, name (the release file), size,
-    sha256, built_month, history_start, sources ({id: {"version", "date"}})."""
+    sha256, built_month, history_start, sources ({id: {"version", "date"}}), release (the release that holds the
+    file: MAIN_RELEASE or a detail release)."""
 
     def __init__(self, key, region, part, name, size, sha256, built_month=0, history_start=0, sources=None,
-                 bounds=None):
+                 bounds=None, release=MAIN_RELEASE):
         self.key, self.region, self.part, self.name = key, region, part, name
+        self.release = release
         self.bounds = bounds            # [west, south, east, north] of the pack's data, or None
         self.size, self.sha256 = size, sha256
         self.built_month, self.history_start = built_month, history_start
@@ -114,7 +130,9 @@ def parse(data, regions=None):
         found[key] = PackInfo(key, region, part, name, size, digest, month(e.get("built_month")),
                               month(e.get("history_start")),
                               {str(k)[:40]: {kk: str(vv)[:100] for kk, vv in v.items()} for k, v in sources.items()
-                               if isinstance(v, dict)}, bounds)
+                               if isinstance(v, dict)}, bounds,
+                              e["release"] if isinstance(e.get("release"), str) and _RELEASE.match(e["release"])
+                              else MAIN_RELEASE)
     return found
 
 
@@ -131,7 +149,7 @@ def changed(old_entry_sources, new_prints):
 
 def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
     """The new manifest dict: the old one with the packs in built_dir (<key>.osmpack plus <key>.json, the build's
-    meta) added under dated names. Returns (manifest, [(local path, asset name)])."""
+    meta) added under dated names. Returns (manifest, [(local path, asset name, release)])."""
     from placepacks import catalogue, fmt
     from placepacks.lookup import PackReader
     today = today or datetime.date.today()
@@ -165,7 +183,9 @@ def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
             source_status = json.loads(meta.get("source_status", "{}"))
         except ValueError:
             source_status = {}
-        packs[key] = {"region": region, "part": part, "name": asset, "size": os.path.getsize(path), "bounds": bounds,
+        release = release_for(part, today)
+        packs[key] = {"region": region, "part": part, "name": asset, "release": release,
+                      "size": os.path.getsize(path), "bounds": bounds,
                       "status": source_status,
                       "sha256": fmt_sha(path), "built_month": int(meta.get("built_month", "0")),
                       "history_start": int(meta.get("history_start", "0") or 0),
@@ -173,7 +193,7 @@ def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
                                   for s, v in fetched.items() if isinstance(v, dict) and v.get("ok")}}
         if meta.get("combined_from"):
             packs[key]["combined_from"] = meta["combined_from"].split(",")     # a parent's sub-regions put together
-        uploads.append((path, asset))
+        uploads.append((path, asset, release))
     manifest = {"format": FORMAT, "version": 2, "made": today.isoformat(), "release": "packs",
                 "sources": {e["id"]: {"name": e["name"], "licence": e["licence"],
                                       "licence_url": cat["licences"][e["licence"]]["url"],
@@ -203,6 +223,13 @@ def referenced(*manifests):
     return {e["name"] for m in manifests if m for e in m.get("packs", {}).values() if isinstance(e, dict)}
 
 
+def referenced_in(*manifests):
+    """"release<TAB>asset name" of every pack the manifests name (a pack without "release" is in MAIN_RELEASE):
+    the files the publish keeps; any other pack file in the pack releases may be deleted."""
+    return {f"{e.get('release') or MAIN_RELEASE}\t{e['name']}" for m in manifests if m
+            for e in m.get("packs", {}).values() if isinstance(e, dict) and isinstance(e.get("name"), str)}
+
+
 def main(argv=None):
     """The command line (see the module docstring)."""
     p = argparse.ArgumentParser()
@@ -212,7 +239,8 @@ def main(argv=None):
     a.add_argument("--built", required=True)
     a.add_argument("--fetched-dir", required=True)
     a.add_argument("--output", required=True)
-    a.add_argument("--uploads", required=True, help="a text file: one 'local path<TAB>asset name' per line")
+    a.add_argument("--uploads", required=True,
+                   help="a text file: one 'local path<TAB>asset name<TAB>release' per line")
     b = sub.add_parser("plan")
     b.add_argument("--manifest", default="")
     b.add_argument("--fingerprints", default="", help="{region: {source: version}} from fetch --fingerprint")
@@ -224,7 +252,7 @@ def main(argv=None):
         with open(args.output, "w", encoding="utf-8") as f:
             json.dump(manifest, f, indent=1, ensure_ascii=False)
         with open(args.uploads, "w", encoding="utf-8") as f:
-            f.writelines(f"{path}\t{asset}\n" for path, asset in uploads)
+            f.writelines(f"{path}\t{asset}\t{release}\n" for path, asset, release in uploads)
         print(f"{len(uploads)} packs to upload; {len(manifest['packs'])} in the list.")
         return 0
     from placepacks.regions import REGIONS, expand, leaves

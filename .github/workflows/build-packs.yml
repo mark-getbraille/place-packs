@@ -43,9 +43,13 @@ on:
         type: boolean
         default: false
       also_from_run:
-        description: "Also publish the packs built by this earlier run id (its publish failed); empty: none"
+        description: "Also publish the packs built by these earlier run ids, separated by spaces (their publish failed); empty: none"
         required: false
         default: ""
+      publish_only:
+        description: "Build nothing: only publish the packs of the runs in also_from_run"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -76,7 +80,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           REGIONS: ${{ inputs.regions }}
           FORCE: ${{ inputs.force }}
+          PUBLISH_ONLY: ${{ inputs.publish_only }}
         run: |
+          if [ "$PUBLISH_ONLY" = "true" ]; then echo "regions=[]" >> "$GITHUB_OUTPUT"; exit 0; fi
           mkdir -p current
           gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern packs.json --dir current 2>/dev/null || true
           python -m placepacks.fetch --fingerprint-all "$REGIONS" --out prints.json
@@ -292,7 +298,7 @@ jobs:
   # that failed, or a build that never ran, publishes nothing; the step below stops when no pack was built.
   publish:
     needs: [plan, build]
-    if: ${{ always() && needs.plan.result == 'success' && needs.build.result != 'skipped' }}
+    if: ${{ always() && needs.plan.result == 'success' && (needs.build.result != 'skipped' || inputs.publish_only) }}
     runs-on: ubuntu-latest
     timeout-minutes: 240
     steps:
@@ -309,21 +315,28 @@ jobs:
           merge-multiple: true
       # The packs an earlier run built when its publish failed (also_from_run): this run's own packs, downloaded
       # above, come first and are not replaced.
-      - uses: actions/download-artifact@v4
+      # (gh, page by page: download-artifact with run-id sees only the first 100 artifacts of a run.)
+      - name: Add the earlier runs' packs
         if: ${{ inputs.also_from_run != '' }}
-        continue-on-error: true
-        with:
-          pattern: pack-*
-          path: earlier
-          merge-multiple: true
-          run-id: ${{ inputs.also_from_run }}
-          github-token: ${{ github.token }}
-      - name: Add the earlier run's packs
-        if: ${{ inputs.also_from_run != '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUNS: ${{ inputs.also_from_run }}
         run: |
           mkdir -p built built/fetched
-          if [ -d earlier ]; then cp -rn earlier/. built/; fi
-          ls built | grep -c '\.osmpack$' || true
+          for run in $RUNS; do
+            case "$run" in *[!0-9]*) echo "Not a run id: $run"; exit 1;; esac
+            for page in $(seq 1 10); do
+              gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run/artifacts?per_page=100&page=$page" --jq '.artifacts[] | select(.expired | not) | .name' | grep '^pack-' || true
+            done | sort -u > "artifacts-$run.txt"
+            echo "Run $run: $(wc -l < "artifacts-$run.txt") packs."
+            while read -r name; do
+              rm -rf earlier; mkdir earlier
+              for attempt in 1 2 3; do gh run download "$run" --repo "$GITHUB_REPOSITORY" --name "$name" --dir earlier && break; sleep 20; done
+              cp -rn earlier/. built/
+            done < "artifacts-$run.txt"
+          done
+          rm -rf earlier
+          echo "$(ls built | grep -c '\.osmpack$') pack files to publish."
       - name: Publish the packs, then the lists
         env:
           GH_TOKEN: ${{ github.token }}
@@ -379,7 +392,12 @@ jobs:
               echo "$release" >> releases.txt
             fi
             cp "$path" "dist/$asset"
-            gh release upload "$release" "dist/$asset" --repo "$GITHUB_REPOSITORY" --clobber
+            # GitHub sometimes answers an upload with a server error (502): try again, three times at most.
+            for attempt in 1 2 3; do
+              gh release upload "$release" "dist/$asset" --repo "$GITHUB_REPOSITORY" --clobber && break
+              if [ "$attempt" = 3 ]; then exit 1; fi
+              echo "The upload of $asset failed; trying again."; sleep 30
+            done
             rm "dist/$asset"
           done < uploads.txt
           # 2. The licences, then the list before (packs-previous.json), then the new list last.

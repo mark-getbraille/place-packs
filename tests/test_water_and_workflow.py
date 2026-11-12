@@ -66,7 +66,7 @@ def test_the_workflow():
     doc = yaml.safe_load(text)
     on = doc.get("on", doc.get(True))
     assert on["schedule"][0]["cron"].split()[2] == "2"
-    assert set(on["workflow_dispatch"]["inputs"]) == {"regions", "force", "seed_history", "also_from_run"}
+    assert set(on["workflow_dispatch"]["inputs"]) == {"regions", "force", "seed_history", "also_from_run", "publish_only"}
     assert doc["permissions"] == {"contents": "write", "actions": "read"}      # actions: an earlier run's packs
     assert "secrets." not in text and "github.token" in text
     jobs = doc["jobs"]
@@ -82,7 +82,8 @@ def test_the_workflow():
     # before), and an empty detail release deleted after.
     assert "gh release create \"$release\"" in publish and "known.txt" in publish[:a] and "old/packs.json" in publish
     assert "--cleanup-tag" in publish[c:] and "referenced_in" in publish
-    assert "also_from_run" in text and "run-id: ${{ inputs.also_from_run }}" in text
+    assert "also_from_run" in text and "gh run download" in text and "page=$page" in text
+    assert "trying again" in publish[:c]                    # an upload that meets a server error is tried again
     assert "sources-status.md" in publish and "git push" in publish
     for job in jobs.values():
         for step in job["steps"]:

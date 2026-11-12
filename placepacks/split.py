@@ -34,6 +34,7 @@ def needed_columns(entry):
     names = set()
 
     def add(spec):
+        """Add the column names of one column spec (a name, a list of names, or {"first_of": [...]})."""
         if isinstance(spec, dict):
             for c in spec.get("first_of", []):
                 names.add(c)

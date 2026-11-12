@@ -18,6 +18,7 @@ READERS = {}
 def reader(name):
     """Register a reader function under name (the "reader" of a catalogue entry)."""
     def register(fn):
+        """Add fn to READERS and give it back unchanged (the decorator itself)."""
         READERS[name] = fn
         return fn
     return register

@@ -26,6 +26,7 @@ def build_plan(folder, opts, places=None, packs="ask", ask=None, progress=None, 
                         full_detail=settings.load().get("full_detail", False))
 
     def say(text, done=0, total=0):
+        """Pass a stage and its counts to progress, when there is one."""
         if progress:
             progress(text, done, total)
     say("Finding the photos")

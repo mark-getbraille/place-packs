@@ -15,7 +15,8 @@ def text(cat):
     lic = cat["licences"]
     out = ["# Sources of the place packs", "",
            "Generated from sources.json by tools/write_sources_md.py. Licences checked in November 2026; check them "
-           "again when a source changes its terms. Part: \"core\" packs (smaller) or \"extra\" packs.", "",
+           "again when a source changes its terms. Part: the pack part the source is in (core, extra, names, "
+           "businesses or addresses; FORMAT.md, \"Parts\").", "",
            "Personal data: the business sources (inspections, licences, registrations, directories) keep only a "
            "trade name, a class, a position and dates, never scores, violations or owners. Business types that are "
            "often run from a home (contractors, consultants, home caterers, childminders, short-term rentals, "

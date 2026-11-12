@@ -2,8 +2,8 @@
 # replaceable). Run from the photo-location-identifier folder:   pyinstaller installer/pli.spec
 # The result is dist/PhotoLocationIdentifier/ with PhotoLocationIdentifier.exe, which the Inno Setup script packs.
 # Bundled: the program (pli), placepacks' reading, lookup and download parts (not its pack builder and its readers),
-# placepacks' regions list and water layer, the manual, the licences, and the licence files of wxPython, Pillow and
-# openpyxl (with et_xmlfile).
+# placepacks' regions list, type phrases (types.json) and water layer, the manual, the licences, and the licence
+# files of wxPython, Pillow and openpyxl (with et_xmlfile).
 
 import glob
 import os
@@ -17,6 +17,8 @@ datas = [
     (os.path.join(HERE, "docs", "manual.txt"), "docs"),
     (os.path.join(HERE, "LICENSES.txt"), "."),
     (os.path.join(REPO, "placepacks", "regions.json"), "placepacks"),
+    # The fine place types: lookup.py asks types.most_specific, which reads it, for every place with a type.
+    (os.path.join(REPO, "placepacks", "types.json"), "placepacks"),
 ]
 datas += [(f, "placepacks/data") for f in glob.glob(os.path.join(REPO, "placepacks", "data", "*"))]
 
@@ -37,7 +39,7 @@ except ImportError:
     pass
 
 hiddenimports = ["placepacks.lookup", "placepacks.regions", "placepacks.when", "placepacks.water",
-                 "placepacks.download", "placepacks.manifest", "placepacks.fmt"]
+                 "placepacks.download", "placepacks.manifest", "placepacks.fmt", "placepacks.types"]
 
 a = Analysis(                                                     # noqa: F821
     [os.path.join(HERE, "run_pli.py")],

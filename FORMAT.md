@@ -96,6 +96,13 @@ parts are there: without the businesses and the addresses it names the landmark,
 made before businesses and addresses existed know only core and extra and leave the other entries of packs.json
 out.
 
+Where they are published: core and extra in the release `packs` (with packs.json); the names, businesses and
+addresses of each publish in a release of their own, `packs-detail-YYYYMMDD` (GitHub allows 1000 files in one
+release). Each packs.json entry names its file (`name`, dated: `us-vermont-addresses-20261102.osmpack`) and its
+`release` (`manifest.release_for`; an entry without one is in `packs`); `download.Catalogue.url_for` gives the
+address. packs.json is at most 4 MB (`manifest.LIMIT`): it is written compact, and only the core entry lists every
+source of its region; the other parts list only their own.
+
 ### Sub-regions
 
 A region whose core and extra together would be larger than about 300 MB is built as sub-regions (regions.json

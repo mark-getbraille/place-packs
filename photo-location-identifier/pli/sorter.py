@@ -164,6 +164,7 @@ def apply(plan, dest=None, progress=None, stop=None, undo_path=None, report=True
     taken = {}
     with open(out.undo_path, "w", encoding="utf-8") as log:
         def write(entry):
+            """Add one JSON line to the undo log and flush it (an interrupted sort can still be undone)."""
             log.write(json.dumps(entry, ensure_ascii=False) + "\n")
             log.flush()
         write({"program": APP_NAME, "version": __version__, "root": plan.root, "dest": dest, "mode": mode,

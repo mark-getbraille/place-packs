@@ -475,6 +475,7 @@ def _parse_table(lines, first_line):
 def _row_from_cells(cells, mapping, where):
     """A Row from the cells of a table or CSV row and its {field: index}."""
     def get(field):
+        """The cell of a field ("" when the field is not mapped or the cell is missing or empty)."""
         i = mapping.get(field)
         return cells[i] if i is not None and i < len(cells) and cells[i] is not None else ""
     row = Row(name=get("name"), street=get("street"), city=get("city"), state=get("state"), zip=get("zip"),
@@ -594,6 +595,7 @@ def _parse_items(numbered):
     rows, current, current_indent = [], None, 0
 
     def finish():
+        """Complete the record being read and keep it when it has a name, a street or a position."""
         nonlocal current
         if current is not None:
             _complete_address(current)

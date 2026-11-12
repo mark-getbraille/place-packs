@@ -567,9 +567,11 @@ def heif_with_exif(tiff_exif):
     """A minimal HEIF file (bytes) whose only item is an Exif block: for the tests of read_heif_exif (no picture is
     in it, which is enough, since only the details are read)."""
     def box(kind, payload):
+        """An ISO media box: its size, its four-letter kind, then payload."""
         return struct.pack(">I4s", 8 + len(payload), kind.encode()) + payload
 
     def full(kind, version, payload):
+        """A "full" box: a box whose payload starts with a version byte and three flag bytes."""
         return box(kind, bytes([version, 0, 0, 0]) + payload)
     payload = struct.pack(">I", 6) + b"Exif\x00\x00" + tiff_exif
     ftyp = box("ftyp", b"heic" + b"\x00\x00\x00\x00" + b"mif1heic")
@@ -578,6 +580,7 @@ def heif_with_exif(tiff_exif):
     iinf = full("iinf", 0, struct.pack(">H", 1) + infe)
 
     def build(offset):
+        """The meta box, with the Exif item located at offset in the file."""
         iloc = full("iloc", 1, bytes([0x44, 0x00]) + struct.pack(">H", 1) + struct.pack(">HHH", 1, 0, 0) +
                     struct.pack(">H", 1) + struct.pack(">II", offset, len(payload)))
         meta = full("meta", 0, hdlr + iinf + iloc)

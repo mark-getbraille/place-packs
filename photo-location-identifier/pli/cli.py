@@ -111,6 +111,7 @@ def options_from(args, saved=None):
 def console_ask(yes):
     """The pack question on the console: always yes with --yes, else asked when there is someone to answer."""
     def ask(label, size, count):
+        """True to download the pack for label (size bytes, needed by count photos)."""
         if yes:
             return True
         if not sys.stdin or not sys.stdin.isatty():
@@ -140,6 +141,7 @@ def run_sort(args):
     last = [""]
 
     def progress(text, done, total):
+        """Print each new stage once (the counts are not printed on the console)."""
         if text != last[0]:
             print(text + "...", flush=True)
             last[0] = text

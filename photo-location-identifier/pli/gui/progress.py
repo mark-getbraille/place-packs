@@ -65,6 +65,7 @@ class ProgressWindow(wx.Dialog):
         box, done = [], threading.Event()
 
         def run():
+            """In the window thread: run fn, keep its result, and let the waiting thread go on."""
             try:
                 box.append(fn())
             finally:

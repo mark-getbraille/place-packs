@@ -117,6 +117,7 @@ def cells_of(south, west, north, east):
     """(level, [cells]) of a bounding box in degrees: 1 and fine cells, or 0 and coarse cells when it touches more
     than BIG_CELLS fine cells."""
     def span(scale):
+        """The cell numbers of the box at a grid scale (FINE or COARSE cells per degree)."""
         rows = range(int(math.floor((south + 90) * scale)), int(math.floor((north + 90) * scale)) + 1)
         cols = range(int(math.floor((west + 180) * scale)), int(math.floor((east + 180) * scale)) + 1)
         return [r * 360 * scale + c for r in rows for c in cols]
@@ -254,8 +255,8 @@ def ring_area_m2(ring):
 
 def classify(category, kind):
     """The class of a named thing from its main tag (OpenStreetMap key=value, or a source's own category mapped
-    to one): park, cemetery, landmark, campus, water, nature, neighbourhood, street, building, business, transit,
-    or ""."""
+    to one): park, cemetery, landmark, public, campus, water, nature, neighbourhood, street, building, business,
+    transit, or ""."""
     category, kind = (category or "").lower(), (kind or "").lower()
     if category == "leisure" and kind in ("park", "garden", "nature_reserve", "playground", "dog_park",
                                           "recreation_ground", "golf_course", "stadium", "marina", "common"):
@@ -311,13 +312,15 @@ _E = math.sqrt(2 * _F - _F * _F)
 
 
 def _lcc_constants(name):
-    """(n, F, rho0, lon0, false easting, false northing) of a Lambert Conformal Conic projection (Snyder 15-1...)."""
+    """(n, F, rho0, lon0, false easting, false northing, t) of a Lambert Conformal Conic projection (Snyder 15-1...)."""
     lat0, lon0, p1, p2, fe, fn = PROJECTIONS[name]
 
     def m(phi):
+        """Snyder's m (14-15) of a latitude in radians."""
         return math.cos(phi) / math.sqrt(1 - (_E * math.sin(phi)) ** 2)
 
     def t(phi):
+        """Snyder's t (15-9) of a latitude in radians."""
         es = _E * math.sin(phi)
         return math.tan(math.pi / 4 - phi / 2) / ((1 - es) / (1 + es)) ** (_E / 2)
     r0, r1, r2 = (math.radians(v) for v in (lat0, p1, p2))

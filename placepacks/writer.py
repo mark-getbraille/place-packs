@@ -71,6 +71,7 @@ class Keep:
     sub-region only the rows in it (with CLIP_MARGIN). drop_sources: source ids; clip: a region dict or None."""
 
     def __init__(self, drop_sources=(), clip=None):
+        """See the class docstring."""
         self.drop_sources, self.clip = set(drop_sources), clip
 
     def box(self, south, west, north, east):
@@ -94,6 +95,8 @@ class PackWriter:
     give (a source read from the parent's file, OpenStreetMap when the extract could not be clipped)."""
 
     def __init__(self, path, month=None, clip=None):
+        """Start a new pack in path + ".partial" (moved to path by finish), dated month (default this month);
+        clip: the sub-region whose rows are kept, or None."""
         self.path, self.month = path, month or fmt.month_of()
         self.clip = clip
         self.tmp = path + ".partial"

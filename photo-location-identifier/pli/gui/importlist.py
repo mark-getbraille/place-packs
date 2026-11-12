@@ -140,6 +140,7 @@ class ImportListWindow(wx.Dialog):
         self.name.SetValue(name)
 
         def read(progress, stop):
+            """[Row] of the file with the chosen table, stopping early when Stop is pressed."""
             out = []
             for k, row in enumerate(placelist.read_file(path, self.table, progress=lambda d, t: progress(
                     "Reading the list", d, t))):
@@ -155,6 +156,7 @@ class ImportListWindow(wx.Dialog):
         places, finder, mode = self.places, self.finder, self.pack_mode
 
         def work(progress, stop, ask):
+            """In the background: read the rows, get the packs they need, locate them and mark duplicates."""
             progress("Reading the list")
             rows = read(progress, stop)
             folder = finder.packs_folder or finder.default_packs_folder()

@@ -76,6 +76,8 @@ class Result:
                   longitude=None, type="", brand="", brand_wikidata="", note="", line="", line_cls="")
 
     def __init__(self, **values):
+        """A result with the given FIELDS (others at their defaults) and the lists of sources, names,
+        attributions, dates and tenants. Raises TypeError for an unknown field."""
         for k, v in self.FIELDS.items():
             setattr(self, k, values.pop(k, v))
         self.sources = list(values.pop("sources", []))
@@ -89,6 +91,7 @@ class Result:
             raise TypeError(f"unknown fields: {', '.join(values)}")
 
     def __bool__(self):
+        """False for the empty result (kind "none": nothing found)."""
         return self.kind != "none"
 
     def _street(self, detail):
@@ -184,6 +187,7 @@ class Result:
         return line
 
     def __repr__(self):
+        """A short form for test messages: the kind and the address-detail phrase."""
         return f"Result({self.kind!r}, {self.phrase('address')!r})"
 
 
@@ -287,6 +291,7 @@ class PackReader:
     """One pack (read-only). meta, sources ({id: row dict}), region, part, latest and start (months), bounds."""
 
     def __init__(self, path):
+        """Open the pack read-only. Raises ValueError when the file is not a place pack of this format."""
         self.path = path
         try:
             self.con = sqlite3.connect(f"file:{urllib.parse.quote(os.path.abspath(path))}?mode=ro", uri=True,
@@ -605,6 +610,7 @@ class Finder:
     for water and air phrases (None: the packs' and the water layer's own places)."""
 
     def __init__(self, folder=None, packs=None, water=None, nearest=None):
+        """Keep the settings (see the class docstring); the packs are opened only when a lookup needs them."""
         self.folder = folder
         self._packs = packs
         self._water = water

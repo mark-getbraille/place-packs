@@ -138,6 +138,11 @@ Each region has these parts:
 - **addresses** (`us-vermont-addresses.osmpack`): address points and address ranges, with their history.
 - **names** (`us-vermont-names.osmpack`, optional): other-language names.
 
+Core and extra are files of the release `packs`. The names, businesses and addresses of each publish are in a
+release of their own, `packs-detail-YYYYMMDD` (GitHub allows 1000 files in one release); each entry of `packs.json`
+says its release, and `Catalogue.url_for` gives the address. When a pack has been replaced since the program last
+read `packs.json` (the old file is gone), the program reads the list again and downloads the newer pack.
+
 Programs download core and extra. They get businesses and addresses only when a lookup needs them (the detail
 "address", or the exact place in a picture's name) or the user turns on full detail. A lookup never fails without
 them: it names the landmark, the street or the town instead. Programs made before these parts existed still find
@@ -190,16 +195,22 @@ files up to 2 GB each with no total limit. A user downloads only the regions the
   - **By hand:** Actions, "Build place packs", Run workflow. Inputs:
     - `regions`: for example `us-vermont fr-ile-de-france`; empty means all;
     - `force`: rebuild even when nothing changed;
-    - `seed_history`: seed the US address-range history from older TIGER years. The finished seed of each region is kept in the "seeds" release and reused, so it is made again only when the seed years or sources change.
+    - `seed_history`: seed the US address-range history from older TIGER years. The finished seed of each region is kept in the "seeds" release and reused, so it is made again only when the seed years or sources change;
+    - `also_from_run`: the ids of earlier runs whose publish failed, separated by spaces: their packs (kept 7 days as
+      run artifacts) are published too, this run's own packs first;
+    - `publish_only`: build nothing, only publish the packs of the runs in `also_from_run`.
 - **What it does:**
   - It downloads the national files once and splits them per region.
   - It builds each region (ten at a time; inside a region four sources at a time, at most two against one server, each stopped after its time limit), merged with its previous pack. Each part is its own pack (core, extra, businesses, addresses, names).
   - A sub-region reads its parent's slice of the national files and its parent's OpenStreetMap extract, clipped with osmium-tool. Its first build takes its history from its parent's older packs (only its own area). The publish job then puts each parent's sub-regions together again under the parent's keys (`placepacks.combine`).
-  - It publishes to the release `packs`, in this order:
-    1. the new packs, under dated file names;
-    2. the previous list, as `packs-previous.json`;
-    3. the new list, `packs.json`, last.
-  - It then deletes files that neither list names. A program never sees a list naming a file that is not there.
+  - It publishes, in this order:
+    1. the new packs, under dated file names: core and extra in the release `packs`, the names, businesses and
+       addresses in this publish's own release `packs-detail-YYYYMMDD`;
+    2. the licences, then the previous list, as `packs-previous.json`, in `packs`;
+    3. the new list, `packs.json`, last. It is written compact and must stay under 4 MB, the most the programs read
+       (`manifest.LIMIT`); each part lists only its own sources (core lists all of its region's, for the plan).
+  - It then deletes the pack files that neither list names, and a detail release left with no pack. A program never
+    sees a list naming a file that is not there.
 - **Keys:** only the repository's own `GITHUB_TOKEN` is used.
 - **Keep-alive:** GitHub turns off scheduled workflows in repositories with no activity for 60 days. Each run
   commits an updated `sources-status.md`, which keeps the schedule alive.

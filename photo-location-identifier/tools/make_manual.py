@@ -43,6 +43,7 @@ def blocks(lines):
     out, para, items, pre = [], [], [], []
 
     def flush():
+        """Close the paragraph and the list being collected (each becomes a block)."""
         if para:
             out.append(("p", " ".join(para)))
             para.clear()

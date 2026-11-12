@@ -13,7 +13,8 @@
 #   parks) are fetched by each region's build job, by the region's box or one small grouped query per dataset. build: one job per region (ten at a time; inside a job four sources at a time, at
 #   most two against one host, each stopped at its time limit), core then extra, each merged with the region's
 #   previous pack (history is never rewritten); the TIGER history seed is made once per region and kept in the
-#   "seeds" release. publish: the new packs under dated names, then packs-previous.json (the list before), then
+#   "seeds" release. publish: the new packs under dated names (core and extra in the "packs" release; names,
+#   businesses and addresses in their own "packs-detail-YYYYMMDD" release, packs.json "release"), then packs-previous.json (the list before), then
 #   packs.json last; then the files neither list names are deleted. Only the repository's own GITHUB_TOKEN is used.
 # - Parts: core, extra, names, businesses and addresses (placepacks/fmt.py). Sub-regions: a region too large for one
 #   pack (England, Texas, ...) is built as its children (regions.json "children"); each child reads its parent's
@@ -218,9 +219,10 @@ jobs:
           if [ -f previous/packs.json ]; then
             # The region's own older packs, and for a sub-region's first build its parent's (build --list-previous).
             for key in $(python -m placepacks.build "$REGION" --list-previous); do
-              name=$(python -c "import json,sys; print(json.load(open('previous/packs.json')).get('packs',{}).get(sys.argv[1],{}).get('name',''))" "$key")
+              # Its file name and its release: names, businesses and addresses are in a "packs-detail-YYYYMMDD" release.
+              read -r name release < <(python -c "import json,sys; e=json.load(open('previous/packs.json')).get('packs',{}).get(sys.argv[1],{}); print(e.get('name',''), e.get('release') or sys.argv[2])" "$key" "$RELEASE_TAG")
               if [ -n "$name" ]; then
-                gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern "$name" --dir previous
+                gh release download "$release" --repo "$GITHUB_REPOSITORY" --pattern "$name" --dir previous
                 mv "previous/$name" "previous/$key.osmpack"
               fi
             done

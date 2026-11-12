@@ -26,6 +26,7 @@ TYPES = {"points": "point_types", "areas": "area_types", "lines": "", "ranges": 
 
 
 def _columns(con, schema, table):
+    """The column names of a table in an attached database (schema: "main" or an ATTACH alias)."""
     return [r[1] for r in con.execute(f"PRAGMA {schema}.table_info({table})")]
 
 
@@ -114,7 +115,6 @@ def combine(region_id, part, paths, out):
     con.commit()
     con.close()
     return counts
-
 
 
 def plan(built_dir, manifest_path=""):

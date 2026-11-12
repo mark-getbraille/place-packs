@@ -63,6 +63,7 @@ def mnemonic_targets(window):
     out = {}
 
     def walk(w):
+        """Look through w's shown children (not other top-level windows), depth first, for letters."""
         for child in w.GetChildren():
             if isinstance(child, wx.TopLevelWindow) or not child.IsShown():
                 continue
@@ -128,6 +129,7 @@ def install_keys(window, section, on_escape=None):
     button (in a field or list it does nothing; in a multi-line field it is a new line), and Alt+letter goes to its
     control everywhere."""
     def on_key(event):
+        """Handle one key press for the window (see install_keys)."""
         key, mods = event.GetKeyCode(), event.GetModifiers()
         if key == wx.WXK_ESCAPE and mods == wx.MOD_NONE:
             if on_escape is not None:

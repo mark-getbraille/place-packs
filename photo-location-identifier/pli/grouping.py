@@ -154,6 +154,7 @@ def place_change_split(level):
     name there differs from the trip's last photo's; for Trip area, when the photo is more than PLACE_CHANGE_KM from
     the trip's first photo, or the state or water changes."""
     def split(trip_photos, photo):
+        """True when photo starts a new trip after trip_photos (see place_change_split)."""
         last = trip_photos[-1]
         a, b = getattr(last, "info", None), getattr(photo, "info", None)
         if a is None or b is None or not a.known or not b.known:
@@ -233,6 +234,7 @@ def name_trip(trip):
         return found[0] if found else None
 
     def choose(name, kind, size=None):
+        """Record the chosen name on the trip (with its kind and area size) and give the name back."""
         trip.name, trip.kind, trip.size_m2 = name, kind, size
         return name
 
@@ -419,6 +421,7 @@ def render(template, group, time="year"):
     values = template_values(group, time)
 
     def sub(m):
+        """The value of one {field} of the template ("" for an unknown field)."""
         return values.get(m.group(1).lower(), "")
     text = re.sub(r"\{(\w+)\}", sub, template or "{place}")
     text = re.sub(r"[ \t]+", " ", text)
@@ -541,6 +544,7 @@ def make_plan(root, photos, places, opts, progress=None, stop=None):
     groups = {}
 
     def group_for(place, key):
+        """The Group of a place name (any letter case) and date key, made the first time it is asked for."""
         g = groups.get((place.lower(), key))
         if g is None:
             g = groups[(place.lower(), key)] = Group(place, key)

@@ -20,6 +20,8 @@ class When:
     "approximate", "range" or "none"."""
 
     def __init__(self, start=None, end=None, certain=True, kind=None):
+        """start and end: YYYYMM months (end defaults to start); certain: False for an approximate date; kind:
+        given, or worked out from start and certain."""
         self.start, self.end = start, end if end is not None else start
         self.certain = certain and start is not None
         self.kind = kind or ("none" if start is None else ("exact" if certain else "approximate"))
@@ -77,4 +79,5 @@ class When:
         return f"{calendar.month_name[self.start % 100]} {year_text(self.start // 100)}"
 
     def __repr__(self):
+        """A short form for test messages."""
         return f"When({self.start}, {self.end}, {self.kind})"

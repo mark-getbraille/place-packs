@@ -253,6 +253,7 @@ def national_files(entry, values, opener=None):
             names = sorted(set(re.findall(f["fallback_pattern"], page)))     # the Light List's PDFs, without XML
         if f.get("latest") and names:
             def year(n):
+                """The number the "latest" pattern finds in a file name (-1 when none): the newest is kept."""
                 m = re.search(f["latest"], os.path.basename(n))
                 return int(m.group(1)) if m else -1
             names = [max(names, key=year)]
@@ -1454,6 +1455,8 @@ def fetch_region(region_id, work, parts=fmt.PARTS, national=None, fingerprint=Fa
     entries = [e for part in parts for e in catalogue.sources_for(region, part, cat, only)]
 
     def finish(entry, got):
+        """Record one source's result (its status and reason filled in) and print its status line (not when
+        only fingerprinting)."""
         if got.get("ok"):
             got["status"], got["reason"] = "ok", ""
         got.setdefault("status", "failed")

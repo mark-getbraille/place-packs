@@ -35,3 +35,18 @@ def test_licences_and_readme_name_the_parts():
         assert name in lic, name
     readme = open(os.path.join(PROGRAM, "README.md"), encoding="utf-8").read()
     assert "SmartScreen" in readme and "Sort pictures by location" in readme
+
+
+def test_installer_bundles_the_data_files_placepacks_reads():
+    """Every placepacks/*.json that a bundled placepacks module reads (regions.json, types.json) is in the
+    installer's data files: without types.json every lookup of a typed place failed in the installed program."""
+    spec = open(os.path.join(PROGRAM, "installer", "pli.spec"), encoding="utf-8").read()
+    bundled = re.findall(r'"placepacks\.(\w+)"', spec.split("hiddenimports =", 1)[1].split("]", 1)[0])
+    assert "lookup" in bundled and "types" in bundled
+    package = os.path.join(os.path.dirname(PROGRAM), "placepacks")
+    data = [f for f in os.listdir(package) if f.endswith(".json")]
+    for module in bundled:
+        text = open(os.path.join(package, module + ".py"), encoding="utf-8").read()
+        for name in data:
+            if f'"{name}"' in text:
+                assert f'"placepacks", "{name}"' in spec, f"{name} (read by placepacks.{module}) is not bundled"

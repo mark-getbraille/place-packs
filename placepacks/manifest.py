@@ -4,7 +4,7 @@
      "sources": {"osm": {"name", "licence", "licence_url", "attribution", "url"}, ...},
      "packs": {"us-vermont": {"region": "us-vermont", "part": "core", "name": "us-vermont-20261102.osmpack",
                               "release": "packs", "size": 12345678, "sha256": "<64 hex>", "built_month": 202611,
-                              "bounds": [west, south, east, north],
+                              "bounds": [west, south, east, north], "status": {source: {"status", ...}},
                               "history_start": 201101, "sources": {"osm": {"version": "...", "date": "..."}}},
                "us-vermont-extra": {...}}}
 
@@ -13,11 +13,18 @@ uploads the new files, then packs-previous.json (the manifest before), then pack
 files neither manifest names. The core and extra parts are in the release "packs"; the names, businesses and
 addresses parts of each publish in a release of their own, "packs-detail-YYYYMMDD" (an entry's "release"; GitHub
 allows 1000 files in one release, too few for two lists of every part). A program made before "release" downloads
-everything from "packs": its core and extra packs still come from there. parse() treats the file as untrusted data: JSON only, at most LIMIT bytes, the format
-and version checked, and each entry's region, part, file name, size and SHA-256 checked; a bad entry is left out.
+everything from "packs": its core and extra packs still come from there.
+
+The core entry lists every source its region was fetched with (plan compares them); the other parts list only their
+own sources, which keeps packs.json under LIMIT. parse() treats the file as untrusted data: JSON only, at most LIMIT
+bytes, the format and version checked, and each entry's region, part, file name, size and SHA-256 checked; a bad
+entry is left out.
 
 python -m placepacks.manifest publish --old packs.json --built out/ --fetched-dir work/ --output packs.json
-    writes the new manifest (the old entries kept for regions not rebuilt) and prints the asset list.
+        --uploads uploads.txt
+    writes the new manifest, compact (the old entries kept for regions not rebuilt), and the files to upload
+    ("local path<TAB>asset name<TAB>release" per line), and prints how many there are. It stops when the new list
+    would be over LIMIT (the programs would refuse it).
 python -m placepacks.manifest plan --manifest packs.json --fingerprints prints.json --regions "..." [--force]
     prints regions=<JSON> of the regions whose sources changed (ETag, Last-Modified or release names differ). Only
     regions without children are built (a parent typed is its sub-regions); a parent's packs are its children's put
@@ -61,6 +68,7 @@ class PackInfo:
 
     def __init__(self, key, region, part, name, size, sha256, built_month=0, history_start=0, sources=None,
                  bounds=None, release=MAIN_RELEASE):
+        """Keep the checked fields of one packs.json entry (see the class docstring)."""
         self.key, self.region, self.part, self.name = key, region, part, name
         self.release = release
         self.bounds = bounds            # [west, south, east, north] of the pack's data, or None
@@ -69,6 +77,7 @@ class PackInfo:
         self.sources = sources or {}
 
     def __repr__(self):
+        """A short form for test messages: the key, the size and the start of the SHA-256."""
         return f"PackInfo({self.key!r}, {self.size}, {self.sha256[:8]}...)"
 
 
@@ -148,9 +157,11 @@ def changed(old_entry_sources, new_prints):
 
 
 def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
-    """The new manifest dict: the old one with the packs in built_dir (<key>.osmpack plus <key>.json, the build's
-    meta) added under dated names. Returns (manifest, [(local path, asset name, release)])."""
-    from placepacks import catalogue, fmt
+    """The new manifest dict: the old one with the packs in built_dir (<key>.osmpack; region, part, bounds and source
+    status read from the pack's own meta, the source versions from fetched_dir/<region>/fetched.json) added under
+    dated names, each in its release (release_for). Returns (manifest, [(local path, asset name, release)]). Stops
+    (SystemExit) when the list would be over LIMIT or would not parse."""
+    from placepacks import catalogue
     from placepacks.lookup import PackReader
     today = today or datetime.date.today()
     cat = cat or catalogue.load()
@@ -160,6 +171,7 @@ def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
             old = json.load(f)
     packs = dict(old.get("packs", {})) if isinstance(old.get("packs"), dict) else {}
     uploads = []
+    regions = catalogue.regions()           # read once: _part_sources is asked for every pack
     for name in sorted(os.listdir(built_dir)):
         if not name.endswith(fmt.PACK_SUFFIX):
             continue
@@ -184,6 +196,7 @@ def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
         except ValueError:
             source_status = {}
         release = release_for(part, today)
+        own = None if part == "core" else _part_sources(region, part, cat, regions)
         packs[key] = {"region": region, "part": part, "name": asset, "release": release,
                       "size": os.path.getsize(path), "bounds": bounds,
                       "status": source_status,
@@ -191,14 +204,14 @@ def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
                       "history_start": int(meta.get("history_start", "0") or 0),
                       "sources": {s: {"version": str(v.get("version", "")), "date": str(v.get("date", ""))}
                                   for s, v in fetched.items() if isinstance(v, dict) and v.get("ok") and
-                                  (part == "core" or s in _part_sources(region, part, cat))}}
+                                  (own is None or s in own)}}
         if meta.get("combined_from"):
             packs[key]["combined_from"] = meta["combined_from"].split(",")     # a parent's sub-regions put together
         uploads.append((path, asset, release))
     # Entries kept from the list before (regions not rebuilt) lose the other parts' sources too.
     for e in packs.values():
         if isinstance(e, dict) and e.get("part") not in (None, "core") and isinstance(e.get("sources"), dict):
-            own = _part_sources(e.get("region"), e["part"], cat)
+            own = _part_sources(e.get("region"), e["part"], cat, regions)
             e["sources"] = {k: v for k, v in e["sources"].items() if k in own}
     manifest = {"format": FORMAT, "version": 2, "made": today.isoformat(), "release": "packs",
                 "sources": {e["id"]: {"name": e["name"], "licence": e["licence"],
@@ -217,12 +230,12 @@ def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
     return manifest, uploads
 
 
-def _part_sources(region_id, part, cat):
+def _part_sources(region_id, part, cat, regions=None):
     """The source ids of a region's part. The core entry lists every source the region was fetched with (plan
     compares them with the sources' new versions); the other parts list only their own, which keeps packs.json under
-    LIMIT (every entry used to repeat the region's sources)."""
+    LIMIT (every entry used to repeat the region's sources). regions: catalogue.regions(), when already read."""
     from placepacks import catalogue
-    regions = catalogue.regions()
+    regions = regions if regions is not None else catalogue.regions()
     if region_id not in regions:
         return set()
     return {e["id"] for e in catalogue.sources_for(dict(regions[region_id]), part, cat)}
@@ -236,11 +249,6 @@ def fmt_sha(path):
         for block in iter(lambda: f.read(1 << 20), b""):
             h.update(block)
     return h.hexdigest()
-
-
-def referenced(*manifests):
-    """The asset names the manifests name (files not in it may be deleted)."""
-    return {e["name"] for m in manifests if m for e in m.get("packs", {}).values() if isinstance(e, dict)}
 
 
 def referenced_in(*manifests):

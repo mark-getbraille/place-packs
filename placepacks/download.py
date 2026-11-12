@@ -54,6 +54,9 @@ class Catalogue:
     """The published packs (see the module docstring). opener(url) -> a response, for the tests."""
 
     def __init__(self, base_url=PUBLIC_RELEASE, cache_path=None, opener=None, max_age=WEEK, now=time.time):
+        """base_url: the address of the release \"packs\" (ending in \"/\"); cache_path: where packs.json is kept
+        (default the pack folder); opener(url): a response (default _open); max_age: seconds the cached list is
+        used before it is read again; now(): the time (the tests give their own)."""
         self.base_url, self.max_age, self.now = base_url, max_age, now
         self.cache_path = cache_path or os.path.join(default_folder(), MANIFEST)
         self.open = opener or _open
@@ -329,7 +332,12 @@ def ensure_pack(region_id, part="core", folder=None, ask=None, progress=None, ca
         if fresh is None or (fresh.name == info.name and fresh.release == info.release):
             raise PackError(f"The place pack for {region_id} is being updated. Try again in an hour.") from None
         info = fresh
-        response = cat.open(cat.url_for(info))
+        try:
+            response = cat.open(cat.url_for(info))
+        except urllib.error.HTTPError as e2:
+            if e2.code != 404:
+                raise
+            raise PackError(f"The place pack for {region_id} is being updated. Try again in an hour.") from None
     with response as r, open(part_file, "wb") as f:
         while True:
             block = r.read(1 << 20)

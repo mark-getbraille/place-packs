@@ -37,8 +37,9 @@ collective database keeps each source's terms exactly.
 
 Wherever the data is shown, credit the sources used, for example "© OpenStreetMap contributors; National Address
 Database (USDOT); Overture Maps Foundation". The exact text of each source is in `SOURCES.md` and in every pack
-(`sources.attribution`). The release also carries `NOTICE` (Foursquare's and Overture's notices) and the licence
-texts in `LICENSES/`.
+(`sources.attribution`). The release `packs` also carries `NOTICE` (Foursquare's and Overture's notices) and the
+licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD` releases too, which packs.json in
+`packs` lists.
 
 ## Conditions passed on
 

@@ -84,6 +84,7 @@ class _Projected:
     """A shape whose points are converted from a projection (fmt.PROJECTIONS) to longitude and latitude."""
 
     def __init__(self, shape, name):
+        """Convert the points of a pyshp shape from the projection name; keep its parts and new box."""
         self.points = [fmt.to_lonlat(name, x, y) for x, y in shape.points]
         self.parts = list(shape.parts)
         xs, ys = [p[0] for p in self.points], [p[1] for p in self.points]

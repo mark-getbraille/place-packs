@@ -58,6 +58,7 @@ def distance_text(metres, units="miles"):
     km, miles, nm = metres / 1000, metres / 1609.344, metres / 1852
 
     def rounded(v):
+        """A distance rounded as it is said: whole units below 20, fives below 200, then fifties."""
         return round(v) if v < 20 else int(round(v / 5) * 5) if v < 200 else int(round(v / 50) * 50)
     if units == "km":
         return "less than 1 km" if km < 0.75 else f"about {rounded(km)} km"
@@ -97,6 +98,7 @@ class WaterLayer:
     _cache, _lock = {}, threading.Lock()
 
     def __init__(self, path=None):
+        """Load the layer's data (read once per file and shared between instances)."""
         path = path or DATA
         with self._lock:
             if path not in self._cache:

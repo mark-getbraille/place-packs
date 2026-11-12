@@ -112,6 +112,7 @@ def _grid_span(region, south, west, north, east, margin):
         return None
 
     def index(v, origin, count):
+        """The grid row or column of a coordinate, kept within 0 .. count - 1."""
         return min(max(math.floor((v - origin) / step), 0), count - 1)
     return (range(index(south - margin, s0, rows), index(north + margin, s0, rows) + 1),
             range(index(west - margin, w0, cols), index(east + margin, w0, cols) + 1))
@@ -194,6 +195,7 @@ def tree():
     out = {}
 
     def order(kv):
+        """The sort key of a (region id, region) pair: continent, country, then the parent's name and its own."""
         r = kv[1]
         parent = REGIONS.get(r.get("parent", ""), {})
         return r["continent"], r["country"], parent.get("name", r["name"]), r["name"]

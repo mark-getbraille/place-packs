@@ -229,6 +229,7 @@ class MainWindow(wx.Frame):
         places = self.make_places()
 
         def work(progress, stop, ask):
+            """In the background: read the pictures and make the plan."""
             return job.build_plan(os.path.abspath(folder), opts, places, packs,
                                   ask=lambda label, size, count: ask(lambda: self.ask_pack(label, size, count)),
                                   progress=progress, stop=stop)[0]
@@ -237,6 +238,7 @@ class MainWindow(wx.Frame):
     def start(self, title, work, done):
         """Run work in the background with the progress window; done(result, error) at the end."""
         def finished(result, error):
+            """The work ended: forget the progress window, update the buttons, then call done."""
             self.busy = None
             if self:
                 self.update_buttons()
@@ -272,6 +274,7 @@ class MainWindow(wx.Frame):
     def sort(self, plan, dest):
         """Sort now: move or copy in the background, then say what happened."""
         def work(progress, stop, ask):
+            """In the background: move or copy the files."""
             os.makedirs(dest, exist_ok=True)
             return sorter.apply(plan, dest, progress=lambda d, t, f: progress("Sorting", d, t), stop=stop)
         self.start("Sorting", work, self.on_sorted)
@@ -310,6 +313,7 @@ class MainWindow(wx.Frame):
             return
 
         def work(progress, stop, ask):
+            """In the background: put the files back."""
             return sorter.undo(path, progress=lambda d, t, name: progress("Putting the files back", d, t))
         self.start("Undoing the last sort", work, self.on_undone)
 

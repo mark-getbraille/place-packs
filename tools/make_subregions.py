@@ -2,7 +2,7 @@
 than about 300 MB are cut into children, each with its own packs (README "Sub-regions"). For maintainers only; the
 programs and the build read the result in regions.json and need none of these files.
 
-    python tools/make_subregions.py --ne ne_10m_admin_1_states_provinces.shp --counties cb_2023_us_county_500k.shp \
+    python tools/make_subregions.py --ne ne_10m_admin_1_states_provinces.shp --counties cb_2023_us_county_500k.shp
         --population co-est2023-alldata.csv [--sizes sizes.json] [--write]
 
 --ne         Natural Earth Admin 1 (public domain): England's nine regions, Australia's states and territories
@@ -38,6 +38,8 @@ FILL_DEGREES = 0.5          # how far out at sea a child reaches (coastal waters
 
 
 def _county(name):
+    """A test for a SPECS child: true for a county record whose name is in name (a set or list of county
+    names)."""
     return lambda c: c["name"] in name
 
 
@@ -150,6 +152,7 @@ class Grid:
     row)."""
 
     def __init__(self, bbox, step):
+        """The grid over bbox (west, south, east, north) widened by MARGIN, in cells of step degrees."""
         w, s, e, n = bbox
         self.step = step
         self.w0 = math.floor((w - MARGIN) / step) * step
@@ -160,9 +163,11 @@ class Grid:
         self.foreign = set()        # cells inside another state, province or country
 
     def centre(self, row, col):
+        """(lat, lon) of a cell's centre."""
         return self.s0 + (row + 0.5) * self.step, self.w0 + (col + 0.5) * self.step
 
     def cell_of(self, lat, lon):
+        """(row, col) of the cell holding a position (kept inside the grid)."""
         return (min(max(math.floor((lat - self.s0) / self.step), 0), self.rows - 1),
                 min(max(math.floor((lon - self.w0) / self.step), 0), self.cols - 1))
 
@@ -232,6 +237,7 @@ class Grid:
 
 
 def _rings(shape):
+    """The rings of a pyshp shape as lists of (lon, lat) tuples."""
     starts = list(shape.parts) + [len(shape.points)]
     return [[tuple(p) for p in shape.points[a:b]] for a, b in zip(starts, starts[1:])]
 
@@ -376,7 +382,9 @@ def generic_spec(parent, k, sizes, population, args):
         if len(cuts) < k - 1 and done >= total * (len(cuts) + 1) / k:
             cuts.append((band + 1) * 0.05)
     cuts += [999.0] * (k - 1 - len(cuts))
+
     def below(i):
+        """The rule of child i: the position is below the i-th cut (on the cut axis)."""
         return lambda lat, lon: (lon if axis == "lon" else lat) < cuts[i]
     rules = [below(i) for i in range(k - 1)] + [lambda lat, lon: True]
     return {"step": 0.1, "units": "rules", "children": [
@@ -392,6 +400,7 @@ def dump(doc):
 
 
 def main(argv=None):
+    """The command line (see the module docstring)."""
     p = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     p.add_argument("--ne", required=True)
     p.add_argument("--counties", required=True)

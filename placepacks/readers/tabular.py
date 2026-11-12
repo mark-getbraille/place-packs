@@ -56,7 +56,6 @@ region's bounding box, are left out. Text that is all capitals is written in ord
 
 import csv
 import fnmatch
-import sys
 import io
 import json
 import os
@@ -110,6 +109,7 @@ class extracted_stream:
     TOOLS = (["unzip", "-p", "{zip}", "{member}"], ["7z", "e", "-so", "-bd", "{zip}", "{member}"])
 
     def __init__(self, path, member):
+        """Choose the extracting command (unzip or 7z). Raises RuntimeError when neither is installed."""
         import shutil
         self.path, self.member, self.proc = str(path), member, None
         self.command = next(([a.format(zip=self.path, member=member) for a in tool] for tool in self.TOOLS
@@ -119,11 +119,13 @@ class extracted_stream:
                                f"read (Deflate64), and neither unzip nor 7z is installed")
 
     def __enter__(self):
+        """Start the command; the member's bytes are read from the returned pipe."""
         import subprocess
         self.proc = subprocess.Popen(self.command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         return self.proc.stdout
 
     def __exit__(self, kind, value, tb):
+        """Stop the command (killed when the block ended with an error) and raise RuntimeError when it failed."""
         if self.proc.poll() is None and kind is not None:
             self.proc.kill()                    # stopped early (an error, or the reader had enough)
         self.proc.stdout.close()
@@ -322,6 +324,7 @@ class _Blank(dict):
     """format_map values: a missing column is empty."""
 
     def __missing__(self, key):
+        """An empty value for a column the row does not have."""
         return ""
 
 

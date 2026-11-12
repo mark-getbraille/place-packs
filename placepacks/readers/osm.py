@@ -162,18 +162,22 @@ def _read_osmium(path, source, writer, index=None):
     import osmium
 
     class Handler(osmium.SimpleHandler):
+        """pyosmium's callbacks: each named node, named road and named area is added to the writer."""
         def node(self, n):
+            """A named node with a valid position: a point."""
             if "name" in n.tags and n.location.valid():
                 _add(writer, source, f"n{n.id}", {t.k: t.v for t in n.tags},
                      point=(n.location.lat, n.location.lon))
 
         def way(self, w):
+            """A named road (highway in ROAD_KINDS) with two points or more: a line."""
             if "name" in w.tags and w.tags.get("highway") in ROAD_KINDS:
                 points = [(nd.lat, nd.lon) for nd in w.nodes if nd.location.valid()]
                 if len(points) >= 2:
                     _add(writer, source, f"w{w.id}", {t.k: t.v for t in w.tags}, points=points)
 
         def area(self, a):
+            """A named area (a closed way with area tags, or a multipolygon relation): its outer and inner rings."""
             if "name" not in a.tags:
                 return
             tags = {t.k: t.v for t in a.tags}

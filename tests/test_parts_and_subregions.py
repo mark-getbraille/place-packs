@@ -435,3 +435,20 @@ def test_a_pack_replaced_since_the_list_was_read_is_downloaded_from_the_new_list
     cat = download.Catalogue(cache_path=str(folder / "packs.json"), opener=opener)
     path = download.ensure_pack(SOUTH, "core", folder=str(folder), catalogue=cat)
     assert download.installed(str(folder))[SOUTH]["name"] == m2["packs"][SOUTH]["name"] and os.path.exists(path)
+
+
+def test_the_packs_list_stays_small(tmp_path):
+    """Only the core entry lists every source of its region (plan compares them); the other parts list their own,
+    and the file is written compact, so a list of every part of every region stays under manifest.LIMIT."""
+    fetched = tmp_path / SOUTH
+    fetched.mkdir()
+    cat = __import__("placepacks.catalogue", fromlist=["x"]).load()
+    region = dict(regions.REGIONS[SOUTH])
+    ids = {p: {e["id"] for e in __import__("placepacks.catalogue", fromlist=["x"]).sources_for(region, p, cat)}
+           for p in ("core", "businesses")}
+    every = sorted(ids["core"] | ids["businesses"])
+    (fetched / "fetched.json").write_text(json.dumps({s: {"ok": True, "version": "v1", "date": "2026-11-01"}
+                                                      for s in every}))
+    m, _ = publish(tmp_path, [(SOUTH, "core"), (SOUTH, "businesses")])
+    assert set(m["packs"][SOUTH]["sources"]) == set(every)
+    assert set(m["packs"][f"{SOUTH}-businesses"]["sources"]) == ids["businesses"] & set(every)

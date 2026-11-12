@@ -190,10 +190,16 @@ def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
                       "sha256": fmt_sha(path), "built_month": int(meta.get("built_month", "0")),
                       "history_start": int(meta.get("history_start", "0") or 0),
                       "sources": {s: {"version": str(v.get("version", "")), "date": str(v.get("date", ""))}
-                                  for s, v in fetched.items() if isinstance(v, dict) and v.get("ok")}}
+                                  for s, v in fetched.items() if isinstance(v, dict) and v.get("ok") and
+                                  (part == "core" or s in _part_sources(region, part, cat))}}
         if meta.get("combined_from"):
             packs[key]["combined_from"] = meta["combined_from"].split(",")     # a parent's sub-regions put together
         uploads.append((path, asset, release))
+    # Entries kept from the list before (regions not rebuilt) lose the other parts' sources too.
+    for e in packs.values():
+        if isinstance(e, dict) and e.get("part") not in (None, "core") and isinstance(e.get("sources"), dict):
+            own = _part_sources(e.get("region"), e["part"], cat)
+            e["sources"] = {k: v for k, v in e["sources"].items() if k in own}
     manifest = {"format": FORMAT, "version": 2, "made": today.isoformat(), "release": "packs",
                 "sources": {e["id"]: {"name": e["name"], "licence": e["licence"],
                                       "licence_url": cat["licences"][e["licence"]]["url"],
@@ -203,9 +209,23 @@ def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
                           "((c) OpenStreetMap contributors) and independent layers under their own licences; see "
                           "the sources and LICENSES.md.",
                 "packs": dict(sorted(packs.items()))}
-    if len(parse(json.dumps(manifest).encode())) != len(packs):
+    size = len(json.dumps(manifest, ensure_ascii=False, separators=(",", ":")).encode("utf-8"))
+    if size > LIMIT:
+        raise SystemExit(f"The new manifest is {size:,} bytes; the programs read at most {LIMIT:,}")
+    if len(parse(json.dumps(manifest, separators=(",", ":")).encode())) != len(packs):
         raise SystemExit("The new manifest would not be accepted by the programs")
     return manifest, uploads
+
+
+def _part_sources(region_id, part, cat):
+    """The source ids of a region's part. The core entry lists every source the region was fetched with (plan
+    compares them with the sources' new versions); the other parts list only their own, which keeps packs.json under
+    LIMIT (every entry used to repeat the region's sources)."""
+    from placepacks import catalogue
+    regions = catalogue.regions()
+    if region_id not in regions:
+        return set()
+    return {e["id"] for e in catalogue.sources_for(dict(regions[region_id]), part, cat)}
 
 
 def fmt_sha(path):
@@ -250,7 +270,7 @@ def main(argv=None):
     if args.cmd == "publish":
         manifest, uploads = publish(args.old, args.built, args.fetched_dir)
         with open(args.output, "w", encoding="utf-8") as f:
-            json.dump(manifest, f, indent=1, ensure_ascii=False)
+            json.dump(manifest, f, ensure_ascii=False, separators=(",", ":"))     # compact: it must stay under LIMIT
         with open(args.uploads, "w", encoding="utf-8") as f:
             f.writelines(f"{path}\t{asset}\t{release}\n" for path, asset, release in uploads)
         print(f"{len(uploads)} packs to upload; {len(manifest['packs'])} in the list.")

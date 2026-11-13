@@ -16,6 +16,6 @@ Modules:
   gui        the windows
 """
 
-__version__ = "1.3.1"
+__version__ = "1.3.2"
 APP_NAME = "Photo Location Identifier"
 PUBLISHER = "Company Maker, LLC"

@@ -33,7 +33,7 @@ Reads JPEG, PNG, TIFF, WebP, HEIC/HEIF, AVIF and most RAW files; videos too when
 
 ## Download and install
 
-Download `PhotoLocationIdentifier-1.3.1-setup.exe` from the release **photo-location-identifier-v1.3.1** on this
+Download `PhotoLocationIdentifier-1.3.2-setup.exe` from the release **photo-location-identifier-v1.3.2** on this
 repository's Releases page and open it.
 
 The installer is not signed with a paid certificate, so Windows **SmartScreen** may say "Windows protected your PC".

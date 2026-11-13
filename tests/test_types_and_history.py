@@ -6,7 +6,6 @@ Every name and place here is made up."""
 
 import json
 import os
-import shutil
 import sqlite3
 import sys
 

@@ -23,6 +23,9 @@ ALLOWED = {"ODbL-1.0", "CDLA-Permissive-2.0", "Apache-2.0", "OGL-Canada-2.0", "O
            "NYC-Open-Data", "OPEN-NY", "public-domain-marked", "Newberry-open", "OGL-Toronto", "OGL-BC", "OGL-Ontario",
            "OGL-Calgary", "Edmonton-Open-Data", "OGL-Nova-Scotia", "OGL-Vancouver", "OGL-NB", "CC-BY-3.0-US"}
 SHARE_ALIKE = {"ODbL-1.0"}
+# The OpenStreetMap layers (ODbL, share-alike): the core part's places and streets, and the navigation part's street
+# network and accessibility details, both made from the same extract.
+OSM_LAYERS = {"osm", "osm-navigation"}
 
 
 def load(path=None):
@@ -59,12 +62,15 @@ def check(cat=None):
                 problems.append(f"{where}: no {field}")
         if e.get("licence") not in ALLOWED:
             problems.append(f"{where}: the licence {e.get('licence')} is not one of the allowed open licences")
-        if e.get("licence") in SHARE_ALIKE and where != "osm":
+        if e.get("licence") in SHARE_ALIKE and where not in OSM_LAYERS:
             problems.append(f"{where}: a share-alike licence outside the OpenStreetMap layer")
         if e.get("licence") not in licences:
             problems.append(f"{where}: the licence {e.get('licence')} is not described in licences")
         if e.get("part") not in fmt.PARTS:
-            problems.append(f"{where}: the part must be one of core, extra, names, businesses, addresses")
+            problems.append(f"{where}: the part must be one of {', '.join(fmt.PARTS)}")
+        same = (e.get("fetch") or {}).get("same_as")
+        if same and same not in {x.get("id") for x in cat.get("accepted", [])}:
+            problems.append(f"{where}: fetch same_as names {same}, which is not an accepted source")
         for rid in e.get("regions", []):
             if rid not in known:
                 problems.append(f"{where}: the region {rid} is not in regions.json")

@@ -197,9 +197,12 @@ DETAILS_NEEDING_PARTS = ("address", "exact")
 
 def parts_for(detail=None, full=False):
     """The parts a lookup needs: core and extra; the businesses and the addresses too for the detail "address" or
-    "exact" (the exact place in a picture's name, Describe this picture), or when the user asked for full detail."""
+    "exact" (the exact place in a picture's name, Describe this picture), or when the user asked for full detail;
+    the navigation part for the detail "navigation" (getting around: intersections, crossings, the next bus)."""
     if full or detail in DETAILS_NEEDING_PARTS:
         return fmt.DEFAULT_PARTS + fmt.DETAIL_PARTS
+    if detail == "navigation":
+        return fmt.DEFAULT_PARTS + ("navigation",)      # the street network, crossings and timetables (on request)
     return fmt.DEFAULT_PARTS
 
 

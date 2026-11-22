@@ -21,6 +21,13 @@ not one database under a single licence:
   © OpenStreetMap contributors. Anyone may obtain it with the pack and rebuild it with this repository's code.
 - **Every other layer** is an independent database kept in its own rows (its `source` column says which), under its
   **own licence** (`SOURCES.md` and the pack's `sources` table, with its attribution text).
+- **The navigation part's OpenStreetMap layer** (`source` `osm-navigation`: the nav_ways, nav_grid,
+  nav_intersections and nav_features tables) is also a database derived from OpenStreetMap, made from the same
+  extract: under the **ODbL 1.0**, © OpenStreetMap contributors, offered whole in the pack and rebuilt with this
+  repository's code. Its transit tables (nav_feeds to nav_times, source `gtfs-navigation`) are not made from
+  OpenStreetMap: each feed keeps its own open licence (nav_feeds.licence_url). The lookups only read the two side by
+  side (a stop's shelter is read from the nearest OpenStreetMap bus stop when the answer is given); the build does
+  not merge them.
 - **No other layer is made from OpenStreetMap data.** The build never uses OpenStreetMap to filter, correct, match or
   merge another source, so the other layers are not derived from it, and the share-alike terms do not extend to
   them. Layers are combined only when a program looks a position up (the result is a "Produced Work" under the

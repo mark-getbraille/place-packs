@@ -30,7 +30,7 @@ python -m placepacks.manifest plan --manifest packs.json --fingerprints prints.j
     regions without children are built (a parent typed is its sub-regions); a parent's packs are its children's put
     together (placepacks.combine), published under its own keys for the programs that know only the parent.
 
-Parts: core, extra, names, businesses, addresses (fmt.PARTS). A program made before businesses and addresses parses
+Parts: core, extra, names, businesses, addresses, navigation (fmt.PARTS). A program made before businesses and addresses parses
 only the parts it knows and only the regions in its regions.json: it leaves the new entries out and keeps working.
 """
 

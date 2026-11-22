@@ -302,12 +302,15 @@ class PackWriter:
         self._write_types()
         self._write_addresses()
         self._write_grid()
+        # The navigation part's own tables (placepacks/navigation.py): intersections, the grid and the indexes.
+        nav_counts = self._nav.finish() if getattr(self, "_nav", None) is not None else {}
         for fields in self.sources.values():
             db.execute(f"INSERT INTO sources VALUES ({', '.join('?' * len(SOURCE_COLUMNS))})",
                        [fields[c] for c in SOURCE_COLUMNS])
         counts = {t: db.execute(f"SELECT COUNT(*) FROM {t}").fetchone()[0] for t in ("points", "areas", "lines",
                                                                                       "ranges")}
         counts["addresses"] = self._address_count
+        counts.update(nav_counts)
         oldest = db.execute("SELECT MIN(m) FROM (SELECT MIN(first) m FROM points UNION ALL SELECT MIN(first) FROM "
                             "areas UNION ALL SELECT MIN(first) FROM lines)").fetchone()[0]
         values = {"format": fmt.PACK_FORMAT, "version": str(fmt.PACK_VERSION), "built_month": str(self.month),

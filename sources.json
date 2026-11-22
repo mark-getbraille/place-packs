@@ -192,6 +192,46 @@
    "time_limit_min": 60
   },
   {
+   "id": "osm-navigation",
+   "name": "OpenStreetMap: street network and pedestrian accessibility (navigation part)",
+   "short": "OpenStreetMap",
+   "part": "navigation",
+   "countries": [
+    "US",
+    "CA",
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "ODbL-1.0",
+   "attribution": "© OpenStreetMap contributors, available under the Open Database License (ODbL) 1.0: https://www.openstreetmap.org/copyright",
+   "url": "https://www.openstreetmap.org",
+   "reader": "osm_navigation",
+   "fetch": {
+    "method": "same_as",
+    "same_as": "osm"
+   },
+   "history": "No history: the street network, crossings and accessibility details as mapped at the build (the navigation part is rebuilt whole each time).",
+   "time_limit_min": 60
+  },
+  {
    "id": "nad",
    "name": "National Address Database (USDOT)",
    "short": "the National Address Database",
@@ -1131,6 +1171,25 @@
     "verify": true
    },
    "history": "From the first build on. Keyed by feed and stop id."
+  },
+  {
+   "id": "gtfs-navigation",
+   "name": "Public transit timetables (GTFS feeds of the Mobility Database catalogue; navigation part)",
+   "short": "transit agencies' open GTFS feeds",
+   "part": "navigation",
+   "countries": [
+    "US",
+    "CA"
+   ],
+   "licence": "per-feed-open",
+   "attribution": "Transit stops, routes and timetables from the agencies' GTFS feeds listed in the pack (nav_feeds, with each feed's licence address), each under its own open licence, found through the Mobility Database (mobilitydatabase.org).",
+   "url": "https://mobilitydatabase.org",
+   "reader": "gtfs_navigation",
+   "fetch": {
+    "method": "same_as",
+    "same_as": "gtfs"
+   },
+   "history": "No history: the timetables in force at the build (each feed's own start and end dates are kept)."
   },
   {
    "id": "wikidata",

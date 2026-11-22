@@ -30,9 +30,13 @@ ATTRIBUTION = "© OpenStreetMap contributors"
 # DEFAULT_PARTS; the businesses and addresses only when a lookup needs them (detail "address", the exact place) or the
 # user asks for full detail. Programs made before businesses and addresses existed know only core and extra (and
 # leave the other parts of packs.json out), so they still find towns and streets.
-PARTS = ("core", "extra", "names", "businesses", "addresses")
+# navigation (since November 2026): the street network, the pedestrian accessibility details and the transit
+# timetables (placepacks/navigation.py), downloaded only on request, like names. Programs made before it leave its
+# entries of packs.json out.
+PARTS = ("core", "extra", "names", "businesses", "addresses", "navigation")
 DEFAULT_PARTS = ("core", "extra")
 DETAIL_PARTS = ("businesses", "addresses")
+ON_REQUEST_PARTS = ("names", "navigation")
 
 
 # ------------------------------------------------------------------------------------------- months

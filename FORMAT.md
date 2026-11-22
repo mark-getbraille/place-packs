@@ -22,6 +22,7 @@ A pack is one SQLite file. Coordinates are whole microdegrees. Months are YYYYMM
 | notes | id, text | short notes about places, each once ("filming location of ..."); data only, never spoken |
 | point_notes | id, note | a point's note: points.id -> notes.id |
 | labels | key, lang, name | only in the optional "names" part: a place's name in another language, by the key of the place in the main packs ("wikidata:Q42", "fr", "Lac Champlain") |
+| nav_* | (below) | only in the optional "navigation" part: the street network, crossings, accessibility details and transit timetables ("The navigation part") |
 
 Fine cell: `floor((lat + 90) * 100) * 36000 + floor((lon + 180) * 100)`. Coarse cell: the same with 10 and 3600.
 Classes (`cls`): park, cemetery, landmark, campus, water, nature, neighbourhood, region, admin, town, county, zip,
@@ -79,7 +80,7 @@ never spoken.
 
 ## Parts: core, extra, names, businesses and addresses
 
-A region has up to five packs, each with the same tables:
+A region has up to six packs, each with the same tables (the navigation part adds its own, below):
 
 | Part | File and key | What | Downloaded |
 |---|---|---|---|
@@ -88,6 +89,7 @@ A region has up to five packs, each with the same tables:
 | businesses | `us-vermont-businesses.osmpack` | Overture places, All the Places, the IRS's exempt organizations and every business list (inspections, licences, bank branches, the UK's food hygiene ratings) | when needed |
 | addresses | `us-vermont-addresses.osmpack` | address points (NAD, ODA, OpenAddresses, BAN, BAG, LINZ, ...) and address ranges (TIGER/Line, NRN), with their history | when needed |
 | names | `us-vermont-names.osmpack` | other-language names (below) | on request |
+| navigation | `us-vermont-navigation.osmpack` | the street network, crossings, accessibility details and transit timetables (below) | on request |
 
 A program downloads core and extra (`fmt.DEFAULT_PARTS`); businesses and addresses (`fmt.DETAIL_PARTS`) only when a
 lookup needs them, at the detail "address" or for the exact place in a picture's name, or when the user asks for full
@@ -126,3 +128,42 @@ Japanese and Chinese. A program downloads it only when its user turns on other l
 (`download.ensure_pack(region, part="names")`) and reads it with `PackReader.labels(key)`; the core and extra packs do
 not change size. The names are data only.
 
+
+### The navigation part (added November 2026, still version 2)
+
+The navigation part (`us-vermont-navigation.osmpack`, key `us-vermont-navigation`) is for getting around on foot
+and by transit. It is downloaded only on request (`download.ensure_pack(region, part="navigation")`, or
+`download.parts_for("navigation")`), like the names part, and is in the detail release of its publish. It has the
+usual meta and sources tables (and empty places tables, so every reader opens it) and these tables of its own,
+written by `placepacks/navigation.py` and read by `placepacks/navigate.py`. It has no history: each build writes the
+network and the timetables as they are (`build.previous_files` gives none).
+
+From the region's OpenStreetMap extract (source `osm-navigation`, the same file as the core part's; ODbL 1.0, like
+the core part's OpenStreetMap layer):
+
+| Table | Columns | What |
+|---|---|---|
+| nav_ways | id, key ("w123"), name (or route number), kind (OSM highway value), tags (JSON), minlat, minlon, maxlat, maxlon, pts | street and path segments: every highway a person can walk or that has a name, without unnamed driveways and parking aisles, tracks, private roads and roads being built; tags keep the walking details (sidewalk, sidewalk:left/right/both, footway, surface, smoothness, lit, incline, width, wheelchair, tactile_paving, step_count, handrail, ramp, kerb, crossing tags on crossing ways, maxspeed, lanes, oneway, bridge, tunnel) |
+| nav_grid | level, cell, way | which segments touch each fine (level 1) or coarse (level 0) cell |
+| nav_intersections | id, key ("n123"), lat, lon, cell, streets (JSON list, sorted), signals (1 when the node has traffic signals) | where streets with different names meet (footpaths and steps do not count as cross streets) |
+| nav_features | id, key, kind, name, lat, lon, cell, tags (JSON), streets (JSON list of the ways the node lies on) | crossing, traffic signals, kerb (curb cuts: kerb=lowered or flush), tactile paving, steps, ramp, elevator, entrance (wheelchair, door, automatic_door), bus stop and tram stop (shelter, bench, bin, lit, tactile_paving, departures_board), platform, accessible place (a named place with wheelchair=*); the tags keep crossing, crossing:markings, crossing:signals, crossing:island, button_operated and the accessible pedestrian signal tags (traffic_signals:sound, :vibration, :arrow, :minimap) |
+
+From the region's open GTFS feeds (source `gtfs-navigation`, the same feeds as the extra part's transit stops, each
+under its own open licence, recorded in nav_feeds):
+
+| Table | Columns | What |
+|---|---|---|
+| nav_feeds | feed, provider, licence_url, timezone, start, end | one row per feed: the agency, its licence address, its time zone (the times below are its local time) and the dates its timetables cover (YYYYMMDD) |
+| nav_stops | id, key ("gtfs:feed:stop"), feed, stop_id, name, code, lat, lon, cell, wheelchair (GTFS wheelchair_boarding: 0 unknown, 1 yes, 2 no), location_type (0 stop, 1 station), parent, platform | stops and stations in the region |
+| nav_routes | id, feed, route_id, short_name, long_name, type (GTFS route_type), agency | routes |
+| nav_services | id, feed, service_id, days (bit 0 Monday ... bit 6 Sunday), start, end | the days each timetable runs |
+| nav_service_dates | service, date, added (1 added, 0 removed) | calendar_dates.txt exceptions |
+| nav_trips | id, route, service, headsign, direction, wheelchair (GTFS wheelchair_accessible), bikes | trips |
+| nav_times | stop, time (seconds after the timetable day's midnight; over 86400 after midnight), trip | every departure (WITHOUT ROWID, by stop and time) |
+
+The lookups (`placepacks.navigate.Navigator`): `nearest_intersection(lat, lon)`, `crossing_here(lat, lon)` (the
+crossing's type, the street it crosses, signals, push button, accessible pedestrian signal, tactile paving, kerb,
+island), `street_here(lat, lon)` (sidewalks, surface, lighting, steps), `features_near(lat, lon, metres, kinds)`,
+`nearest_stops(lat, lon)`, `stop_amenities(lat, lon)` and `next_buses(lat, lon, when)` (the next departures from the
+nearest stop with service, wheelchair boarding and each trip's wheelchair access). Each returns the facts and a
+plain sentence ("phrase"); where the map does not say, the fact is None and nothing is said.

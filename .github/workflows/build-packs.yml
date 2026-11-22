@@ -16,7 +16,7 @@
 #   "seeds" release. publish: the new packs under dated names (core and extra in the "packs" release; names,
 #   businesses and addresses in their own "packs-detail-YYYYMMDD" release, packs.json "release"), then packs-previous.json (the list before), then
 #   packs.json last; then the files neither list names are deleted. Only the repository's own GITHUB_TOKEN is used.
-# - Parts: core, extra, names, businesses and addresses (placepacks/fmt.py). Sub-regions: a region too large for one
+# - Parts: core, extra, names, businesses, addresses and navigation (placepacks/fmt.py). Sub-regions: a region too large for one
 #   pack (England, Texas, ...) is built as its children (regions.json "children"); each child reads its parent's
 #   national slice and its parent's OpenStreetMap extract, clipped with osmium-tool. A child's first build takes its
 #   history from its parent's older packs. publish then puts each parent's children together again under the
@@ -268,7 +268,7 @@ jobs:
               gh release delete-asset seeds "$old" --repo "$GITHUB_REPOSITORY" -y || true
             done
           fi
-      - name: Build the core, extra, businesses, addresses and names packs
+      - name: Build the core, extra, businesses, addresses, names and navigation packs
         env:
           REGION: ${{ matrix.region.id }}
         run: |
@@ -277,8 +277,10 @@ jobs:
           python -m placepacks.build "$REGION" --part core --inputs "work/$REGION/fetched.json" --previous-dir previous --out "out/$REGION.osmpack"
           python -m placepacks.build "$REGION" --part extra --inputs "work/$REGION/fetched.json" --previous-dir previous --out "out/$REGION-extra.osmpack"
           # The other parts only for regions that have a source for them (names: other-language names; businesses:
-          # Overture and the business lists; addresses: address points and ranges, with their history).
-          for part in businesses addresses names; do
+          # Overture and the business lists; addresses: address points and ranges, with their history; navigation:
+          # the street network, crossings and accessibility details from the same OpenStreetMap extract, and the
+          # open GTFS feeds' timetables, with no history).
+          for part in businesses addresses names navigation; do
             if python -c "import sys; from placepacks import catalogue; r = catalogue.regions()[sys.argv[1]]; sys.exit(0 if catalogue.sources_for(r, sys.argv[2]) else 1)" "$REGION" "$part"; then
               python -m placepacks.build "$REGION" --part "$part" --inputs "work/$REGION/fetched.json" --previous-dir previous --out "out/$REGION-$part.osmpack"
             fi

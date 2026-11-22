@@ -137,6 +137,14 @@ Each region has these parts:
   organizations and the business lists (inspections, licences, bank branches, food hygiene ratings).
 - **addresses** (`us-vermont-addresses.osmpack`): address points and address ranges, with their history.
 - **names** (`us-vermont-names.osmpack`, optional): other-language names.
+- **navigation** (`us-vermont-navigation.osmpack`, optional, since November 2026): for getting around. The street
+  network with its intersections (named cross streets) and segments, and the pedestrian details: crossings and
+  their type, traffic signals and accessible pedestrian signals, tactile paving, kerbs and curb cuts, sidewalks,
+  steps, ramps, elevators, entrances with wheelchair access, and bus stops with their shelter, bench and tactile
+  paving (OpenStreetMap); and the open transit feeds' stops, routes and timetables with wheelchair boarding.
+  `placepacks.navigate.Navigator` answers "what is the nearest intersection" (`nearest_intersection`), "how do I
+  cross here" (`crossing_here`) and "the next bus from the nearest stop" (`next_buses`), each with a plain
+  sentence. Download it with `ensure_pack(region, part="navigation")`. FORMAT.md, "The navigation part".
 
 Core and extra are files of the release `packs`. The names, businesses and addresses of each publish are in a
 release of their own, `packs-detail-YYYYMMDD` (GitHub allows 1000 files in one release); each entry of `packs.json`

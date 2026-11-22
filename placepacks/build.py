@@ -45,11 +45,11 @@ def previous_keys(region_id):
 def previous_files(region_id, part, folder):
     """The older packs a part takes its history from (paths in folder, named <key>.osmpack): its own, else the
     region's (or its parent's) core and extra of before (where the moved sources were), else the seed. [] for the
-    names part (no history)."""
+    names and navigation parts (no history)."""
     from placepacks.manifest import key_of
     from placepacks.regions import parent_of
-    if part == "names":
-        return []
+    if part in ("names", "navigation"):
+        return []                       # no history: other-language names, and the network as it is now
     path = lambda key: os.path.join(folder, key + fmt.PACK_SUFFIX)  # noqa: E731
     own = path(key_of(region_id, part))
     if os.path.exists(own):

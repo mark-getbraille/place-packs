@@ -9,6 +9,8 @@ downloaded), the source's catalogue entry (sources.json) and the region, and add
   gtfs.py     public transit stops from GTFS feeds
   wikidata.py Wikidata query results (names, coordinates and start/end dates)
   sqlite_query.py  SQLite and GeoPackage files a source publishes (GNIS variant names and historical features)
+  navigation.py  the navigation part: OpenStreetMap's street network and accessibility details, and the GTFS
+              timetables (osm_navigation, gtfs_navigation)
   ohm.py      OpenHistoricalMap features (CC0) with their own start and end dates, from its Overpass API
 """
 
@@ -26,5 +28,6 @@ def reader(name):
 
 def load_all():
     """Import every reader module, so READERS is complete."""
-    from placepacks.readers import gtfs, ohm, osm, parquet, shapes, sqlite_query, tabular, wikidata  # noqa: F401
+    from placepacks.readers import (gtfs, navigation, ohm, osm, parquet, shapes, sqlite_query, tabular,  # noqa: F401
+                                    wikidata)
     return READERS

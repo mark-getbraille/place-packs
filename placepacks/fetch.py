@@ -23,6 +23,8 @@ Each source's catalogue "fetch" says how:
                   "_rings" for polygons, read as areas); dates become YYYY-MM-DD; the version is the layer's last edit
                   date and the number of records; polylines come with "_paths" (read as named lines)
   manual          a folder someone filled (inputs/...): used when it exists
+  same_as         nothing is downloaded: the source reads another source's download (its "same_as" id), such as
+                  the navigation part's readers of the OpenStreetMap extract and the GTFS feeds
 A national source's file may be named by the publisher's metadata instead of a fixed address ("socrata_blob": the
 NAD's file on data.transportation.gov, whose version is its blobId and rowsUpdatedAt), one file per country
 ("per_country": GeoNames) or every file a listing page links to ("listing": the FSA's hygiene ratings, one XML file
@@ -1453,6 +1455,14 @@ def fetch_region(region_id, work, parts=fmt.PARTS, national=None, fingerprint=Fa
     os.makedirs(work, exist_ok=True)
     result = {}
     entries = [e for part in parts for e in catalogue.sources_for(region, part, cat, only)]
+    # A source that reads another source's download (fetch "same_as": the navigation part reads the core part's
+    # OpenStreetMap extract and the extra part's GTFS feeds) is not downloaded again: it gets that source's result.
+    # The other source is fetched even when only the part that reuses it was asked for.
+    reuse = {e["id"]: e["fetch"]["same_as"] for e in entries if e["fetch"].get("same_as")}
+    have = {e["id"] for e in entries}
+    for wanted in sorted(set(reuse.values()) - have):
+        entries += [e for e in cat["accepted"] if e["id"] == wanted]
+    entries = [e for e in entries if e["id"] not in reuse]
 
     def finish(entry, got):
         """Record one source's result (its status and reason filled in) and print its status line (not when
@@ -1482,6 +1492,8 @@ def fetch_region(region_id, work, parts=fmt.PARTS, national=None, fingerprint=Fa
     workers = int(os.environ.get("PLACEPACKS_FETCH_WORKERS", FETCH_WORKERS))
     for entry, got in run_parallel(rest, region, cat, work, national, fingerprint, workers):
         finish(entry, got)
+    for sid, other in reuse.items():
+        result[sid] = dict(result.get(other) or {"ok": False, "status": "skipped", "reason": f"{other} was not fetched"})
     if not fingerprint:
         with open(os.path.join(work, "fetched.json"), "w", encoding="utf-8") as f:
             json.dump(result, f, indent=1)

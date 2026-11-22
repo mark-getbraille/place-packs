@@ -141,6 +141,34 @@ def download(url, target, pause=0, waits=RETRY_WAITS, sleep=time.sleep):
     return version, date
 
 
+GEOFABRIK_FLAT = re.compile(r"^(https://download\.geofabrik\.de/(?:.+/)?)([^/]+)-latest\.osm\.pbf$")
+
+
+def geofabrik_folder_url(url):
+    """Geofabrik's newer address of an extract: each region in a folder of its own name
+    (.../north-america/us/vermont/vermont-latest.osm.pbf instead of .../north-america/us/vermont-latest.osm.pbf, as
+    found in November 2026). Any other address is returned as it is."""
+    m = GEOFABRIK_FLAT.match(url)
+    if not m or m.group(1).rstrip("/").endswith("/" + m.group(2)):
+        return url
+    return f"{m.group(1)}{m.group(2)}/{m.group(2)}-latest.osm.pbf"
+
+
+def geofabrik_url(url):
+    """The Geofabrik extract's address that exists: the folder address first, then the older flat one (a region
+    that has not moved). Any other address is returned as it is."""
+    newer = geofabrik_folder_url(url)
+    if newer == url:
+        return url
+    try:
+        with request(newer, "HEAD") as r:
+            if r.status == 200:
+                return newer
+    except Exception:  # noqa: BLE001 - not there (404) or not answering: the older address is tried by the download
+        pass
+    return url
+
+
 def md5_ok(path, url):
     """True when the file matches the published .md5 file next to url (Geofabrik)."""
     with request(url + ".md5") as r:
@@ -1289,6 +1317,7 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
     if method == "ckan_sql":
         return fetch_ckan_sql(entry, folder, fingerprint)
     # http
+    url = geofabrik_url(url)
     if fingerprint:
         if f.get("no_head"):
             # A host that does not answer HEAD (the FDIC's API): the source changes with the month.

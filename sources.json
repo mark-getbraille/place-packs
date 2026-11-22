@@ -8550,7 +8550,8 @@
    "election_name": "general election",
    "fetch": {
     "method": "polling",
-    "url": "https://raw.githubusercontent.com/PublicI/us-polling-places/update-2020/data/{folder}/output/{file}_{date}.csv",
+    "url": "https://raw.githubusercontent.com/PublicI/us-polling-places/update-2020/data/",
+    "template": "{folder}/output/{file}_{date}.csv",
     "dates": [
      "2012-11-06",
      "2014-11-04",

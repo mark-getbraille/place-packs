@@ -1344,13 +1344,14 @@ def fetch_gtfs(entry, region, url, folder, pause, fingerprint):
 
 
 def fetch_polling(entry, region, folder, pause, fingerprint):
-    """The newest election file of a state's polling places: the entry's "url" ({folder}, {file} and {date}: the
-    state's name in lower case with underscores, as written, and each of the entry's "dates", newest first) is tried
-    until one exists. The version is the election date."""
+    """The newest election file of a state's polling places: the entry's "url" followed by its "template" ({folder},
+    {file} and {date}: the state's name in lower case with underscores, as written, and each of the entry's "dates",
+    newest first) is tried until one exists. The version is the election date."""
     f = entry["fetch"]
     state = catalogue.parent_values(region).get("name") or region["name"]
     for date in sorted(f["dates"], reverse=True):
-        url = f["url"].format(folder=state.lower().replace(" ", "_"), file=urllib.parse.quote(state), date=date)
+        url = f["url"] + f["template"].format(folder=state.lower().replace(" ", "_"), file=urllib.parse.quote(state),
+                                              date=date)
         try:
             with request(url, "HEAD") as r:
                 if r.status != 200:

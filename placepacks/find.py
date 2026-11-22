@@ -82,14 +82,15 @@ SYNONYMS = {
     "church": ["church", "catholic church", "baptist church", "methodist church", "lutheran church",
                "presbyterian church", "episcopal church", "anglican church", "orthodox church",
                "greek orthodox church", "pentecostal church", "latter-day saints church", "congregational church",
-               "unitarian church", "quaker meeting house", "evangelical church", "christian church"],
+               "unitarian church", "quaker meeting house", "evangelical church", "christian church",
+               "christian place of worship"],
     "catholic church": ["catholic church", "roman catholic church"],
     "catholic": ["catholic church"],
     "baptist church": ["baptist church"],
     "methodist church": ["methodist church", "united methodist church"],
-    "mosque": ["mosque", "islamic center", "masjid"],
+    "mosque": ["mosque", "islamic center", "masjid", "muslim place of worship", "islamic place of worship"],
     "masjid": ["mosque"],
-    "synagogue": ["synagogue", "temple (jewish)"],
+    "synagogue": ["synagogue", "temple (jewish)", "jewish place of worship"],
     "temple": ["buddhist temple", "hindu temple", "synagogue"],
     "gurdwara": ["gurdwara"],
     "place of worship": ["place of worship", "church", "mosque", "synagogue", "buddhist temple", "hindu temple",
@@ -100,6 +101,7 @@ SERVICE_WORDS = {"social security office": "social security office", "social sec
                  "dmv": "motor vehicle office", "motor vehicle office": "motor vehicle office",
                  "veterans office": "veterans office", "va": "veterans office", "courthouse": "courthouse",
                  "defibrillator": "defibrillator", "aed": "defibrillator", "service canada": "service canada centre"}
+WORSHIP = {"church", "chapel", "mosque", "synagogue", "temple", "cathedral"}
 POLLING = re.compile(r"^(polling place|polling station|where (do|can) i vote|voting place|vote)$", re.I)
 WHEELCHAIR = {"yes": "Step-free access.", "limited": "Partly step-free.", "no": "Not step-free.",
               "designated": "Made for wheelchair users."}
@@ -122,11 +124,16 @@ def phrases_for(text, known=()):
     """The type phrases a request means: its SYNONYMS, else the known phrases (of the packs) that hold every word
     asked ("bicycle" -> "bicycle shop"), else the words themselves."""
     t = plain(text)
-    if t in SYNONYMS:
-        return list(dict.fromkeys(SYNONYMS[t] + [t]))
     words = t.split()
-    found = [p for p in known if all(re.search(rf"\b{re.escape(w)}", p) for w in words)]
-    return [t] + sorted(set(found) - {t}, key=len)
+    found = {p for p in known if all(re.search(rf"\b{re.escape(w)}", p) for w in words)}
+    if len(words) >= 2 and words[-1] in WORSHIP:
+        # "Catholic church" also finds Overture's "roman catholic place of worship", "Baptist church" its "baptist
+        # place of worship".
+        found |= {p for p in known if "place of worship" in p and all(re.search(rf"\b{re.escape(w)}", p)
+                                                                      for w in words[:-1])}
+    if t in SYNONYMS:
+        return list(dict.fromkeys(SYNONYMS[t] + [t] + sorted(found - set(SYNONYMS[t]), key=len)))
+    return [t] + sorted(found - {t}, key=len)
 
 
 class Finder:

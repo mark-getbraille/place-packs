@@ -55,6 +55,7 @@ import os
 import re
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 
@@ -154,19 +155,16 @@ def geofabrik_folder_url(url):
     return f"{m.group(1)}{m.group(2)}/{m.group(2)}-latest.osm.pbf"
 
 
-def geofabrik_url(url):
-    """The Geofabrik extract's address that exists: the folder address first, then the older flat one (a region
-    that has not moved). Any other address is returned as it is."""
+def geofabrik_candidates(url):
+    """The addresses to try for a Geofabrik extract, in order: the folder address, then the older flat one (a region
+    that has not moved). Any other address is the only one."""
     newer = geofabrik_folder_url(url)
-    if newer == url:
-        return url
-    try:
-        with request(newer, "HEAD") as r:
-            if r.status == 200:
-                return newer
-    except Exception:  # noqa: BLE001 - not there (404) or not answering: the older address is tried by the download
-        pass
-    return url
+    return [url] if newer == url else [newer, url]
+
+
+def not_found(error):
+    """True when error is the server's "404 Not Found" (the next address is tried)."""
+    return isinstance(error, urllib.error.HTTPError) and error.code == 404
 
 
 def md5_ok(path, url):
@@ -1316,18 +1314,30 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         return fetch_arcgis(entry, region, folder, fingerprint)
     if method == "ckan_sql":
         return fetch_ckan_sql(entry, folder, fingerprint)
-    # http
-    url = geofabrik_url(url)
+    # http (a Geofabrik extract: its folder address first, then the older flat one; see geofabrik_candidates)
+    candidates = geofabrik_candidates(url)
     if fingerprint:
         if f.get("no_head"):
             # A host that does not answer HEAD (the FDIC's API): the source changes with the month.
             out.update(ok=True, version=datetime.date.today().strftime("%Y-%m"))
             return out
-        with request(url, "HEAD") as r:
-            out.update(ok=True, version=version_of(r.headers))
-        return out
+        for n, url in enumerate(candidates):
+            try:
+                with request(url, "HEAD") as r:
+                    out.update(ok=True, version=version_of(r.headers))
+                return out
+            except Exception as e:  # noqa: BLE001 - only "not found" moves on to the next address
+                if n + 1 == len(candidates) or not not_found(e):
+                    raise
     target = os.path.join(folder, f.get("file") or os.path.basename(urllib.parse.urlsplit(url).path))
-    version, date = download(url, target, pause)
+    for n, url in enumerate(candidates):
+        try:
+            version, date = download(url, target, pause)
+            break
+        except Exception as e:  # noqa: BLE001 - only "not found" moves on to the next address
+            if n + 1 == len(candidates) or not not_found(e):
+                raise
+            print(f"  {url}: not found; trying {candidates[n + 1]}", flush=True)
     if f.get("no_head"):
         version = datetime.date.today().strftime("%Y-%m")     # the same version as the plan's fingerprint
     if f.get("md5") and not md5_ok(target, url):

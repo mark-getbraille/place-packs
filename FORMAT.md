@@ -22,6 +22,7 @@ A pack is one SQLite file. Coordinates are whole microdegrees. Months are YYYYMM
 | notes | id, text | short notes about places, each once ("filming location of ..."); data only, never spoken |
 | point_notes | id, note | a point's note: points.id -> notes.id |
 | labels | key, lang, name | only in the optional "names" part: a place's name in another language, by the key of the place in the main packs ("wikidata:Q42", "fr", "Lac Champlain") |
+| svc_* | (below) | only in the optional "services" part: offices and services, NWS zones and NOAA Weather Radio ("The services part") |
 | nav_* | (below) | only in the optional "navigation" part: the street network, crossings, accessibility details and transit timetables ("The navigation part") |
 
 Fine cell: `floor((lat + 90) * 100) * 36000 + floor((lon + 180) * 100)`. Coarse cell: the same with 10 and 3600.
@@ -80,7 +81,7 @@ never spoken.
 
 ## Parts: core, extra, names, businesses and addresses
 
-A region has up to six packs, each with the same tables (the navigation part adds its own, below):
+A region has up to seven packs, each with the same tables (the navigation and services parts add their own, below):
 
 | Part | File and key | What | Downloaded |
 |---|---|---|---|
@@ -90,6 +91,7 @@ A region has up to six packs, each with the same tables (the navigation part add
 | addresses | `us-vermont-addresses.osmpack` | address points (NAD, ODA, OpenAddresses, BAN, BAG, LINZ, ...) and address ranges (TIGER/Line, NRN), with their history | when needed |
 | names | `us-vermont-names.osmpack` | other-language names (below) | on request |
 | navigation | `us-vermont-navigation.osmpack` | the street network, crossings, accessibility details and transit timetables (below) | on request |
+| services | `us-vermont-services.osmpack` | offices and services, weather zones and NOAA Weather Radio (below) | on request |
 
 A program downloads core and extra (`fmt.DEFAULT_PARTS`); businesses and addresses (`fmt.DETAIL_PARTS`) only when a
 lookup needs them, at the detail "address" or for the exact place in a picture's name, or when the user asks for full
@@ -167,3 +169,22 @@ island), `street_here(lat, lon)` (sidewalks, surface, lighting, steps), `feature
 `nearest_stops(lat, lon)`, `stop_amenities(lat, lon)` and `next_buses(lat, lon, when)` (the next departures from the
 nearest stop with service, wheelchair boarding and each trip's wheelchair access). Each returns the facts and a
 plain sentence ("phrase"); where the map does not say, the fact is None and nothing is said.
+
+### The services part (added November 2026, still version 2)
+
+The services part (`us-vermont-services.osmpack`, key `us-vermont-services`) holds what a person needs to find a
+public office or to follow a weather emergency. Like the navigation part it is downloaded only on request
+(`download.ensure_pack(region, part="services")`), is in the detail release, and has no history. Written by
+`placepacks/services.py`, read by `placepacks/local.py`.
+
+| Table | Columns | What |
+|---|---|---|
+| svc_places | id, key, source, kind, name, lat, lon, cell, ccell, details (JSON: phone, opening_hours, website, addr:*, wheelchair, operator, description) | offices and services from OpenStreetMap (source `osm-services`, ODbL): Social Security office, Service Canada centre, motor vehicle office, veterans office, courthouse, post office, library, pharmacy, food bank, soup kitchen, shelter, social services, hospital, clinic, police, fire station, town hall, government office, community centre, defibrillator (`services.SERVICE_KINDS`) |
+| svc_zones | id, key, source, kind ("county" or "forecast zone"), code (county FIPS, or the zone "VTZ006"), name, state, office (the NWS forecast office), minlat, minlon, maxlat, maxlon, rings | the National Weather Service county areas and public forecast zones of the region's state (public domain) |
+| svc_radio | id, call_sign, frequency (MHz), site, site_state, lat, lon, power (watts), status, office, same (the county's SAME code, "050007"), county, state, remarks | every NOAA Weather Radio transmitter covering each county of the region's state (the county coverage list, public domain) |
+
+The lookups (`placepacks.local.LocalServices`): `nearest(lat, lon, kind)` (a kind or a plain word such as "DMV" or
+"Social Security"; it also searches the core and extra parts' places of the same type, such as the IMLS libraries
+and the HRSA health centres, and gives a place listed by several sources once), `weather_zone(lat, lon)` (the
+county, its SAME code, the forecast zone and office) and `weather_radio(lat, lon)` (the transmitters covering the
+county, nearest first, with their frequencies and status).

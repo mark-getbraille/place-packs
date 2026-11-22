@@ -304,6 +304,9 @@ class PackWriter:
         self._write_grid()
         # The navigation part's own tables (placepacks/navigation.py): intersections, the grid and the indexes.
         nav_counts = self._nav.finish() if getattr(self, "_nav", None) is not None else {}
+        # The services part's own tables (placepacks/services.py): its indexes.
+        if getattr(self, "_svc", None) is not None:
+            nav_counts.update(self._svc.finish())
         for fields in self.sources.values():
             db.execute(f"INSERT INTO sources VALUES ({', '.join('?' * len(SOURCE_COLUMNS))})",
                        [fields[c] for c in SOURCE_COLUMNS])

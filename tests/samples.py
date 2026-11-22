@@ -196,3 +196,109 @@ def nav_gtfs_folder(folder):
     with open(os.path.join(folder, "licences.json"), "w", encoding="utf-8") as f:
         json.dump({"mdb-9999": "https://creativecommons.org/licenses/by/4.0/"}, f)
     return folder
+
+
+# The services part's made-up Testville: a Social Security office with its phone, hours and step-free access, a
+# motor vehicle office, a food bank drawn as a building, a pharmacy, a defibrillator and an unnamed office (left out).
+SVC_OSM = """<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="made up for tests">
+ <node id="40" lat="44.0100" lon="-72.0100"><tag k="office" v="government"/><tag k="government" v="social_security"/>
+  <tag k="name" v="Social Security Administration"/><tag k="phone" v="+1 800 555 0100"/>
+  <tag k="opening_hours" v="Mo-Fr 09:00-16:00"/><tag k="wheelchair" v="yes"/><tag k="addr:housenumber" v="12"/>
+  <tag k="addr:street" v="Made-up Street"/><tag k="addr:city" v="Testville"/></node>
+ <node id="41" lat="44.0300" lon="-72.0300"><tag k="office" v="government"/><tag k="government" v="transportation"/>
+  <tag k="name" v="Testville DMV"/></node>
+ <node id="42" lat="44.0020" lon="-72.0020"/>
+ <node id="43" lat="44.0020" lon="-72.0010"/>
+ <node id="44" lat="44.0030" lon="-72.0010"/>
+ <node id="45" lat="44.0002" lon="-72.0001"><tag k="amenity" v="pharmacy"/><tag k="name" v="Pretend Pharmacy"/></node>
+ <node id="46" lat="44.0004" lon="-72.0004"><tag k="emergency" v="defibrillator"/></node>
+ <node id="47" lat="44.0005" lon="-72.0005"><tag k="office" v="government"/></node>
+ <way id="300"><nd ref="42"/><nd ref="43"/><nd ref="44"/><nd ref="42"/><tag k="building" v="yes"/>
+  <tag k="amenity" v="social_facility"/><tag k="social_facility" v="food_bank"/><tag k="name" v="Testville Food Shelf"/></way>
+</osm>
+"""
+
+
+def svc_osm_file(folder):
+    """The made-up offices and services (SVC_OSM)."""
+    path = os.path.join(folder, "services.osm")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(SVC_OSM)
+    return path
+
+
+def nws_folder(folder, kind):
+    """A folder with one zipped NWS-like shapefile: kind "county" (c_16ap26.zip: Made-up County, FIPS 50999, around
+    Testville, and a county of another state) or "zone" (z_16ap26.zip: zone VTZ099)."""
+    import shapefile
+    os.makedirs(folder, exist_ok=True)
+    base = os.path.join(folder, "c_16ap26" if kind == "county" else "z_16ap26")
+    with shapefile.Writer(base, shapeType=shapefile.POLYGON) as w:
+        if kind == "county":
+            for field in ("STATE", "CWA", "COUNTYNAME", "FIPS"):
+                w.field(field, "C", size=40)
+            w.poly([[[-72.1, 43.9], [-72.1, 44.1], [-71.9, 44.1], [-71.9, 43.9], [-72.1, 43.9]]])
+            w.record("VT", "BTV", "Made-up", "50999")
+            w.poly([[[-72.1, 43.9], [-72.1, 44.1], [-71.9, 44.1], [-71.9, 43.9], [-72.1, 43.9]]])
+            w.record("NH", "GYX", "Other State", "33999")
+        else:
+            for field in ("STATE", "CWA", "NAME", "ZONE"):
+                w.field(field, "C", size=40)
+            w.poly([[[-72.1, 43.9], [-72.1, 44.1], [-71.9, 44.1], [-71.9, 43.9], [-72.1, 43.9]]])
+            w.record("VT", "BTV", "Made-up Valley", "099")
+    path = base + ".zip"
+    with zipfile.ZipFile(path, "w") as z:
+        for ext in (".shp", ".shx", ".dbf"):
+            z.write(base + ext, os.path.basename(base) + ext)
+            os.remove(base + ext)
+    return folder
+
+
+NWR_JS = """var ST = [];
+ST[0] = "VT";
+STATE[0] = "Vermont";
+COUNTY[0] = "Made-up";
+SAME[0] = "050999";
+SITENAME[0] = "Pretend Mountain";
+SITESTATE[0] = "VT";
+FREQ[0] = "162.550";
+CALLSIGN[0] = "WXX99";
+LAT[0] = "44.05";
+LON[0] = "-72.05";
+PWR[0] = "1000";
+STATUS[0] = "NORMAL";
+WFO[0] = "Burlington|VT";
+REMARKS[0] = "";
+
+ST[1] = "VT";
+COUNTY[1] = "Made-up";
+SAME[1] = "050999";
+SITENAME[1] = "Faraway Hill";
+SITESTATE[1] = "NH";
+FREQ[1] = "162.475";
+CALLSIGN[1] = "WXX98";
+LAT[1] = "44.50";
+LON[1] = "-72.50";
+PWR[1] = "300";
+STATUS[1] = "OUT OF SERVICE";
+WFO[1] = "Gray|ME";
+
+ST[2] = "NH";
+COUNTY[2] = "Other State";
+SAME[2] = "033999";
+SITENAME[2] = "Elsewhere";
+FREQ[2] = "162.400";
+CALLSIGN[2] = "WXX97";
+LAT[2] = "43.0";
+LON[2] = "-71.0";
+"""
+
+
+def nwr_file(folder):
+    """A made-up county coverage list (CCL.js)."""
+    os.makedirs(folder, exist_ok=True)
+    path = os.path.join(folder, "CCL.js")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(NWR_JS)
+    return path

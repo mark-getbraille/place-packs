@@ -232,6 +232,46 @@
    "time_limit_min": 60
   },
   {
+   "id": "osm-services",
+   "name": "OpenStreetMap: offices and services (services part)",
+   "short": "OpenStreetMap",
+   "part": "services",
+   "countries": [
+    "US",
+    "CA",
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "ODbL-1.0",
+   "attribution": "© OpenStreetMap contributors, available under the Open Database License (ODbL) 1.0: https://www.openstreetmap.org/copyright",
+   "url": "https://www.openstreetmap.org",
+   "reader": "osm_services",
+   "fetch": {
+    "method": "same_as",
+    "same_as": "osm"
+   },
+   "history": "No history: the offices and services as mapped at the build (the services part is rebuilt whole each time).",
+   "time_limit_min": 60
+  },
+  {
    "id": "nad",
    "name": "National Address Database (USDOT)",
    "short": "the National Address Database",
@@ -8417,6 +8457,83 @@
    "history": "Each work from its year.",
    "notes": "About 90 permanent public artworks (the artist's name is not kept).",
    "skip_names": "^Untitled"
+  },
+  {
+   "id": "nws-counties",
+   "name": "National Weather Service county areas (with FIPS and SAME codes)",
+   "short": "the National Weather Service",
+   "part": "services",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "County areas from the National Weather Service (NOAA), a US government work (public domain).",
+   "url": "https://www.weather.gov/gis/Counties",
+   "reader": "nws_zones",
+   "zones": {
+    "kind": "county",
+    "code": "{FIPS}",
+    "name": "COUNTYNAME",
+    "state": "STATE",
+    "office": "CWA"
+   },
+   "fetch": {
+    "method": "national",
+    "listing": "https://www.weather.gov/gis/Counties",
+    "pattern": "/source/gis/Shapefiles/County/c_\\d{2}[a-z]{2}\\d{2}\\.zip",
+    "latest": "c_(\\d{2}[a-z]{2}\\d{2})\\.zip",
+    "latest_date": "nws",
+    "pause": 2
+   },
+   "history": "No history: the county areas of the newest NWS file (its date is in the file name)."
+  },
+  {
+   "id": "nws-zones",
+   "name": "National Weather Service public forecast zones",
+   "short": "the National Weather Service",
+   "part": "services",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Public forecast zones from the National Weather Service (NOAA), a US government work (public domain).",
+   "url": "https://www.weather.gov/gis/PublicZones",
+   "reader": "nws_zones",
+   "zones": {
+    "kind": "forecast zone",
+    "code": "{STATE}Z{ZONE}",
+    "name": "NAME",
+    "state": "STATE",
+    "office": "CWA"
+   },
+   "fetch": {
+    "method": "national",
+    "listing": "https://www.weather.gov/gis/PublicZones",
+    "pattern": "/source/gis/Shapefiles/WSOM/z_\\d{2}[a-z]{2}\\d{2}\\.zip",
+    "latest": "z_(\\d{2}[a-z]{2}\\d{2})\\.zip",
+    "latest_date": "nws",
+    "pause": 2
+   },
+   "history": "No history: the zones of the newest NWS file (its date is in the file name)."
+  },
+  {
+   "id": "noaa-weather-radio",
+   "name": "NOAA Weather Radio All Hazards county coverage (transmitters and frequencies by county)",
+   "short": "NOAA Weather Radio",
+   "part": "services",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "NOAA Weather Radio county coverage list from the National Weather Service (NOAA), a US government work (public domain).",
+   "url": "https://www.weather.gov/nwr/county_coverage",
+   "reader": "nwr",
+   "fetch": {
+    "method": "national",
+    "url": "https://www.weather.gov/source/nwr/JS/CCL.js",
+    "pause": 2
+   },
+   "history": "No history: the transmitters listed at the build, with their status (normal, out of service ...)."
   }
  ],
  "rejected": [
@@ -8994,6 +9111,46 @@
    "name": "Large US city portals without an open licence (top 50 pass, November 2026)",
    "licence": "No licence stated",
    "reason": "Searched the 50 largest cities not yet covered on Socrata and ArcGIS: Phoenix, San Antonio, San Diego, Jacksonville, San Jose, Charlotte, Indianapolis, Nashville, El Paso, Oklahoma City, Las Vegas, Portland, Memphis, Louisville, Milwaukee, Albuquerque, Tucson, Fresno, Mesa, Omaha, Colorado Springs, Raleigh, Long Beach, Virginia Beach, Tulsa, Wichita, Cleveland, Bakersfield, Aurora, Anaheim, Riverside, Corpus Christi, Lexington, St. Louis, Orlando, Durham, Madison, Buffalo, Richmond, Boise and Spokane publish their facility, inspection and landmark layers with a disclaimer only, or not at all with coordinates. Used: Houston (public domain), Fort Worth, Miami and Arlington TX (CC BY 4.0), Sacramento County, Tampa and Oakland (CC0), Saint Paul (public domain), Seattle (public domain, located by address; PDDL districts), Winnipeg (OGL-Canada)."
+  },
+  {
+   "name": "Social Security Administration office locator (ssa.gov)",
+   "licence": "US government work",
+   "reason": "ssa.gov refuses programs (its server answers \"Access Denied\" even to robots.txt, read 22 November 2026) and SSA publishes no download of its field offices; the services part finds Social Security offices in OpenStreetMap (and GSA's federal buildings in the extra part) instead."
+  },
+  {
+   "name": "VA Facilities API (api.va.gov)",
+   "licence": "US government work",
+   "reason": "Public, but every request needs a free API key; none has been added (it would go only in the owner's settings or a repository secret). VA offices and clinics come from OpenStreetMap (veterans office) and VA national cemeteries from the extra part."
+  },
+  {
+   "name": "SAMHSA FindTreatment.gov treatment locator",
+   "licence": "US government work",
+   "reason": "robots.txt allows programs, but the site offers no bulk download a program can use (its export is a form inside the web application) and the national directory is a PDF; left out until SAMHSA publishes a data file."
+  },
+  {
+   "name": "211 community services directories",
+   "licence": "Proprietary (211 providers and Inform USA)",
+   "reason": "Not open data: the 211 databases are licensed per provider and may not be redistributed."
+  },
+  {
+   "name": "FEMA National Shelter System (Open Shelters)",
+   "licence": "US government work",
+   "reason": "Only shelters open during an emergency are published, changing by the hour; a monthly offline pack would mislead. People should call 211 or check FEMA's app during an emergency."
+  },
+  {
+   "name": "Feeding America food bank locator",
+   "licence": "Terms of use",
+   "reason": "No open download; food banks come from OpenStreetMap (amenity=food_bank, social_facility=food_bank) and the IRS's exempt organizations."
+  },
+  {
+   "name": "USPS facility data",
+   "licence": "Terms of use",
+   "reason": "No open USPS download with coordinates (see USPS post office locations); post offices come from OpenStreetMap, the USGS National Structures Dataset and GNIS."
+  },
+  {
+   "name": "State DMV office lists",
+   "licence": "Varies by state",
+   "reason": "No national open list; few states publish one. Motor vehicle offices come from OpenStreetMap by name and government tag (motor vehicle office); a state's open list can be added as its own source once its licence is checked."
   }
  ],
  "candidates": [
@@ -9296,6 +9453,11 @@
    "name": "Street-renaming lists of DC, Toronto and Baton Rouge",
    "licence": "Various",
    "note": "No open DC or Toronto renaming dataset was found; Baton Rouge's (public domain, 880 changes since the 1950s) has dates but no positions and would need matching to street lines. Chicago's portal terms are rejected."
+  },
+  {
+   "name": "Canada: Environment and Climate Change Canada Weatheradio transmitters",
+   "licence": "Open Government Licence - Canada (to check)",
+   "note": "The Canadian counterpart of NOAA Weather Radio; its transmitter list must be found as a data file and its licence checked."
   }
  ]
 }

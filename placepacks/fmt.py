@@ -31,12 +31,13 @@ ATTRIBUTION = "© OpenStreetMap contributors"
 # user asks for full detail. Programs made before businesses and addresses existed know only core and extra (and
 # leave the other parts of packs.json out), so they still find towns and streets.
 # navigation (since November 2026): the street network, the pedestrian accessibility details and the transit
-# timetables (placepacks/navigation.py), downloaded only on request, like names. Programs made before it leave its
-# entries of packs.json out.
-PARTS = ("core", "extra", "names", "businesses", "addresses", "navigation")
+# timetables (placepacks/navigation.py); services: the offices and services a person goes to and the weather
+# emergency information (NWS zones, NOAA Weather Radio; placepacks/services.py). Both are downloaded only on
+# request, like names. Programs made before them leave their entries of packs.json out.
+PARTS = ("core", "extra", "names", "businesses", "addresses", "navigation", "services")
 DEFAULT_PARTS = ("core", "extra")
 DETAIL_PARTS = ("businesses", "addresses")
-ON_REQUEST_PARTS = ("names", "navigation")
+ON_REQUEST_PARTS = ("names", "navigation", "services")
 
 
 # ------------------------------------------------------------------------------------------- months

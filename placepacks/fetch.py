@@ -218,6 +218,18 @@ def socrata_blob(spec, values, opener=None):
     return url, spec.get("file", "{blobFilename}").format(blobFilename=name), f"{blob}:{meta.get('rowsUpdatedAt', '')}"
 
 
+NWS_MONTHS = {"ja": 1, "fe": 2, "mr": 3, "ap": 4, "my": 5, "jn": 6, "jl": 7, "au": 8, "se": 9, "oc": 10, "no": 11,
+              "de": 12}
+
+
+def nws_date(text):
+    """YYYYMMDD of a National Weather Service file date ("16ap26" -> 20260416), -1 when it is not one."""
+    m = re.fullmatch(r"(\d{2})([a-z]{2})(\d{2})", (text or "").lower())
+    if not m or m.group(2) not in NWS_MONTHS:
+        return -1
+    return (2000 + int(m.group(3))) * 10000 + NWS_MONTHS[m.group(2)] * 100 + int(m.group(1))
+
+
 def national_files(entry, values, opener=None):
     """[(address, local file name, version or None)] of a national source. None: the version comes from the
     download's ETag or Last-Modified."""
@@ -255,8 +267,11 @@ def national_files(entry, values, opener=None):
             names = sorted(set(re.findall(f["fallback_pattern"], page)))     # the Light List's PDFs, without XML
         if f.get("latest") and names:
             def year(n):
-                """The number the "latest" pattern finds in a file name (-1 when none): the newest is kept."""
+                """The number the "latest" pattern finds in a file name (-1 when none): the newest is kept. With
+                "latest_date": "nws", the group is a National Weather Service date (16ap26: 16 April 2026)."""
                 m = re.search(f["latest"], os.path.basename(n))
+                if m and f.get("latest_date") == "nws":
+                    return nws_date(m.group(1))
                 return int(m.group(1)) if m else -1
             names = [max(names, key=year)]
         return [(urllib.parse.urljoin(f["listing"], n), os.path.basename(urllib.parse.urlsplit(n).path), None)

@@ -373,7 +373,7 @@ def test_the_status_lists_each_regions_parts(tmp_path):
     m["packs"]["us-texas"] = {"region": "us-texas", "part": "core", "size": 3_000_000}
     text = status.status(m)
     assert "| us-florida (its sub-regions put together) |" in text and "| us-texas (before its sub-regions) |" in text
-    assert "| us-florida-south |  |  |  |  | 2.0 |  | 0.0 |" in text
+    assert "| us-florida-south |  |  |  |  | 2.0 |  |  | 0.0 |" in text
     close_readers()
 
 

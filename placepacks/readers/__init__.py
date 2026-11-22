@@ -11,6 +11,8 @@ downloaded), the source's catalogue entry (sources.json) and the region, and add
   sqlite_query.py  SQLite and GeoPackage files a source publishes (GNIS variant names and historical features)
   navigation.py  the navigation part: OpenStreetMap's street network and accessibility details, and the GTFS
               timetables (osm_navigation, gtfs_navigation)
+  services.py    the services part: OpenStreetMap's offices and services (osm_services), the NWS county and forecast
+              zones (nws_zones) and the NOAA Weather Radio county coverage list (nwr)
   ohm.py      OpenHistoricalMap features (CC0) with their own start and end dates, from its Overpass API
 """
 
@@ -28,6 +30,6 @@ def reader(name):
 
 def load_all():
     """Import every reader module, so READERS is complete."""
-    from placepacks.readers import (gtfs, navigation, ohm, osm, parquet, shapes, sqlite_query, tabular,  # noqa: F401
-                                    wikidata)
+    from placepacks.readers import (gtfs, navigation, ohm, osm, parquet, services, shapes,  # noqa: F401
+                                    sqlite_query, tabular, wikidata)
     return READERS

@@ -23,9 +23,9 @@ ALLOWED = {"ODbL-1.0", "CDLA-Permissive-2.0", "Apache-2.0", "OGL-Canada-2.0", "O
            "NYC-Open-Data", "OPEN-NY", "public-domain-marked", "Newberry-open", "OGL-Toronto", "OGL-BC", "OGL-Ontario",
            "OGL-Calgary", "Edmonton-Open-Data", "OGL-Nova-Scotia", "OGL-Vancouver", "OGL-NB", "CC-BY-3.0-US"}
 SHARE_ALIKE = {"ODbL-1.0"}
-# The OpenStreetMap layers (ODbL, share-alike): the core part's places and streets, and the navigation part's street
-# network and accessibility details, both made from the same extract.
-OSM_LAYERS = {"osm", "osm-navigation"}
+# The OpenStreetMap layers (ODbL, share-alike): the core part's places and streets, the navigation part's street
+# network and accessibility details and the services part's offices and services, all made from the same extract.
+OSM_LAYERS = {"osm", "osm-navigation", "osm-services"}
 
 
 def load(path=None):

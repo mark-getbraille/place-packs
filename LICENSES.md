@@ -28,6 +28,9 @@ not one database under a single licence:
   OpenStreetMap: each feed keeps its own open licence (nav_feeds.licence_url). The lookups only read the two side by
   side (a stop's shelter is read from the nearest OpenStreetMap bus stop when the answer is given); the build does
   not merge them.
+- **The services part's OpenStreetMap layer** (`source` `osm-services`: the svc_places table) is likewise derived
+  from OpenStreetMap and under the **ODbL 1.0**. Its weather tables (svc_zones, svc_radio) come from the National
+  Weather Service (public domain) and are not made from OpenStreetMap.
 - **No other layer is made from OpenStreetMap data.** The build never uses OpenStreetMap to filter, correct, match or
   merge another source, so the other layers are not derived from it, and the share-alike terms do not extend to
   them. Layers are combined only when a program looks a position up (the result is a "Produced Work" under the

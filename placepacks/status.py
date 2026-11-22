@@ -48,7 +48,7 @@ def status(manifest, today=None):
 
 def by_region(packs):
     """The table of each region's parts and sizes (MB): what a program downloads by default (core and extra) and on
-    demand (businesses, addresses, names, navigation)."""
+    demand (businesses, addresses, names, navigation, services)."""
     from placepacks.fmt import PARTS
     from placepacks.manifest import split_key
     from placepacks.regions import REGIONS
@@ -60,7 +60,7 @@ def by_region(packs):
             combined.add(found[0])
     lines = ["## Packs by region", "",
              "Sizes in MB. A program downloads core and extra; businesses and addresses only when a lookup needs them "
-             "(the exact place, full detail); names and navigation on request. A region with sub-regions (England, Texas, ...) is "
+             "(the exact place, full detail); names, navigation and services on request. A region with sub-regions (England, Texas, ...) is "
              "listed with them; its own core and extra are its sub-regions put together, for programs that know only "
              "the region.", "",
              "| Region | " + " | ".join(p.capitalize() for p in PARTS) + " | Core + extra |",

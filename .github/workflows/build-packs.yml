@@ -220,7 +220,8 @@ jobs:
             # The region's own older packs, and for a sub-region's first build its parent's (build --list-previous).
             for key in $(python -m placepacks.build "$REGION" --list-previous); do
               # Its file name and its release: names, businesses and addresses are in a "packs-detail-YYYYMMDD" release.
-              read -r name release < <(python -c "import json,sys; e=json.load(open('previous/packs.json')).get('packs',{}).get(sys.argv[1],{}); print(e.get('name',''), e.get('release') or sys.argv[2])" "$key" "$RELEASE_TAG")
+              # (split on "|": with a space, a part never built before, such as navigation, read its release as its name)
+              IFS='|' read -r name release < <(python -c "import json,sys; e=json.load(open('previous/packs.json')).get('packs',{}).get(sys.argv[1],{}); print(e.get('name','') + '|' + (e.get('release') or sys.argv[2]))" "$key" "$RELEASE_TAG")
               if [ -n "$name" ]; then
                 gh release download "$release" --repo "$GITHUB_REPOSITORY" --pattern "$name" --dir previous
                 mv "previous/$name" "previous/$key.osmpack"

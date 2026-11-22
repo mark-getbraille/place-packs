@@ -120,6 +120,10 @@ def plain(text):
     return t
 
 
+# Names of mailboxes that some business lists call post offices.
+NOT_A_POST_OFFICE = re.compile(r"collection (point|box)|drop ?box|mail ?box|blue box", re.I)
+
+
 def phrases_for(text, known=()):
     """The type phrases a request means: its SYNONYMS, else the known phrases (of the packs) that hold every word
     asked ("bicycle" -> "bicycle shop"), else the words themselves."""
@@ -195,9 +199,25 @@ class Finder:
         t = plain(kind)
         service_kind = SERVICE_WORDS.get(t)
         phrases = set() if service_kind and t not in SYNONYMS else set(phrases_for(t, self.known_phrases()))
+        keep = lambda r: True                                           # noqa: E731 - every candidate by default
+        words = t.split()
+        if len(words) >= 2 and words[-1] in WORSHIP and not service_kind:
+            # "Catholic church": a church whose type gives no denomination ("christian place of worship", "church")
+            # counts when its own name says it ("St Augustine's Catholic Church"); typed ones count as before.
+            asked = words[:-1]
+            plain_types = {k for k in self.known_phrases() if ("place of worship" in k or k in WORSHIP)
+                           and not all(re.search(rf"\b{re.escape(w)}", k) for w in asked)}
+            typed = set(phrases)
+            phrases = typed | plain_types
+            keep = lambda r: r["type"] in typed or all(                 # noqa: E731
+                re.search(rf"\b{re.escape(w)}", plain(r["name"] or "")) for w in asked)
+        if t == "post office":
+            # a mailbox listed as a post office ("USPS Collection Point", "drop box") is not one
+            keep = lambda r: not NOT_A_POST_OFFICE.search(r["name"] or "")  # noqa: E731
         found, rings = [], 1
         while True:
-            found = [r for r in self.candidates(lat, lon, phrases, service_kind, rings) if r["d"] <= max_km * 1000]
+            found = [r for r in self.candidates(lat, lon, phrases, service_kind, rings) if r["d"] <= max_km * 1000
+                     and keep(r)]
             if len(found) >= limit or rings * 11 >= max_km:
                 break
             rings = rings * 2 + 1

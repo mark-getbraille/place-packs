@@ -317,7 +317,9 @@ def describe(nav, graph, path, start_name, mode, units="miles", to_name="", goal
         if gap < 8:
             steps.append(f"{what} is here.")
         else:
-            steps.append(f"{what} is {length_words(gap, units)} away, on your {side}.")
+            # "on your left" and "on your right", but "straight ahead" and "behind you" (never "on your ahead")
+            where = f"on your {side}" if side in ("left", "right") else ("straight ahead" if side == "ahead" else side)
+            steps.append(f"{what} is {length_words(gap, units)} away, {where}.")
     return steps
 
 

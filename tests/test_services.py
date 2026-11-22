@@ -38,7 +38,7 @@ def test_the_services_part_and_its_sources_are_in_the_catalogue():
     cat = catalogue.load()
     assert "services" in fmt.PARTS and catalogue.check(cat) == []
     ids = {e["id"]: e for e in catalogue.sources_for(catalogue.regions()[VT], "services", cat)}
-    assert set(ids) == {"osm-services", "nws-counties", "nws-zones", "noaa-weather-radio"}
+    assert set(ids) == {"osm-services", "nws-counties", "nws-zones", "noaa-weather-radio", "cpi-polling-places"}
     assert ids["osm-services"]["licence"] == "ODbL-1.0" and ids["noaa-weather-radio"]["licence"] == "US-Government-Work"
     assert set(catalogue.sources_for(catalogue.regions()["ca-prince-edward-island"], "services", cat)[i]["id"]
                for i in range(1)) == {"osm-services"}

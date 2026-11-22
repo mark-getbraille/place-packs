@@ -23,6 +23,7 @@ Each source's catalogue "fetch" says how:
                   "_rings" for polygons, read as areas); dates become YYYY-MM-DD; the version is the layer's last edit
                   date and the number of records; polylines come with "_paths" (read as named lines)
   manual          a folder someone filled (inputs/...): used when it exists
+  polling         a state's newest polling place list of the elections in the entry's "dates" (the first that exists)
   same_as         nothing is downloaded: the source reads another source's download (its "same_as" id), such as
                   the navigation part's readers of the OpenStreetMap extract and the GTFS feeds
 A national source's file may be named by the publisher's metadata instead of a fixed address ("socrata_blob": the
@@ -1277,6 +1278,8 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         return out
     if method == "gtfs":
         return fetch_gtfs(entry, region, url, folder, pause, fingerprint)
+    if method == "polling":
+        return fetch_polling(entry, region, folder, pause, fingerprint)
     if method == "socrata":
         return fetch_socrata(entry, folder, fingerprint)
     if method == "wfs":
@@ -1338,6 +1341,30 @@ def fetch_gtfs(entry, region, url, folder, pause, fingerprint):
     with open(os.path.join(folder, "licences.json"), "w", encoding="utf-8") as fh:
         json.dump({f[0]: f[2] for f in feeds}, fh, indent=1)
     return {"ok": bool(feeds), "version": version, "path": folder, "date": datetime.date.today().isoformat()}
+
+
+def fetch_polling(entry, region, folder, pause, fingerprint):
+    """The newest election file of a state's polling places: the entry's "url" ({folder}, {file} and {date}: the
+    state's name in lower case with underscores, as written, and each of the entry's "dates", newest first) is tried
+    until one exists. The version is the election date."""
+    f = entry["fetch"]
+    state = catalogue.parent_values(region).get("name") or region["name"]
+    for date in sorted(f["dates"], reverse=True):
+        url = f["url"].format(folder=state.lower().replace(" ", "_"), file=urllib.parse.quote(state), date=date)
+        try:
+            with request(url, "HEAD") as r:
+                if r.status != 200:
+                    continue
+        except Exception:  # noqa: BLE001 - this election has no file for the state: the next older one
+            time.sleep(pause)
+            continue
+        if fingerprint:
+            return {"ok": True, "version": date, "path": "", "date": date}
+        target = os.path.join(folder, f"polling_{date}.csv")
+        download(url, target, pause)
+        return {"ok": True, "version": date, "path": folder, "date": date}
+    return {"ok": False, "version": "", "path": "", "date": "", "status": "skipped",
+            "reason": "no polling place list of this state in the dataset"}
 
 
 def status_line(source, got, rows=None):

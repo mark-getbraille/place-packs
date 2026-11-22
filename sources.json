@@ -8534,6 +8534,33 @@
     "pause": 2
    },
    "history": "No history: the transmitters listed at the build, with their status (normal, out of service ...)."
+  },
+  {
+   "id": "cpi-polling-places",
+   "name": "Polling places of past general elections (Center for Public Integrity, U.S. Polling Places 2012-2020)",
+   "short": "the Center for Public Integrity",
+   "part": "services",
+   "countries": [
+    "US"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Polling places from the Center for Public Integrity's U.S. Polling Places dataset (github.com/PublicI/us-polling-places), CC BY 4.0. Lists of past elections: polling places change; check with your election office.",
+   "url": "https://github.com/PublicI/us-polling-places",
+   "reader": "polling",
+   "election_name": "general election",
+   "fetch": {
+    "method": "polling",
+    "url": "https://raw.githubusercontent.com/PublicI/us-polling-places/update-2020/data/{folder}/output/{file}_{date}.csv",
+    "dates": [
+     "2012-11-06",
+     "2014-11-04",
+     "2016-11-08",
+     "2018-11-06",
+     "2020-11-03"
+    ],
+    "pause": 2
+   },
+   "history": "No history: the newest election the dataset has for the state (its date is kept with every polling place and said with every answer)."
   }
  ],
  "rejected": [
@@ -9151,6 +9178,21 @@
    "name": "State DMV office lists",
    "licence": "Varies by state",
    "reason": "No national open list; few states publish one. Motor vehicle offices come from OpenStreetMap by name and government tag (motor vehicle office); a state's open list can be added as its own source once its licence is checked."
+  },
+  {
+   "name": "Vote.org polling place locator",
+   "licence": "Terms of use",
+   "reason": "No open download; its lookups are for people, one address at a time."
+  },
+  {
+   "name": "US Election Assistance Commission (EAVS)",
+   "licence": "US government work",
+   "reason": "The Election Administration and Voting Survey counts polling places by jurisdiction but lists no addresses or positions."
+  },
+  {
+   "name": "Google Civic Information API and the Voting Information Project",
+   "licence": "Terms of service",
+   "reason": "Current polling places are served one address at a time under terms that do not allow storing them; the Center for Public Integrity's open lists (past elections, with their dates) are used instead."
   }
  ],
  "candidates": [
@@ -9458,6 +9500,11 @@
    "name": "Canada: Environment and Climate Change Canada Weatheradio transmitters",
    "licence": "Open Government Licence - Canada (to check)",
    "note": "The Canadian counterpart of NOAA Weather Radio; its transmitter list must be found as a data file and its licence checked."
+  },
+  {
+   "name": "State and county election offices' polling place lists",
+   "licence": "Varies (to check per state)",
+   "note": "Many states and counties publish the current election's polling places as open data; each must be checked for its licence and added with its election date."
   }
  ]
 }

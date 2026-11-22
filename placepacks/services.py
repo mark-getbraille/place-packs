@@ -11,7 +11,11 @@ What is kept:
   - svc_zones, from the National Weather Service (public domain): the county areas (with their FIPS code, the
     county's SAME code without the leading digit) and the public forecast zones, as polygons;
   - svc_radio, from the NOAA Weather Radio county coverage list (public domain): every transmitter that covers each
-    county of the region, with its call sign, frequency, site, power and status.
+    county of the region, with its call sign, frequency, site, power and status;
+  - svc_details, from OpenStreetMap: the phone, opening hours, website and wheelchair access of every named shop,
+    amenity, craft, office and the like, by the key of its point in the core part ("n123"), for any search;
+  - svc_polling: polling places of a past election, each with its election date (the Center for Public
+    Integrity's standardized lists, CC BY 4.0), located by the offline geocoder against the region's address points.
 The libraries (IMLS), health centres (HRSA), post offices and courthouses (USGS structures) and the pharmacies and
 food banks of the core and extra parts are not copied here: placepacks/local.py also searches those packs.
 
@@ -32,7 +36,14 @@ TABLES = {
     "svc_radio": "id INTEGER PRIMARY KEY, call_sign TEXT, frequency TEXT, site TEXT, site_state TEXT, lat INTEGER, "
                  "lon INTEGER, power TEXT, status TEXT, office TEXT, same TEXT, county TEXT, state TEXT, "
                  "remarks TEXT",
+    "svc_details": "key TEXT PRIMARY KEY, phone TEXT, opening_hours TEXT, website TEXT, wheelchair TEXT",
+    "svc_polling": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, election_date TEXT, election TEXT, county TEXT, "
+                   "jurisdiction TEXT, precinct TEXT, name TEXT, address TEXT, lat INTEGER, lon INTEGER, "
+                   "ccell INTEGER, located TEXT",
 }
+# OpenStreetMap objects whose phone, hours, website and wheelchair access are kept in svc_details (by the same key as
+# the core part's point, "n123" or "w45"), so a search of any business or place can say them.
+DETAIL_KEYS = ("shop", "amenity", "craft", "office", "healthcare", "tourism", "leisure", "club")
 DETAIL_TAGS = ("phone", "contact:phone", "opening_hours", "website", "contact:website", "addr:housenumber",
                "addr:street", "addr:unit", "addr:city", "addr:postcode", "wheelchair", "wheelchair:description",
                "toilets:wheelchair", "operator", "description", "social_facility:for", "healthcare:speciality")
@@ -51,7 +62,7 @@ VETERANS = re.compile(r"\b(veterans? affairs|vet center|veterans administration|
 SERVICE_KINDS = ("social security office", "service canada centre", "motor vehicle office", "veterans office",
                  "courthouse", "post office", "library", "pharmacy", "food bank", "soup kitchen", "shelter",
                  "social services", "hospital", "clinic", "police", "fire station", "town hall", "government office",
-                 "community centre", "defibrillator")
+                 "community centre", "senior centre", "school", "urgent care", "defibrillator")
 
 
 def store(writer):
@@ -95,10 +106,16 @@ def service_kind(tags):
         return "soup kitchen"
     if social in ("shelter", "outreach") or amenity == "shelter" and tags.get("shelter_type") == "emergency":
         return "shelter" if social != "outreach" else "social services"
+    if (social == "day_care" or amenity == "social_centre" or amenity == "community_centre") and \
+            ("senior" in (tags.get("social_facility:for") or "") or re.search(r"\bseniors?\b|\bsenior citizens?\b|"
+                                                                            r"\bcouncil on aging\b", name, re.I)):
+        return "senior centre"
     if amenity == "social_facility" or gov in ("social_services", "social_welfare"):
         return "social services"
     if amenity == "hospital":
         return "hospital"
+    if tags.get("healthcare") == "urgent_care" or re.search(r"\burgent care\b|\bwalk-in clinic\b", name, re.I):
+        return "urgent care"
     if amenity == "clinic" or tags.get("healthcare") in ("clinic", "centre"):
         return "clinic"
     if amenity == "police":
@@ -111,6 +128,8 @@ def service_kind(tags):
         return "government office"
     if amenity == "community_centre":
         return "community centre"
+    if amenity == "school":
+        return "school"
     return None
 
 
@@ -144,11 +163,39 @@ class ServiceStore:
         return True
 
     def add_osm(self, key, source, tags, lat, lon):
-        """An OpenStreetMap node or area centre: kept when service_kind names it."""
+        """An OpenStreetMap node or area centre: kept when service_kind names it; the details of any named place."""
+        if tags.get("name"):
+            self.add_details(key, tags)
         kind = service_kind(tags)
         if kind:
             name = (tags.get("name") or ("Defibrillator" if kind == "defibrillator" else "")).strip()
             self.add_place(key, source, kind, name, lat, lon, {k: tags.get(k) for k in DETAIL_TAGS})
+
+    def add_details(self, key, tags):
+        """The phone, opening hours, website and wheelchair access of an OpenStreetMap place (any shop, amenity,
+        craft, office ...: DETAIL_KEYS), by its key; nothing when it has none of them."""
+        phone = tags.get("phone") or tags.get("contact:phone") or ""
+        hours = tags.get("opening_hours") or ""
+        site = tags.get("website") or tags.get("contact:website") or ""
+        wheel = tags.get("wheelchair") or ""
+        if (phone or hours or site or wheel) and any(k in tags for k in DETAIL_KEYS):
+            self.db.execute("INSERT OR REPLACE INTO svc_details VALUES (?, ?, ?, ?, ?)",
+                            (key, phone, hours, site, wheel))
+
+    def add_polling(self, key, source, election_date, election, county, jurisdiction, precinct, name, address,
+                    lat, lon, located):
+        """A polling place of one election (its date, YYYY-MM-DD, is always kept: polling places change); lat and
+        lon None when its address could not be located (it is still listed by its address)."""
+        if lat is not None and not self._inside(lat, lon):
+            return False
+        self.db.execute("INSERT INTO svc_polling (key, source, election_date, election, county, jurisdiction, "
+                        "precinct, name, address, lat, lon, ccell, located) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, "
+                        "?, ?)",
+                        (key, source, election_date, election, county, jurisdiction, precinct, name, address,
+                         None if lat is None else int(round(lat * fmt.SCALE)),
+                         None if lon is None else int(round(lon * fmt.SCALE)),
+                         None if lat is None else fmt.coarse_cell(lat, lon), located))
+        return True
 
     def add_zone(self, key, source, kind, code, name, state, office, rings):
         """A county or forecast zone: rings of (lat, lon) degrees, simplified at 50 m (holes are rings too)."""
@@ -182,5 +229,6 @@ class ServiceStore:
             CREATE INDEX svc_places_ccell ON svc_places (kind, ccell);
             CREATE INDEX svc_zones_kind ON svc_zones (kind);
             CREATE INDEX svc_radio_same ON svc_radio (same);
+            CREATE INDEX svc_polling_ccell ON svc_polling (ccell);
         """)
         return {name: self.db.execute(f"SELECT COUNT(*) FROM {name}").fetchone()[0] for name in TABLES}

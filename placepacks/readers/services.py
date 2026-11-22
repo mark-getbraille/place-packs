@@ -5,6 +5,9 @@
                 access (ODbL)
   nws_zones     a National Weather Service shapefile (the county areas, c_DDmmYY.zip, or the public forecast zones,
                 z_DDmmYY.zip; public domain): the region's state's polygons, each with its code and name
+  polling       polling places of past elections (the Center for Public Integrity's standardized lists, CC BY 4.0:
+                election_date, county_name, jurisdiction, precinct_id, name, address ...), located by the offline
+                geocoder against the region's address points (placepacks.geocode)
   nwr           the NOAA Weather Radio county coverage list (www.weather.gov/source/nwr/JS/CCL.js, the data of the
                 weather.gov/nwr/county_coverage page; public domain): every transmitter covering each county of the
                 region's state
@@ -22,7 +25,7 @@ from placepacks.regions import touches_region
 
 @reader("osm_services")
 def read_osm(path, entry, region, writer, use_osmium=None, index=None):
-    """Read an extract's services into writer. Returns the number kept."""
+    """Read an extract's services into writer. Returns the number of places and of place details kept."""
     svc = services.store(writer)
     if use_osmium is None:
         try:
@@ -32,12 +35,13 @@ def read_osm(path, entry, region, writer, use_osmium=None, index=None):
             use_osmium = False
     if str(path).lower().endswith(".pbf") and not use_osmium:
         raise SystemExit("A .osm.pbf extract needs pyosmium (BSD-2-Clause): pip install osmium")
-    before = writer.db.execute("SELECT COUNT(*) FROM svc_places").fetchone()[0]
+    count = "SELECT (SELECT COUNT(*) FROM svc_places) + (SELECT COUNT(*) FROM svc_details)"
+    before = writer.db.execute(count).fetchone()[0]
     if use_osmium:
         _read_osmium(path, entry["id"], svc, index)
     else:
         _read_xml(path, entry["id"], svc)
-    return writer.db.execute("SELECT COUNT(*) FROM svc_places").fetchone()[0] - before
+    return writer.db.execute(count).fetchone()[0] - before
 
 
 def _centre(points):
@@ -64,6 +68,14 @@ def _read_xml(path, source, svc):
             el.clear()
 
 
+def _wanted(tags):
+    """True when an object is a service, or a named place with a phone, hours, website or wheelchair tag."""
+    if services.service_kind(tags) is not None:
+        return True
+    return "name" in tags and any(k in tags for k in ("phone", "contact:phone", "opening_hours", "website",
+                                                       "contact:website", "wheelchair"))
+
+
 def _read_osmium(path, source, svc, index=None):
     """An extract with pyosmium (BSD-2-Clause)."""
     import osmium
@@ -72,12 +84,12 @@ def _read_osmium(path, source, svc, index=None):
         """pyosmium's callbacks: services that are nodes, and those drawn as buildings or sites (their centre)."""
         def node(self, n):
             """A tagged node."""
-            if len(n.tags) and n.location.valid() and services.service_kind(n.tags) is not None:
+            if len(n.tags) and n.location.valid() and _wanted(n.tags):
                 svc.add_osm(f"n{n.id}", source, {t.k: t.v for t in n.tags}, n.location.lat, n.location.lon)
 
         def way(self, w):
             """A way that is a service (not a road)."""
-            if "highway" in w.tags or services.service_kind(w.tags) is None:
+            if "highway" in w.tags or not _wanted(w.tags):
                 return
             points = [(nd.lat, nd.lon) for nd in w.nodes if nd.location.valid()]
             if points:
@@ -161,9 +173,65 @@ def read_nwr(path, entry, region, writer):
         except ValueError:
             lat = lon = 0.0
         svc.add_radio({"call_sign": r.get("call_sign", ""), "frequency": r.get("frequency", ""),
-                       "site": r.get("site", ""), "site_state": r.get("site_state", ""), "lat": lat, "lon": lon,
+                       "site": r.get("site", "").rstrip(". "), "site_state": r.get("site_state", ""),
+                       "lat": lat, "lon": lon,
                        "power": r.get("power", ""), "status": r.get("status", ""),
                        "office": r.get("office", "").replace("|", ", "), "same": same,
                        "county": r.get("county", ""), "state": r.get("state", ""), "remarks": r.get("remarks", "")})
         count += 1
+    return count
+
+
+# ------------------------------------------------------------------------------------------- polling places
+
+def split_one_line(address):
+    """(street line, city, ZIP) of a one-line address ("265 S MAIN ST, KENTON, DE 19955")."""
+    parts = [p.strip() for p in (address or "").split(",") if p.strip()]
+    if not parts:
+        return "", "", ""
+    zip_code = ""
+    m = re.search(r"\b(\d{5})(?:-\d{4})?\s*$", parts[-1])
+    if m:
+        zip_code = m.group(1)
+    city = parts[1] if len(parts) >= 3 else (re.sub(r"\b[A-Z]{2}\s*\d{5}.*$", "", parts[1]).strip()
+                                             if len(parts) == 2 else "")
+    return parts[0], city, zip_code
+
+
+@reader("polling")
+def read_polling(path, entry, region, writer):
+    """The polling places of the newest election file in path (a folder, or one CSV), each located against the
+    region's address points when the build has them (region["_inputs"]: the NAD slice). Returns the number kept."""
+    import csv
+    import os
+    from placepacks import catalogue, geocode
+    files = sorted(os.path.join(path, n) for n in os.listdir(path) if n.lower().endswith(".csv")) \
+        if os.path.isdir(path) else [path]
+    if not files:
+        return 0
+    file = files[-1]                                    # the newest election (file names end with its date)
+    with open(file, encoding="utf-8-sig", errors="replace", newline="") as f:
+        rows = [r for r in csv.DictReader(f) if (r.get("name") or r.get("address") or "").strip()]
+    requests = [split_one_line(r.get("address")) for r in rows]
+    found = {}
+    nad_path = (region.get("_inputs") or {}).get("nad")
+    if nad_path:
+        nad_entry = next((e for e in catalogue.load()["accepted"] if e["id"] == "nad"), None)
+        if nad_entry:
+            found = geocode.locate(requests, nad_path, nad_entry)
+            print(f"  {entry['id']}: {geocode.stats(found, len(rows))}", flush=True)
+    svc = services.store(writer)
+    election = entry.get("election_name", "general election")
+    count = 0
+    for i, r in enumerate(rows):
+        lat, lon, how = found.get(i, (None, None, ""))     # how: "address", or "street" (placed on its street)
+        date = (r.get("election_date") or "").strip()
+        key = f"polling:{date}:{r.get('jurisdiction', '')}:{r.get('precinct_id', '')}:{i}"
+        if svc.add_polling(key, entry["id"], date, election, (r.get("county_name") or "").strip(),
+                           (r.get("jurisdiction") or "").strip(),
+                           (r.get("precinct_name") or r.get("precinct_id") or "").strip(),
+                           " ".join((r.get("name") or "").split()).title() if (r.get("name") or "").isupper()
+                           else " ".join((r.get("name") or "").split()),
+                           " ".join((r.get("address") or "").split()), lat, lon, how or "not located"):
+            count += 1
     return count

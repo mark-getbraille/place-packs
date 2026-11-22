@@ -145,6 +145,12 @@ Each region has these parts:
   `placepacks.navigate.Navigator` answers "what is the nearest intersection" (`nearest_intersection`), "how do I
   cross here" (`crossing_here`) and "the next bus from the nearest stop" (`next_buses`), each with a plain
   sentence. Download it with `ensure_pack(region, part="navigation")`. FORMAT.md, "The navigation part".
+- **Finding places and directions** (`placepacks.find.find_nearest("hardware store", start=(lat, lon))`): the
+  nearest place of any kind (every shop, craft and amenity type, with plain words and synonyms; places of worship by
+  religion and denomination; offices; past polling places with their election date) with its phone and hours, and
+  offline turn-by-turn walking directions that name the cross streets and each crossing's signal, push button and
+  tactile paving (driving and a direct transit ride too). The routing is this repository's own A* search over the
+  navigation part's network. FORMAT.md, "Finding places and directions".
 - **services** (`us-vermont-services.osmpack`, optional, since November 2026): local services and weather
   emergencies. Offices and services from OpenStreetMap (Social Security, motor vehicle and veterans offices,
   courthouses, post offices, libraries, pharmacies, food banks, shelters, hospitals, police and fire stations,

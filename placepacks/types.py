@@ -77,7 +77,10 @@ def osm(tags):
     amenity = tags.get("amenity", "")
     if amenity == "place_of_worship" or tags.get("building") in ("church", "chapel", "cathedral"):
         denomination = tags.get("denomination", "")
-        found = t["denomination"].get(denomination) if denomination else None
+        # The denomination table is of Christian churches: a synagogue tagged denomination=orthodox is a
+        # synagogue, not an "orthodox church".
+        christian = tags.get("religion", "christian") == "christian"
+        found = t["denomination"].get(denomination) if denomination and christian else None
         if not found and tags.get("religion") == "christian" and denomination:
             found = f"{humanise(denomination)} church"
         return found or _lookup(t["religion"], tags.get("religion", "")) or "place of worship"

@@ -31,6 +31,10 @@ not one database under a single licence:
 - **The services part's OpenStreetMap layer** (`source` `osm-services`: the svc_places table) is likewise derived
   from OpenStreetMap and under the **ODbL 1.0**. Its weather tables (svc_zones, svc_radio) come from the National
   Weather Service (public domain) and are not made from OpenStreetMap.
+- **Polling places** (svc_polling, source `cpi-polling-places`): the Center for Public Integrity's U.S. Polling Places
+  dataset, **CC BY 4.0**, credited in the sources table; located with the region's address points (not with
+  OpenStreetMap). The directions (placepacks/route.py) are this repository's own code (MIT); no routing library is
+  used.
 - **No other layer is made from OpenStreetMap data.** The build never uses OpenStreetMap to filter, correct, match or
   merge another source, so the other layers are not derived from it, and the share-alike terms do not extend to
   them. Layers are combined only when a program looks a position up (the result is a "Produced Work" under the

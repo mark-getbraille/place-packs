@@ -147,6 +147,8 @@ the core part's OpenStreetMap layer):
 |---|---|---|
 | nav_ways | id, key ("w123"), name (or route number), kind (OSM highway value), tags (JSON), minlat, minlon, maxlat, maxlon, pts | street and path segments: every highway a person can walk or that has a name, without unnamed driveways and parking aisles, tracks, private roads and roads being built; tags keep the walking details (sidewalk, sidewalk:left/right/both, footway, surface, smoothness, lit, incline, width, wheelchair, tactile_paving, step_count, handrail, ramp, kerb, crossing tags on crossing ways, maxspeed, lanes, oneway, bridge, tunnel) |
 | nav_grid | level, cell, way | which segments touch each fine (level 1) or coarse (level 0) cell |
+| nav_nodes | node (OSM node id), lat, lon, cell | the routing graph's nodes: where segments meet, and their ends |
+| nav_edges | id, a, b (nav_nodes), way (nav_ways id), length (metres), b1, b2 (bearings in degrees: leaving a, arriving at b) | the routing graph: each segment split where it meets another (placepacks/route.py searches it) |
 | nav_intersections | id, key ("n123"), lat, lon, cell, streets (JSON list, sorted), signals (1 when the node has traffic signals) | where streets with different names meet (footpaths and steps do not count as cross streets) |
 | nav_features | id, key, kind, name, lat, lon, cell, tags (JSON), streets (JSON list of the ways the node lies on) | crossing, traffic signals, kerb (curb cuts: kerb=lowered or flush), tactile paving, steps, ramp, elevator, entrance (wheelchair, door, automatic_door), bus stop and tram stop (shelter, bench, bin, lit, tactile_paving, departures_board), platform, accessible place (a named place with wheelchair=*); the tags keep crossing, crossing:markings, crossing:signals, crossing:island, button_operated and the accessible pedestrian signal tags (traffic_signals:sound, :vibration, :arrow, :minimap) |
 
@@ -181,6 +183,8 @@ public office or to follow a weather emergency. Like the navigation part it is d
 |---|---|---|
 | svc_places | id, key, source, kind, name, lat, lon, cell, ccell, details (JSON: phone, opening_hours, website, addr:*, wheelchair, operator, description) | offices and services from OpenStreetMap (source `osm-services`, ODbL): Social Security office, Service Canada centre, motor vehicle office, veterans office, courthouse, post office, library, pharmacy, food bank, soup kitchen, shelter, social services, hospital, clinic, police, fire station, town hall, government office, community centre, defibrillator (`services.SERVICE_KINDS`) |
 | svc_zones | id, key, source, kind ("county" or "forecast zone"), code (county FIPS, or the zone "VTZ006"), name, state, office (the NWS forecast office), minlat, minlon, maxlat, maxlon, rings | the National Weather Service county areas and public forecast zones of the region's state (public domain) |
+| svc_details | key ("n123", the key of the place's point in the core part), phone, opening_hours, website, wheelchair | what OpenStreetMap says about any named shop, amenity, craft, office or the like, for every search (placepacks/find.py) |
+| svc_polling | id, key, source, election_date (YYYY-MM-DD), election ("general election"), county, jurisdiction, precinct, name, address, lat, lon (null when the address could not be located), ccell, located ("address", "street" or "not located") | polling places of the newest past election the Center for Public Integrity's lists have for the state (CC BY 4.0), located by the offline geocoder; always said with the election's date |
 | svc_radio | id, call_sign, frequency (MHz), site, site_state, lat, lon, power (watts), status, office, same (the county's SAME code, "050007"), county, state, remarks | every NOAA Weather Radio transmitter covering each county of the region's state (the county coverage list, public domain) |
 
 The lookups (`placepacks.local.LocalServices`): `nearest(lat, lon, kind)` (a kind or a plain word such as "DMV" or
@@ -188,3 +192,19 @@ The lookups (`placepacks.local.LocalServices`): `nearest(lat, lon, kind)` (a kin
 and the HRSA health centres, and gives a place listed by several sources once), `weather_zone(lat, lon)` (the
 county, its SAME code, the forecast zone and office) and `weather_radio(lat, lon)` (the transmitters covering the
 county, nearest first, with their frequencies and status).
+
+### Finding places and directions (November 2026, no pack change beyond the tables above)
+
+`placepacks.find.find_nearest(kind, start, mode="walk")` finds the nearest place of a kind from a start (a position,
+"Main Street and Elm Street", or "12 Main Street, Town") in every downloaded pack: by the fine types of the core,
+extra and businesses parts (plain words and synonyms: "hardware store" also finds home improvement stores,
+"drugstore" pharmacies, "grocery" supermarkets; "Catholic church", "Baptist church", "mosque", "synagogue" by the
+religion and denomination types), the services part's offices ("Social Security", "DMV") and its polling places
+(said with their election date and a warning that polling places change). The phone, opening hours, website and
+wheelchair access come from svc_details where OpenStreetMap has them. It then asks `placepacks.route.directions`
+for the way there: our own A* search over nav_nodes and nav_edges (no routing library; a small cost for each turn,
+so the directions have fewer turns), described in plain speech: the street and direction, the distance in blocks
+and feet, the cross street reached, each street crossed with its crossing's signal, push button, accessible signal,
+tactile paving and curb cut, the turns, and on which side the place is. mode "drive" keeps to roads and respects
+one-way streets; mode "transit" gives the first direct ride (no transfer) from a stop near the start to a stop near
+the place, with the walks to and from the stops.

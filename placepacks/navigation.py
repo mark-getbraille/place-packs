@@ -64,6 +64,8 @@ TABLES = {
     "nav_features": "id INTEGER PRIMARY KEY, key TEXT, kind TEXT, name TEXT, lat INTEGER, lon INTEGER, "
                     "cell INTEGER, tags TEXT, streets TEXT",
     "nav_grid": "level INTEGER, cell INTEGER, way INTEGER",
+    "nav_nodes": "node INTEGER PRIMARY KEY, lat INTEGER, lon INTEGER, cell INTEGER",
+    "nav_edges": "id INTEGER PRIMARY KEY, a INTEGER, b INTEGER, way INTEGER, length REAL, b1 INTEGER, b2 INTEGER",
     "nav_feeds": "feed TEXT PRIMARY KEY, provider TEXT, licence_url TEXT, timezone TEXT, start INTEGER, "
                  "end INTEGER",
     "nav_stops": "id INTEGER PRIMARY KEY, key TEXT, feed TEXT, stop_id TEXT, name TEXT, code TEXT, lat INTEGER, "
@@ -158,6 +160,8 @@ class NavStore:
             self.db.execute(f"CREATE TABLE {name} ({columns})" + (" WITHOUT ROWID" if name in WITHOUT_ROWID else ""))
         self.db.execute("CREATE TABLE nav_tmp_names (node INTEGER, name TEXT, lat INTEGER, lon INTEGER)")
         self.db.execute("CREATE TABLE nav_tmp_on (node INTEGER, name TEXT)")
+        self.db.execute("CREATE TABLE nav_tmp_refs (way INTEGER, seq INTEGER, node INTEGER, lat INTEGER, lon INTEGER)")
+        self._refs = []
         self.feature_nodes = {}         # OpenStreetMap node id -> nav_features id (to put a feature on its street)
         self.signal_nodes = set()       # node ids with traffic signals (intersections "with traffic signals")
         self._names, self._on = [], []
@@ -218,10 +222,13 @@ class NavStore:
             return
         simple, bounds = row
         name = street_name(tags)
-        self.db.execute("INSERT INTO nav_ways (key, name, kind, tags, minlat, minlon, maxlat, maxlon, pts) VALUES "
-                        "(?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                        (f"w{wid}", name, kind, compact_tags(tags, WAY_TAGS), *bounds,
-                         fmt.pack_points(fmt.micro(simple))))
+        cur = self.db.execute("INSERT INTO nav_ways (key, name, kind, tags, minlat, minlon, maxlat, maxlon, pts) "
+                              "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                              (f"w{wid}", name, kind, compact_tags(tags, WAY_TAGS), *bounds,
+                               fmt.pack_points(fmt.micro(simple))))
+        # Every node of the segment, for the routing graph (finish splits the segment where it meets another).
+        self._refs += [(cur.lastrowid, i, r, int(round(p[0] * fmt.SCALE)), int(round(p[1] * fmt.SCALE)))
+                       for i, (r, p) in enumerate(good)]
         label = name or kind.replace("_", " ")
         if name and kind in STREET_KINDS:
             self._names += [(r, name, int(round(p[0] * fmt.SCALE)), int(round(p[1] * fmt.SCALE))) for r, p in good]
@@ -230,14 +237,15 @@ class NavStore:
         if wkind in ("steps", "crossing", "ramp", "elevator"):
             mid = coords[len(coords) // 2]
             self.add_feature(f"w{wid}", wkind, tags, *mid)
-        if len(self._names) > BATCH or len(self._on) > BATCH:
+        if len(self._names) > BATCH or len(self._on) > BATCH or len(self._refs) > BATCH:
             self._flush()
 
     def _flush(self):
         """Write the build-time rows kept in memory."""
         self.db.executemany("INSERT INTO nav_tmp_names VALUES (?, ?, ?, ?)", self._names)
         self.db.executemany("INSERT INTO nav_tmp_on VALUES (?, ?)", self._on)
-        self._names, self._on = [], []
+        self.db.executemany("INSERT INTO nav_tmp_refs VALUES (?, ?, ?, ?, ?)", self._refs)
+        self._names, self._on, self._refs = [], [], []
 
     # -- GTFS
 
@@ -306,6 +314,7 @@ class NavStore:
                         for node, names in ons.items() if node in self.feature_nodes])
         db.execute("DROP TABLE nav_tmp_names")
         db.execute("DROP TABLE nav_tmp_on")
+        self._write_graph()
         grid = []
         for wid, s, w, n, e in db.execute("SELECT id, minlat, minlon, maxlat, maxlon FROM nav_ways").fetchall():
             level, cells = fmt.cells_of(s / fmt.SCALE, w / fmt.SCALE, n / fmt.SCALE, e / fmt.SCALE)
@@ -313,6 +322,9 @@ class NavStore:
         db.executemany("INSERT INTO nav_grid VALUES (?, ?, ?)", grid)
         db.executescript("""
             CREATE INDEX nav_grid_cell ON nav_grid (level, cell);
+            CREATE INDEX nav_nodes_cell ON nav_nodes (cell);
+            CREATE INDEX nav_edges_a ON nav_edges (a);
+            CREATE INDEX nav_edges_b ON nav_edges (b);
             CREATE INDEX nav_intersections_cell ON nav_intersections (cell);
             CREATE INDEX nav_features_cell ON nav_features (cell);
             CREATE INDEX nav_stops_cell ON nav_stops (cell);
@@ -320,5 +332,60 @@ class NavStore:
             CREATE INDEX nav_service_dates_service ON nav_service_dates (service, date);
         """)
         return {name: db.execute(f"SELECT COUNT(*) FROM {name}").fetchone()[0]
-                for name in ("nav_ways", "nav_intersections", "nav_features", "nav_stops", "nav_routes", "nav_trips",
-                             "nav_times")}
+                for name in ("nav_ways", "nav_intersections", "nav_features", "nav_nodes", "nav_edges", "nav_stops",
+                             "nav_routes", "nav_trips", "nav_times")}
+
+    def _write_graph(self):
+        """The routing graph: each segment split at the nodes it shares with another segment (and at its ends), as
+        nav_edges (from node a to node b along the segment, its length in metres and its bearing at each end, in
+        degrees clockwise from north, b1 leaving a and b2 arriving at b), with the end nodes in nav_nodes."""
+        db = self.db
+        db.execute("CREATE INDEX nav_tmp_refs_node ON nav_tmp_refs (node)")
+        db.execute("CREATE TABLE nav_tmp_junctions AS SELECT node FROM nav_tmp_refs GROUP BY node HAVING COUNT(*) >= 2")
+        db.execute("CREATE UNIQUE INDEX nav_tmp_junctions_node ON nav_tmp_junctions (node)")
+        edges, nodes = [], []
+        way, run = None, []
+
+        def close(run):
+            """Write the edges of one segment's nodes [(node, lat, lon, junction)]."""
+            start, length = 0, 0.0
+            for i in range(1, len(run)):
+                a, b = run[i - 1], run[i]
+                length += fmt.metres(a[1] / fmt.SCALE, a[2] / fmt.SCALE, b[1] / fmt.SCALE, b[2] / fmt.SCALE)
+                if b[3] or i == len(run) - 1:
+                    s0, s1, e0 = run[start], run[start + 1], run[i - 1]
+                    edges.append((s0[0], b[0], way, round(length, 1), bearing(s0, s1), bearing(e0, b)))
+                    nodes.extend([(s0[0], s0[1], s0[2]), (b[0], b[1], b[2])])
+                    start, length = i, 0.0
+        for w, node, lat, lon, junction in db.execute(
+                "SELECT r.way, r.node, r.lat, r.lon, j.node IS NOT NULL FROM nav_tmp_refs r LEFT JOIN "
+                "nav_tmp_junctions j ON j.node = r.node ORDER BY r.way, r.seq"):
+            if w != way:
+                if len(run) >= 2:
+                    close(run)
+                way, run = w, []
+            run.append((node, lat, lon, junction))
+            if len(edges) > BATCH:
+                self._write_edges(edges, nodes)
+                edges, nodes = [], []
+        if len(run) >= 2:
+            close(run)
+        self._write_edges(edges, nodes)
+        db.execute("DROP TABLE nav_tmp_refs")
+        db.execute("DROP TABLE nav_tmp_junctions")
+
+    def _write_edges(self, edges, nodes):
+        """Write some edges and their end nodes."""
+        self.db.executemany("INSERT INTO nav_edges (a, b, way, length, b1, b2) VALUES (?, ?, ?, ?, ?, ?)", edges)
+        self.db.executemany("INSERT OR IGNORE INTO nav_nodes VALUES (?, ?, ?, ?)",
+                            [(n, lat, lon, fmt.fine_cell(lat / fmt.SCALE, lon / fmt.SCALE)) for n, lat, lon in nodes])
+
+
+def bearing(a, b):
+    """The bearing in whole degrees (clockwise from north) from a to b, (node, lat, lon, ...) in microdegrees."""
+    import math
+    lat1, lat2 = math.radians(a[1] / fmt.SCALE), math.radians(b[1] / fmt.SCALE)
+    dlon = math.radians((b[2] - a[2]) / fmt.SCALE)
+    y = math.sin(dlon) * math.cos(lat2)
+    x = math.cos(lat1) * math.sin(lat2) - math.sin(lat1) * math.cos(lat2) * math.cos(dlon)
+    return int(round(math.degrees(math.atan2(y, x)))) % 360

@@ -201,6 +201,7 @@ US businesses: there is no federal database of businesses with positions (the co
 | [National Weather Service county areas (with FIPS and SAME codes)](https://www.weather.gov/gis/Counties) | services | US | [Public domain: a work of the United States Government (17 U.S.C. 105)](https://www.usa.gov/government-works) | County areas from the National Weather Service (NOAA), a US government work (public domain). | No history: the county areas of the newest NWS file (its date is in the file name). |
 | [National Weather Service public forecast zones](https://www.weather.gov/gis/PublicZones) | services | US | [Public domain: a work of the United States Government (17 U.S.C. 105)](https://www.usa.gov/government-works) | Public forecast zones from the National Weather Service (NOAA), a US government work (public domain). | No history: the zones of the newest NWS file (its date is in the file name). |
 | [NOAA Weather Radio All Hazards county coverage (transmitters and frequencies by county)](https://www.weather.gov/nwr/county_coverage) | services | US | [Public domain: a work of the United States Government (17 U.S.C. 105)](https://www.usa.gov/government-works) | NOAA Weather Radio county coverage list from the National Weather Service (NOAA), a US government work (public domain). | No history: the transmitters listed at the build, with their status (normal, out of service ...). |
+| [Polling places of past general elections (Center for Public Integrity, U.S. Polling Places 2012-2020)](https://github.com/PublicI/us-polling-places) | services | US | [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) | Polling places from the Center for Public Integrity's U.S. Polling Places dataset (github.com/PublicI/us-polling-places), CC BY 4.0. Lists of past elections: polling places change; check with your election office. | No history: the newest election the dataset has for the state (its date is kept with every polling place and said with every answer). |
 
 ## Candidates (licence to confirm; not used yet)
 
@@ -267,6 +268,7 @@ US businesses: there is no federal database of businesses with positions (the co
 | NCES Common Core of Data before 2015-16 and IPEDS closed colleges | US-Government-Work | Open; the CCD's older directory files have addresses but the EDGE geocodes start in 2015-16, so the older years would need the geocoder. |
 | Street-renaming lists of DC, Toronto and Baton Rouge | Various | No open DC or Toronto renaming dataset was found; Baton Rouge's (public domain, 880 changes since the 1950s) has dates but no positions and would need matching to street lines. Chicago's portal terms are rejected. |
 | Canada: Environment and Climate Change Canada Weatheradio transmitters | Open Government Licence - Canada (to check) | The Canadian counterpart of NOAA Weather Radio; its transmitter list must be found as a data file and its licence checked. |
+| State and county election offices' polling place lists | Varies (to check per state) | Many states and counties publish the current election's polling places as open data; each must be checked for its licence and added with its election date. |
 
 ## Not used
 
@@ -395,6 +397,9 @@ US businesses: there is no federal database of businesses with positions (the co
 | Feeding America food bank locator | Terms of use | No open download; food banks come from OpenStreetMap (amenity=food_bank, social_facility=food_bank) and the IRS's exempt organizations. |
 | USPS facility data | Terms of use | No open USPS download with coordinates (see USPS post office locations); post offices come from OpenStreetMap, the USGS National Structures Dataset and GNIS. |
 | State DMV office lists | Varies by state | No national open list; few states publish one. Motor vehicle offices come from OpenStreetMap by name and government tag (motor vehicle office); a state's open list can be added as its own source once its licence is checked. |
+| Vote.org polling place locator | Terms of use | No open download; its lookups are for people, one address at a time. |
+| US Election Assistance Commission (EAVS) | US government work | The Election Administration and Voting Survey counts polling places by jurisdiction but lists no addresses or positions. |
+| Google Civic Information API and the Voting Information Project | Terms of service | Current polling places are served one address at a time under terms that do not allow storing them; the Center for Public Integrity's open lists (past elections, with their dates) are used instead. |
 
 ## Notes on individual sources
 

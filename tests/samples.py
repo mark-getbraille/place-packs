@@ -215,7 +215,8 @@ SVC_OSM = """<?xml version="1.0" encoding="UTF-8"?>
  <node id="46" lat="44.0004" lon="-72.0004"><tag k="emergency" v="defibrillator"/></node>
  <node id="47" lat="44.0005" lon="-72.0005"><tag k="office" v="government"/></node>
  <way id="300"><nd ref="42"/><nd ref="43"/><nd ref="44"/><nd ref="42"/><tag k="building" v="yes"/>
-  <tag k="amenity" v="social_facility"/><tag k="social_facility" v="food_bank"/><tag k="name" v="Testville Food Shelf"/></way>
+  <tag k="amenity" v="social_facility"/><tag k="social_facility" v="food_bank"/>
+  <tag k="name" v="Testville Food Shelf"/></way>
 </osm>
 """
 
@@ -302,3 +303,63 @@ def nwr_file(folder):
     with open(path, "w", encoding="utf-8") as f:
         f.write(NWR_JS)
     return path
+
+
+# The routing test town: Main Street runs east from node 1 through Oak Street (node 2, with a signalled crossing of
+# Oak Street just south of the corner) and Elm Street (node 3) to node 4; Oak and Elm run north to Pine Street, a
+# one-way street eastbound; Elm goes on north to node 12, beside Made-up Hardware (phone and hours).
+ROUTE_OSM = """<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" generator="made up for tests">
+ <node id="1" lat="44.0000" lon="-72.0030"/>
+ <node id="2" lat="44.0000" lon="-72.0020"/>
+ <node id="3" lat="44.0000" lon="-72.0010"/>
+ <node id="4" lat="44.0000" lon="-72.0000"/>
+ <node id="6" lat="43.99995" lon="-72.0020"><tag k="highway" v="crossing"/><tag k="crossing" v="traffic_signals"/>
+  <tag k="tactile_paving" v="yes"/><tag k="button_operated" v="yes"/><tag k="traffic_signals:sound" v="yes"/>
+  <tag k="kerb" v="lowered"/></node>
+ <node id="8" lat="43.9990" lon="-72.0020"/>
+ <node id="9" lat="44.0010" lon="-72.0020"/>
+ <node id="10" lat="43.9990" lon="-72.0010"/>
+ <node id="11" lat="44.0010" lon="-72.0010"/>
+ <node id="12" lat="44.0020" lon="-72.0010"/>
+ <node id="60" lat="44.0019" lon="-72.0008"><tag k="shop" v="hardware"/><tag k="name" v="Made-up Hardware"/>
+  <tag k="phone" v="+1 802 555 0199"/><tag k="opening_hours" v="Mo-Sa 08:00-18:00"/><tag k="wheelchair" v="yes"/></node>
+ <node id="61" lat="44.0011" lon="-72.0025"><tag k="amenity" v="place_of_worship"/><tag k="religion" v="christian"/>
+  <tag k="denomination" v="catholic"/><tag k="name" v="Saint Pretend Church"/></node>
+ <node id="62" lat="43.9992" lon="-72.0005"><tag k="amenity" v="place_of_worship"/><tag k="religion" v="muslim"/>
+  <tag k="name" v="Made-up Masjid"/></node>
+ <node id="63" lat="43.9993" lon="-72.0028"><tag k="amenity" v="place_of_worship"/><tag k="religion" v="jewish"/>
+  <tag k="denomination" v="orthodox"/><tag k="name" v="Beth Pretend"/></node>
+ <way id="400"><nd ref="1"/><nd ref="2"/><nd ref="3"/><nd ref="4"/><tag k="highway" v="residential"/>
+  <tag k="name" v="Main Street"/></way>
+ <way id="401"><nd ref="8"/><nd ref="6"/><nd ref="2"/><nd ref="9"/><tag k="highway" v="residential"/>
+  <tag k="name" v="Oak Street"/></way>
+ <way id="402"><nd ref="10"/><nd ref="3"/><nd ref="11"/><nd ref="12"/><tag k="highway" v="residential"/>
+  <tag k="name" v="Elm Street"/></way>
+ <way id="403"><nd ref="9"/><nd ref="11"/><tag k="highway" v="residential"/><tag k="name" v="Pine Street"/>
+  <tag k="oneway" v="yes"/></way>
+</osm>
+"""
+
+
+def route_osm_file(folder):
+    """The routing test town (ROUTE_OSM)."""
+    path = os.path.join(folder, "town.osm")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(ROUTE_OSM)
+    return path
+
+
+def polling_folder(folder):
+    """A folder like fetch_polling's: the made-up 2020 general election list of Testville (one address the made-up
+    address points know, one they do not)."""
+    os.makedirs(folder, exist_ok=True)
+    path = os.path.join(folder, "polling_2020-11-03.csv")
+    with open(path, "w", encoding="utf-8", newline="") as f:
+        f.write("election_date,state,county_name,jurisdiction,jurisdiction_type,precinct_id,precinct_name,"
+                "polling_place_id,location_type,name,address,notes,source,source_date,source_notes\n"
+                "2020-11-03,VT,,Testville,municipality,,,,,TESTVILLE TOWN HALL,\"12 MAIN ST, TESTVILLE, VT 05401\","
+                ",ORR,2020-10-01,\n"
+                "2020-11-03,VT,,Nexttown,municipality,,,,,NEXTTOWN SCHOOL,\"99 NOWHERE RD, NEXTTOWN, VT 05402\","
+                ",ORR,2020-10-01,\n")
+    return folder

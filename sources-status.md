@@ -1,211 +1,211 @@
-# Place packs status, 2026-11-12
+# Place packs status, 2026-11-22
 
-904 packs published, 54.84 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
+906 packs published, 54.85 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
 
 ## Packs by region
 
-Sizes in MB. A program downloads core and extra; businesses and addresses only when a lookup needs them (the exact place, full detail); names on request. A region with sub-regions (England, Texas, ...) is listed with them; its own core and extra are its sub-regions put together, for programs that know only the region.
+Sizes in MB. A program downloads core and extra; businesses and addresses only when a lookup needs them (the exact place, full detail); names, navigation and services on request. A region with sub-regions (England, Texas, ...) is listed with them; its own core and extra are its sub-regions put together, for programs that know only the region.
 
-| Region | Core | Extra | Names | Businesses | Addresses | Core + extra |
-|---|---|---|---|---|---|---|
-| at-austria | 204.9 | 55.6 | 50.1 | 213.2 |  | 260.5 |
-| au-australia (its sub-regions put together) | 565.1 | 53.3 | 11.4 |  |  | 618.4 |
-| au-australian-capital-territory | 10.5 | 1.9 | 0.2 | 4.5 |  | 12.4 |
-| au-new-south-wales | 159.9 | 19.8 | 3.6 | 92.3 |  | 179.7 |
-| au-northern-territory | 15.5 | 9.7 | 0.5 | 3.5 |  | 25.2 |
-| au-queensland | 116.8 | 16.3 | 1.7 | 84.8 |  | 133.1 |
-| au-south-australia | 55.8 | 12.4 | 1.3 | 21.1 |  | 68.2 |
-| au-tasmania | 24.2 | 3.4 | 0.7 | 12.6 |  | 27.5 |
-| au-victoria | 136.4 | 7.9 | 1.9 | 314.9 |  | 144.3 |
-| au-western-australia | 77.7 | 13.9 | 1.6 | 30.7 |  | 91.5 |
-| be-belgium | 164.7 | 38.1 | 33.9 | 192.6 |  | 202.8 |
-| ca-alberta | 73.2 | 66.3 | 2.6 | 51.2 | 58.3 | 139.5 |
-| ca-british-columbia | 137.2 | 108.5 | 7.9 | 180.7 | 6.6 | 245.7 |
-| ca-manitoba | 37.2 | 76.9 | 2.6 | 13.2 | 16.0 | 114.0 |
-| ca-new-brunswick | 20.9 | 45.6 | 2.7 | 22.0 | 17.2 | 66.5 |
-| ca-newfoundland-and-labrador | 37.6 | 85.0 | 6.4 | 25.7 | 3.1 | 122.6 |
-| ca-northwest-territories | 20.0 | 79.9 | 1.0 | 1.8 | 0.4 | 99.9 |
-| ca-nova-scotia | 38.3 | 56.0 | 2.8 | 19.6 | 37.6 | 94.3 |
-| ca-nunavut | 60.0 | 149.4 | 7.5 | 36.7 | 0.2 | 209.4 |
-| ca-ontario (its sub-regions put together) | 214.9 | 109.4 | 21.1 |  |  | 324.3 |
-| ca-ontario-east | 53.2 | 17.9 | 5.1 | 28.5 | 35.4 | 71.1 |
-| ca-ontario-north | 79.1 | 60.7 | 6.1 | 10.4 | 8.6 | 139.7 |
-| ca-ontario-south-west | 30.4 | 16.5 | 1.4 | 23.3 | 27.2 | 47.0 |
-| ca-ontario-toronto | 61.5 | 37.6 | 1.1 | 90.5 | 53.5 | 99.2 |
-| ca-prince-edward-island | 5.4 | 24.9 | 0.5 | 2.6 | 3.9 | 30.3 |
-| ca-quebec (its sub-regions put together) | 43.3 | 68.0 | 20.4 |  |  | 111.3 |
-| ca-quebec-east-and-north | 20.1 | 65.4 | 21.3 | 7.5 | 4.2 | 85.5 |
-| ca-quebec-montreal | 24.8 | 12.5 | 1.5 | 13.1 | 9.4 | 37.3 |
-| ca-saskatchewan | 26.8 | 94.9 | 1.7 | 12.2 | 16.7 | 121.7 |
-| ca-yukon | 7.5 | 69.9 | 0.6 | 1.3 | 0.7 | 77.5 |
-| ch-switzerland | 159.4 | 33.2 | 30.2 | 166.6 |  | 192.6 |
-| de-baden-wuerttemberg | 196.8 | 35.0 | 31.3 | 196.0 |  | 231.8 |
-| de-bayern | 221.8 | 70.7 | 65.1 | 238.3 |  | 292.5 |
-| de-berlin | 32.0 | 20.6 | 12.7 | 37.0 |  | 52.6 |
-| de-brandenburg | 84.2 | 29.0 | 23.5 | 78.5 |  | 113.2 |
-| de-bremen | 6.8 | 14.5 | 1.7 | 9.2 |  | 21.3 |
-| de-hamburg | 15.9 | 17.4 | 7.7 | 34.8 |  | 33.3 |
-| de-hessen | 100.1 | 30.0 | 30.8 | 106.2 |  | 130.2 |
-| de-mecklenburg-vorpommern | 34.9 | 17.6 | 4.9 | 25.6 |  | 52.5 |
-| de-niedersachsen | 154.8 | 41.1 | 39.5 | 236.4 |  | 195.9 |
-| de-nordrhein-westfalen | 235.5 | 46.1 | 46.2 | 247.3 |  | 281.6 |
-| de-rheinland-pfalz | 72.5 | 23.3 | 15.4 | 104.5 |  | 95.8 |
-| de-saarland | 14.9 | 14.9 | 1.7 | 11.9 |  | 29.7 |
-| de-sachsen | 82.1 | 36.4 | 29.5 | 71.8 |  | 118.4 |
-| de-sachsen-anhalt | 48.8 | 23.2 | 15.3 | 47.7 |  | 72.0 |
-| de-schleswig-holstein | 48.0 | 20.9 | 12.1 | 65.0 |  | 68.9 |
-| de-thueringen | 45.8 | 24.7 | 16.6 | 45.6 |  | 70.5 |
-| dk-denmark | 106.9 | 26.5 | 7.5 | 104.2 |  | 133.4 |
-| es-andalucia | 94.1 | 17.0 | 9.3 | 77.7 | 0.1 | 111.1 |
-| es-aragon | 33.1 | 14.4 | 7.1 | 25.3 | 0.1 | 47.5 |
-| es-asturias | 18.3 | 15.8 | 2.3 | 9.8 | 0.1 | 34.0 |
-| es-canarias | 22.7 | 13.7 | 1.4 | 19.3 | 0.1 | 36.4 |
-| es-cantabria | 12.5 | 14.7 | 1.0 | 6.1 | 0.1 | 27.2 |
-| es-castilla-la-mancha | 47.4 | 13.7 | 7.7 | 69.6 | 0.1 | 61.0 |
-| es-castilla-y-leon | 93.2 | 16.6 | 12.5 | 77.8 | 0.1 | 109.9 |
-| es-cataluna | 105.5 | 35.3 | 18.2 | 69.9 | 0.1 | 140.8 |
-| es-ceuta | 0.4 | 8.5 | 0.2 | 0.5 | 0.1 | 9.0 |
-| es-extremadura | 22.5 | 9.7 | 2.3 | 13.5 | 0.1 | 32.2 |
-| es-galicia | 58.7 | 13.4 | 3.6 | 23.8 | 0.1 | 72.0 |
-| es-islas-baleares | 15.4 | 10.0 | 1.1 | 12.8 | 0.1 | 25.4 |
-| es-la-rioja | 5.8 | 8.6 | 0.9 | 3.8 | 0.1 | 14.5 |
-| es-madrid | 38.8 | 10.7 | 3.2 | 48.2 | 0.1 | 49.5 |
-| es-melilla | 0.5 | 8.6 | 0.2 | 0.5 | 0.1 | 9.2 |
-| es-murcia | 13.8 | 10.1 | 1.6 | 26.9 | 0.1 | 23.9 |
-| es-navarra | 17.9 | 10.9 | 3.6 | 13.5 | 0.1 | 28.8 |
-| es-pais-vasco | 29.6 | 16.9 | 4.5 | 17.8 | 0.1 | 46.5 |
-| es-valencia | 55.2 | 12.0 | 4.1 | 55.9 | 0.1 | 67.2 |
-| fi-finland (its sub-regions put together) | 223.9 | 51.7 | 7.7 |  |  | 275.6 |
-| fi-finland-centre-and-north | 122.3 | 35.2 | 3.7 | 17.3 |  | 157.6 |
-| fi-finland-south | 106.2 | 25.1 | 2.1 | 36.5 |  | 131.3 |
-| fr-alsace | 35.1 | 18.6 | 8.4 | 51.3 | 10.6 | 53.6 |
-| fr-aquitaine | 87.3 | 21.1 | 12.4 | 60.1 | 42.9 | 108.4 |
-| fr-auvergne | 46.0 | 16.8 | 5.8 | 21.3 | 22.1 | 62.8 |
-| fr-basse-normandie | 42.0 | 17.9 | 6.8 | 23.5 | 23.8 | 59.9 |
-| fr-bourgogne | 51.9 | 18.2 | 7.8 | 22.7 | 20.9 | 70.2 |
-| fr-bretagne | 77.3 | 18.8 | 10.1 | 43.0 | 35.4 | 96.2 |
-| fr-centre | 70.0 | 29.4 | 24.8 | 109.7 | 49.0 | 99.5 |
-| fr-champagne-ardenne | 38.2 | 18.0 | 7.7 | 22.4 | 16.2 | 56.1 |
-| fr-corse | 9.6 | 8.7 | 1.0 | 4.3 | 2.1 | 18.3 |
-| fr-franche-comte | 31.7 | 17.5 | 6.8 | 32.4 | 11.1 | 49.3 |
-| fr-haute-normandie | 29.6 | 16.5 | 4.5 | 17.4 | 14.6 | 46.1 |
-| fr-ile-de-france | 99.5 | 28.0 | 21.4 | 95.2 | 28.4 | 127.5 |
-| fr-languedoc-roussillon | 66.5 | 21.3 | 10.5 | 46.4 | 33.1 | 87.8 |
-| fr-limousin | 24.6 | 15.2 | 2.9 | 10.3 | 12.3 | 39.8 |
-| fr-lorraine | 55.3 | 19.1 | 9.4 | 42.9 | 18.4 | 74.5 |
-| fr-midi-pyrenees | 88.3 | 21.8 | 13.3 | 50.1 | 43.1 | 110.1 |
-| fr-nord-pas-de-calais | 52.5 | 20.0 | 9.8 | 74.5 | 20.1 | 72.6 |
-| fr-pays-de-la-loire | 79.9 | 18.9 | 11.6 | 52.1 | 47.6 | 98.8 |
-| fr-picardie | 32.5 | 26.7 | 19.6 | 89.5 | 35.1 | 59.2 |
-| fr-poitou-charentes | 52.7 | 16.6 | 6.1 | 29.8 | 31.1 | 69.3 |
-| fr-provence-alpes-cote-d-azur | 87.5 | 20.2 | 11.7 | 88.4 | 32.0 | 107.7 |
-| fr-rhone-alpes | 148.7 | 23.8 | 17.6 | 88.8 | 43.5 | 172.5 |
-| gb-england (its sub-regions put together) | 573.1 | 118.3 | 25.4 |  |  | 691.3 |
-| gb-england-east | 75.5 | 21.7 | 5.6 | 87.8 |  | 97.2 |
-| gb-england-east-midlands | 57.6 | 15.6 | 3.1 | 63.2 |  | 73.2 |
-| gb-england-london | 60.1 | 15.5 | 3.6 | 122.7 |  | 75.6 |
-| gb-england-north-east | 27.7 | 11.4 | 1.0 | 30.9 |  | 39.1 |
-| gb-england-north-west | 74.5 | 16.9 | 2.8 | 94.7 |  | 91.4 |
-| gb-england-south-east | 107.9 | 28.0 | 8.5 | 133.9 |  | 135.9 |
-| gb-england-south-west | 77.1 | 31.7 | 3.7 | 85.9 |  | 108.8 |
-| gb-england-west-midlands | 59.4 | 17.4 | 2.4 | 73.0 |  | 76.8 |
-| gb-england-yorkshire-and-the-humber | 63.0 | 16.8 | 3.0 | 69.1 |  | 79.8 |
-| gb-scotland | 74.5 | 56.7 | 5.3 | 116.3 |  | 131.2 |
-| gb-wales | 38.9 | 36.8 | 3.1 | 80.9 |  | 75.8 |
-| ie-ireland-and-northern-ireland | 178.8 | 31.8 | 3.1 | 58.0 |  | 210.5 |
-| is-iceland | 19.7 | 14.7 | 1.1 | 3.3 |  | 34.4 |
-| it-centro | 125.6 | 31.5 | 25.4 | 227.6 |  | 157.1 |
-| it-isole | 74.2 | 22.0 | 11.3 | 135.7 |  | 96.2 |
-| it-nord-est | 178.5 | 40.3 | 36.7 | 242.2 |  | 218.9 |
-| it-nord-ovest | 187.5 | 45.4 | 51.9 | 330.8 |  | 232.8 |
-| it-sud | 110.3 | 18.7 | 15.2 | 162.7 |  | 129.1 |
-| jp-chubu | 86.3 | 24.6 | 17.7 | 470.5 |  | 110.9 |
-| jp-chugoku | 36.1 | 12.7 | 4.0 | 88.7 |  | 48.8 |
-| jp-hokkaido | 36.0 | 11.4 | 1.7 | 33.9 |  | 47.3 |
-| jp-kansai | 95.3 | 17.0 | 9.3 | 214.2 |  | 112.3 |
-| jp-kanto | 138.0 | 32.2 | 21.8 | 557.7 |  | 170.2 |
-| jp-kyushu | 53.9 | 23.0 | 5.3 | 120.7 |  | 77.0 |
-| jp-shikoku | 18.9 | 11.4 | 2.6 | 54.6 |  | 30.3 |
-| jp-tohoku | 60.0 | 12.6 | 3.8 | 69.8 |  | 72.6 |
-| lu-luxembourg | 11.2 | 14.5 | 1.2 | 7.2 |  | 25.7 |
-| nl-netherlands (its sub-regions put together) | 265.9 | 61.8 | 82.2 |  |  | 327.7 |
-| nl-netherlands-north-east-south | 164.3 | 40.6 | 83.2 | 99.5 | 0.1 | 204.9 |
-| nl-netherlands-west | 111.2 | 28.6 | 38.3 | 75.2 | 0.1 | 139.8 |
-| no-norway (its sub-regions put together) | 247.5 | 87.9 | 0.1 |  |  | 335.3 |
-| no-norway-east-and-south | 111.3 | 35.1 | 10.8 | 35.9 |  | 146.4 |
-| no-norway-west-and-north | 138.4 | 60.9 | 39.6 | 28.1 |  | 199.3 |
-| nz-new-zealand | 96.0 | 120.4 | 25.5 | 551.4 | 0.1 | 216.4 |
-| pt-portugal | 150.0 | 25.3 | 8.6 | 100.1 |  | 175.3 |
-| se-sweden (its sub-regions put together) | 238.5 | 38.9 | 26.4 |  |  | 277.4 |
-| se-sweden-south-and-west | 84.9 | 22.6 | 8.2 | 61.6 |  | 107.4 |
-| se-sweden-stockholm-and-north | 155.3 | 24.3 | 16.2 | 60.2 |  | 179.6 |
-| us-alabama | 79.0 | 52.9 | 1.6 | 92.6 | 273.8 | 131.9 |
-| us-alaska | 99.7 | 166.2 | 2.2 | 12.9 | 27.5 | 265.9 |
-| us-arizona | 103.2 | 63.1 | 2.1 | 90.2 | 190.5 | 166.3 |
-| us-arkansas | 66.3 | 59.4 | 1.9 | 59.0 | 204.9 | 125.6 |
-| us-california (its sub-regions put together) | 350.4 | 108.3 | 7.7 |  |  | 458.7 |
-| us-california-bay-area | 75.3 | 21.2 | 1.7 | 98.9 | 102.6 | 96.6 |
-| us-california-central | 63.6 | 37.9 | 4.7 | 53.3 | 110.0 | 101.6 |
-| us-california-los-angeles | 86.3 | 21.0 | 1.9 | 174.0 | 144.9 | 107.3 |
-| us-california-north | 61.9 | 43.1 | 1.8 | 43.1 | 98.0 | 105.0 |
-| us-california-south | 71.3 | 24.6 | 1.6 | 95.2 | 127.9 | 95.9 |
-| us-colorado | 97.8 | 98.2 | 1.9 | 92.0 | 165.5 | 196.1 |
-| us-connecticut | 36.0 | 22.9 | 1.0 | 52.5 | 80.8 | 58.9 |
-| us-delaware | 12.0 | 22.8 | 1.0 | 45.5 | 34.8 | 34.8 |
-| us-district-of-columbia | 5.9 | 18.7 | 0.9 | 102.0 | 5.9 | 24.6 |
-| us-florida (its sub-regions put together) | 202.1 | 42.2 | 2.5 |  |  | 244.2 |
-| us-florida-central | 87.4 | 18.7 | 1.0 | 121.0 | 181.9 | 106.1 |
-| us-florida-north | 58.6 | 24.3 | 0.9 | 65.1 | 155.2 | 82.9 |
-| us-florida-south | 59.8 | 14.1 | 0.9 | 111.3 | 98.1 | 73.9 |
-| us-georgia | 130.4 | 70.0 | 2.2 | 185.0 | 321.8 | 200.5 |
-| us-hawaii | 16.5 | 109.3 | 0.7 | 17.7 | 16.0 | 125.8 |
-| us-idaho | 49.5 | 120.5 | 1.7 | 38.5 | 88.5 | 170.0 |
-| us-illinois | 146.6 | 94.1 | 4.8 | 206.6 | 329.1 | 240.7 |
-| us-indiana | 83.9 | 58.6 | 3.3 | 137.6 | 301.7 | 142.5 |
-| us-iowa | 77.3 | 85.9 | 2.6 | 64.3 | 215.8 | 163.1 |
-| us-kansas | 58.6 | 129.3 | 4.5 | 176.9 | 145.3 | 187.9 |
-| us-kentucky | 74.5 | 82.5 | 3.1 | 100.3 | 212.1 | 157.0 |
-| us-louisiana | 56.4 | 52.1 | 1.5 | 81.2 | 172.1 | 108.4 |
-| us-maine | 54.1 | 48.7 | 3.5 | 43.3 | 74.7 | 102.8 |
-| us-maryland | 69.9 | 57.0 | 4.1 | 282.2 | 121.8 | 126.9 |
-| us-massachusetts | 80.5 | 51.8 | 3.0 | 161.0 | 158.4 | 132.3 |
-| us-michigan | 141.5 | 123.7 | 8.8 | 377.1 | 276.9 | 265.2 |
-| us-minnesota | 118.2 | 117.7 | 4.0 | 106.1 | 256.6 | 235.9 |
-| us-mississippi | 49.0 | 53.6 | 1.2 | 56.2 | 167.1 | 102.6 |
-| us-missouri | 106.5 | 102.5 | 4.4 | 132.7 | 317.5 | 209.0 |
-| us-montana | 47.4 | 129.1 | 1.7 | 25.6 | 77.0 | 176.4 |
-| us-nebraska | 48.4 | 79.0 | 1.5 | 33.6 | 118.9 | 127.4 |
-| us-nevada | 42.7 | 79.1 | 1.7 | 61.1 | 51.5 | 121.8 |
-| us-new-hampshire | 33.4 | 37.6 | 1.2 | 30.4 | 45.5 | 71.0 |
-| us-new-jersey | 71.3 | 57.1 | 5.7 | 287.5 | 170.7 | 128.4 |
-| us-new-mexico | 48.0 | 124.9 | 7.2 | 285.9 | 93.5 | 172.9 |
-| us-new-york (its sub-regions put together) | 169.6 | 63.8 | 11.4 |  |  | 233.3 |
-| us-new-york-city | 28.9 | 11.7 | 2.9 | 120.6 | 36.2 | 40.6 |
-| us-new-york-downstate | 49.4 | 18.8 | 5.4 | 90.0 | 115.1 | 68.2 |
-| us-new-york-upstate | 95.6 | 43.9 | 3.9 | 92.5 | 216.1 | 139.5 |
-| us-north-carolina | 155.1 | 86.6 | 3.7 | 273.2 | 473.7 | 241.7 |
-| us-north-dakota | 35.9 | 69.2 | 1.3 | 14.9 | 74.4 | 105.1 |
-| us-ohio | 137.4 | 92.1 | 5.6 | 276.5 | 446.9 | 229.5 |
-| us-oklahoma | 71.2 | 77.8 | 1.5 | 66.6 | 196.8 | 149.0 |
-| us-oregon | 91.7 | 90.2 | 1.9 | 72.6 | 132.3 | 181.9 |
-| us-pennsylvania | 178.3 | 97.0 | 6.8 | 279.7 | 409.6 | 275.3 |
-| us-puerto-rico | 27.2 | 12.9 | 0.6 | 19.3 | 33.6 | 40.1 |
-| us-rhode-island | 11.7 | 15.1 | 0.5 | 19.1 | 29.9 | 26.8 |
-| us-south-carolina | 78.0 | 49.2 | 1.4 | 102.4 | 207.1 | 127.2 |
-| us-south-dakota | 36.1 | 75.7 | 0.9 | 14.5 | 54.5 | 111.9 |
-| us-tennessee | 96.6 | 67.9 | 1.8 | 110.7 | 290.6 | 164.5 |
-| us-texas (its sub-regions put together) | 291.3 | 107.3 | 8.7 |  |  | 398.6 |
-| us-texas-gulf-coast | 75.8 | 33.3 | 1.0 | 108.6 | 206.7 | 109.1 |
-| us-texas-north | 114.7 | 57.3 | 1.7 | 136.2 | 285.5 | 172.1 |
-| us-texas-south-central | 71.0 | 42.8 | 1.6 | 101.9 | 192.5 | 113.8 |
-| us-texas-west | 35.3 | 45.9 | 2.0 | 31.7 | 78.6 | 81.2 |
-| us-utah | 57.3 | 71.0 | 1.1 | 41.3 | 95.3 | 128.3 |
-| us-vermont | 24.0 | 29.0 | 1.0 | 20.7 | 50.2 | 53.0 |
-| us-virginia | 129.0 | 100.3 | 5.1 | 291.3 | 377.2 | 229.2 |
-| us-washington | 122.1 | 76.3 | 2.4 | 112.4 | 223.5 | 198.4 |
-| us-west-virginia | 49.5 | 73.8 | 3.6 | 102.6 | 123.2 | 123.3 |
-| us-wisconsin | 114.3 | 100.4 | 2.5 | 96.8 | 249.0 | 214.8 |
-| us-wyoming | 26.8 | 100.7 | 0.8 | 10.8 | 45.7 | 127.5 |
+| Region | Core | Extra | Names | Businesses | Addresses | Navigation | Services | Core + extra |
+|---|---|---|---|---|---|---|---|---|
+| at-austria | 204.9 | 55.6 | 50.1 | 213.2 |  |  |  | 260.5 |
+| au-australia (its sub-regions put together) | 565.1 | 53.3 | 11.4 |  |  |  |  | 618.4 |
+| au-australian-capital-territory | 10.5 | 1.9 | 0.2 | 4.5 |  |  |  | 12.4 |
+| au-new-south-wales | 159.9 | 19.8 | 3.6 | 92.3 |  |  |  | 179.7 |
+| au-northern-territory | 15.5 | 9.7 | 0.5 | 3.5 |  |  |  | 25.2 |
+| au-queensland | 116.8 | 16.3 | 1.7 | 84.8 |  |  |  | 133.1 |
+| au-south-australia | 55.8 | 12.4 | 1.3 | 21.1 |  |  |  | 68.2 |
+| au-tasmania | 24.2 | 3.4 | 0.7 | 12.6 |  |  |  | 27.5 |
+| au-victoria | 136.4 | 7.9 | 1.9 | 314.9 |  |  |  | 144.3 |
+| au-western-australia | 77.7 | 13.9 | 1.6 | 30.7 |  |  |  | 91.5 |
+| be-belgium | 164.7 | 38.1 | 33.9 | 192.6 |  |  |  | 202.8 |
+| ca-alberta | 73.2 | 66.3 | 2.6 | 51.2 | 58.3 |  |  | 139.5 |
+| ca-british-columbia | 137.2 | 108.5 | 7.9 | 180.7 | 6.6 |  |  | 245.7 |
+| ca-manitoba | 37.2 | 76.9 | 2.6 | 13.2 | 16.0 |  |  | 114.0 |
+| ca-new-brunswick | 20.9 | 45.6 | 2.7 | 22.0 | 17.2 |  |  | 66.5 |
+| ca-newfoundland-and-labrador | 37.6 | 85.0 | 6.4 | 25.7 | 3.1 |  |  | 122.6 |
+| ca-northwest-territories | 20.0 | 79.9 | 1.0 | 1.8 | 0.4 |  |  | 99.9 |
+| ca-nova-scotia | 38.3 | 56.0 | 2.8 | 19.6 | 37.6 |  |  | 94.3 |
+| ca-nunavut | 60.0 | 149.4 | 7.5 | 36.7 | 0.2 |  |  | 209.4 |
+| ca-ontario (its sub-regions put together) | 214.9 | 109.4 | 21.1 |  |  |  |  | 324.3 |
+| ca-ontario-east | 53.2 | 17.9 | 5.1 | 28.5 | 35.4 |  |  | 71.1 |
+| ca-ontario-north | 79.1 | 60.7 | 6.1 | 10.4 | 8.6 |  |  | 139.7 |
+| ca-ontario-south-west | 30.4 | 16.5 | 1.4 | 23.3 | 27.2 |  |  | 47.0 |
+| ca-ontario-toronto | 61.5 | 37.6 | 1.1 | 90.5 | 53.5 |  |  | 99.2 |
+| ca-prince-edward-island | 5.4 | 24.9 | 0.5 | 2.6 | 3.9 |  |  | 30.3 |
+| ca-quebec (its sub-regions put together) | 43.3 | 68.0 | 20.4 |  |  |  |  | 111.3 |
+| ca-quebec-east-and-north | 20.1 | 65.4 | 21.3 | 7.5 | 4.2 |  |  | 85.5 |
+| ca-quebec-montreal | 24.8 | 12.5 | 1.5 | 13.1 | 9.4 |  |  | 37.3 |
+| ca-saskatchewan | 26.8 | 94.9 | 1.7 | 12.2 | 16.7 |  |  | 121.7 |
+| ca-yukon | 7.5 | 69.9 | 0.6 | 1.3 | 0.7 |  |  | 77.5 |
+| ch-switzerland | 159.4 | 33.2 | 30.2 | 166.6 |  |  |  | 192.6 |
+| de-baden-wuerttemberg | 196.8 | 35.0 | 31.3 | 196.0 |  |  |  | 231.8 |
+| de-bayern | 221.8 | 70.7 | 65.1 | 238.3 |  |  |  | 292.5 |
+| de-berlin | 32.0 | 20.6 | 12.7 | 37.0 |  |  |  | 52.6 |
+| de-brandenburg | 84.2 | 29.0 | 23.5 | 78.5 |  |  |  | 113.2 |
+| de-bremen | 6.8 | 14.5 | 1.7 | 9.2 |  |  |  | 21.3 |
+| de-hamburg | 15.9 | 17.4 | 7.7 | 34.8 |  |  |  | 33.3 |
+| de-hessen | 100.1 | 30.0 | 30.8 | 106.2 |  |  |  | 130.2 |
+| de-mecklenburg-vorpommern | 34.9 | 17.6 | 4.9 | 25.6 |  |  |  | 52.5 |
+| de-niedersachsen | 154.8 | 41.1 | 39.5 | 236.4 |  |  |  | 195.9 |
+| de-nordrhein-westfalen | 235.5 | 46.1 | 46.2 | 247.3 |  |  |  | 281.6 |
+| de-rheinland-pfalz | 72.5 | 23.3 | 15.4 | 104.5 |  |  |  | 95.8 |
+| de-saarland | 14.9 | 14.9 | 1.7 | 11.9 |  |  |  | 29.7 |
+| de-sachsen | 82.1 | 36.4 | 29.5 | 71.8 |  |  |  | 118.4 |
+| de-sachsen-anhalt | 48.8 | 23.2 | 15.3 | 47.7 |  |  |  | 72.0 |
+| de-schleswig-holstein | 48.0 | 20.9 | 12.1 | 65.0 |  |  |  | 68.9 |
+| de-thueringen | 45.8 | 24.7 | 16.6 | 45.6 |  |  |  | 70.5 |
+| dk-denmark | 106.9 | 26.5 | 7.5 | 104.2 |  |  |  | 133.4 |
+| es-andalucia | 94.1 | 17.0 | 9.3 | 77.7 | 0.1 |  |  | 111.1 |
+| es-aragon | 33.1 | 14.4 | 7.1 | 25.3 | 0.1 |  |  | 47.5 |
+| es-asturias | 18.3 | 15.8 | 2.3 | 9.8 | 0.1 |  |  | 34.0 |
+| es-canarias | 22.7 | 13.7 | 1.4 | 19.3 | 0.1 |  |  | 36.4 |
+| es-cantabria | 12.5 | 14.7 | 1.0 | 6.1 | 0.1 |  |  | 27.2 |
+| es-castilla-la-mancha | 47.4 | 13.7 | 7.7 | 69.6 | 0.1 |  |  | 61.0 |
+| es-castilla-y-leon | 93.2 | 16.6 | 12.5 | 77.8 | 0.1 |  |  | 109.9 |
+| es-cataluna | 105.5 | 35.3 | 18.2 | 69.9 | 0.1 |  |  | 140.8 |
+| es-ceuta | 0.4 | 8.5 | 0.2 | 0.5 | 0.1 |  |  | 9.0 |
+| es-extremadura | 22.5 | 9.7 | 2.3 | 13.5 | 0.1 |  |  | 32.2 |
+| es-galicia | 58.7 | 13.4 | 3.6 | 23.8 | 0.1 |  |  | 72.0 |
+| es-islas-baleares | 15.4 | 10.0 | 1.1 | 12.8 | 0.1 |  |  | 25.4 |
+| es-la-rioja | 5.8 | 8.6 | 0.9 | 3.8 | 0.1 |  |  | 14.5 |
+| es-madrid | 38.8 | 10.7 | 3.2 | 48.2 | 0.1 |  |  | 49.5 |
+| es-melilla | 0.5 | 8.6 | 0.2 | 0.5 | 0.1 |  |  | 9.2 |
+| es-murcia | 13.8 | 10.1 | 1.6 | 26.9 | 0.1 |  |  | 23.9 |
+| es-navarra | 17.9 | 10.9 | 3.6 | 13.5 | 0.1 |  |  | 28.8 |
+| es-pais-vasco | 29.6 | 16.9 | 4.5 | 17.8 | 0.1 |  |  | 46.5 |
+| es-valencia | 55.2 | 12.0 | 4.1 | 55.9 | 0.1 |  |  | 67.2 |
+| fi-finland (its sub-regions put together) | 223.9 | 51.7 | 7.7 |  |  |  |  | 275.6 |
+| fi-finland-centre-and-north | 122.3 | 35.2 | 3.7 | 17.3 |  |  |  | 157.6 |
+| fi-finland-south | 106.2 | 25.1 | 2.1 | 36.5 |  |  |  | 131.3 |
+| fr-alsace | 35.1 | 18.6 | 8.4 | 51.3 | 10.6 |  |  | 53.6 |
+| fr-aquitaine | 87.3 | 21.1 | 12.4 | 60.1 | 42.9 |  |  | 108.4 |
+| fr-auvergne | 46.0 | 16.8 | 5.8 | 21.3 | 22.1 |  |  | 62.8 |
+| fr-basse-normandie | 42.0 | 17.9 | 6.8 | 23.5 | 23.8 |  |  | 59.9 |
+| fr-bourgogne | 51.9 | 18.2 | 7.8 | 22.7 | 20.9 |  |  | 70.2 |
+| fr-bretagne | 77.3 | 18.8 | 10.1 | 43.0 | 35.4 |  |  | 96.2 |
+| fr-centre | 70.0 | 29.4 | 24.8 | 109.7 | 49.0 |  |  | 99.5 |
+| fr-champagne-ardenne | 38.2 | 18.0 | 7.7 | 22.4 | 16.2 |  |  | 56.1 |
+| fr-corse | 9.6 | 8.7 | 1.0 | 4.3 | 2.1 |  |  | 18.3 |
+| fr-franche-comte | 31.7 | 17.5 | 6.8 | 32.4 | 11.1 |  |  | 49.3 |
+| fr-haute-normandie | 29.6 | 16.5 | 4.5 | 17.4 | 14.6 |  |  | 46.1 |
+| fr-ile-de-france | 99.5 | 28.0 | 21.4 | 95.2 | 28.4 |  |  | 127.5 |
+| fr-languedoc-roussillon | 66.5 | 21.3 | 10.5 | 46.4 | 33.1 |  |  | 87.8 |
+| fr-limousin | 24.6 | 15.2 | 2.9 | 10.3 | 12.3 |  |  | 39.8 |
+| fr-lorraine | 55.3 | 19.1 | 9.4 | 42.9 | 18.4 |  |  | 74.5 |
+| fr-midi-pyrenees | 88.3 | 21.8 | 13.3 | 50.1 | 43.1 |  |  | 110.1 |
+| fr-nord-pas-de-calais | 52.5 | 20.0 | 9.8 | 74.5 | 20.1 |  |  | 72.6 |
+| fr-pays-de-la-loire | 79.9 | 18.9 | 11.6 | 52.1 | 47.6 |  |  | 98.8 |
+| fr-picardie | 32.5 | 26.7 | 19.6 | 89.5 | 35.1 |  |  | 59.2 |
+| fr-poitou-charentes | 52.7 | 16.6 | 6.1 | 29.8 | 31.1 |  |  | 69.3 |
+| fr-provence-alpes-cote-d-azur | 87.5 | 20.2 | 11.7 | 88.4 | 32.0 |  |  | 107.7 |
+| fr-rhone-alpes | 148.7 | 23.8 | 17.6 | 88.8 | 43.5 |  |  | 172.5 |
+| gb-england (its sub-regions put together) | 573.1 | 118.3 | 25.4 |  |  |  |  | 691.3 |
+| gb-england-east | 75.5 | 21.7 | 5.6 | 87.8 |  |  |  | 97.2 |
+| gb-england-east-midlands | 57.6 | 15.6 | 3.1 | 63.2 |  |  |  | 73.2 |
+| gb-england-london | 60.1 | 15.5 | 3.6 | 122.7 |  |  |  | 75.6 |
+| gb-england-north-east | 27.7 | 11.4 | 1.0 | 30.9 |  |  |  | 39.1 |
+| gb-england-north-west | 74.5 | 16.9 | 2.8 | 94.7 |  |  |  | 91.4 |
+| gb-england-south-east | 107.9 | 28.0 | 8.5 | 133.9 |  |  |  | 135.9 |
+| gb-england-south-west | 77.1 | 31.7 | 3.7 | 85.9 |  |  |  | 108.8 |
+| gb-england-west-midlands | 59.4 | 17.4 | 2.4 | 73.0 |  |  |  | 76.8 |
+| gb-england-yorkshire-and-the-humber | 63.0 | 16.8 | 3.0 | 69.1 |  |  |  | 79.8 |
+| gb-scotland | 74.5 | 56.7 | 5.3 | 116.3 |  |  |  | 131.2 |
+| gb-wales | 38.9 | 36.8 | 3.1 | 80.9 |  |  |  | 75.8 |
+| ie-ireland-and-northern-ireland | 178.8 | 31.8 | 3.1 | 58.0 |  |  |  | 210.5 |
+| is-iceland | 19.7 | 14.7 | 1.1 | 3.3 |  |  |  | 34.4 |
+| it-centro | 125.6 | 31.5 | 25.4 | 227.6 |  |  |  | 157.1 |
+| it-isole | 74.2 | 22.0 | 11.3 | 135.7 |  |  |  | 96.2 |
+| it-nord-est | 178.5 | 40.3 | 36.7 | 242.2 |  |  |  | 218.9 |
+| it-nord-ovest | 187.5 | 45.4 | 51.9 | 330.8 |  |  |  | 232.8 |
+| it-sud | 110.3 | 18.7 | 15.2 | 162.7 |  |  |  | 129.1 |
+| jp-chubu | 86.3 | 24.6 | 17.7 | 470.5 |  |  |  | 110.9 |
+| jp-chugoku | 36.1 | 12.7 | 4.0 | 88.7 |  |  |  | 48.8 |
+| jp-hokkaido | 36.0 | 11.4 | 1.7 | 33.9 |  |  |  | 47.3 |
+| jp-kansai | 95.3 | 17.0 | 9.3 | 214.2 |  |  |  | 112.3 |
+| jp-kanto | 138.0 | 32.2 | 21.8 | 557.7 |  |  |  | 170.2 |
+| jp-kyushu | 53.9 | 23.0 | 5.3 | 120.7 |  |  |  | 77.0 |
+| jp-shikoku | 18.9 | 11.4 | 2.6 | 54.6 |  |  |  | 30.3 |
+| jp-tohoku | 60.0 | 12.6 | 3.8 | 69.8 |  |  |  | 72.6 |
+| lu-luxembourg | 11.2 | 14.5 | 1.2 | 7.2 |  |  |  | 25.7 |
+| nl-netherlands (its sub-regions put together) | 265.9 | 61.8 | 82.2 |  |  |  |  | 327.7 |
+| nl-netherlands-north-east-south | 164.3 | 40.6 | 83.2 | 99.5 | 0.1 |  |  | 204.9 |
+| nl-netherlands-west | 111.2 | 28.6 | 38.3 | 75.2 | 0.1 |  |  | 139.8 |
+| no-norway (its sub-regions put together) | 247.5 | 87.9 | 0.1 |  |  |  |  | 335.3 |
+| no-norway-east-and-south | 111.3 | 35.1 | 10.8 | 35.9 |  |  |  | 146.4 |
+| no-norway-west-and-north | 138.4 | 60.9 | 39.6 | 28.1 |  |  |  | 199.3 |
+| nz-new-zealand | 96.0 | 120.4 | 25.5 | 551.4 | 0.1 |  |  | 216.4 |
+| pt-portugal | 150.0 | 25.3 | 8.6 | 100.1 |  |  |  | 175.3 |
+| se-sweden (its sub-regions put together) | 238.5 | 38.9 | 26.4 |  |  |  |  | 277.4 |
+| se-sweden-south-and-west | 84.9 | 22.6 | 8.2 | 61.6 |  |  |  | 107.4 |
+| se-sweden-stockholm-and-north | 155.3 | 24.3 | 16.2 | 60.2 |  |  |  | 179.6 |
+| us-alabama | 79.0 | 52.9 | 1.6 | 92.6 | 273.8 |  |  | 131.9 |
+| us-alaska | 99.7 | 166.2 | 2.2 | 12.9 | 27.5 |  |  | 265.9 |
+| us-arizona | 103.2 | 63.1 | 2.1 | 90.2 | 190.5 |  |  | 166.3 |
+| us-arkansas | 66.3 | 59.4 | 1.9 | 59.0 | 204.9 |  |  | 125.6 |
+| us-california (its sub-regions put together) | 350.4 | 108.3 | 7.7 |  |  |  |  | 458.7 |
+| us-california-bay-area | 75.3 | 21.2 | 1.7 | 98.9 | 102.6 |  |  | 96.6 |
+| us-california-central | 63.6 | 37.9 | 4.7 | 53.3 | 110.0 |  |  | 101.6 |
+| us-california-los-angeles | 86.3 | 21.0 | 1.9 | 174.0 | 144.9 |  |  | 107.3 |
+| us-california-north | 61.9 | 43.1 | 1.8 | 43.1 | 98.0 |  |  | 105.0 |
+| us-california-south | 71.3 | 24.6 | 1.6 | 95.2 | 127.9 |  |  | 95.9 |
+| us-colorado | 97.8 | 98.2 | 1.9 | 92.0 | 165.5 |  |  | 196.1 |
+| us-connecticut | 36.0 | 22.9 | 1.0 | 52.5 | 80.8 |  |  | 58.9 |
+| us-delaware | 12.0 | 22.8 | 1.0 | 45.5 | 34.8 |  |  | 34.8 |
+| us-district-of-columbia | 5.9 | 18.7 | 0.9 | 102.0 | 5.9 |  |  | 24.6 |
+| us-florida (its sub-regions put together) | 202.1 | 42.2 | 2.5 |  |  |  |  | 244.2 |
+| us-florida-central | 87.4 | 18.7 | 1.0 | 121.0 | 181.9 |  |  | 106.1 |
+| us-florida-north | 58.6 | 24.3 | 0.9 | 65.1 | 155.2 |  |  | 82.9 |
+| us-florida-south | 59.8 | 14.1 | 0.9 | 111.3 | 98.1 |  |  | 73.9 |
+| us-georgia | 130.4 | 70.0 | 2.2 | 185.0 | 321.8 |  |  | 200.5 |
+| us-hawaii | 16.5 | 109.3 | 0.7 | 17.7 | 16.0 |  |  | 125.8 |
+| us-idaho | 49.5 | 120.5 | 1.7 | 38.5 | 88.5 |  |  | 170.0 |
+| us-illinois | 146.6 | 94.1 | 4.8 | 206.6 | 329.1 |  |  | 240.7 |
+| us-indiana | 83.9 | 58.6 | 3.3 | 137.6 | 301.7 |  |  | 142.5 |
+| us-iowa | 77.3 | 85.9 | 2.6 | 64.3 | 215.8 |  |  | 163.1 |
+| us-kansas | 58.6 | 129.3 | 4.5 | 176.9 | 145.3 |  |  | 187.9 |
+| us-kentucky | 74.5 | 82.5 | 3.1 | 100.3 | 212.1 |  |  | 157.0 |
+| us-louisiana | 56.4 | 52.1 | 1.5 | 81.2 | 172.1 |  |  | 108.4 |
+| us-maine | 54.1 | 48.7 | 3.5 | 43.3 | 74.7 |  |  | 102.8 |
+| us-maryland | 69.9 | 57.0 | 4.1 | 282.2 | 121.8 |  |  | 126.9 |
+| us-massachusetts | 80.5 | 51.8 | 3.0 | 161.0 | 158.4 |  |  | 132.3 |
+| us-michigan | 141.5 | 123.7 | 8.8 | 377.1 | 276.9 |  |  | 265.2 |
+| us-minnesota | 118.2 | 117.7 | 4.0 | 106.1 | 256.6 |  |  | 235.9 |
+| us-mississippi | 49.0 | 53.6 | 1.2 | 56.2 | 167.1 |  |  | 102.6 |
+| us-missouri | 106.5 | 102.5 | 4.4 | 132.7 | 317.5 |  |  | 209.0 |
+| us-montana | 47.4 | 129.1 | 1.7 | 25.6 | 77.0 |  |  | 176.4 |
+| us-nebraska | 48.4 | 79.0 | 1.5 | 33.6 | 118.9 |  |  | 127.4 |
+| us-nevada | 42.7 | 79.1 | 1.7 | 61.1 | 51.5 |  |  | 121.8 |
+| us-new-hampshire | 33.4 | 37.6 | 1.2 | 30.4 | 45.5 |  |  | 71.0 |
+| us-new-jersey | 71.3 | 57.1 | 5.7 | 287.5 | 170.7 |  |  | 128.4 |
+| us-new-mexico | 48.0 | 124.9 | 7.2 | 285.9 | 93.5 |  |  | 172.9 |
+| us-new-york (its sub-regions put together) | 169.6 | 63.8 | 11.4 |  |  |  |  | 233.3 |
+| us-new-york-city | 28.9 | 11.7 | 2.9 | 120.6 | 36.2 |  |  | 40.6 |
+| us-new-york-downstate | 49.4 | 18.8 | 5.4 | 90.0 | 115.1 |  |  | 68.2 |
+| us-new-york-upstate | 95.6 | 43.9 | 3.9 | 92.5 | 216.1 |  |  | 139.5 |
+| us-north-carolina | 155.1 | 86.6 | 3.7 | 273.2 | 473.7 |  |  | 241.7 |
+| us-north-dakota | 35.9 | 69.2 | 1.3 | 14.9 | 74.4 |  |  | 105.1 |
+| us-ohio | 137.4 | 92.1 | 5.6 | 276.5 | 446.9 |  |  | 229.5 |
+| us-oklahoma | 71.2 | 77.8 | 1.5 | 66.6 | 196.8 |  |  | 149.0 |
+| us-oregon | 91.7 | 90.2 | 1.9 | 72.6 | 132.3 |  |  | 181.9 |
+| us-pennsylvania | 178.3 | 97.0 | 6.8 | 279.7 | 409.6 |  |  | 275.3 |
+| us-puerto-rico | 27.2 | 12.9 | 0.6 | 19.3 | 33.6 |  |  | 40.1 |
+| us-rhode-island | 11.7 | 15.1 | 0.5 | 19.1 | 29.9 |  |  | 26.8 |
+| us-south-carolina | 78.0 | 49.2 | 1.4 | 102.4 | 207.1 |  |  | 127.2 |
+| us-south-dakota | 36.1 | 75.7 | 0.9 | 14.5 | 54.5 |  |  | 111.9 |
+| us-tennessee | 96.6 | 67.9 | 1.8 | 110.7 | 290.6 |  |  | 164.5 |
+| us-texas (its sub-regions put together) | 291.3 | 107.3 | 8.7 |  |  |  |  | 398.6 |
+| us-texas-gulf-coast | 75.8 | 33.3 | 1.0 | 108.6 | 206.7 |  |  | 109.1 |
+| us-texas-north | 114.7 | 57.3 | 1.7 | 136.2 | 285.5 |  |  | 172.1 |
+| us-texas-south-central | 71.0 | 42.8 | 1.6 | 101.9 | 192.5 |  |  | 113.8 |
+| us-texas-west | 35.3 | 45.9 | 2.0 | 31.7 | 78.6 |  |  | 81.2 |
+| us-utah | 57.3 | 71.0 | 1.1 | 41.3 | 95.3 |  |  | 128.3 |
+| us-vermont | 24.0 | 29.0 | 0.9 | 22.2 | 50.2 | 0.1 | 0.2 | 53.0 |
+| us-virginia | 129.0 | 100.3 | 5.1 | 291.3 | 377.2 |  |  | 229.2 |
+| us-washington | 122.1 | 76.3 | 2.4 | 112.4 | 223.5 |  |  | 198.4 |
+| us-west-virginia | 49.5 | 73.8 | 3.6 | 102.6 | 123.2 |  |  | 123.3 |
+| us-wisconsin | 114.3 | 100.4 | 2.5 | 96.8 | 249.0 |  |  | 214.8 |
+| us-wyoming | 26.8 | 100.7 | 0.8 | 10.8 | 45.7 |  |  | 127.5 |
 
 ## Every pack
 
@@ -1085,11 +1085,13 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | us-utah-businesses | 2026-11 | 41.3 | 1873-07 | alltheplaces, fdic-branches, irs-exempt-organizations, overture-places |
 | us-utah-extra | 2026-11 | 71.0 | 1803-04 | abpp-battlefields, bia-land-areas, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, epa-beaches, faa-airports, faa-special-use-airspace, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, military-installations, msha-mines, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, ourairports, padus, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wild-scenic-rivers |
 | us-utah-names | 2026-11 | 1.1 | 2026-11 | wikidata-labels |
-| us-vermont | 2026-11 | 24.0 | 2026-11 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, osm, ourairports, overture-places, padus, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
+| us-vermont | 2026-11 | 24.0 | 2026-11 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, cpi-polling-places, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, noaa-weather-radio, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, nws-counties, nws-zones, ohm, ourairports, overture-places, padus, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
 | us-vermont-addresses | 2026-11 | 50.2 | 2026-11 | nad, tiger-addrfeat |
-| us-vermont-businesses | 2026-11 | 20.7 | 1831-11 | alltheplaces, fdic-branches, irs-exempt-organizations, overture-places |
+| us-vermont-businesses | 2026-11 | 22.2 | 1831-11 | alltheplaces, fdic-branches, irs-exempt-organizations, overture-places |
 | us-vermont-extra | 2026-11 | 29.0 | 1629-03 | abpp-battlefields, bia-land-areas, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, epa-beaches, faa-airports, faa-special-use-airspace, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, military-installations, msha-mines, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, ourairports, padus, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wild-scenic-rivers |
-| us-vermont-names | 2026-11 | 1.0 | 2026-11 | wikidata-labels |
+| us-vermont-names | 2026-11 | 0.9 | 2026-11 | wikidata-labels |
+| us-vermont-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| us-vermont-services | 2026-11 | 0.2 | 2026-11 | cpi-polling-places, noaa-weather-radio, nws-counties, nws-zones |
 | us-virginia | 2026-11 | 129.0 | 2026-11 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hampton-roads-water-access, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, osm, ourairports, overture-places, padus, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
 | us-virginia-addresses | 2026-11 | 377.2 | 2026-11 | nad, tiger-addrfeat |
 | us-virginia-businesses | 2026-11 | 291.3 | 1852-01 | alltheplaces, fdic-branches, irs-exempt-organizations, overture-places |
@@ -8303,86 +8305,93 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | us-vermont | census-cousub | ok | 256 |
 | us-vermont | census-places | ok | 180 |
 | us-vermont | census-zcta | ok | 449 |
-| us-vermont | osm | ok | 2026-11-10T21:21:39Z |
+| us-vermont | osm | failed | HTTP Error 404: Not Found |
 | us-vermont-addresses | nad | ok | 333610 |
 | us-vermont-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/us-vermont |
-| us-vermont-addresses | tiger-addrfeat | ok | 89718 |
-| us-vermont-businesses | alltheplaces | ok | 4577 |
+| us-vermont-addresses | tiger-addrfeat | ok | 89698 |
+| us-vermont-businesses | alltheplaces | ok | 5271 |
 | us-vermont-businesses | fdic-branches | ok | 219 |
 | us-vermont-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
 | us-vermont-businesses | irs-exempt-organizations | ok | 3571 |
-| us-vermont-businesses | overture-places | ok | 72931 |
+| us-vermont-businesses | overture-places | ok | 63674 |
 | us-vermont-extra | abpp-battlefields | ok | 11 |
 | us-vermont-extra | bia-land-areas | ok | 0 in this region |
 | us-vermont-extra | census-school-districts-elsd | ok | 56 |
 | us-vermont-extra | census-school-districts-scsd | ok | 11 |
 | us-vermont-extra | census-school-districts-unsd | ok | 64 |
 | us-vermont-extra | epa-beaches | ok | 0 in this region |
-| us-vermont-extra | faa-airports | ok | 33 |
+| us-vermont-extra | faa-airports | ok | 32 |
 | us-vermont-extra | faa-special-use-airspace | ok | 5 |
 | us-vermont-extra | fhwa-scenic-byways | ok | 7 |
 | us-vermont-extra | fuds | ok | 10 |
-| us-vermont-extra | fws-fish-hatcheries | ok | 4 |
+| us-vermont-extra | fws-fish-hatcheries | ok | 2 |
 | us-vermont-extra | geonames-na | ok | 640 |
 | us-vermont-extra | gnis | ok | 1983 |
 | us-vermont-extra | gnis-variant-names | ok | 1809 |
-| us-vermont-extra | gsa-federal-buildings | ok | 94 |
+| us-vermont-extra | gsa-federal-buildings | ok | 90 |
 | us-vermont-extra | gtfs | skipped | no feed of this region in the Mobility Database lists an open licence |
-| us-vermont-extra | hrsa-health-centers | ok | 139 |
+| us-vermont-extra | hrsa-health-centers | ok | 130 |
 | us-vermont-extra | imls-libraries | ok | 186 |
 | us-vermont-extra | imls-museums | ok | 86 |
 | us-vermont-extra | military-installations | ok | 7 |
 | us-vermont-extra | msha-mines | ok | 605 |
 | us-vermont-extra | natural-earth-lines | ok | 0 in this region |
 | us-vermont-extra | natural-earth-regions | ok | 3 |
-| us-vermont-extra | nbi-bridges | ok | 276 |
+| us-vermont-extra | nbi-bridges | ok | 267 |
 | us-vermont-extra | nces-closed-schools | ok | 150 |
 | us-vermont-extra | nces-postsecondary | ok | 16 |
 | us-vermont-extra | nces-private-schools | ok | 164 |
 | us-vermont-extra | nces-schools | ok | 561 |
 | us-vermont-extra | newberry-counties | ok | 304 |
-| us-vermont-extra | nhd-named-flowlines | ok | 7532 |
-| us-vermont-extra | nhd-named-waterbodies | ok | 1133 |
-| us-vermont-extra | nid-dams | ok | 796 |
+| us-vermont-extra | nhd-named-flowlines | ok | 7289 |
+| us-vermont-extra | nhd-named-waterbodies | ok | 1099 |
+| us-vermont-extra | nid-dams | ok | 772 |
 | us-vermont-extra | noaa-marine-sanctuaries | ok | 0 in this region |
 | us-vermont-extra | noaa-nerrs | ok | 0 in this region |
 | us-vermont-extra | noaa-tide-stations | ok | 0 in this region |
 | us-vermont-extra | nps-poi | ok | 2 |
 | us-vermont-extra | nps-trails | ok | 1 |
-| us-vermont-extra | nrhp | ok | 1082 |
-| us-vermont-extra | nrhp-districts | ok | 327 |
+| us-vermont-extra | nrhp | ok | 1049 |
+| us-vermont-extra | nrhp-districts | ok | 317 |
 | us-vermont-extra | ntad-amtrak | ok | 19 |
 | us-vermont-extra | ntad-amtrak-routes | ok | 3 |
 | us-vermont-extra | ntad-ferry-terminals | ok | 8 |
-| us-vermont-extra | ntad-passenger-terminals | ok | 75 |
-| us-vermont-extra | ntad-rail-lines | ok | 610 |
-| us-vermont-extra | ntad-rail-yards | ok | 18 |
-| us-vermont-extra | ntad-rest-areas | ok | 47 |
+| us-vermont-extra | ntad-passenger-terminals | ok | 72 |
+| us-vermont-extra | ntad-rail-lines | ok | 608 |
+| us-vermont-extra | ntad-rail-yards | ok | 17 |
+| us-vermont-extra | ntad-rest-areas | ok | 45 |
 | us-vermont-extra | ntad-spaceports | ok | 0 in this region |
-| us-vermont-extra | ntad-transit-stations | ok | 63 |
+| us-vermont-extra | ntad-transit-stations | ok | 61 |
 | us-vermont-extra | ntad-tunnels | ok | 0 in this region |
-| us-vermont-extra | ohm | ok | 183 |
+| us-vermont-extra | ohm | ok | 145 |
 | us-vermont-extra | ourairports | ok | 263 |
-| us-vermont-extra | padus | ok | 1765 |
+| us-vermont-extra | padus | ok | 1713 |
 | us-vermont-extra | tiger-aiannh | ok | 0 in this region |
 | us-vermont-extra | tiger-arealm | ok | 131 |
 | us-vermont-extra | tiger-mil | ok | 5 |
-| us-vermont-extra | tiger-pointlm | ok | 4277 |
+| us-vermont-extra | tiger-pointlm | ok | 4276 |
 | us-vermont-extra | us-post-offices | ok | 1222 |
 | us-vermont-extra | usace-principal-ports | ok | 0 in this region |
 | us-vermont-extra | uscg-light-list | skipped | could not be downloaded: HTTP Error 403: Forbidden |
 | us-vermont-extra | usfs-offices | ok | 13 |
-| us-vermont-extra | usfs-recreation-sites | ok | 253 |
-| us-vermont-extra | usfs-trails | ok | 1222 |
+| us-vermont-extra | usfs-recreation-sites | ok | 235 |
+| us-vermont-extra | usfs-trails | ok | 1164 |
 | us-vermont-extra | usgs-mrds | ok | 1153 |
-| us-vermont-extra | usgs-structures | ok | 2773 |
+| us-vermont-extra | usgs-structures | ok | 2650 |
 | us-vermont-extra | uswtdb-wind-farms | ok | 16 |
 | us-vermont-extra | va-national-cemeteries | ok | 2 |
 | us-vermont-extra | whosonfirst-neighbourhoods | ok | 627 |
-| us-vermont-extra | wikidata | ok | 6850 |
-| us-vermont-extra | wikidata-filming | ok | 23 |
+| us-vermont-extra | wikidata | ok | 5462 |
+| us-vermont-extra | wikidata-filming | ok | 12 |
 | us-vermont-extra | wild-scenic-rivers | ok | 2 |
-| us-vermont-names | wikidata-labels | ok | 4781 |
+| us-vermont-names | wikidata-labels | ok | 3628 |
+| us-vermont-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| us-vermont-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| us-vermont-services | cpi-polling-places | ok | 261 |
+| us-vermont-services | noaa-weather-radio | ok | 31 |
+| us-vermont-services | nws-counties | ok | 14 |
+| us-vermont-services | nws-zones | ok | 20 |
+| us-vermont-services | osm-services | failed | HTTP Error 404: Not Found |
 | us-virginia | census-cousub | ok | 552 |
 | us-virginia | census-places | ok | 700 |
 | us-virginia | census-zcta | ok | 2530 |

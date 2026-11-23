@@ -1,6 +1,6 @@
-# Place packs status, 2026-11-22
+# Place packs status, 2026-11-23
 
-906 packs published, 54.89 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
+978 packs published, 62.44 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
 
 ## Packs by region
 
@@ -8,17 +8,17 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 
 | Region | Core | Extra | Names | Businesses | Addresses | Navigation | Services | Core + extra |
 |---|---|---|---|---|---|---|---|---|
-| at-austria | 204.9 | 55.6 | 50.1 | 213.2 |  |  |  | 260.5 |
-| au-australia (its sub-regions put together) | 565.1 | 53.3 | 11.4 |  |  |  |  | 618.4 |
-| au-australian-capital-territory | 10.5 | 1.9 | 0.2 | 4.5 |  |  |  | 12.4 |
-| au-new-south-wales | 159.9 | 19.8 | 3.6 | 92.3 |  |  |  | 179.7 |
-| au-northern-territory | 15.5 | 9.7 | 0.5 | 3.5 |  |  |  | 25.2 |
-| au-queensland | 116.8 | 16.3 | 1.7 | 84.8 |  |  |  | 133.1 |
-| au-south-australia | 55.8 | 12.4 | 1.3 | 21.1 |  |  |  | 68.2 |
-| au-tasmania | 24.2 | 3.4 | 0.7 | 12.6 |  |  |  | 27.5 |
-| au-victoria | 136.4 | 7.9 | 1.9 | 314.9 |  |  |  | 144.3 |
-| au-western-australia | 77.7 | 13.9 | 1.6 | 30.7 |  |  |  | 91.5 |
-| be-belgium | 164.7 | 38.1 | 33.9 | 192.6 |  |  |  | 202.8 |
+| at-austria | 205.3 | 55.8 | 50.1 | 236.8 |  | 547.2 | 17.5 | 261.0 |
+| au-australia (its sub-regions put together) | 565.6 | 56.4 | 11.4 |  |  |  |  | 622.1 |
+| au-australian-capital-territory | 10.5 | 1.9 | 0.2 | 4.8 |  | 37.2 | 0.5 | 12.4 |
+| au-new-south-wales | 160.0 | 20.8 | 3.6 | 98.6 |  | 358.3 | 8.2 | 180.8 |
+| au-northern-territory | 15.5 | 9.7 | 0.5 | 3.8 |  | 17.2 | 0.4 | 25.2 |
+| au-queensland | 116.9 | 17.1 | 1.7 | 89.2 |  | 257.8 | 3.5 | 134.0 |
+| au-south-australia | 55.9 | 12.7 | 1.3 | 22.6 |  | 106.0 | 1.3 | 68.6 |
+| au-tasmania | 24.2 | 3.4 | 0.7 | 13.1 |  | 27.9 | 0.7 | 27.6 |
+| au-victoria | 136.7 | 8.3 | 1.9 | 342.1 |  | 382.3 | 5.4 | 145.1 |
+| au-western-australia | 77.7 | 14.4 | 1.6 | 32.9 |  | 167.8 | 1.8 | 92.1 |
+| be-belgium | 164.7 | 38.3 | 29.2 | 216.7 |  | 0.1 | 0.1 | 202.9 |
 | ca-alberta | 73.2 | 66.3 | 2.6 | 51.2 | 58.3 |  |  | 139.5 |
 | ca-british-columbia | 137.2 | 108.5 | 7.9 | 180.7 | 6.6 |  |  | 245.7 |
 | ca-manitoba | 37.2 | 76.9 | 2.6 | 13.2 | 16.0 |  |  | 114.0 |
@@ -38,7 +38,7 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | ca-quebec-montreal | 24.8 | 12.5 | 1.5 | 13.1 | 9.4 |  |  | 37.3 |
 | ca-saskatchewan | 26.8 | 94.9 | 1.7 | 12.2 | 16.7 |  |  | 121.7 |
 | ca-yukon | 7.5 | 69.9 | 0.6 | 1.3 | 0.7 |  |  | 77.5 |
-| ch-switzerland | 159.4 | 33.2 | 30.2 | 166.6 |  |  |  | 192.6 |
+| ch-switzerland | 159.4 | 33.3 | 29.8 | 184.7 |  | 0.1 | 0.1 | 192.7 |
 | de-baden-wuerttemberg | 196.8 | 35.0 | 31.3 | 196.0 |  |  |  | 231.8 |
 | de-bayern | 221.8 | 70.7 | 65.1 | 238.3 |  |  |  | 292.5 |
 | de-berlin | 32.0 | 20.6 | 12.7 | 37.0 |  |  |  | 52.6 |
@@ -55,7 +55,7 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | de-sachsen-anhalt | 48.8 | 23.2 | 15.3 | 47.7 |  |  |  | 72.0 |
 | de-schleswig-holstein | 48.0 | 20.9 | 12.1 | 65.0 |  |  |  | 68.9 |
 | de-thueringen | 45.8 | 24.7 | 16.6 | 45.6 |  |  |  | 70.5 |
-| dk-denmark | 106.9 | 26.5 | 7.5 | 104.2 |  |  |  | 133.4 |
+| dk-denmark | 107.1 | 26.5 | 7.5 | 119.0 |  | 386.4 | 6.1 | 133.6 |
 | es-andalucia | 94.1 | 17.0 | 9.3 | 77.7 | 0.1 |  |  | 111.1 |
 | es-aragon | 33.1 | 14.4 | 7.1 | 25.3 | 0.1 |  |  | 47.5 |
 | es-asturias | 18.3 | 15.8 | 2.3 | 9.8 | 0.1 |  |  | 34.0 |
@@ -75,9 +75,9 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | es-navarra | 17.9 | 10.9 | 3.6 | 13.5 | 0.1 |  |  | 28.8 |
 | es-pais-vasco | 29.6 | 16.9 | 4.5 | 17.8 | 0.1 |  |  | 46.5 |
 | es-valencia | 55.2 | 12.0 | 4.1 | 55.9 | 0.1 |  |  | 67.2 |
-| fi-finland (its sub-regions put together) | 223.9 | 51.7 | 7.7 |  |  |  |  | 275.6 |
-| fi-finland-centre-and-north | 122.3 | 35.2 | 3.7 | 17.3 |  |  |  | 157.6 |
-| fi-finland-south | 106.2 | 25.1 | 2.1 | 36.5 |  |  |  | 131.3 |
+| fi-finland (its sub-regions put together) | 224.3 | 51.7 | 7.7 |  |  |  |  | 276.0 |
+| fi-finland-centre-and-north | 122.6 | 35.3 | 3.7 | 25.5 |  | 245.2 | 3.4 | 157.8 |
+| fi-finland-south | 106.3 | 25.1 | 2.1 | 50.5 |  | 345.8 | 5.6 | 131.4 |
 | fr-alsace | 35.1 | 18.6 | 8.4 | 51.3 | 10.6 |  |  | 53.6 |
 | fr-aquitaine | 87.3 | 21.1 | 12.4 | 60.1 | 42.9 |  |  | 108.4 |
 | fr-auvergne | 46.0 | 16.8 | 5.8 | 21.3 | 22.1 |  |  | 62.8 |
@@ -100,20 +100,20 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | fr-poitou-charentes | 52.7 | 16.6 | 6.1 | 29.8 | 31.1 |  |  | 69.3 |
 | fr-provence-alpes-cote-d-azur | 87.5 | 20.2 | 11.7 | 88.4 | 32.0 |  |  | 107.7 |
 | fr-rhone-alpes | 148.7 | 23.8 | 17.6 | 88.8 | 43.5 |  |  | 172.5 |
-| gb-england (its sub-regions put together) | 573.1 | 118.3 | 25.4 |  |  |  |  | 691.3 |
-| gb-england-east | 75.5 | 21.7 | 5.6 | 87.8 |  |  |  | 97.2 |
-| gb-england-east-midlands | 57.6 | 15.6 | 3.1 | 63.2 |  |  |  | 73.2 |
-| gb-england-london | 60.1 | 15.5 | 3.6 | 122.7 |  |  |  | 75.6 |
-| gb-england-north-east | 27.7 | 11.4 | 1.0 | 30.9 |  |  |  | 39.1 |
-| gb-england-north-west | 74.5 | 16.9 | 2.8 | 94.7 |  |  |  | 91.4 |
-| gb-england-south-east | 107.9 | 28.0 | 8.5 | 133.9 |  |  |  | 135.9 |
-| gb-england-south-west | 77.1 | 31.7 | 3.7 | 85.9 |  |  |  | 108.8 |
-| gb-england-west-midlands | 59.4 | 17.4 | 2.4 | 73.0 |  |  |  | 76.8 |
-| gb-england-yorkshire-and-the-humber | 63.0 | 16.8 | 3.0 | 69.1 |  |  |  | 79.8 |
-| gb-scotland | 74.5 | 56.7 | 5.3 | 116.3 |  |  |  | 131.2 |
-| gb-wales | 38.9 | 36.8 | 3.1 | 80.9 |  |  |  | 75.8 |
-| ie-ireland-and-northern-ireland | 178.8 | 31.8 | 3.1 | 58.0 |  |  |  | 210.5 |
-| is-iceland | 19.7 | 14.7 | 1.1 | 3.3 |  |  |  | 34.4 |
+| gb-england (its sub-regions put together) | 574.0 | 118.3 | 25.4 |  |  |  |  | 692.3 |
+| gb-england-east | 75.6 | 21.7 | 5.6 | 94.6 |  | 265.9 | 12.1 | 97.3 |
+| gb-england-east-midlands | 57.7 | 15.6 | 3.1 | 68.1 |  | 185.5 | 7.8 | 73.3 |
+| gb-england-london | 60.2 | 15.5 | 3.7 | 134.7 |  | 224.4 | 8.3 | 75.7 |
+| gb-england-north-east | 27.7 | 11.4 | 1.0 | 33.6 |  | 0.1 | 0.1 | 39.1 |
+| gb-england-north-west | 74.7 | 16.9 | 2.8 | 102.8 |  | 269.9 | 6.8 | 91.6 |
+| gb-england-south-east | 107.9 | 28.0 | 8.5 | 144.5 |  | 0.1 | 0.1 | 135.9 |
+| gb-england-south-west | 77.3 | 31.7 | 3.7 | 92.1 |  | 252.0 | 6.2 | 109.0 |
+| gb-england-west-midlands | 59.6 | 17.4 | 2.4 | 78.7 |  | 193.2 | 6.3 | 77.0 |
+| gb-england-yorkshire-and-the-humber | 63.1 | 16.8 | 3.0 | 74.3 |  | 192.6 | 7.6 | 79.9 |
+| gb-scotland | 74.7 | 56.7 | 5.3 | 126.3 |  | 256.9 | 5.7 | 131.3 |
+| gb-wales | 39.1 | 36.8 | 3.1 | 87.7 |  | 137.1 | 3.3 | 75.9 |
+| ie-ireland-and-northern-ireland | 179.0 | 31.8 | 3.1 | 62.7 |  | 336.5 | 6.5 | 210.8 |
+| is-iceland | 20.1 | 14.7 | 1.1 | 3.6 |  | 40.3 | 0.7 | 34.8 |
 | it-centro | 125.6 | 31.5 | 25.4 | 227.6 |  |  |  | 157.1 |
 | it-isole | 74.2 | 22.0 | 11.3 | 135.7 |  |  |  | 96.2 |
 | it-nord-est | 178.5 | 40.3 | 36.7 | 242.2 |  |  |  | 218.9 |
@@ -127,18 +127,18 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | jp-kyushu | 53.9 | 23.0 | 5.3 | 120.7 |  |  |  | 77.0 |
 | jp-shikoku | 18.9 | 11.4 | 2.6 | 54.6 |  |  |  | 30.3 |
 | jp-tohoku | 60.0 | 12.6 | 3.8 | 69.8 |  |  |  | 72.6 |
-| lu-luxembourg | 11.2 | 14.5 | 1.2 | 7.2 |  |  |  | 25.7 |
-| nl-netherlands (its sub-regions put together) | 265.9 | 61.8 | 82.2 |  |  |  |  | 327.7 |
-| nl-netherlands-north-east-south | 164.3 | 40.6 | 83.2 | 99.5 | 0.1 |  |  | 204.9 |
-| nl-netherlands-west | 111.2 | 28.6 | 38.3 | 75.2 | 0.1 |  |  | 139.8 |
-| no-norway (its sub-regions put together) | 247.5 | 87.9 | 0.1 |  |  |  |  | 335.3 |
-| no-norway-east-and-south | 111.3 | 35.1 | 10.8 | 35.9 |  |  |  | 146.4 |
-| no-norway-west-and-north | 138.4 | 60.9 | 39.6 | 28.1 |  |  |  | 199.3 |
-| nz-new-zealand | 96.0 | 120.4 | 25.5 | 551.4 | 0.1 |  |  | 216.4 |
-| pt-portugal | 150.0 | 25.3 | 8.6 | 100.1 |  |  |  | 175.3 |
-| se-sweden (its sub-regions put together) | 238.5 | 38.9 | 26.4 |  |  |  |  | 277.4 |
-| se-sweden-south-and-west | 84.9 | 22.6 | 8.2 | 61.6 |  |  |  | 107.4 |
-| se-sweden-stockholm-and-north | 155.3 | 24.3 | 16.2 | 60.2 |  |  |  | 179.6 |
+| lu-luxembourg | 11.2 | 14.5 | 1.2 | 8.4 |  | 0.1 | 0.1 | 25.8 |
+| nl-netherlands (its sub-regions put together) | 265.9 | 61.9 | 82.2 |  |  |  |  | 327.7 |
+| nl-netherlands-north-east-south | 164.3 | 40.6 | 83.2 | 116.8 | 0.1 | 0.1 | 0.1 | 204.9 |
+| nl-netherlands-west | 111.2 | 28.6 | 38.3 | 90.6 | 0.1 | 0.1 | 0.1 | 139.8 |
+| no-norway (its sub-regions put together) | 247.6 | 87.9 | 0.1 |  |  |  |  | 335.5 |
+| no-norway-east-and-south | 111.4 | 35.1 | 10.8 | 39.1 |  | 320.5 | 4.4 | 146.5 |
+| no-norway-west-and-north | 138.4 | 61.0 | 39.6 | 30.6 |  | 0.1 | 0.1 | 199.4 |
+| nz-new-zealand | 96.2 | 120.4 | 25.5 | 621.1 | 0.1 | 282.6 | 4.8 | 216.6 |
+| pt-portugal | 150.4 | 26.3 | 8.6 | 110.7 |  | 454.7 | 10.8 | 176.7 |
+| se-sweden (its sub-regions put together) | 239.3 | 38.9 | 26.4 |  |  |  |  | 278.2 |
+| se-sweden-south-and-west | 85.1 | 22.6 | 8.2 | 69.3 |  | 344.7 | 5.0 | 107.6 |
+| se-sweden-stockholm-and-north | 155.9 | 24.3 | 16.2 | 66.6 |  | 379.8 | 4.8 | 180.2 |
 | us-alabama | 79.0 | 52.9 | 1.6 | 92.6 | 273.8 |  |  | 131.9 |
 | us-alaska | 99.7 | 166.2 | 2.2 | 12.9 | 27.5 |  |  | 265.9 |
 | us-arizona | 103.2 | 63.1 | 2.1 | 90.2 | 190.5 |  |  | 166.3 |
@@ -211,49 +211,69 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 
 | Pack | Built | Size (MB) | History from | Sources |
 |---|---|---|---|---|
-| at-austria | 2026-11 | 204.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| at-austria-businesses | 2026-11 | 213.2 | 2026-11 | alltheplaces, overture-places |
-| at-austria-extra | 2026-11 | 55.6 | 0080-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| at-austria | 2026-11 | 205.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| at-austria-businesses | 2026-11 | 236.8 | 2026-11 | alltheplaces, overture-places |
+| at-austria-extra | 2026-11 | 55.8 | 0080-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | at-austria-names | 2026-11 | 50.1 | 2026-11 | wikidata-labels |
-| au-australia | 2026-11 | 565.1 | 2026-11 |  |
-| au-australia-extra | 2026-11 | 53.3 | 0001-01 |  |
+| at-austria-navigation | 2026-11 | 547.2 | 2026-11 | osm-navigation |
+| at-austria-services | 2026-11 | 17.5 | 2026-11 | osm-services |
+| au-australia | 2026-11 | 565.6 | 2026-11 |  |
+| au-australia-extra | 2026-11 | 56.4 | 0001-01 |  |
 | au-australia-names | 2026-11 | 11.4 | 2026-11 | wikidata-labels |
-| au-australian-capital-territory | 2026-11 | 10.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
-| au-australian-capital-territory-businesses | 2026-11 | 4.5 | 2026-11 | alltheplaces, overture-places, vic-sands-mcdougall |
+| au-australian-capital-territory | 2026-11 | 10.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
+| au-australian-capital-territory-businesses | 2026-11 | 4.8 | 2026-11 | alltheplaces, overture-places, vic-sands-mcdougall |
 | au-australian-capital-territory-extra | 2026-11 | 1.9 | 1825-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | au-australian-capital-territory-names | 2026-11 | 0.2 | 2026-11 | wikidata-labels |
-| au-new-south-wales | 2026-11 | 159.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
-| au-new-south-wales-businesses | 2026-11 | 92.3 | 1905-01 | alltheplaces, overture-places, vic-sands-mcdougall |
-| au-new-south-wales-extra | 2026-11 | 19.8 | 1788-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| au-australian-capital-territory-navigation | 2026-11 | 37.2 | 2026-11 | osm-navigation |
+| au-australian-capital-territory-services | 2026-11 | 0.5 | 2026-11 | osm-services |
+| au-new-south-wales | 2026-11 | 160.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
+| au-new-south-wales-businesses | 2026-11 | 98.6 | 1905-01 | alltheplaces, overture-places, vic-sands-mcdougall |
+| au-new-south-wales-extra | 2026-11 | 20.8 | 1788-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | au-new-south-wales-names | 2026-11 | 3.6 | 2026-11 | wikidata-labels |
-| au-northern-territory | 2026-11 | 15.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
-| au-northern-territory-businesses | 2026-11 | 3.5 | 2026-11 | alltheplaces, overture-places, vic-sands-mcdougall |
+| au-new-south-wales-navigation | 2026-11 | 358.3 | 2026-11 | osm-navigation |
+| au-new-south-wales-services | 2026-11 | 8.2 | 2026-11 | osm-services |
+| au-northern-territory | 2026-11 | 15.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
+| au-northern-territory-businesses | 2026-11 | 3.8 | 2026-11 | alltheplaces, overture-places, vic-sands-mcdougall |
 | au-northern-territory-extra | 2026-11 | 9.7 | 1827-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | au-northern-territory-names | 2026-11 | 0.5 | 2026-11 | wikidata-labels |
-| au-queensland | 2026-11 | 116.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
-| au-queensland-businesses | 2026-11 | 84.8 | 2026-11 | alltheplaces, overture-places, vic-sands-mcdougall |
-| au-queensland-extra | 2026-11 | 16.3 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| au-northern-territory-navigation | 2026-11 | 17.2 | 2026-11 | osm-navigation |
+| au-northern-territory-services | 2026-11 | 0.4 | 2026-11 | osm-services |
+| au-queensland | 2026-11 | 116.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
+| au-queensland-businesses | 2026-11 | 89.2 | 2026-11 | alltheplaces, overture-places, vic-sands-mcdougall |
+| au-queensland-extra | 2026-11 | 17.1 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | au-queensland-names | 2026-11 | 1.7 | 2026-11 | wikidata-labels |
-| au-south-australia | 2026-11 | 55.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
-| au-south-australia-businesses | 2026-11 | 21.1 | 1905-01 | alltheplaces, overture-places, vic-sands-mcdougall |
-| au-south-australia-extra | 2026-11 | 12.4 | 1836-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| au-queensland-navigation | 2026-11 | 257.8 | 2026-11 | osm-navigation |
+| au-queensland-services | 2026-11 | 3.5 | 2026-11 | osm-services |
+| au-south-australia | 2026-11 | 55.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
+| au-south-australia-businesses | 2026-11 | 22.6 | 1905-01 | alltheplaces, overture-places, vic-sands-mcdougall |
+| au-south-australia-extra | 2026-11 | 12.7 | 1836-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | au-south-australia-names | 2026-11 | 1.3 | 2026-11 | wikidata-labels |
-| au-tasmania | 2026-11 | 24.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
-| au-tasmania-businesses | 2026-11 | 12.6 | 2026-11 | alltheplaces, overture-places, vic-sands-mcdougall |
+| au-south-australia-navigation | 2026-11 | 106.0 | 2026-11 | osm-navigation |
+| au-south-australia-services | 2026-11 | 1.3 | 2026-11 | osm-services |
+| au-tasmania | 2026-11 | 24.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
+| au-tasmania-businesses | 2026-11 | 13.1 | 2026-11 | alltheplaces, overture-places, vic-sands-mcdougall |
 | au-tasmania-extra | 2026-11 | 3.4 | 1803-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | au-tasmania-names | 2026-11 | 0.7 | 2026-11 | wikidata-labels |
-| au-victoria | 2026-11 | 136.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
-| au-victoria-businesses | 2026-11 | 314.9 | 1896-01 | alltheplaces, overture-places, vic-sands-mcdougall |
-| au-victoria-extra | 2026-11 | 7.9 | 1701-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| au-tasmania-navigation | 2026-11 | 27.9 | 2026-11 | osm-navigation |
+| au-tasmania-services | 2026-11 | 0.7 | 2026-11 | osm-services |
+| au-victoria | 2026-11 | 136.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
+| au-victoria-businesses | 2026-11 | 342.1 | 1896-01 | alltheplaces, overture-places, vic-sands-mcdougall |
+| au-victoria-extra | 2026-11 | 8.3 | 1701-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | au-victoria-names | 2026-11 | 1.9 | 2026-11 | wikidata-labels |
-| au-western-australia | 2026-11 | 77.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
-| au-western-australia-businesses | 2026-11 | 30.7 | 2026-11 | alltheplaces, overture-places, vic-sands-mcdougall |
-| au-western-australia-extra | 2026-11 | 13.9 | 1800-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| au-victoria-navigation | 2026-11 | 382.3 | 2026-11 | osm-navigation |
+| au-victoria-services | 2026-11 | 5.4 | 2026-11 | osm-services |
+| au-western-australia | 2026-11 | 77.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, vic-sands-mcdougall, wikidata, wikidata-filming, wikidata-labels |
+| au-western-australia-businesses | 2026-11 | 32.9 | 2026-11 | alltheplaces, overture-places, vic-sands-mcdougall |
+| au-western-australia-extra | 2026-11 | 14.4 | 1800-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | au-western-australia-names | 2026-11 | 1.6 | 2026-11 | wikidata-labels |
-| be-belgium | 2026-11 | 164.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| be-belgium-businesses | 2026-11 | 192.6 | 2026-11 | alltheplaces, overture-places |
-| be-belgium-extra | 2026-11 | 38.1 | 0027-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| be-belgium-names | 2026-11 | 33.9 | 2026-11 | wikidata-labels |
+| au-western-australia-navigation | 2026-11 | 167.8 | 2026-11 | osm-navigation |
+| au-western-australia-services | 2026-11 | 1.8 | 2026-11 | osm-services |
+| be-belgium | 2026-11 | 164.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| be-belgium-businesses | 2026-11 | 216.7 | 2026-11 | alltheplaces, overture-places |
+| be-belgium-extra | 2026-11 | 38.3 | 0027-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| be-belgium-names | 2026-11 | 29.2 | 2026-11 | wikidata-labels |
+| be-belgium-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| be-belgium-services | 2026-11 | 0.1 | 2026-11 |  |
 | ca-alberta | 2026-11 | 73.2 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, edmonton-business-licences, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-alberta-addresses | 2026-11 | 58.3 | 2026-11 | nrn-address-ranges, oda |
 | ca-alberta-businesses | 2026-11 | 51.2 | 2026-11 | alltheplaces, overture-places |
@@ -345,10 +365,12 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | ca-yukon-businesses | 2026-11 | 1.3 | 2026-11 | alltheplaces, overture-places |
 | ca-yukon-extra | 2026-11 | 69.9 | 1868-01 | canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-yukon-names | 2026-11 | 0.6 | 2026-11 | wikidata-labels |
-| ch-switzerland | 2026-11 | 159.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| ch-switzerland-businesses | 2026-11 | 166.6 | 2026-11 | alltheplaces, overture-places |
-| ch-switzerland-extra | 2026-11 | 33.2 | 0005-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| ch-switzerland-names | 2026-11 | 30.2 | 2026-11 | wikidata-labels |
+| ch-switzerland | 2026-11 | 159.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| ch-switzerland-businesses | 2026-11 | 184.7 | 2026-11 | alltheplaces, overture-places |
+| ch-switzerland-extra | 2026-11 | 33.3 | 0005-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| ch-switzerland-names | 2026-11 | 29.8 | 2026-11 | wikidata-labels |
+| ch-switzerland-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| ch-switzerland-services | 2026-11 | 0.1 | 2026-11 |  |
 | de-baden-wuerttemberg | 2026-11 | 196.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | de-baden-wuerttemberg-businesses | 2026-11 | 196.0 | 2026-11 | alltheplaces, overture-places |
 | de-baden-wuerttemberg-extra | 2026-11 | 35.0 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
@@ -413,10 +435,12 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | de-thueringen-businesses | 2026-11 | 45.6 | 2026-11 | alltheplaces, overture-places |
 | de-thueringen-extra | 2026-11 | 24.7 | 0700-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | de-thueringen-names | 2026-11 | 16.6 | 2026-11 | wikidata-labels |
-| dk-denmark | 2026-11 | 106.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| dk-denmark-businesses | 2026-11 | 104.2 | 2026-11 | alltheplaces, overture-places |
+| dk-denmark | 2026-11 | 107.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| dk-denmark-businesses | 2026-11 | 119.0 | 2026-11 | alltheplaces, overture-places |
 | dk-denmark-extra | 2026-11 | 26.5 | 0003-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | dk-denmark-names | 2026-11 | 7.5 | 2026-11 | wikidata-labels |
+| dk-denmark-navigation | 2026-11 | 386.4 | 2026-11 | osm-navigation |
+| dk-denmark-services | 2026-11 | 6.1 | 2026-11 | osm-services |
 | es-andalucia | 2026-11 | 94.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-andalucia-addresses | 2026-11 | 0.1 | 2026-11 |  |
 | es-andalucia-businesses | 2026-11 | 77.7 | 2026-11 | alltheplaces, overture-places |
@@ -512,17 +536,21 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | es-valencia-businesses | 2026-11 | 55.9 | 2026-11 | alltheplaces, overture-places |
 | es-valencia-extra | 2026-11 | 12.0 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-valencia-names | 2026-11 | 4.1 | 2026-11 | wikidata-labels |
-| fi-finland | 2026-11 | 223.9 | 2026-11 |  |
-| fi-finland-centre-and-north | 2026-11 | 122.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fi-finland-centre-and-north-businesses | 2026-11 | 17.3 | 2026-11 | alltheplaces, overture-places |
-| fi-finland-centre-and-north-extra | 2026-11 | 35.2 | 1475-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| fi-finland | 2026-11 | 224.3 | 2026-11 |  |
+| fi-finland-centre-and-north | 2026-11 | 122.6 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fi-finland-centre-and-north-businesses | 2026-11 | 25.5 | 2026-11 | alltheplaces, overture-places |
+| fi-finland-centre-and-north-extra | 2026-11 | 35.3 | 1475-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | fi-finland-centre-and-north-names | 2026-11 | 3.7 | 2026-11 | wikidata-labels |
+| fi-finland-centre-and-north-navigation | 2026-11 | 245.2 | 2026-11 | osm-navigation |
+| fi-finland-centre-and-north-services | 2026-11 | 3.4 | 2026-11 | osm-services |
 | fi-finland-extra | 2026-11 | 51.7 | 1201-01 |  |
 | fi-finland-names | 2026-11 | 7.7 | 2026-11 | wikidata-labels |
-| fi-finland-south | 2026-11 | 106.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fi-finland-south-businesses | 2026-11 | 36.5 | 2026-11 | alltheplaces, overture-places |
+| fi-finland-south | 2026-11 | 106.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fi-finland-south-businesses | 2026-11 | 50.5 | 2026-11 | alltheplaces, overture-places |
 | fi-finland-south-extra | 2026-11 | 25.1 | 1201-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | fi-finland-south-names | 2026-11 | 2.1 | 2026-11 | wikidata-labels |
+| fi-finland-south-navigation | 2026-11 | 345.8 | 2026-11 | osm-navigation |
+| fi-finland-south-services | 2026-11 | 5.6 | 2026-11 | osm-services |
 | fr-alsace | 2026-11 | 35.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | fr-alsace-addresses | 2026-11 | 10.6 | 2026-11 |  |
 | fr-alsace-businesses | 2026-11 | 51.3 | 2026-11 | alltheplaces, overture-places |
@@ -633,61 +661,87 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | fr-rhone-alpes-businesses | 2026-11 | 88.8 | 2026-11 | alltheplaces, overture-places |
 | fr-rhone-alpes-extra | 2026-11 | 23.8 | 0005-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | fr-rhone-alpes-names | 2026-11 | 17.6 | 2026-11 | wikidata-labels |
-| gb-england | 2026-11 | 573.1 | 2026-11 |  |
-| gb-england-east | 2026-11 | 75.5 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| gb-england-east-businesses | 2026-11 | 87.8 | 2001-10 | alltheplaces, fsa-hygiene, overture-places |
+| gb-england | 2026-11 | 574.0 | 2026-11 |  |
+| gb-england-east | 2026-11 | 75.6 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| gb-england-east-businesses | 2026-11 | 94.6 | 2001-10 | alltheplaces, fsa-hygiene, overture-places |
 | gb-england-east-extra | 2026-11 | 21.7 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| gb-england-east-midlands | 2026-11 | 57.6 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| gb-england-east-midlands-businesses | 2026-11 | 63.2 | 2003-01 | alltheplaces, fsa-hygiene, overture-places |
+| gb-england-east-midlands | 2026-11 | 57.7 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| gb-england-east-midlands-businesses | 2026-11 | 68.1 | 2003-01 | alltheplaces, fsa-hygiene, overture-places |
 | gb-england-east-midlands-extra | 2026-11 | 15.6 | 0050-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | gb-england-east-midlands-names | 2026-11 | 3.1 | 2026-11 | wikidata-labels |
+| gb-england-east-midlands-navigation | 2026-11 | 185.5 | 2026-11 | osm-navigation |
+| gb-england-east-midlands-services | 2026-11 | 7.8 | 2026-11 | osm-services |
 | gb-england-east-names | 2026-11 | 5.6 | 2026-11 | wikidata-labels |
+| gb-england-east-navigation | 2026-11 | 265.9 | 2026-11 | osm-navigation |
+| gb-england-east-services | 2026-11 | 12.1 | 2026-11 | osm-services |
 | gb-england-extra | 2026-11 | 118.3 | 0001-01 |  |
-| gb-england-london | 2026-11 | 60.1 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| gb-england-london-businesses | 2026-11 | 122.7 | 2002-07 | alltheplaces, fsa-hygiene, overture-places |
+| gb-england-london | 2026-11 | 60.2 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| gb-england-london-businesses | 2026-11 | 134.7 | 2002-07 | alltheplaces, fsa-hygiene, overture-places |
 | gb-england-london-extra | 2026-11 | 15.5 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| gb-england-london-names | 2026-11 | 3.6 | 2026-11 | wikidata-labels |
+| gb-england-london-names | 2026-11 | 3.7 | 2026-11 | wikidata-labels |
+| gb-england-london-navigation | 2026-11 | 224.4 | 2026-11 | osm-navigation |
+| gb-england-london-services | 2026-11 | 8.3 | 2026-11 | osm-services |
 | gb-england-names | 2026-11 | 25.4 | 2026-11 | wikidata-labels |
-| gb-england-north-east | 2026-11 | 27.7 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| gb-england-north-east-businesses | 2026-11 | 30.9 | 2005-10 | alltheplaces, fsa-hygiene, overture-places |
+| gb-england-north-east | 2026-11 | 27.7 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| gb-england-north-east-businesses | 2026-11 | 33.6 | 2005-10 | alltheplaces, fsa-hygiene, overture-places |
 | gb-england-north-east-extra | 2026-11 | 11.4 | 0085-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | gb-england-north-east-names | 2026-11 | 1.0 | 2026-11 | wikidata-labels |
-| gb-england-north-west | 2026-11 | 74.5 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| gb-england-north-west-businesses | 2026-11 | 94.7 | 2000-01 | alltheplaces, fsa-hygiene, overture-places |
+| gb-england-north-east-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| gb-england-north-east-services | 2026-11 | 0.1 | 2026-11 |  |
+| gb-england-north-west | 2026-11 | 74.7 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| gb-england-north-west-businesses | 2026-11 | 102.8 | 2000-01 | alltheplaces, fsa-hygiene, overture-places |
 | gb-england-north-west-extra | 2026-11 | 16.9 | 0072-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | gb-england-north-west-names | 2026-11 | 2.8 | 2026-11 | wikidata-labels |
-| gb-england-south-east | 2026-11 | 107.9 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| gb-england-south-east-businesses | 2026-11 | 133.9 | 2001-05 | alltheplaces, fsa-hygiene, overture-places |
+| gb-england-north-west-navigation | 2026-11 | 269.9 | 2026-11 | osm-navigation |
+| gb-england-north-west-services | 2026-11 | 6.8 | 2026-11 | osm-services |
+| gb-england-south-east | 2026-11 | 107.9 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| gb-england-south-east-businesses | 2026-11 | 144.5 | 2001-05 | alltheplaces, fsa-hygiene, overture-places |
 | gb-england-south-east-extra | 2026-11 | 28.0 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | gb-england-south-east-names | 2026-11 | 8.5 | 2026-11 | wikidata-labels |
-| gb-england-south-west | 2026-11 | 77.1 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| gb-england-south-west-businesses | 2026-11 | 85.9 | 2002-03 | alltheplaces, fsa-hygiene, overture-places |
+| gb-england-south-east-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| gb-england-south-east-services | 2026-11 | 0.1 | 2026-11 |  |
+| gb-england-south-west | 2026-11 | 77.3 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| gb-england-south-west-businesses | 2026-11 | 92.1 | 2002-03 | alltheplaces, fsa-hygiene, overture-places |
 | gb-england-south-west-extra | 2026-11 | 31.7 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | gb-england-south-west-names | 2026-11 | 3.7 | 2026-11 | wikidata-labels |
-| gb-england-west-midlands | 2026-11 | 59.4 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| gb-england-west-midlands-businesses | 2026-11 | 73.0 | 2000-01 | alltheplaces, fsa-hygiene, overture-places |
+| gb-england-south-west-navigation | 2026-11 | 252.0 | 2026-11 | osm-navigation |
+| gb-england-south-west-services | 2026-11 | 6.2 | 2026-11 | osm-services |
+| gb-england-west-midlands | 2026-11 | 59.6 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| gb-england-west-midlands-businesses | 2026-11 | 78.7 | 2000-01 | alltheplaces, fsa-hygiene, overture-places |
 | gb-england-west-midlands-extra | 2026-11 | 17.4 | 0019-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | gb-england-west-midlands-names | 2026-11 | 2.4 | 2026-11 | wikidata-labels |
-| gb-england-yorkshire-and-the-humber | 2026-11 | 63.0 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| gb-england-yorkshire-and-the-humber-businesses | 2026-11 | 69.1 | 1998-01 | alltheplaces, fsa-hygiene, overture-places |
+| gb-england-west-midlands-navigation | 2026-11 | 193.2 | 2026-11 | osm-navigation |
+| gb-england-west-midlands-services | 2026-11 | 6.3 | 2026-11 | osm-services |
+| gb-england-yorkshire-and-the-humber | 2026-11 | 63.1 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| gb-england-yorkshire-and-the-humber-businesses | 2026-11 | 74.3 | 1998-01 | alltheplaces, fsa-hygiene, overture-places |
 | gb-england-yorkshire-and-the-humber-extra | 2026-11 | 16.8 | 0050-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | gb-england-yorkshire-and-the-humber-names | 2026-11 | 3.0 | 2026-11 | wikidata-labels |
-| gb-scotland | 2026-11 | 74.5 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| gb-scotland-businesses | 2026-11 | 116.3 | 1993-12 | alltheplaces, fsa-hygiene, overture-places |
+| gb-england-yorkshire-and-the-humber-navigation | 2026-11 | 192.6 | 2026-11 | osm-navigation |
+| gb-england-yorkshire-and-the-humber-services | 2026-11 | 7.6 | 2026-11 | osm-services |
+| gb-scotland | 2026-11 | 74.7 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| gb-scotland-businesses | 2026-11 | 126.3 | 1993-12 | alltheplaces, fsa-hygiene, overture-places |
 | gb-scotland-extra | 2026-11 | 56.7 | 0060-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | gb-scotland-names | 2026-11 | 5.3 | 2026-11 | wikidata-labels |
-| gb-wales | 2026-11 | 38.9 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| gb-wales-businesses | 2026-11 | 80.9 | 2000-01 | alltheplaces, fsa-hygiene, overture-places |
+| gb-scotland-navigation | 2026-11 | 256.9 | 2026-11 | osm-navigation |
+| gb-scotland-services | 2026-11 | 5.7 | 2026-11 | osm-services |
+| gb-wales | 2026-11 | 39.1 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| gb-wales-businesses | 2026-11 | 87.7 | 2000-01 | alltheplaces, fsa-hygiene, overture-places |
 | gb-wales-extra | 2026-11 | 36.8 | 0017-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | gb-wales-names | 2026-11 | 3.1 | 2026-11 | wikidata-labels |
-| ie-ireland-and-northern-ireland | 2026-11 | 178.8 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| ie-ireland-and-northern-ireland-businesses | 2026-11 | 58.0 | 2005-03 | alltheplaces, fsa-hygiene, overture-places |
+| gb-wales-navigation | 2026-11 | 137.1 | 2026-11 | osm-navigation |
+| gb-wales-services | 2026-11 | 3.3 | 2026-11 | osm-services |
+| ie-ireland-and-northern-ireland | 2026-11 | 179.0 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| ie-ireland-and-northern-ireland-businesses | 2026-11 | 62.7 | 2005-03 | alltheplaces, fsa-hygiene, overture-places |
 | ie-ireland-and-northern-ireland-extra | 2026-11 | 31.8 | 0050-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | ie-ireland-and-northern-ireland-names | 2026-11 | 3.1 | 2026-11 | wikidata-labels |
-| is-iceland | 2026-11 | 19.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| is-iceland-businesses | 2026-11 | 3.3 | 2026-11 | alltheplaces, overture-places |
+| ie-ireland-and-northern-ireland-navigation | 2026-11 | 336.5 | 2026-11 | osm-navigation |
+| ie-ireland-and-northern-ireland-services | 2026-11 | 6.5 | 2026-11 | osm-services |
+| is-iceland | 2026-11 | 20.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| is-iceland-businesses | 2026-11 | 3.6 | 2026-11 | alltheplaces, overture-places |
 | is-iceland-extra | 2026-11 | 14.7 | 0930-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | is-iceland-names | 2026-11 | 1.1 | 2026-11 | wikidata-labels |
+| is-iceland-navigation | 2026-11 | 40.3 | 2026-11 | osm-navigation |
+| is-iceland-services | 2026-11 | 0.7 | 2026-11 | osm-services |
 | it-centro | 2026-11 | 125.6 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | it-centro-businesses | 2026-11 | 227.6 | 2026-11 | alltheplaces, overture-places |
 | it-centro-extra | 2026-11 | 31.5 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
@@ -740,54 +794,72 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | jp-tohoku-businesses | 2026-11 | 69.8 | 2026-11 | alltheplaces, overture-places |
 | jp-tohoku-extra | 2026-11 | 12.6 | 0110-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | jp-tohoku-names | 2026-11 | 3.8 | 2026-11 | wikidata-labels |
-| lu-luxembourg | 2026-11 | 11.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| lu-luxembourg-businesses | 2026-11 | 7.2 | 2026-11 | alltheplaces, overture-places |
+| lu-luxembourg | 2026-11 | 11.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| lu-luxembourg-businesses | 2026-11 | 8.4 | 2026-11 | alltheplaces, overture-places |
 | lu-luxembourg-extra | 2026-11 | 14.5 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | lu-luxembourg-names | 2026-11 | 1.2 | 2026-11 | wikidata-labels |
+| lu-luxembourg-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| lu-luxembourg-services | 2026-11 | 0.1 | 2026-11 |  |
 | nl-netherlands | 2026-11 | 265.9 | 2026-11 |  |
-| nl-netherlands-extra | 2026-11 | 61.8 | 0020-01 |  |
+| nl-netherlands-extra | 2026-11 | 61.9 | 0020-01 |  |
 | nl-netherlands-names | 2026-11 | 82.2 | 2026-11 | wikidata-labels |
-| nl-netherlands-north-east-south | 2026-11 | 164.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| nl-netherlands-north-east-south | 2026-11 | 164.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | nl-netherlands-north-east-south-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| nl-netherlands-north-east-south-businesses | 2026-11 | 99.5 | 2026-11 | alltheplaces, overture-places |
+| nl-netherlands-north-east-south-businesses | 2026-11 | 116.8 | 2026-11 | alltheplaces, overture-places |
 | nl-netherlands-north-east-south-extra | 2026-11 | 40.6 | 0027-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | nl-netherlands-north-east-south-names | 2026-11 | 83.2 | 2026-11 | wikidata-labels |
-| nl-netherlands-west | 2026-11 | 111.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| nl-netherlands-north-east-south-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| nl-netherlands-north-east-south-services | 2026-11 | 0.1 | 2026-11 |  |
+| nl-netherlands-west | 2026-11 | 111.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | nl-netherlands-west-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| nl-netherlands-west-businesses | 2026-11 | 75.2 | 2026-11 | alltheplaces, overture-places |
+| nl-netherlands-west-businesses | 2026-11 | 90.6 | 2026-11 | alltheplaces, overture-places |
 | nl-netherlands-west-extra | 2026-11 | 28.6 | 0020-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | nl-netherlands-west-names | 2026-11 | 38.3 | 2026-11 | wikidata-labels |
-| no-norway | 2026-11 | 247.5 | 2026-11 |  |
-| no-norway-east-and-south | 2026-11 | 111.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| no-norway-east-and-south-businesses | 2026-11 | 35.9 | 2026-11 | alltheplaces, overture-places |
+| nl-netherlands-west-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| nl-netherlands-west-services | 2026-11 | 0.1 | 2026-11 |  |
+| no-norway | 2026-11 | 247.6 | 2026-11 |  |
+| no-norway-east-and-south | 2026-11 | 111.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| no-norway-east-and-south-businesses | 2026-11 | 39.1 | 2026-11 | alltheplaces, overture-places |
 | no-norway-east-and-south-extra | 2026-11 | 35.1 | 0700-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | no-norway-east-and-south-names | 2026-11 | 10.8 | 2026-11 | wikidata-labels |
+| no-norway-east-and-south-navigation | 2026-11 | 320.5 | 2026-11 | osm-navigation |
+| no-norway-east-and-south-services | 2026-11 | 4.4 | 2026-11 | osm-services |
 | no-norway-extra | 2026-11 | 87.9 | 0600-01 |  |
 | no-norway-names | 2026-11 | 0.1 | 2026-11 |  |
-| no-norway-west-and-north | 2026-11 | 138.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| no-norway-west-and-north-businesses | 2026-11 | 28.1 | 2026-11 | alltheplaces, overture-places |
-| no-norway-west-and-north-extra | 2026-11 | 60.9 | 0600-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| no-norway-west-and-north | 2026-11 | 138.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| no-norway-west-and-north-businesses | 2026-11 | 30.6 | 2026-11 | alltheplaces, overture-places |
+| no-norway-west-and-north-extra | 2026-11 | 61.0 | 0600-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | no-norway-west-and-north-names | 2026-11 | 39.6 | 2026-11 | wikidata-labels |
-| nz-new-zealand | 2026-11 | 96.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| no-norway-west-and-north-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| no-norway-west-and-north-services | 2026-11 | 0.1 | 2026-11 |  |
+| nz-new-zealand | 2026-11 | 96.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata-filming, wikidata-labels |
 | nz-new-zealand-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| nz-new-zealand-businesses | 2026-11 | 551.4 | 2026-11 | alltheplaces, overture-places |
+| nz-new-zealand-businesses | 2026-11 | 621.1 | 2026-11 | alltheplaces, overture-places |
 | nz-new-zealand-extra | 2026-11 | 120.4 | 2026-11 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
 | nz-new-zealand-names | 2026-11 | 25.5 | 2026-11 | wikidata-labels |
-| pt-portugal | 2026-11 | 150.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| pt-portugal-businesses | 2026-11 | 100.1 | 2026-11 | alltheplaces, overture-places |
-| pt-portugal-extra | 2026-11 | 25.3 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| nz-new-zealand-navigation | 2026-11 | 282.6 | 2026-11 | osm-navigation |
+| nz-new-zealand-services | 2026-11 | 4.8 | 2026-11 | osm-services |
+| pt-portugal | 2026-11 | 150.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| pt-portugal-businesses | 2026-11 | 110.7 | 2026-11 | alltheplaces, overture-places |
+| pt-portugal-extra | 2026-11 | 26.3 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | pt-portugal-names | 2026-11 | 8.6 | 2026-11 | wikidata-labels |
-| se-sweden | 2026-11 | 238.5 | 2026-11 |  |
+| pt-portugal-navigation | 2026-11 | 454.7 | 2026-11 | osm-navigation |
+| pt-portugal-services | 2026-11 | 10.8 | 2026-11 | osm-services |
+| se-sweden | 2026-11 | 239.3 | 2026-11 |  |
 | se-sweden-extra | 2026-11 | 38.9 | 0003-01 |  |
 | se-sweden-names | 2026-11 | 26.4 | 2026-11 | wikidata-labels |
-| se-sweden-south-and-west | 2026-11 | 84.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| se-sweden-south-and-west-businesses | 2026-11 | 61.6 | 2026-11 | alltheplaces, overture-places |
+| se-sweden-south-and-west | 2026-11 | 85.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| se-sweden-south-and-west-businesses | 2026-11 | 69.3 | 2026-11 | alltheplaces, overture-places |
 | se-sweden-south-and-west-extra | 2026-11 | 22.6 | 0003-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | se-sweden-south-and-west-names | 2026-11 | 8.2 | 2026-11 | wikidata-labels |
-| se-sweden-stockholm-and-north | 2026-11 | 155.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| se-sweden-stockholm-and-north-businesses | 2026-11 | 60.2 | 2026-11 | alltheplaces, overture-places |
+| se-sweden-south-and-west-navigation | 2026-11 | 344.7 | 2026-11 | osm-navigation |
+| se-sweden-south-and-west-services | 2026-11 | 5.0 | 2026-11 | osm-services |
+| se-sweden-stockholm-and-north | 2026-11 | 155.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| se-sweden-stockholm-and-north-businesses | 2026-11 | 66.6 | 2026-11 | alltheplaces, overture-places |
 | se-sweden-stockholm-and-north-extra | 2026-11 | 24.3 | 0600-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | se-sweden-stockholm-and-north-names | 2026-11 | 16.2 | 2026-11 | wikidata-labels |
+| se-sweden-stockholm-and-north-navigation | 2026-11 | 379.8 | 2026-11 | osm-navigation |
+| se-sweden-stockholm-and-north-services | 2026-11 | 4.8 | 2026-11 | osm-services |
 | us-alabama | 2026-11 | 79.0 | 2026-11 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, osm, ourairports, overture-places, padus, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, va-national-cemeteries, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
 | us-alabama-addresses | 2026-11 | 273.8 | 2026-11 | nad, tiger-addrfeat |
 | us-alabama-businesses | 2026-11 | 92.6 | 1848-01 | alltheplaces, fdic-branches, irs-exempt-organizations, overture-places |
@@ -1124,56 +1196,62 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 
 | Pack | Source | Status | Rows or reason |
 |---|---|---|---|
-| at-austria | osm | ok | 2026-11-10T21:21:39Z |
-| at-austria-businesses | alltheplaces | ok | 77077 |
+| at-austria | osm | ok | 2026-11-22T21:20:48Z |
+| at-austria-businesses | alltheplaces | ok | 124719 |
 | at-austria-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| at-austria-businesses | overture-places | ok | 762381 |
+| at-austria-businesses | overture-places | ok | 767199 |
 | at-austria-extra | geonames | ok | 14358 |
 | at-austria-extra | natural-earth-lines | ok | 0 in this region |
 | at-austria-extra | natural-earth-regions | ok | 3 |
 | at-austria-extra | ourairports | ok | 201 |
-| at-austria-extra | wikidata | ok | 217900 |
-| at-austria-extra | wikidata-filming | ok | 328 |
-| at-austria-names | wikidata-labels | ok | 328579 |
+| at-austria-extra | wikidata | ok | 218189 |
+| at-austria-extra | wikidata-filming | ok | 326 |
+| at-austria-names | wikidata-labels | ok | 329075 |
+| at-austria-navigation | osm-navigation | ok | 1801083 |
+| at-austria-services | osm-services | ok | 154107 |
 | au-australia | osm | ok | 0 |
 | au-australia-extra | au-gazetteer | skipped | needs a hand-supplied file in inputs/au-gazetteer |
 | au-australia-extra | geonames | ok | 70059 |
 | au-australia-extra | natural-earth-lines | ok | 0 in this region |
 | au-australia-extra | natural-earth-regions | ok | 72 |
 | au-australia-extra | ourairports | ok | 2826 |
-| au-australia-extra | wikidata | ok | 229948 |
-| au-australia-extra | wikidata-filming | ok | 230 |
+| au-australia-extra | wikidata | ok | 229853 |
+| au-australia-extra | wikidata-filming | ok | 228 |
 | au-australia-names | wikidata-labels | ok | 68265 |
 | au-australian-capital-territory | osm | ok |  |
-| au-australian-capital-territory-businesses | alltheplaces | ok | 1438 |
+| au-australian-capital-territory-businesses | alltheplaces | ok | 1416 |
 | au-australian-capital-territory-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| au-australian-capital-territory-businesses | overture-places | ok | 15372 |
+| au-australian-capital-territory-businesses | overture-places | ok | 15476 |
 | au-australian-capital-territory-businesses | vic-sands-mcdougall | ok | 0 in this region |
 | au-australian-capital-territory-extra | au-gazetteer | skipped | needs a hand-supplied file in inputs/au-gazetteer |
 | au-australian-capital-territory-extra | geonames | ok | 523 |
 | au-australian-capital-territory-extra | natural-earth-lines | ok | 0 in this region |
 | au-australian-capital-territory-extra | natural-earth-regions | ok | 3 |
 | au-australian-capital-territory-extra | ourairports | ok | 10 |
-| au-australian-capital-territory-extra | wikidata | ok | 1594 |
+| au-australian-capital-territory-extra | wikidata | ok | 1595 |
 | au-australian-capital-territory-extra | wikidata-filming | ok | 3 |
-| au-australian-capital-territory-names | wikidata-labels | ok | 535 |
+| au-australian-capital-territory-names | wikidata-labels | ok | 536 |
+| au-australian-capital-territory-navigation | osm-navigation | ok | 114842 |
+| au-australian-capital-territory-services | osm-services | ok | 3354 |
 | au-new-south-wales | osm | ok |  |
-| au-new-south-wales-businesses | alltheplaces | ok | 28784 |
+| au-new-south-wales-businesses | alltheplaces | ok | 30376 |
 | au-new-south-wales-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| au-new-south-wales-businesses | overture-places | ok | 550119 |
+| au-new-south-wales-businesses | overture-places | ok | 555173 |
 | au-new-south-wales-businesses | vic-sands-mcdougall | ok | 6661 |
 | au-new-south-wales-extra | au-gazetteer | skipped | needs a hand-supplied file in inputs/au-gazetteer |
 | au-new-south-wales-extra | geonames | ok | 20215 |
 | au-new-south-wales-extra | natural-earth-lines | ok | 0 in this region |
 | au-new-south-wales-extra | natural-earth-regions | ok | 9 |
 | au-new-south-wales-extra | ourairports | ok | 610 |
-| au-new-south-wales-extra | wikidata | ok | 77076 |
-| au-new-south-wales-extra | wikidata-filming | ok | 98 |
+| au-new-south-wales-extra | wikidata | ok | 77059 |
+| au-new-south-wales-extra | wikidata-filming | ok | 99 |
 | au-new-south-wales-names | wikidata-labels | ok | 18811 |
+| au-new-south-wales-navigation | osm-navigation | ok | 1087443 |
+| au-new-south-wales-services | osm-services | ok | 72949 |
 | au-northern-territory | osm | ok |  |
-| au-northern-territory-businesses | alltheplaces | ok | 1839 |
+| au-northern-territory-businesses | alltheplaces | ok | 1702 |
 | au-northern-territory-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| au-northern-territory-businesses | overture-places | ok | 11829 |
+| au-northern-territory-businesses | overture-places | ok | 11915 |
 | au-northern-territory-businesses | vic-sands-mcdougall | ok | 0 in this region |
 | au-northern-territory-extra | au-gazetteer | skipped | needs a hand-supplied file in inputs/au-gazetteer |
 | au-northern-territory-extra | geonames | ok | 3209 |
@@ -1183,82 +1261,96 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | au-northern-territory-extra | wikidata | ok | 8290 |
 | au-northern-territory-extra | wikidata-filming | ok | 4 |
 | au-northern-territory-names | wikidata-labels | ok | 2648 |
+| au-northern-territory-navigation | osm-navigation | ok | 36475 |
+| au-northern-territory-services | osm-services | ok | 2015 |
 | au-queensland | osm | ok |  |
-| au-queensland-businesses | alltheplaces | ok | 115999 |
+| au-queensland-businesses | alltheplaces | ok | 116593 |
 | au-queensland-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| au-queensland-businesses | overture-places | ok | 238336 |
+| au-queensland-businesses | overture-places | ok | 240244 |
 | au-queensland-businesses | vic-sands-mcdougall | ok | 0 in this region |
 | au-queensland-extra | au-gazetteer | skipped | needs a hand-supplied file in inputs/au-gazetteer |
 | au-queensland-extra | geonames | ok | 10784 |
 | au-queensland-extra | natural-earth-lines | ok | 1 |
 | au-queensland-extra | natural-earth-regions | ok | 18 |
 | au-queensland-extra | ourairports | ok | 742 |
-| au-queensland-extra | wikidata | ok | 39130 |
-| au-queensland-extra | wikidata-filming | ok | 39 |
-| au-queensland-names | wikidata-labels | ok | 9616 |
+| au-queensland-extra | wikidata | ok | 39108 |
+| au-queensland-extra | wikidata-filming | ok | 37 |
+| au-queensland-names | wikidata-labels | ok | 9609 |
+| au-queensland-navigation | osm-navigation | ok | 763589 |
+| au-queensland-services | osm-services | ok | 30278 |
 | au-south-australia | osm | ok |  |
-| au-south-australia-businesses | alltheplaces | ok | 7632 |
+| au-south-australia-businesses | alltheplaces | ok | 7001 |
 | au-south-australia-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| au-south-australia-businesses | overture-places | ok | 75462 |
+| au-south-australia-businesses | overture-places | ok | 76077 |
 | au-south-australia-businesses | vic-sands-mcdougall | ok | 47 |
 | au-south-australia-extra | au-gazetteer | skipped | needs a hand-supplied file in inputs/au-gazetteer |
 | au-south-australia-extra | geonames | ok | 8791 |
 | au-south-australia-extra | natural-earth-lines | ok | 0 in this region |
 | au-south-australia-extra | natural-earth-regions | ok | 10 |
 | au-south-australia-extra | ourairports | ok | 285 |
-| au-south-australia-extra | wikidata | ok | 20698 |
+| au-south-australia-extra | wikidata | ok | 20699 |
 | au-south-australia-extra | wikidata-filming | ok | 16 |
-| au-south-australia-names | wikidata-labels | ok | 8642 |
+| au-south-australia-names | wikidata-labels | ok | 8643 |
+| au-south-australia-navigation | osm-navigation | ok | 295071 |
+| au-south-australia-services | osm-services | ok | 9260 |
 | au-tasmania | osm | ok |  |
-| au-tasmania-businesses | alltheplaces | ok | 21391 |
+| au-tasmania-businesses | alltheplaces | ok | 21443 |
 | au-tasmania-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| au-tasmania-businesses | overture-places | ok | 27773 |
+| au-tasmania-businesses | overture-places | ok | 28020 |
 | au-tasmania-businesses | vic-sands-mcdougall | ok | 0 in this region |
 | au-tasmania-extra | au-gazetteer | skipped | needs a hand-supplied file in inputs/au-gazetteer |
 | au-tasmania-extra | geonames | ok | 6550 |
 | au-tasmania-extra | natural-earth-lines | ok | 0 in this region |
 | au-tasmania-extra | natural-earth-regions | ok | 3 |
 | au-tasmania-extra | ourairports | ok | 74 |
-| au-tasmania-extra | wikidata | ok | 13428 |
-| au-tasmania-extra | wikidata-filming | ok | 2 |
-| au-tasmania-names | wikidata-labels | ok | 4160 |
+| au-tasmania-extra | wikidata | ok | 13379 |
+| au-tasmania-extra | wikidata-filming | ok | 1 |
+| au-tasmania-names | wikidata-labels | ok | 4161 |
+| au-tasmania-navigation | osm-navigation | ok | 73937 |
+| au-tasmania-services | osm-services | ok | 4245 |
 | au-victoria | osm | ok |  |
-| au-victoria-businesses | alltheplaces | ok | 403073 |
+| au-victoria-businesses | alltheplaces | ok | 484943 |
 | au-victoria-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| au-victoria-businesses | overture-places | ok | 297063 |
+| au-victoria-businesses | overture-places | ok | 300052 |
 | au-victoria-businesses | vic-sands-mcdougall | ok | 511285 |
 | au-victoria-extra | au-gazetteer | skipped | needs a hand-supplied file in inputs/au-gazetteer |
 | au-victoria-extra | geonames | ok | 9051 |
 | au-victoria-extra | natural-earth-lines | ok | 0 in this region |
 | au-victoria-extra | natural-earth-regions | ok | 5 |
 | au-victoria-extra | ourairports | ok | 252 |
-| au-victoria-extra | wikidata | ok | 38286 |
+| au-victoria-extra | wikidata | ok | 38246 |
 | au-victoria-extra | wikidata-filming | ok | 54 |
-| au-victoria-names | wikidata-labels | ok | 10034 |
+| au-victoria-names | wikidata-labels | ok | 10036 |
+| au-victoria-navigation | osm-navigation | ok | 1109265 |
+| au-victoria-services | osm-services | ok | 46174 |
 | au-western-australia | osm | ok |  |
-| au-western-australia-businesses | alltheplaces | ok | 9811 |
+| au-western-australia-businesses | alltheplaces | ok | 9437 |
 | au-western-australia-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| au-western-australia-businesses | overture-places | ok | 111557 |
+| au-western-australia-businesses | overture-places | ok | 112547 |
 | au-western-australia-businesses | vic-sands-mcdougall | ok | 0 in this region |
 | au-western-australia-extra | au-gazetteer | skipped | needs a hand-supplied file in inputs/au-gazetteer |
 | au-western-australia-extra | geonames | ok | 10936 |
 | au-western-australia-extra | natural-earth-lines | ok | 1 |
 | au-western-australia-extra | natural-earth-regions | ok | 12 |
 | au-western-australia-extra | ourairports | ok | 520 |
-| au-western-australia-extra | wikidata | ok | 31446 |
+| au-western-australia-extra | wikidata | ok | 31477 |
 | au-western-australia-extra | wikidata-filming | ok | 14 |
-| au-western-australia-names | wikidata-labels | ok | 9447 |
-| be-belgium | osm | ok | 2026-11-10T21:21:39Z |
-| be-belgium-businesses | alltheplaces | ok | 67006 |
+| au-western-australia-names | wikidata-labels | ok | 9445 |
+| au-western-australia-navigation | osm-navigation | ok | 464417 |
+| au-western-australia-services | osm-services | ok | 13976 |
+| be-belgium | osm | failed | HTTP Error 404: Not Found |
+| be-belgium-businesses | alltheplaces | ok | 121652 |
 | be-belgium-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| be-belgium-businesses | overture-places | ok | 702355 |
+| be-belgium-businesses | overture-places | ok | 654272 |
 | be-belgium-extra | geonames | ok | 1609 |
 | be-belgium-extra | natural-earth-lines | ok | 0 in this region |
 | be-belgium-extra | natural-earth-regions | ok | 2 |
 | be-belgium-extra | ourairports | ok | 215 |
-| be-belgium-extra | wikidata | ok | 138174 |
-| be-belgium-extra | wikidata-filming | ok | 130 |
-| be-belgium-names | wikidata-labels | ok | 175010 |
+| be-belgium-extra | wikidata | ok | 117392 |
+| be-belgium-extra | wikidata-filming | ok | 127 |
+| be-belgium-names | wikidata-labels | ok | 150226 |
+| be-belgium-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| be-belgium-services | osm-services | failed | HTTP Error 404: Not Found |
 | ca-alberta | osm | ok | 2026-11-10T21:21:39Z |
 | ca-alberta-addresses | nrn-address-ranges | ok | 192832 |
 | ca-alberta-addresses | oda | ok | 1776750 |
@@ -1968,17 +2060,19 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-yukon-extra | wikidata | ok | 6154 |
 | ca-yukon-extra | wikidata-filming | ok | 1 |
 | ca-yukon-names | wikidata-labels | ok | 4050 |
-| ch-switzerland | osm | ok | 2026-11-10T21:21:39Z |
-| ch-switzerland-businesses | alltheplaces | ok | 131440 |
+| ch-switzerland | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
+| ch-switzerland-businesses | alltheplaces | ok | 166876 |
 | ch-switzerland-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ch-switzerland-businesses | overture-places | ok | 532451 |
+| ch-switzerland-businesses | overture-places | ok | 530442 |
 | ch-switzerland-extra | geonames | ok | 16025 |
 | ch-switzerland-extra | natural-earth-lines | ok | 0 in this region |
 | ch-switzerland-extra | natural-earth-regions | ok | 3 |
 | ch-switzerland-extra | ourairports | ok | 133 |
-| ch-switzerland-extra | wikidata | ok | 95887 |
-| ch-switzerland-extra | wikidata-filming | ok | 151 |
-| ch-switzerland-names | wikidata-labels | ok | 159001 |
+| ch-switzerland-extra | wikidata | ok | 94895 |
+| ch-switzerland-extra | wikidata-filming | ok | 150 |
+| ch-switzerland-names | wikidata-labels | ok | 157215 |
+| ch-switzerland-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| ch-switzerland-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
 | de-baden-wuerttemberg | osm | ok | 2026-11-10T21:21:39Z |
 | de-baden-wuerttemberg-businesses | alltheplaces | ok | 93951 |
 | de-baden-wuerttemberg-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
@@ -2155,17 +2249,19 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | de-thueringen-extra | wikidata | ok | 56637 |
 | de-thueringen-extra | wikidata-filming | ok | 23 |
 | de-thueringen-names | wikidata-labels | ok | 96071 |
-| dk-denmark | osm | ok | 2026-11-10T21:21:39Z |
-| dk-denmark-businesses | alltheplaces | ok | 22370 |
+| dk-denmark | osm | ok | 2026-11-22T21:20:48Z |
+| dk-denmark-businesses | alltheplaces | ok | 53505 |
 | dk-denmark-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| dk-denmark-businesses | overture-places | ok | 392170 |
-| dk-denmark-extra | geonames | ok | 2486 |
+| dk-denmark-businesses | overture-places | ok | 393733 |
+| dk-denmark-extra | geonames | ok | 2500 |
 | dk-denmark-extra | natural-earth-lines | ok | 0 in this region |
 | dk-denmark-extra | natural-earth-regions | ok | 4 |
 | dk-denmark-extra | ourairports | ok | 132 |
-| dk-denmark-extra | wikidata | ok | 64320 |
+| dk-denmark-extra | wikidata | ok | 64330 |
 | dk-denmark-extra | wikidata-filming | ok | 166 |
-| dk-denmark-names | wikidata-labels | ok | 41746 |
+| dk-denmark-names | wikidata-labels | ok | 41754 |
+| dk-denmark-navigation | osm-navigation | ok | 1121770 |
+| dk-denmark-services | osm-services | ok | 60486 |
 | es-andalucia | osm | ok | 2026-11-10T21:21:39Z |
 | es-andalucia-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
 | es-andalucia-businesses | alltheplaces | ok | 14438 |
@@ -2396,34 +2492,38 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | es-valencia-names | wikidata-labels | ok | 23223 |
 | fi-finland | osm | ok | 0 |
 | fi-finland-centre-and-north | osm | ok |  |
-| fi-finland-centre-and-north-businesses | alltheplaces | ok | 7475 |
+| fi-finland-centre-and-north-businesses | alltheplaces | ok | 36313 |
 | fi-finland-centre-and-north-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fi-finland-centre-and-north-businesses | overture-places | ok | 106172 |
+| fi-finland-centre-and-north-businesses | overture-places | ok | 107791 |
 | fi-finland-centre-and-north-extra | geonames | ok | 123302 |
 | fi-finland-centre-and-north-extra | natural-earth-lines | ok | 1 |
 | fi-finland-centre-and-north-extra | natural-earth-regions | ok | 7 |
 | fi-finland-centre-and-north-extra | ourairports | ok | 75 |
-| fi-finland-centre-and-north-extra | wikidata | ok | 86686 |
-| fi-finland-centre-and-north-extra | wikidata-filming | ok | 168 |
-| fi-finland-centre-and-north-names | wikidata-labels | ok | 26193 |
+| fi-finland-centre-and-north-extra | wikidata | ok | 86714 |
+| fi-finland-centre-and-north-extra | wikidata-filming | ok | 166 |
+| fi-finland-centre-and-north-names | wikidata-labels | ok | 26207 |
+| fi-finland-centre-and-north-navigation | osm-navigation | ok | 653615 |
+| fi-finland-centre-and-north-services | osm-services | ok | 26713 |
 | fi-finland-extra | geonames | ok | 193385 |
 | fi-finland-extra | natural-earth-lines | ok | 0 in this region |
 | fi-finland-extra | natural-earth-regions | ok | 13 |
 | fi-finland-extra | ourairports | ok | 127 |
-| fi-finland-extra | wikidata | ok | 143288 |
-| fi-finland-extra | wikidata-filming | ok | 360 |
+| fi-finland-extra | wikidata | ok | 143330 |
+| fi-finland-extra | wikidata-filming | ok | 357 |
 | fi-finland-names | wikidata-labels | ok | 50697 |
 | fi-finland-south | osm | ok |  |
-| fi-finland-south-businesses | alltheplaces | ok | 25447 |
+| fi-finland-south-businesses | alltheplaces | ok | 70170 |
 | fi-finland-south-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fi-finland-south-businesses | overture-places | ok | 140597 |
+| fi-finland-south-businesses | overture-places | ok | 141875 |
 | fi-finland-south-extra | geonames | ok | 70083 |
 | fi-finland-south-extra | natural-earth-lines | ok | 0 in this region |
 | fi-finland-south-extra | natural-earth-regions | ok | 6 |
 | fi-finland-south-extra | ourairports | ok | 52 |
-| fi-finland-south-extra | wikidata | ok | 56602 |
-| fi-finland-south-extra | wikidata-filming | ok | 192 |
-| fi-finland-south-names | wikidata-labels | ok | 11617 |
+| fi-finland-south-extra | wikidata | ok | 56616 |
+| fi-finland-south-extra | wikidata-filming | ok | 191 |
+| fi-finland-south-names | wikidata-labels | ok | 11627 |
+| fi-finland-south-navigation | osm-navigation | ok | 1057885 |
+| fi-finland-south-services | osm-services | ok | 45123 |
 | fr-alsace | osm | ok | 2026-11-10T21:21:39Z |
 | fr-alsace-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
 | fr-alsace-businesses | alltheplaces | ok | 29392 |
@@ -2692,177 +2792,203 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | gb-england | osm | ok | 0 |
 | gb-england-east | os-open-names | skipped | needs a hand-supplied file in inputs/os-open-names |
 | gb-england-east | osm | ok |  |
-| gb-england-east-businesses | alltheplaces | ok | 28508 |
-| gb-england-east-businesses | fsa-hygiene | ok | 38337 |
+| gb-england-east-businesses | alltheplaces | ok | 38917 |
+| gb-england-east-businesses | fsa-hygiene | ok | 38315 |
 | gb-england-east-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| gb-england-east-businesses | overture-places | ok | 678087 |
+| gb-england-east-businesses | overture-places | ok | 682557 |
 | gb-england-east-extra | geonames | ok | 2405 |
 | gb-england-east-extra | natural-earth-lines | ok | 0 in this region |
 | gb-england-east-extra | natural-earth-regions | ok | 3 |
 | gb-england-east-extra | ourairports | ok | 293 |
-| gb-england-east-extra | wikidata | ok | 138598 |
-| gb-england-east-extra | wikidata-filming | ok | 281 |
+| gb-england-east-extra | wikidata | ok | 138748 |
+| gb-england-east-extra | wikidata-filming | ok | 271 |
 | gb-england-east-midlands | os-open-names | skipped | needs a hand-supplied file in inputs/os-open-names |
 | gb-england-east-midlands | osm | ok |  |
-| gb-england-east-midlands-businesses | alltheplaces | ok | 17028 |
-| gb-england-east-midlands-businesses | fsa-hygiene | ok | 27643 |
+| gb-england-east-midlands-businesses | alltheplaces | ok | 22806 |
+| gb-england-east-midlands-businesses | fsa-hygiene | ok | 27627 |
 | gb-england-east-midlands-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| gb-england-east-midlands-businesses | overture-places | ok | 482650 |
+| gb-england-east-midlands-businesses | overture-places | ok | 486302 |
 | gb-england-east-midlands-extra | geonames | ok | 1812 |
 | gb-england-east-midlands-extra | natural-earth-lines | ok | 0 in this region |
 | gb-england-east-midlands-extra | natural-earth-regions | ok | 3 |
 | gb-england-east-midlands-extra | ourairports | ok | 218 |
-| gb-england-east-midlands-extra | wikidata | ok | 97970 |
+| gb-england-east-midlands-extra | wikidata | ok | 97973 |
 | gb-england-east-midlands-extra | wikidata-filming | ok | 55 |
-| gb-england-east-midlands-names | wikidata-labels | ok | 11864 |
-| gb-england-east-names | wikidata-labels | ok | 19326 |
+| gb-england-east-midlands-names | wikidata-labels | ok | 11867 |
+| gb-england-east-midlands-navigation | osm-navigation | ok | 597774 |
+| gb-england-east-midlands-services | osm-services | ok | 66845 |
+| gb-england-east-names | wikidata-labels | ok | 19413 |
+| gb-england-east-navigation | osm-navigation | ok | 861360 |
+| gb-england-east-services | osm-services | ok | 108797 |
 | gb-england-extra | geonames | ok | 30384 |
 | gb-england-extra | natural-earth-lines | ok | 0 in this region |
 | gb-england-extra | natural-earth-regions | ok | 29 |
-| gb-england-extra | ourairports | ok | 1455 |
-| gb-england-extra | wikidata | ok | 965765 |
-| gb-england-extra | wikidata-filming | ok | 1362 |
+| gb-england-extra | ourairports | ok | 1456 |
+| gb-england-extra | wikidata | ok | 966412 |
+| gb-england-extra | wikidata-filming | ok | 1325 |
 | gb-england-london | os-open-names | skipped | needs a hand-supplied file in inputs/os-open-names |
 | gb-england-london | osm | ok |  |
-| gb-england-london-businesses | alltheplaces | ok | 46469 |
-| gb-england-london-businesses | fsa-hygiene | ok | 60199 |
+| gb-england-london-businesses | alltheplaces | ok | 69576 |
+| gb-england-london-businesses | fsa-hygiene | ok | 59819 |
 | gb-england-london-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| gb-england-london-businesses | overture-places | ok | 432552 |
+| gb-england-london-businesses | overture-places | ok | 435046 |
 | gb-england-london-extra | geonames | ok | 3670 |
 | gb-england-london-extra | natural-earth-lines | ok | 0 in this region |
 | gb-england-london-extra | natural-earth-regions | ok | 3 |
 | gb-england-london-extra | ourairports | ok | 30 |
-| gb-england-london-extra | wikidata | ok | 49318 |
-| gb-england-london-extra | wikidata-filming | ok | 229 |
-| gb-england-london-names | wikidata-labels | ok | 11630 |
+| gb-england-london-extra | wikidata | ok | 49475 |
+| gb-england-london-extra | wikidata-filming | ok | 222 |
+| gb-england-london-names | wikidata-labels | ok | 11719 |
+| gb-england-london-navigation | osm-navigation | ok | 789943 |
+| gb-england-london-services | osm-services | ok | 70526 |
 | gb-england-names | wikidata-labels | ok | 106740 |
 | gb-england-north-east | os-open-names | skipped | needs a hand-supplied file in inputs/os-open-names |
-| gb-england-north-east | osm | ok |  |
-| gb-england-north-east-businesses | alltheplaces | ok | 8354 |
-| gb-england-north-east-businesses | fsa-hygiene | ok | 14047 |
+| gb-england-north-east | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
+| gb-england-north-east-businesses | alltheplaces | ok | 11122 |
+| gb-england-north-east-businesses | fsa-hygiene | ok | 14084 |
 | gb-england-north-east-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| gb-england-north-east-businesses | overture-places | ok | 109053 |
+| gb-england-north-east-businesses | overture-places | ok | 110053 |
 | gb-england-north-east-extra | geonames | ok | 1661 |
 | gb-england-north-east-extra | natural-earth-lines | ok | 0 in this region |
 | gb-england-north-east-extra | natural-earth-regions | ok | 4 |
 | gb-england-north-east-extra | ourairports | ok | 43 |
-| gb-england-north-east-extra | wikidata | ok | 31025 |
+| gb-england-north-east-extra | wikidata | ok | 31030 |
 | gb-england-north-east-extra | wikidata-filming | ok | 16 |
 | gb-england-north-east-names | wikidata-labels | ok | 4057 |
+| gb-england-north-east-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| gb-england-north-east-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
 | gb-england-north-west | os-open-names | skipped | needs a hand-supplied file in inputs/os-open-names |
 | gb-england-north-west | osm | ok |  |
-| gb-england-north-west-businesses | alltheplaces | ok | 23387 |
-| gb-england-north-west-businesses | fsa-hygiene | ok | 43491 |
+| gb-england-north-west-businesses | alltheplaces | ok | 32679 |
+| gb-england-north-west-businesses | fsa-hygiene | ok | 43486 |
 | gb-england-north-west-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| gb-england-north-west-businesses | overture-places | ok | 381971 |
+| gb-england-north-west-businesses | overture-places | ok | 385047 |
 | gb-england-north-west-extra | geonames | ok | 5267 |
 | gb-england-north-west-extra | natural-earth-lines | ok | 0 in this region |
 | gb-england-north-west-extra | natural-earth-regions | ok | 3 |
-| gb-england-north-west-extra | ourairports | ok | 101 |
-| gb-england-north-west-extra | wikidata | ok | 80466 |
+| gb-england-north-west-extra | ourairports | ok | 102 |
+| gb-england-north-west-extra | wikidata | ok | 80474 |
 | gb-england-north-west-extra | wikidata-filming | ok | 59 |
-| gb-england-north-west-names | wikidata-labels | ok | 12380 |
+| gb-england-north-west-names | wikidata-labels | ok | 12381 |
+| gb-england-north-west-navigation | osm-navigation | ok | 852303 |
+| gb-england-north-west-services | osm-services | ok | 53295 |
 | gb-england-south-east | os-open-names | skipped | needs a hand-supplied file in inputs/os-open-names |
-| gb-england-south-east | osm | ok |  |
-| gb-england-south-east-businesses | alltheplaces | ok | 40415 |
-| gb-england-south-east-businesses | fsa-hygiene | ok | 52132 |
+| gb-england-south-east | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
+| gb-england-south-east-businesses | alltheplaces | ok | 55793 |
+| gb-england-south-east-businesses | fsa-hygiene | ok | 51948 |
 | gb-england-south-east-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| gb-england-south-east-businesses | overture-places | ok | 1073400 |
+| gb-england-south-east-businesses | overture-places | ok | 1080633 |
 | gb-england-south-east-extra | geonames | ok | 4392 |
 | gb-england-south-east-extra | natural-earth-lines | ok | 0 in this region |
 | gb-england-south-east-extra | natural-earth-regions | ok | 3 |
 | gb-england-south-east-extra | ourairports | ok | 299 |
-| gb-england-south-east-extra | wikidata | ok | 218696 |
-| gb-england-south-east-extra | wikidata-filming | ok | 454 |
-| gb-england-south-east-names | wikidata-labels | ok | 31004 |
+| gb-england-south-east-extra | wikidata | ok | 218983 |
+| gb-england-south-east-extra | wikidata-filming | ok | 439 |
+| gb-england-south-east-names | wikidata-labels | ok | 31184 |
+| gb-england-south-east-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| gb-england-south-east-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
 | gb-england-south-west | os-open-names | skipped | needs a hand-supplied file in inputs/os-open-names |
 | gb-england-south-west | osm | ok |  |
-| gb-england-south-west-businesses | alltheplaces | ok | 22426 |
-| gb-england-south-west-businesses | fsa-hygiene | ok | 34270 |
+| gb-england-south-west-businesses | alltheplaces | ok | 28677 |
+| gb-england-south-west-businesses | fsa-hygiene | ok | 34245 |
 | gb-england-south-west-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| gb-england-south-west-businesses | overture-places | ok | 393426 |
+| gb-england-south-west-businesses | overture-places | ok | 396896 |
 | gb-england-south-west-extra | geonames | ok | 4766 |
 | gb-england-south-west-extra | natural-earth-lines | ok | 0 in this region |
 | gb-england-south-west-extra | natural-earth-regions | ok | 3 |
 | gb-england-south-west-extra | ourairports | ok | 219 |
-| gb-england-south-west-extra | wikidata | ok | 174800 |
-| gb-england-south-west-extra | wikidata-filming | ok | 144 |
-| gb-england-south-west-names | wikidata-labels | ok | 16168 |
+| gb-england-south-west-extra | wikidata | ok | 174827 |
+| gb-england-south-west-extra | wikidata-filming | ok | 140 |
+| gb-england-south-west-names | wikidata-labels | ok | 16175 |
+| gb-england-south-west-navigation | osm-navigation | ok | 805401 |
+| gb-england-south-west-services | osm-services | ok | 49970 |
 | gb-england-west-midlands | os-open-names | skipped | needs a hand-supplied file in inputs/os-open-names |
 | gb-england-west-midlands | osm | ok |  |
-| gb-england-west-midlands-businesses | alltheplaces | ok | 20865 |
-| gb-england-west-midlands-businesses | fsa-hygiene | ok | 30404 |
+| gb-england-west-midlands-businesses | alltheplaces | ok | 28523 |
+| gb-england-west-midlands-businesses | fsa-hygiene | ok | 30394 |
 | gb-england-west-midlands-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| gb-england-west-midlands-businesses | overture-places | ok | 362007 |
+| gb-england-west-midlands-businesses | overture-places | ok | 364838 |
 | gb-england-west-midlands-extra | geonames | ok | 3448 |
 | gb-england-west-midlands-extra | natural-earth-lines | ok | 0 in this region |
 | gb-england-west-midlands-extra | natural-earth-regions | ok | 4 |
 | gb-england-west-midlands-extra | ourairports | ok | 128 |
-| gb-england-west-midlands-extra | wikidata | ok | 88333 |
-| gb-england-west-midlands-extra | wikidata-filming | ok | 52 |
-| gb-england-west-midlands-names | wikidata-labels | ok | 9929 |
+| gb-england-west-midlands-extra | wikidata | ok | 88335 |
+| gb-england-west-midlands-extra | wikidata-filming | ok | 51 |
+| gb-england-west-midlands-names | wikidata-labels | ok | 9930 |
+| gb-england-west-midlands-navigation | osm-navigation | ok | 621076 |
+| gb-england-west-midlands-services | osm-services | ok | 52680 |
 | gb-england-yorkshire-and-the-humber | os-open-names | skipped | needs a hand-supplied file in inputs/os-open-names |
 | gb-england-yorkshire-and-the-humber | osm | ok |  |
-| gb-england-yorkshire-and-the-humber-businesses | alltheplaces | ok | 17038 |
-| gb-england-yorkshire-and-the-humber-businesses | fsa-hygiene | ok | 33583 |
+| gb-england-yorkshire-and-the-humber-businesses | alltheplaces | ok | 21799 |
+| gb-england-yorkshire-and-the-humber-businesses | fsa-hygiene | ok | 33479 |
 | gb-england-yorkshire-and-the-humber-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| gb-england-yorkshire-and-the-humber-businesses | overture-places | ok | 481219 |
+| gb-england-yorkshire-and-the-humber-businesses | overture-places | ok | 485080 |
 | gb-england-yorkshire-and-the-humber-extra | geonames | ok | 2963 |
 | gb-england-yorkshire-and-the-humber-extra | natural-earth-lines | ok | 0 in this region |
 | gb-england-yorkshire-and-the-humber-extra | natural-earth-regions | ok | 3 |
 | gb-england-yorkshire-and-the-humber-extra | ourairports | ok | 124 |
-| gb-england-yorkshire-and-the-humber-extra | wikidata | ok | 86559 |
+| gb-england-yorkshire-and-the-humber-extra | wikidata | ok | 86567 |
 | gb-england-yorkshire-and-the-humber-extra | wikidata-filming | ok | 72 |
 | gb-england-yorkshire-and-the-humber-names | wikidata-labels | ok | 12149 |
+| gb-england-yorkshire-and-the-humber-navigation | osm-navigation | ok | 608512 |
+| gb-england-yorkshire-and-the-humber-services | osm-services | ok | 66421 |
 | gb-scotland | os-open-names | skipped | needs a hand-supplied file in inputs/os-open-names |
-| gb-scotland | osm | ok | 2026-11-10T21:21:39Z |
-| gb-scotland-businesses | alltheplaces | ok | 28225 |
-| gb-scotland-businesses | fsa-hygiene | ok | 55014 |
+| gb-scotland | osm | ok | 2026-11-21T21:20:51Z |
+| gb-scotland-businesses | alltheplaces | ok | 38786 |
+| gb-scotland-businesses | fsa-hygiene | ok | 55098 |
 | gb-scotland-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| gb-scotland-businesses | overture-places | ok | 399975 |
+| gb-scotland-businesses | overture-places | ok | 403506 |
 | gb-scotland-extra | geonames | ok | 22566 |
 | gb-scotland-extra | natural-earth-lines | ok | 0 in this region |
 | gb-scotland-extra | natural-earth-regions | ok | 10 |
 | gb-scotland-extra | ourairports | ok | 313 |
-| gb-scotland-extra | wikidata | ok | 186784 |
-| gb-scotland-extra | wikidata-filming | ok | 101 |
-| gb-scotland-names | wikidata-labels | ok | 24582 |
+| gb-scotland-extra | wikidata | ok | 186856 |
+| gb-scotland-extra | wikidata-filming | ok | 100 |
+| gb-scotland-names | wikidata-labels | ok | 24622 |
+| gb-scotland-navigation | osm-navigation | ok | 801401 |
+| gb-scotland-services | osm-services | ok | 45797 |
 | gb-wales | os-open-names | skipped | needs a hand-supplied file in inputs/os-open-names |
-| gb-wales | osm | ok | 2026-11-10T21:21:39Z |
-| gb-wales-businesses | alltheplaces | ok | 22239 |
-| gb-wales-businesses | fsa-hygiene | ok | 38988 |
+| gb-wales | osm | ok | 2026-11-21T21:20:51Z |
+| gb-wales-businesses | alltheplaces | ok | 29790 |
+| gb-wales-businesses | fsa-hygiene | ok | 38981 |
 | gb-wales-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| gb-wales-businesses | overture-places | ok | 274461 |
+| gb-wales-businesses | overture-places | ok | 276981 |
 | gb-wales-extra | geonames | ok | 7267 |
 | gb-wales-extra | natural-earth-lines | ok | 0 in this region |
 | gb-wales-extra | natural-earth-regions | ok | 5 |
-| gb-wales-extra | ourairports | ok | 132 |
-| gb-wales-extra | wikidata | ok | 117557 |
-| gb-wales-extra | wikidata-filming | ok | 104 |
-| gb-wales-names | wikidata-labels | ok | 14828 |
-| ie-ireland-and-northern-ireland | osm | ok | 2026-11-10T21:21:39Z |
-| ie-ireland-and-northern-ireland-businesses | alltheplaces | ok | 13119 |
-| ie-ireland-and-northern-ireland-businesses | fsa-hygiene | ok | 9704 |
+| gb-wales-extra | ourairports | ok | 133 |
+| gb-wales-extra | wikidata | ok | 117560 |
+| gb-wales-extra | wikidata-filming | ok | 103 |
+| gb-wales-names | wikidata-labels | ok | 14829 |
+| gb-wales-navigation | osm-navigation | ok | 433875 |
+| gb-wales-services | osm-services | ok | 24559 |
+| ie-ireland-and-northern-ireland | osm | ok | 2026-11-21T21:20:51Z |
+| ie-ireland-and-northern-ireland-businesses | alltheplaces | ok | 17119 |
+| ie-ireland-and-northern-ireland-businesses | fsa-hygiene | ok | 9713 |
 | ie-ireland-and-northern-ireland-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ie-ireland-and-northern-ireland-businesses | overture-places | ok | 211802 |
+| ie-ireland-and-northern-ireland-businesses | overture-places | ok | 213304 |
 | ie-ireland-and-northern-ireland-extra | geonames | ok | 7505 |
 | ie-ireland-and-northern-ireland-extra | natural-earth-lines | ok | 0 in this region |
 | ie-ireland-and-northern-ireland-extra | natural-earth-regions | ok | 5 |
 | ie-ireland-and-northern-ireland-extra | ourairports | ok | 136 |
-| ie-ireland-and-northern-ireland-extra | wikidata | ok | 126701 |
-| ie-ireland-and-northern-ireland-extra | wikidata-filming | ok | 87 |
-| ie-ireland-and-northern-ireland-names | wikidata-labels | ok | 15216 |
-| is-iceland | osm | ok | 2026-11-10T21:21:39Z |
-| is-iceland-businesses | alltheplaces | ok | 1339 |
+| ie-ireland-and-northern-ireland-extra | wikidata | ok | 126753 |
+| ie-ireland-and-northern-ireland-extra | wikidata-filming | ok | 89 |
+| ie-ireland-and-northern-ireland-names | wikidata-labels | ok | 15228 |
+| ie-ireland-and-northern-ireland-navigation | osm-navigation | ok | 1071748 |
+| ie-ireland-and-northern-ireland-services | osm-services | ok | 58927 |
+| is-iceland | osm | ok | 2026-11-22T21:20:48Z |
+| is-iceland-businesses | alltheplaces | ok | 260 |
 | is-iceland-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| is-iceland-businesses | overture-places | ok | 11730 |
+| is-iceland-businesses | overture-places | ok | 11671 |
 | is-iceland-extra | geonames | ok | 5732 |
 | is-iceland-extra | natural-earth-lines | ok | 1 |
 | is-iceland-extra | natural-earth-regions | ok | 4 |
 | is-iceland-extra | ourairports | ok | 95 |
-| is-iceland-extra | wikidata | ok | 4015 |
-| is-iceland-extra | wikidata-filming | ok | 12 |
-| is-iceland-names | wikidata-labels | ok | 5471 |
+| is-iceland-extra | wikidata | ok | 4017 |
+| is-iceland-extra | wikidata-filming | ok | 11 |
+| is-iceland-names | wikidata-labels | ok | 5472 |
+| is-iceland-navigation | osm-navigation | ok | 110838 |
+| is-iceland-services | osm-services | ok | 5111 |
 | it-centro | osm | ok | 2026-11-10T21:21:39Z |
 | it-centro-businesses | alltheplaces | ok | 53002 |
 | it-centro-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
@@ -3006,133 +3132,151 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | jp-tohoku-extra | wikidata | ok | 16068 |
 | jp-tohoku-extra | wikidata-filming | ok | 9 |
 | jp-tohoku-names | wikidata-labels | ok | 22640 |
-| lu-luxembourg | osm | ok | 2026-11-10T21:21:39Z |
-| lu-luxembourg-businesses | alltheplaces | ok | 2419 |
+| lu-luxembourg | osm | failed | HTTP Error 404: Not Found |
+| lu-luxembourg-businesses | alltheplaces | ok | 4953 |
 | lu-luxembourg-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| lu-luxembourg-businesses | overture-places | ok | 25927 |
+| lu-luxembourg-businesses | overture-places | ok | 25228 |
 | lu-luxembourg-extra | geonames | ok | 199 |
 | lu-luxembourg-extra | natural-earth-lines | ok | 0 in this region |
-| lu-luxembourg-extra | natural-earth-regions | ok | 3 |
+| lu-luxembourg-extra | natural-earth-regions | ok | 2 |
 | lu-luxembourg-extra | ourairports | ok | 15 |
-| lu-luxembourg-extra | wikidata | ok | 4346 |
+| lu-luxembourg-extra | wikidata | ok | 4281 |
 | lu-luxembourg-extra | wikidata-filming | ok | 8 |
-| lu-luxembourg-names | wikidata-labels | ok | 4749 |
-| nl-netherlands | osm | ok | 0 |
+| lu-luxembourg-names | wikidata-labels | ok | 4689 |
+| lu-luxembourg-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| lu-luxembourg-services | osm-services | failed | HTTP Error 404: Not Found |
+| nl-netherlands | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
 | nl-netherlands-extra | geonames | ok | 5543 |
 | nl-netherlands-extra | natural-earth-lines | ok | 0 in this region |
 | nl-netherlands-extra | natural-earth-regions | ok | 4 |
 | nl-netherlands-extra | ourairports | ok | 201 |
-| nl-netherlands-extra | wikidata | ok | 570250 |
-| nl-netherlands-extra | wikidata-filming | ok | 277 |
+| nl-netherlands-extra | wikidata | ok | 570329 |
+| nl-netherlands-extra | wikidata-filming | ok | 279 |
 | nl-netherlands-names | wikidata-labels | ok | 439721 |
-| nl-netherlands-north-east-south | osm | ok |  |
+| nl-netherlands-north-east-south | osm | failed | HTTP Error 404: Not Found |
 | nl-netherlands-north-east-south-addresses | bag | skipped | needs a hand-supplied file in inputs/bag |
-| nl-netherlands-north-east-south-businesses | alltheplaces | ok | 25803 |
+| nl-netherlands-north-east-south-businesses | alltheplaces | ok | 73348 |
 | nl-netherlands-north-east-south-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| nl-netherlands-north-east-south-businesses | overture-places | ok | 1286592 |
+| nl-netherlands-north-east-south-businesses | overture-places | ok | 1298708 |
 | nl-netherlands-north-east-south-extra | geonames | ok | 3086 |
 | nl-netherlands-north-east-south-extra | natural-earth-lines | ok | 0 in this region |
 | nl-netherlands-north-east-south-extra | natural-earth-regions | ok | 2 |
 | nl-netherlands-north-east-south-extra | ourairports | ok | 125 |
-| nl-netherlands-north-east-south-extra | wikidata | ok | 387547 |
-| nl-netherlands-north-east-south-extra | wikidata-filming | ok | 193 |
-| nl-netherlands-north-east-south-names | wikidata-labels | ok | 443315 |
-| nl-netherlands-west | osm | ok |  |
+| nl-netherlands-north-east-south-extra | wikidata | ok | 387600 |
+| nl-netherlands-north-east-south-extra | wikidata-filming | ok | 195 |
+| nl-netherlands-north-east-south-names | wikidata-labels | ok | 443364 |
+| nl-netherlands-north-east-south-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| nl-netherlands-north-east-south-services | osm-services | failed | HTTP Error 404: Not Found |
+| nl-netherlands-west | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
 | nl-netherlands-west-addresses | bag | skipped | needs a hand-supplied file in inputs/bag |
-| nl-netherlands-west-businesses | alltheplaces | ok | 18400 |
+| nl-netherlands-west-businesses | alltheplaces | ok | 62818 |
 | nl-netherlands-west-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| nl-netherlands-west-businesses | overture-places | ok | 380523 |
+| nl-netherlands-west-businesses | overture-places | ok | 385139 |
 | nl-netherlands-west-extra | geonames | ok | 2457 |
 | nl-netherlands-west-extra | natural-earth-lines | ok | 0 in this region |
 | nl-netherlands-west-extra | natural-earth-regions | ok | 2 |
 | nl-netherlands-west-extra | ourairports | ok | 76 |
-| nl-netherlands-west-extra | wikidata | ok | 182703 |
+| nl-netherlands-west-extra | wikidata | ok | 182729 |
 | nl-netherlands-west-extra | wikidata-filming | ok | 84 |
-| nl-netherlands-west-names | wikidata-labels | ok | 204672 |
-| no-norway | osm | ok | 0 |
+| nl-netherlands-west-names | wikidata-labels | ok | 204692 |
+| nl-netherlands-west-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| nl-netherlands-west-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
+| no-norway | osm | ok |  |
 | no-norway-east-and-south | osm | ok |  |
-| no-norway-east-and-south-businesses | alltheplaces | ok | 23885 |
+| no-norway-east-and-south-businesses | alltheplaces | ok | 25085 |
 | no-norway-east-and-south-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| no-norway-east-and-south-businesses | overture-places | ok | 168515 |
+| no-norway-east-and-south-businesses | overture-places | ok | 169279 |
 | no-norway-east-and-south-extra | geonames | ok | 80924 |
 | no-norway-east-and-south-extra | natural-earth-lines | ok | 0 in this region |
 | no-norway-east-and-south-extra | natural-earth-regions | ok | 5 |
 | no-norway-east-and-south-extra | ourairports | ok | 93 |
-| no-norway-east-and-south-extra | wikidata | ok | 130406 |
+| no-norway-east-and-south-extra | wikidata | ok | 130409 |
 | no-norway-east-and-south-extra | wikidata-filming | ok | 78 |
-| no-norway-east-and-south-names | wikidata-labels | ok | 89668 |
-| no-norway-extra | geonames | ok | 236067 |
+| no-norway-east-and-south-names | wikidata-labels | ok | 89667 |
+| no-norway-east-and-south-navigation | osm-navigation | ok | 984691 |
+| no-norway-east-and-south-services | osm-services | ok | 38754 |
+| no-norway-extra | geonames | ok | 236074 |
 | no-norway-extra | natural-earth-lines | ok | 0 in this region |
 | no-norway-extra | natural-earth-regions | ok | 14 |
 | no-norway-extra | ourairports | ok | 215 |
-| no-norway-extra | wikidata | ok | 662750 |
-| no-norway-extra | wikidata-filming | ok | 836 |
+| no-norway-extra | wikidata | ok | 662918 |
+| no-norway-extra | wikidata-filming | ok | 832 |
 | no-norway-names | wikidata-labels | failed | took longer than 45 min |
-| no-norway-west-and-north | osm | ok |  |
-| no-norway-west-and-north-businesses | alltheplaces | ok | 18583 |
+| no-norway-west-and-north | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
+| no-norway-west-and-north-businesses | alltheplaces | ok | 18928 |
 | no-norway-west-and-north-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| no-norway-west-and-north-businesses | overture-places | ok | 776730 |
-| no-norway-west-and-north-extra | geonames | ok | 155143 |
+| no-norway-west-and-north-businesses | overture-places | ok | 782642 |
+| no-norway-west-and-north-extra | geonames | ok | 155150 |
 | no-norway-west-and-north-extra | natural-earth-lines | ok | 1 |
 | no-norway-west-and-north-extra | natural-earth-regions | ok | 9 |
 | no-norway-west-and-north-extra | ourairports | ok | 122 |
-| no-norway-west-and-north-extra | wikidata | ok | 532344 |
-| no-norway-west-and-north-extra | wikidata-filming | ok | 758 |
-| no-norway-west-and-north-names | wikidata-labels | ok | 296030 |
-| nz-new-zealand | osm | ok | 2026-11-11T21:22:47Z |
+| no-norway-west-and-north-extra | wikidata | ok | 532509 |
+| no-norway-west-and-north-extra | wikidata-filming | ok | 754 |
+| no-norway-west-and-north-names | wikidata-labels | ok | 296069 |
+| no-norway-west-and-north-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| no-norway-west-and-north-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
+| nz-new-zealand | osm | ok | 2026-11-22T21:20:48Z |
 | nz-new-zealand-addresses | linz-addresses | skipped | needs a hand-supplied file in inputs/linz |
-| nz-new-zealand-businesses | alltheplaces | ok | 156487 |
+| nz-new-zealand-businesses | alltheplaces | ok | 158989 |
 | nz-new-zealand-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| nz-new-zealand-businesses | overture-places | ok | 2024383 |
+| nz-new-zealand-businesses | overture-places | ok | 2035400 |
 | nz-new-zealand-extra | geonames | ok | 19473 |
 | nz-new-zealand-extra | natural-earth-lines | ok | 1 |
 | nz-new-zealand-extra | natural-earth-regions | ok | 66 |
 | nz-new-zealand-extra | nz-gazetteer | skipped | needs a hand-supplied file in inputs/nz-gazetteer |
 | nz-new-zealand-extra | ourairports | ok | 331 |
 | nz-new-zealand-extra | wikidata | failed | took longer than 90 min |
-| nz-new-zealand-extra | wikidata-filming | ok | 292 |
-| nz-new-zealand-names | wikidata-labels | ok | 154885 |
-| pt-portugal | osm | ok | 2026-11-10T21:21:39Z |
-| pt-portugal-businesses | alltheplaces | ok | 17332 |
+| nz-new-zealand-extra | wikidata-filming | ok | 294 |
+| nz-new-zealand-names | wikidata-labels | ok | 155179 |
+| nz-new-zealand-navigation | osm-navigation | ok | 853455 |
+| nz-new-zealand-services | osm-services | ok | 42704 |
+| pt-portugal | osm | ok | 2026-11-22T21:20:48Z |
+| pt-portugal-businesses | alltheplaces | ok | 33478 |
 | pt-portugal-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| pt-portugal-businesses | overture-places | ok | 379002 |
-| pt-portugal-extra | geonames | ok | 9014 |
+| pt-portugal-businesses | overture-places | ok | 381346 |
+| pt-portugal-extra | geonames | ok | 9015 |
 | pt-portugal-extra | natural-earth-lines | ok | 0 in this region |
 | pt-portugal-extra | natural-earth-regions | ok | 15 |
 | pt-portugal-extra | ourairports | ok | 240 |
-| pt-portugal-extra | wikidata | ok | 58424 |
-| pt-portugal-extra | wikidata-filming | ok | 72 |
-| pt-portugal-names | wikidata-labels | ok | 36224 |
+| pt-portugal-extra | wikidata | ok | 62293 |
+| pt-portugal-extra | wikidata-filming | ok | 73 |
+| pt-portugal-names | wikidata-labels | ok | 36242 |
+| pt-portugal-navigation | osm-navigation | ok | 1415649 |
+| pt-portugal-services | osm-services | ok | 90056 |
 | se-sweden | osm | ok | 0 |
 | se-sweden-extra | geonames | ok | 31109 |
 | se-sweden-extra | natural-earth-lines | ok | 0 in this region |
 | se-sweden-extra | natural-earth-regions | ok | 9 |
 | se-sweden-extra | ourairports | ok | 283 |
-| se-sweden-extra | wikidata | ok | 281446 |
+| se-sweden-extra | wikidata | ok | 281531 |
 | se-sweden-extra | wikidata-filming | ok | 544 |
 | se-sweden-names | wikidata-labels | ok | 180215 |
 | se-sweden-south-and-west | osm | ok |  |
-| se-sweden-south-and-west-businesses | alltheplaces | ok | 15947 |
+| se-sweden-south-and-west-businesses | alltheplaces | ok | 26331 |
 | se-sweden-south-and-west-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| se-sweden-south-and-west-businesses | overture-places | ok | 331008 |
+| se-sweden-south-and-west-businesses | overture-places | ok | 332862 |
 | se-sweden-south-and-west-extra | geonames | ok | 8420 |
 | se-sweden-south-and-west-extra | natural-earth-lines | ok | 0 in this region |
 | se-sweden-south-and-west-extra | natural-earth-regions | ok | 5 |
 | se-sweden-south-and-west-extra | ourairports | ok | 106 |
-| se-sweden-south-and-west-extra | wikidata | ok | 98873 |
+| se-sweden-south-and-west-extra | wikidata | ok | 98893 |
 | se-sweden-south-and-west-extra | wikidata-filming | ok | 184 |
-| se-sweden-south-and-west-names | wikidata-labels | ok | 46332 |
+| se-sweden-south-and-west-names | wikidata-labels | ok | 46336 |
+| se-sweden-south-and-west-navigation | osm-navigation | ok | 991082 |
+| se-sweden-south-and-west-services | osm-services | ok | 43625 |
 | se-sweden-stockholm-and-north | osm | ok |  |
-| se-sweden-stockholm-and-north-businesses | alltheplaces | ok | 8318 |
+| se-sweden-stockholm-and-north-businesses | alltheplaces | ok | 10185 |
 | se-sweden-stockholm-and-north-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| se-sweden-stockholm-and-north-businesses | overture-places | ok | 351051 |
+| se-sweden-stockholm-and-north-businesses | overture-places | ok | 353801 |
 | se-sweden-stockholm-and-north-extra | geonames | ok | 22689 |
 | se-sweden-stockholm-and-north-extra | natural-earth-lines | ok | 1 |
 | se-sweden-stockholm-and-north-extra | natural-earth-regions | ok | 4 |
 | se-sweden-stockholm-and-north-extra | ourairports | ok | 177 |
-| se-sweden-stockholm-and-north-extra | wikidata | ok | 182573 |
+| se-sweden-stockholm-and-north-extra | wikidata | ok | 182638 |
 | se-sweden-stockholm-and-north-extra | wikidata-filming | ok | 360 |
-| se-sweden-stockholm-and-north-names | wikidata-labels | ok | 117150 |
+| se-sweden-stockholm-and-north-names | wikidata-labels | ok | 117175 |
+| se-sweden-stockholm-and-north-navigation | osm-navigation | ok | 1078266 |
+| se-sweden-stockholm-and-north-services | osm-services | ok | 42865 |
 | us-alabama | census-cousub | ok | 390 |
 | us-alabama | census-places | ok | 594 |
 | us-alabama | census-zcta | ok | 910 |

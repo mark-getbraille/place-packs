@@ -32,7 +32,7 @@ on:
   workflow_dispatch:
     inputs:
       regions:
-        description: "Region ids separated by spaces or commas, for example us-vermont fr-ile-de-france (empty: all)"
+        description: "Region ids separated by spaces or commas, for example us-vermont fr-ile-de-france (empty: all). With publish_only: which packs of also_from_run to publish (a batch; a prefix such as us- takes a whole country)"
         required: false
         default: ""
       force:
@@ -340,6 +340,10 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RUNS: ${{ inputs.also_from_run }}
+          # With publish_only, "regions" chooses which of those runs' packs this run publishes (a batch: a full
+          # rebuild is about 50 GB, more than one runner can hold, so it is published in several runs; give a
+          # country prefix such as "us-" to take all its regions and sub-regions together).
+          ONLY: ${{ inputs.publish_only && inputs.regions || '' }}
         run: |
           mkdir -p built built/fetched
           for run in $RUNS; do
@@ -347,6 +351,14 @@ jobs:
             for page in $(seq 1 10); do
               gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run/artifacts?per_page=100&page=$page" --jq '.artifacts[] | select(.expired | not) | .name' | grep '^pack-' || true
             done | sort -u > "artifacts-$run.txt"
+            if [ -n "$ONLY" ]; then
+              : > "chosen-$run.txt"
+              for want in $(echo "$ONLY" | tr ',' ' '); do
+                grep -E "^pack-${want}" "artifacts-$run.txt" >> "chosen-$run.txt" || true
+              done
+              sort -u "chosen-$run.txt" > "artifacts-$run.txt"
+              echo "This batch: $(wc -l < "artifacts-$run.txt") packs ($ONLY)."
+            fi
             echo "Run $run: $(wc -l < "artifacts-$run.txt") packs."
             while read -r name; do
               rm -rf earlier; mkdir earlier

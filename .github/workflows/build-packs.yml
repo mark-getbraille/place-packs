@@ -313,6 +313,19 @@ jobs:
         with:
           python-version: "3.12"
       - run: python -m pip install -r requirements.txt
+      # A full rebuild of every region is about 50 GB of packs, more than the runner's own disk has free (the
+      # publish of 22 November 2026 ran out of room downloading them): the tools this job does not use are removed,
+      # and the packs are kept on the runner's second, larger disk (/mnt) when it has more room.
+      - name: Make room for the packs
+        run: |
+          df -h / /mnt 2>/dev/null || true
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL /usr/local/share/boost /usr/local/.ghcup || true
+          if [ -d /mnt ] && [ "$(df --output=avail -B1G /mnt | tail -1)" -gt "$(df --output=avail -B1G . | tail -1)" ]; then
+            sudo mkdir -p /mnt/work && sudo chown "$(id -u):$(id -g)" /mnt/work
+            for d in built dist old children; do mkdir -p "/mnt/work/$d"; ln -sfn "/mnt/work/$d" "$d"; done
+            echo "The packs are kept on /mnt."
+          fi
+          df -h / /mnt 2>/dev/null || true
       - uses: actions/download-artifact@v4
         continue-on-error: true
         with:

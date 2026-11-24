@@ -351,6 +351,15 @@ jobs:
           mkdir -p built built/fetched
           for run in $RUNS; do
             case "$run" in *[!0-9]*) echo "Not a run id: $run"; exit 1;; esac
+            # Only the packs of a run of this same workflow, in this repository (not a fork's), started on its
+            # schedule or by hand, are taken: any other run's artifacts could hold packs this workflow did not build.
+            run_info=$(gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run" --jq '[.path, .event, .head_repository.full_name] | @tsv')
+            IFS="$(printf '\t')" read -r run_path run_event run_repo <<< "$run_info"
+            if [ "$run_path" != ".github/workflows/build-packs.yml" ] || [ "$run_repo" != "$GITHUB_REPOSITORY" ] ||
+                { [ "$run_event" != schedule ] && [ "$run_event" != workflow_dispatch ]; }; then
+              echo "::error::Run $run is not a scheduled or hand-started run of build-packs.yml in $GITHUB_REPOSITORY ($run_path, $run_event, $run_repo); its packs are not published."
+              exit 1
+            fi
             for page in $(seq 1 10); do
               gh api "repos/$GITHUB_REPOSITORY/actions/runs/$run/artifacts?per_page=100&page=$page" --jq '.artifacts[] | select(.expired | not) | .name' | grep '^pack-' || true
             done | sort -u > "artifacts-$run.txt"

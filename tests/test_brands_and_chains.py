@@ -124,3 +124,39 @@ def test_all_the_places_is_open_and_skips_individuals():
     e = entry_of("alltheplaces")
     assert e["licence"] in catalogue.ALLOWED and e["licence"] == "CC0-1.0"
     assert {"insurance", "estate_agent"} <= fetch.ATP_PERSONAL["office"]
+
+
+def test_local_merge_runs_no_trigger_and_quotes_column_names(tmp_path):
+    """merge_local opens the older pack read-only, quotes the column names it reads from the files, and refuses a
+    pack with a trigger (the packs the program writes have none) instead of running it."""
+    import pytest
+    from placepacks.download import merge_local
+    old = pack(tmp_path / "o.osmpack", 202601, [("n1", "Invented Coffee", None)])
+    # A column whose name would break unquoted SQL, in both packs: its value is copied across.
+    odd = 'x"); DROP TABLE meta; --'
+    fresh = pack(tmp_path / "f.osmpack", 202611, [("n2", "Pretend Pizza", None)])
+    for p in (old, fresh):
+        con = sqlite3.connect(p)
+        con.execute(f'ALTER TABLE points ADD COLUMN "{odd.replace(chr(34), chr(34) * 2)}" TEXT')
+        con.commit()
+        con.close()
+    merge_local(fresh, old)
+    con = sqlite3.connect(fresh)
+    assert {r[0] for r in con.execute("SELECT name FROM points")} == {"Invented Coffee", "Pretend Pizza"}
+    assert con.execute("SELECT COUNT(*) FROM meta").fetchone()[0] > 0
+    con.close()
+    # A trigger in the downloaded pack is not run: the merge stops and nothing is copied.
+    bad = pack(tmp_path / "b.osmpack", 202611, [("n3", "Made-up Bakery", None)])
+    con = sqlite3.connect(bad)
+    con.execute("CREATE TABLE seen (x)")
+    con.execute("CREATE TRIGGER t AFTER INSERT ON points BEGIN INSERT INTO seen VALUES (1); END")
+    con.commit()
+    con.close()
+    with pytest.raises(sqlite3.DatabaseError):
+        merge_local(bad, old)
+    con = sqlite3.connect(bad)
+    assert con.execute("SELECT COUNT(*) FROM seen").fetchone()[0] == 0
+    assert {r[0] for r in con.execute("SELECT name FROM points")} == {"Made-up Bakery"}
+    con.close()
+    # The older pack was only read.
+    assert sqlite3.connect(old).execute("SELECT COUNT(*) FROM points").fetchone()[0] == 1

@@ -30,6 +30,7 @@ import shutil
 import sqlite3
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
 
 from placepacks import fmt, manifest
@@ -136,12 +137,30 @@ def _save_installed(folder, data):
     os.replace(path + ".partial", path)
 
 
+def _quote(name):
+    """A column name ready to put in SQL: in double quotes, any double quote inside doubled. The column names come
+    from the packs themselves (PRAGMA table_info), and a pack file may come from anywhere (add_pack_file)."""
+    return '"' + str(name).replace('"', '""') + '"'
+
+
+def _no_triggers(action, arg1, arg2, database, inner):
+    """The SQLite authorizer of merge_local: anything a trigger or a view asks for is refused. The packs the
+    program writes have neither, so a pack file that has one is not ours and is not run."""
+    return sqlite3.SQLITE_DENY if inner else sqlite3.SQLITE_OK
+
+
 def merge_local(new_path, old_path):
     """Keep every row of the older pack in the newer one (the published packs already keep their history; this
-    also keeps rows of a pack built elsewhere). Rows whose key is in the new pack's removals are not brought back."""
-    con = sqlite3.connect(new_path)
+    also keeps rows of a pack built elsewhere). Rows whose key is in the new pack's removals are not brought back.
+    The older pack is opened read-only, the column names are quoted, and no trigger or view of either file is
+    run (a pack with one raises sqlite3.DatabaseError and nothing is merged)."""
+    # Both files as URIs (lookup.PackReader does the same): only then does SQLite read "mode=ro" in the ATTACH below.
+    con = sqlite3.connect(f"file:{urllib.parse.quote(os.path.abspath(new_path))}", uri=True)
     try:
-        con.execute("ATTACH DATABASE ? AS old", (old_path,))
+        con.execute("PRAGMA trusted_schema = OFF")      # a file's own schema may not call functions (SQLite 3.31+)
+        con.set_authorizer(_no_triggers)
+        # The older pack read-only (a URI with mode=ro, as lookup.PackReader opens a pack).
+        con.execute("ATTACH DATABASE ? AS old", (f"file:{urllib.parse.quote(os.path.abspath(old_path))}?mode=ro",))
         removed = "(SELECT key FROM main.removals)"
         have = {s: {r[0] for r in con.execute(f"SELECT name FROM {s}.sqlite_master WHERE type = 'table'")}
                 for s in ("main", "old")}
@@ -150,7 +169,7 @@ def merge_local(new_path, old_path):
             # The columns both packs have (an older pack may lack one a newer pack has).
             old_cols = {r[1] for r in con.execute(f"PRAGMA old.table_info({table})")}
             cols = [r[1] for r in con.execute(f"PRAGMA main.table_info({table})") if r[1] != "id" and r[1] in old_cols]
-            c = ", ".join(cols)
+            c = ", ".join(_quote(col) for col in cols)
             start = con.execute(f"SELECT COALESCE(MAX(id), 0) FROM main.{table}").fetchone()[0]
             con.execute(f"INSERT INTO main.{table} ({c}) SELECT {c} FROM old.{table} o WHERE o.key NOT IN {removed} "
                         f"AND NOT EXISTS (SELECT 1 FROM main.{table} m WHERE m.key = o.key AND m.first = o.first "

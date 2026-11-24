@@ -160,3 +160,15 @@ def test_local_merge_runs_no_trigger_and_quotes_column_names(tmp_path):
     con.close()
     # The older pack was only read.
     assert sqlite3.connect(old).execute("SELECT COUNT(*) FROM points").fetchone()[0] == 1
+
+
+def test_a_zip_member_over_the_size_cap_is_not_read_whole(tmp_path, monkeypatch):
+    """fetch reads a JSON member of a downloaded .zip whole, so a member over MAX_MEMBER_BYTES is refused."""
+    z = tmp_path / "big.zip"
+    with zipfile.ZipFile(z, "w", zipfile.ZIP_DEFLATED) as out:
+        out.writestr("a.json", json.dumps({"x": "y" * 5000}))
+    assert next(fetch._json_documents([str(z)]))["x"] == "y" * 5000
+    monkeypatch.setattr(fetch, "MAX_MEMBER_BYTES", 1000)
+    import pytest
+    with pytest.raises(ValueError):
+        next(fetch._json_documents([str(z)]))

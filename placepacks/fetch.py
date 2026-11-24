@@ -58,6 +58,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
+import zipfile
 
 
 csv.field_size_limit(2**31 - 1)   # polygon rings in one field can be many megabytes (sys.maxsize overflows on Windows)
@@ -308,6 +309,24 @@ def national_files(entry, values, opener=None):
     return [(url, f.get("file") or os.path.basename(urllib.parse.urlsplit(url).path), None)]
 
 
+MAX_MEMBER_BYTES = 1 << 30     # a JSON file inside a downloaded .zip is read whole: at most 1 GiB of it
+
+
+def _read_member(z, info):
+    """The bytes of one member of a downloaded .zip, read whole into memory. A member larger than MAX_MEMBER_BYTES
+    (a damaged or hostile archive that would fill the runner's memory) raises ValueError. Its size is checked as
+    the archive states it and again while reading, since an archive can state a false size."""
+    if not isinstance(info, zipfile.ZipInfo):
+        info = z.getinfo(info)
+    if info.file_size > MAX_MEMBER_BYTES:
+        raise ValueError(f"{info.filename} is larger than {MAX_MEMBER_BYTES:,} bytes")
+    with z.open(info) as fh:
+        data = fh.read(MAX_MEMBER_BYTES + 1)
+    if len(data) > MAX_MEMBER_BYTES:
+        raise ValueError(f"{info.filename} is larger than {MAX_MEMBER_BYTES:,} bytes")
+    return data
+
+
 def _json_documents(paths):
     """The JSON documents of files: each file, or each .json/.geojson member of a .zip."""
     import zipfile
@@ -316,7 +335,7 @@ def _json_documents(paths):
             with zipfile.ZipFile(path) as z:
                 for name in z.namelist():
                     if name.lower().endswith((".json", ".geojson")):
-                        yield json.loads(z.read(name).decode("utf-8"))
+                        yield json.loads(_read_member(z, name).decode("utf-8"))
         else:
             with open(path, encoding="utf-8") as fh:
                 yield json.load(fh)
@@ -823,7 +842,7 @@ def atp_to_csv(zip_path, target, boxes):
             if not info.filename.endswith(".geojson"):
                 continue
             try:
-                data = json.loads(z.read(info).decode("utf-8"))
+                data = json.loads(_read_member(z, info).decode("utf-8"))
             except ValueError:
                 continue
             for feat in data.get("features", []):

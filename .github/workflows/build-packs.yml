@@ -84,8 +84,9 @@ jobs:
           PUBLISH_ONLY: ${{ inputs.publish_only }}
         run: |
           if [ "$PUBLISH_ONLY" = "true" ]; then echo "regions=[]" >> "$GITHUB_OUTPUT"; exit 0; fi
-          mkdir -p current
-          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern packs.json --dir current 2>/dev/null || true
+          # The list of published packs (tools/download_packs_list.sh): a list that is there but cannot be downloaded
+          # stops the plan, rather than rebuild every region as if nothing were published.
+          bash tools/download_packs_list.sh current
           python -m placepacks.fetch --fingerprint-all "$REGIONS" --out prints.json
           extra=""
           if [ "$FORCE" = "true" ]; then extra="--force"; fi
@@ -215,7 +216,9 @@ jobs:
           if [ -d "national-split/$SLICE" ]; then cp -r "national-split/$SLICE/." national/; fi
           if [ -d national-whole ]; then cp -r national-whole/. national/; fi
           rm -rf national-split national-whole
-          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern packs.json --dir previous 2>/dev/null || true
+          # The list of published packs (tools/download_packs_list.sh): a list that is there but cannot be downloaded
+          # stops this leg, rather than build the region without its history.
+          bash tools/download_packs_list.sh previous
           if [ -f previous/packs.json ]; then
             # The region's own older packs, and for a sub-region's first build its parent's (build --list-previous).
             for key in $(python -m placepacks.build "$REGION" --list-previous); do
@@ -377,7 +380,13 @@ jobs:
           if ! gh release view "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             gh release create "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --title "Place packs" --notes-file RELEASE_NOTES.md
           fi
-          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" --pattern packs.json --dir old 2>/dev/null || true
+          # The list before (tools/download_packs_list.sh). A release that has a packs.json which cannot be downloaded
+          # stops the job here, before anything is changed: going on with no list before would publish a list of only
+          # the new packs and delete every other pack. Only a release with no packs.json yet (the first publish) goes on
+          # without one; when there is one, manifest publish is told so (--old-required) and checks it again.
+          bash tools/download_packs_list.sh old
+          old_required=""
+          if [ -f old/packs.json ]; then old_required="--old-required"; fi
           # 0. Each parent's core and extra put together from its sub-regions' (a child not rebuilt now comes from the
           #    release), under the parent's keys: the programs that know only the parent still find its towns and streets.
           mkdir -p children
@@ -396,7 +405,11 @@ jobs:
             python -m placepacks.combine "$parent" "$part" --out "$out" $files || echo "$parent $part could not be put together; its older pack stays."
           done
           rm -rf children
-          python -m placepacks.manifest publish --old old/packs.json --built built --fetched-dir built/fetched --output packs.json --uploads uploads.txt
+          python -m placepacks.manifest publish --old old/packs.json --built built --fetched-dir built/fetched --output packs.json --uploads uploads.txt $old_required
+          # A safety check before anything in the releases is uploaded or deleted (steps 0b to 3): the new list must keep
+          # at least 90% of the packs of the list before (manifest guard). publish never drops an entry, so a smaller
+          # list means a fault: the job stops, nothing is deleted, and the published list stays as it was.
+          if [ -f old/packs.json ]; then python -m placepacks.manifest guard --old old/packs.json --new packs.json; fi
           # The pack releases: "packs" (core and extra, the lists, the licences) and "packs-detail-YYYYMMDD" (the
           # names, businesses and addresses of one publish). GitHub allows 1000 files in a release.
           gh api "repos/$GITHUB_REPOSITORY/releases?per_page=100" --paginate --jq '.[].tag_name' | grep -E '^packs(-detail-[0-9]{8})?$' > releases.txt || true

@@ -413,3 +413,41 @@ def test_foursquare_is_split_per_region(tmp_path):
     counts = split.split_parquet(entry, str(path), str(tmp_path / "out"),
                                  {k: v for k, v in catalogue.regions().items() if k in (VT, "us-maine")})
     assert counts == {VT: 1, "us-maine": 1}
+
+
+def test_publish_needs_the_list_before_and_the_guard_stops_a_smaller_list(tmp_path):
+    """When the release has a list before (--old-required), a missing, unreadable or empty one stops the publish
+    instead of starting a list of only the new packs; the guard stops the deleting when the new list is much
+    smaller than the list before."""
+    import datetime
+    built = tmp_path / "built"
+    built.mkdir()
+    core(tmp_path, built / "us-vermont.osmpack", 202611)
+    day = datetime.date(2026, 11, 2)
+    missing = str(tmp_path / "old" / "packs.json")
+    for path in ("", missing):
+        with pytest.raises(SystemExit):
+            manifest.publish(path, str(built), str(tmp_path), today=day, require_old=True)
+    broken = tmp_path / "broken.json"
+    broken.write_text("{not json", encoding="utf-8")
+    empty = tmp_path / "empty.json"
+    empty.write_text(json.dumps({"format": "place-packs", "version": 2, "packs": {}}), encoding="utf-8")
+    for path in (broken, empty):
+        with pytest.raises(SystemExit):
+            manifest.publish(str(path), str(built), str(tmp_path), today=day, require_old=True)
+    # No list before and none required (the first publish): a new list, as before.
+    m, _ = manifest.publish(missing, str(built), str(tmp_path), today=day)
+    assert list(m["packs"]) == [VT]
+    old = tmp_path / "old.json"
+    old.write_text(json.dumps(m), encoding="utf-8")
+    m2, _ = manifest.publish(str(old), str(built), str(tmp_path), today=day, require_old=True)
+    new = tmp_path / "new.json"
+    new.write_text(json.dumps(m2), encoding="utf-8")
+    assert manifest.guard(str(old), str(new)) is None and manifest.guard(missing, str(new)) is None
+    many = dict(m, packs={f"k{i}": m["packs"][VT] for i in range(20)})
+    old.write_text(json.dumps(many), encoding="utf-8")
+    assert "fewer than 90%" in manifest.guard(str(old), str(new))
+    assert manifest.main(["guard", "--old", str(old), "--new", str(new)]) == 1
+    many["packs"] = dict(list(many["packs"].items())[:1])
+    old.write_text(json.dumps(many), encoding="utf-8")
+    assert manifest.main(["guard", "--old", str(old), "--new", str(new)]) == 0

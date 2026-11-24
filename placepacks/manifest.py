@@ -21,10 +21,15 @@ bytes, the format and version checked, and each entry's region, part, file name,
 entry is left out.
 
 python -m placepacks.manifest publish --old packs.json --built out/ --fetched-dir work/ --output packs.json
-        --uploads uploads.txt
+        --uploads uploads.txt [--old-required]
     writes the new manifest, compact (the old entries kept for regions not rebuilt), and the files to upload
     ("local path<TAB>asset name<TAB>release" per line), and prints how many there are. It stops when the new list
-    would be over LIMIT (the programs would refuse it).
+    would be over LIMIT (the programs would refuse it). --old-required: the release has a list before (the workflow
+    found it), so --old must be there and readable; it stops otherwise, rather than start a list of only the new
+    packs (the files of every other pack would then be deleted).
+python -m placepacks.manifest guard --old old/packs.json --new packs.json
+    a safety check before the publish deletes anything: it stops (exit 1) when the new list has fewer packs than
+    SHRINK_SHARE of the list before. publish never drops an entry, so this happens only when something went wrong.
 python -m placepacks.manifest plan --manifest packs.json --fingerprints prints.json --regions "..." [--force]
     prints regions=<JSON> of the regions whose sources changed (ETag, Last-Modified or release names differ). Only
     regions without children are built (a parent typed is its sub-regions); a parent's packs are its children's put
@@ -46,6 +51,7 @@ from placepacks import fmt
 FORMAT = "place-packs"
 VERSIONS = (1, 2)
 LIMIT = 4_000_000
+SHRINK_SHARE = 0.9                      # guard: the new list must have at least this share of the old list's packs
 MAX_PACK_BYTES = 2_000_000_000          # GitHub's per-file limit for release assets
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
 # The release that holds a pack: "packs" (the core and extra parts, and every pack of a list without "release"), or
@@ -156,19 +162,17 @@ def changed(old_entry_sources, new_prints):
     return any(old.get(k) != v for k, v in new_prints.items()) or not old
 
 
-def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
+def publish(old_path, built_dir, fetched_dir, today=None, cat=None, require_old=False):
     """The new manifest dict: the old one with the packs in built_dir (<key>.osmpack; region, part, bounds and source
     status read from the pack's own meta, the source versions from fetched_dir/<region>/fetched.json) added under
     dated names, each in its release (release_for). Returns (manifest, [(local path, asset name, release)]). Stops
-    (SystemExit) when the list would be over LIMIT or would not parse."""
+    (SystemExit) when the list would be over LIMIT or would not parse. require_old: the release has a list before,
+    so old_path must name a readable one with its packs; it stops (SystemExit) when it does not."""
     from placepacks import catalogue
     from placepacks.lookup import PackReader
     today = today or datetime.date.today()
     cat = cat or catalogue.load()
-    old = {}
-    if old_path and os.path.exists(old_path):
-        with open(old_path, encoding="utf-8") as f:
-            old = json.load(f)
+    old = read_old(old_path, require_old)
     packs = dict(old.get("packs", {})) if isinstance(old.get("packs"), dict) else {}
     uploads = []
     regions = catalogue.regions()           # read once: _part_sources is asked for every pack
@@ -230,6 +234,42 @@ def publish(old_path, built_dir, fetched_dir, today=None, cat=None):
     return manifest, uploads
 
 
+def read_old(old_path, required=False):
+    """The list before as a dict ({} when there is none). required: the release has one, so a missing, unreadable
+    or empty list stops (SystemExit): a publish that went on with an empty list before would delete every pack."""
+    if not old_path or not os.path.exists(old_path):
+        if required:
+            raise SystemExit(f"The list before ({old_path or 'not given'}) is missing; nothing is published.")
+        return {}
+    try:
+        with open(old_path, encoding="utf-8") as f:
+            old = json.load(f)
+    except (OSError, ValueError) as e:
+        if required:
+            raise SystemExit(f"The list before ({old_path}) cannot be read ({e}); nothing is published.") from None
+        raise
+    if required and not (isinstance(old, dict) and isinstance(old.get("packs"), dict) and old["packs"]):
+        raise SystemExit(f"The list before ({old_path}) has no packs; nothing is published.")
+    return old if isinstance(old, dict) else {}
+
+
+def guard(old_path, new_path, share=SHRINK_SHARE):
+    """None when the new list may replace the old one, or a message saying why not: the new list has fewer packs
+    than share of the old one's (publish keeps every old entry, so a smaller list means a list before that was not
+    read whole, or a fault). With no list before (the first publish) there is nothing to compare."""
+    if not old_path or not os.path.exists(old_path):
+        return None
+    with open(old_path, encoding="utf-8") as f:
+        old = json.load(f)
+    with open(new_path, encoding="utf-8") as f:
+        new = json.load(f)
+    count = lambda m: len(m.get("packs", {})) if isinstance(m, dict) and isinstance(m.get("packs"), dict) else 0  # noqa
+    if count(new) < share * count(old):
+        return (f"The new list has {count(new)} packs, the list before {count(old)}: fewer than {share:.0%}. "
+                f"Nothing is deleted; look at this run before publishing again.")
+    return None
+
+
 def _part_sources(region_id, part, cat, regions=None):
     """The source ids of a region's part. The core entry lists every source the region was fetched with (plan
     compares them with the sources' new versions); the other parts list only their own, which keeps packs.json under
@@ -269,6 +309,11 @@ def main(argv=None):
     a.add_argument("--output", required=True)
     a.add_argument("--uploads", required=True,
                    help="a text file: one 'local path<TAB>asset name<TAB>release' per line")
+    a.add_argument("--old-required", action="store_true",
+                   help="the release has a list before: stop when --old is missing or unreadable")
+    g = sub.add_parser("guard")
+    g.add_argument("--old", required=True)
+    g.add_argument("--new", required=True)
     b = sub.add_parser("plan")
     b.add_argument("--manifest", default="")
     b.add_argument("--fingerprints", default="", help="{region: {source: version}} from fetch --fingerprint")
@@ -276,12 +321,19 @@ def main(argv=None):
     b.add_argument("--force", action="store_true")
     args = p.parse_args(argv)
     if args.cmd == "publish":
-        manifest, uploads = publish(args.old, args.built, args.fetched_dir)
+        manifest, uploads = publish(args.old, args.built, args.fetched_dir, require_old=args.old_required)
         with open(args.output, "w", encoding="utf-8") as f:
             json.dump(manifest, f, ensure_ascii=False, separators=(",", ":"))     # compact: it must stay under LIMIT
         with open(args.uploads, "w", encoding="utf-8") as f:
             f.writelines(f"{path}\t{asset}\t{release}\n" for path, asset, release in uploads)
         print(f"{len(uploads)} packs to upload; {len(manifest['packs'])} in the list.")
+        return 0
+    if args.cmd == "guard":
+        problem = guard(args.old, args.new)
+        if problem:
+            print(f"::error::{problem}")
+            return 1
+        print("The new list keeps the packs of the list before.")
         return 0
     from placepacks.regions import REGIONS, expand, leaves
     typed = [r for r in args.regions.replace(",", " ").split() if r]

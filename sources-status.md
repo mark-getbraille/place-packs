@@ -1,6 +1,6 @@
 # Place packs status, 2026-11-24
 
-1178 packs published, 127.81 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
+1276 packs published, 139.60 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
 
 ## Packs by region
 
@@ -19,25 +19,25 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | au-victoria | 136.7 | 8.3 | 1.9 | 342.1 |  | 382.3 | 5.4 | 145.1 |
 | au-western-australia | 77.7 | 14.4 | 1.6 | 32.9 |  | 167.8 | 1.8 | 92.1 |
 | be-belgium | 164.7 | 38.3 | 29.2 | 216.7 |  | 0.1 | 0.1 | 202.9 |
-| ca-alberta | 73.2 | 66.3 | 2.6 | 51.2 | 58.3 |  |  | 139.5 |
-| ca-british-columbia | 137.2 | 108.5 | 7.9 | 180.7 | 6.6 |  |  | 245.7 |
-| ca-manitoba | 37.2 | 76.9 | 2.6 | 13.2 | 16.0 |  |  | 114.0 |
-| ca-new-brunswick | 20.9 | 45.6 | 2.7 | 22.0 | 17.2 |  |  | 66.5 |
-| ca-newfoundland-and-labrador | 37.6 | 85.0 | 6.4 | 25.7 | 3.1 |  |  | 122.6 |
-| ca-northwest-territories | 20.0 | 79.9 | 1.0 | 1.8 | 0.4 |  |  | 99.9 |
-| ca-nova-scotia | 38.3 | 56.0 | 2.8 | 19.6 | 37.6 |  |  | 94.3 |
-| ca-nunavut | 60.0 | 149.4 | 7.5 | 36.7 | 0.2 |  |  | 209.4 |
-| ca-ontario (its sub-regions put together) | 214.9 | 109.4 | 21.1 |  |  |  |  | 324.3 |
-| ca-ontario-east | 53.2 | 17.9 | 5.1 | 28.5 | 35.4 |  |  | 71.1 |
-| ca-ontario-north | 79.1 | 60.7 | 6.1 | 10.4 | 8.6 |  |  | 139.7 |
-| ca-ontario-south-west | 30.4 | 16.5 | 1.4 | 23.3 | 27.2 |  |  | 47.0 |
-| ca-ontario-toronto | 61.5 | 37.6 | 1.1 | 90.5 | 53.5 |  |  | 99.2 |
-| ca-prince-edward-island | 5.4 | 24.9 | 0.5 | 2.6 | 3.9 |  |  | 30.3 |
+| ca-alberta | 73.3 | 66.4 | 2.6 | 55.1 | 58.3 | 291.0 | 3.2 | 139.8 |
+| ca-british-columbia | 137.7 | 108.6 | 7.9 | 193.4 | 6.6 | 290.9 | 5.7 | 246.3 |
+| ca-manitoba | 37.2 | 76.9 | 2.6 | 14.1 | 16.0 | 73.3 | 0.9 | 114.1 |
+| ca-new-brunswick | 20.9 | 45.6 | 2.7 | 23.7 | 17.2 | 37.8 | 0.7 | 66.5 |
+| ca-newfoundland-and-labrador | 37.7 | 85.0 | 6.4 | 27.5 | 3.1 | 28.5 | 0.4 | 122.6 |
+| ca-northwest-territories | 20.0 | 79.9 | 0.9 | 1.9 | 0.4 | 0.1 | 0.1 | 99.9 |
+| ca-nova-scotia | 38.5 | 56.0 | 2.8 | 21.1 | 37.6 | 45.5 | 0.9 | 94.5 |
+| ca-nunavut | 60.2 | 149.5 | 7.5 | 39.3 | 0.2 | 2.0 | 0.2 | 209.7 |
+| ca-ontario (its sub-regions put together) | 215.3 | 110.9 | 21.1 |  |  |  |  | 326.1 |
+| ca-ontario-east | 53.3 | 17.9 | 5.1 | 30.6 | 35.4 | 117.0 | 5.5 | 71.2 |
+| ca-ontario-north | 79.2 | 60.7 | 6.1 | 11.1 | 8.6 | 43.8 | 0.7 | 139.9 |
+| ca-ontario-south-west | 30.5 | 16.5 | 1.4 | 25.1 | 27.2 | 121.0 | 1.8 | 47.1 |
+| ca-ontario-toronto | 61.7 | 39.1 | 1.1 | 95.5 | 53.5 | 289.1 | 5.5 | 100.7 |
+| ca-prince-edward-island | 5.4 | 24.9 | 0.5 | 2.8 | 3.9 | 9.3 | 0.3 | 30.3 |
 | ca-quebec (its sub-regions put together) | 43.3 | 68.0 | 20.4 |  |  |  |  | 111.3 |
-| ca-quebec-east-and-north | 20.1 | 65.4 | 21.3 | 7.5 | 4.2 |  |  | 85.5 |
-| ca-quebec-montreal | 24.8 | 12.5 | 1.5 | 13.1 | 9.4 |  |  | 37.3 |
-| ca-saskatchewan | 26.8 | 94.9 | 1.7 | 12.2 | 16.7 |  |  | 121.7 |
-| ca-yukon | 7.5 | 69.9 | 0.6 | 1.3 | 0.7 |  |  | 77.5 |
+| ca-quebec-east-and-north | 20.1 | 65.4 | 21.3 | 8.1 | 4.2 | 14.1 | 2.6 | 85.5 |
+| ca-quebec-montreal | 24.9 | 12.5 | 1.5 | 14.1 | 9.4 | 98.0 | 1.7 | 37.3 |
+| ca-saskatchewan | 26.9 | 95.0 | 1.7 | 13.0 | 16.7 | 103.6 | 0.8 | 121.8 |
+| ca-yukon | 7.5 | 70.0 | 0.6 | 1.4 | 0.7 | 6.2 | 0.2 | 77.5 |
 | ch-switzerland | 159.4 | 33.3 | 29.8 | 184.7 |  | 0.1 | 0.1 | 192.7 |
 | de-baden-wuerttemberg | 196.8 | 42.2 | 224.8 | 1050.7 |  | 0.1 | 0.1 | 239.0 |
 | de-bayern | 221.8 | 179.8 | 224.8 | 1050.4 |  | 0.1 | 0.1 | 401.7 |
@@ -56,25 +56,25 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | de-schleswig-holstein | 48.0 | 21.0 | 12.1 | 71.7 |  | 140.0 | 5.4 | 69.0 |
 | de-thueringen | 45.9 | 24.7 | 16.6 | 50.1 |  | 129.2 | 4.8 | 70.6 |
 | dk-denmark | 107.1 | 26.5 | 7.5 | 119.0 |  | 386.4 | 6.1 | 133.6 |
-| es-andalucia | 94.1 | 17.0 | 9.3 | 77.7 | 0.1 |  |  | 111.1 |
-| es-aragon | 33.1 | 14.4 | 7.1 | 25.3 | 0.1 |  |  | 47.5 |
-| es-asturias | 18.3 | 15.8 | 2.3 | 9.8 | 0.1 |  |  | 34.0 |
-| es-canarias | 22.7 | 13.7 | 1.4 | 19.3 | 0.1 |  |  | 36.4 |
-| es-cantabria | 12.5 | 14.7 | 1.0 | 6.1 | 0.1 |  |  | 27.2 |
-| es-castilla-la-mancha | 47.4 | 13.7 | 7.7 | 69.6 | 0.1 |  |  | 61.0 |
-| es-castilla-y-leon | 93.2 | 16.6 | 12.5 | 77.8 | 0.1 |  |  | 109.9 |
-| es-cataluna | 105.5 | 35.3 | 18.2 | 69.9 | 0.1 |  |  | 140.8 |
-| es-ceuta | 0.4 | 8.5 | 0.2 | 0.5 | 0.1 |  |  | 9.0 |
-| es-extremadura | 22.5 | 9.7 | 2.3 | 13.5 | 0.1 |  |  | 32.2 |
-| es-galicia | 58.7 | 13.4 | 3.6 | 23.8 | 0.1 |  |  | 72.0 |
-| es-islas-baleares | 15.4 | 10.0 | 1.1 | 12.8 | 0.1 |  |  | 25.4 |
-| es-la-rioja | 5.8 | 8.6 | 0.9 | 3.8 | 0.1 |  |  | 14.5 |
-| es-madrid | 38.8 | 10.7 | 3.2 | 48.2 | 0.1 |  |  | 49.5 |
-| es-melilla | 0.5 | 8.6 | 0.2 | 0.5 | 0.1 |  |  | 9.2 |
-| es-murcia | 13.8 | 10.1 | 1.6 | 26.9 | 0.1 |  |  | 23.9 |
-| es-navarra | 17.9 | 10.9 | 3.6 | 13.5 | 0.1 |  |  | 28.8 |
-| es-pais-vasco | 29.6 | 16.9 | 4.5 | 17.8 | 0.1 |  |  | 46.5 |
-| es-valencia | 55.2 | 12.0 | 4.1 | 55.9 | 0.1 |  |  | 67.2 |
+| es-andalucia | 94.3 | 17.0 | 9.3 | 83.8 | 0.1 | 277.9 | 5.3 | 111.3 |
+| es-aragon | 33.1 | 101.5 | 76.7 | 537.5 | 0.1 | 0.1 | 0.1 | 134.6 |
+| es-asturias | 18.3 | 15.8 | 2.3 | 10.6 | 0.1 | 43.8 | 0.8 | 34.1 |
+| es-canarias | 22.7 | 13.7 | 1.4 | 20.9 | 0.1 | 77.1 | 1.3 | 36.4 |
+| es-cantabria | 12.5 | 14.7 | 1.0 | 6.6 | 0.1 | 34.6 | 1.0 | 27.2 |
+| es-castilla-la-mancha | 47.4 | 13.7 | 7.7 | 75.0 | 0.1 | 105.0 | 1.5 | 61.1 |
+| es-castilla-y-leon | 93.5 | 16.8 | 12.5 | 84.1 | 0.1 | 199.2 | 3.4 | 110.3 |
+| es-cataluna | 105.9 | 35.3 | 18.2 | 75.6 | 0.1 | 303.8 | 6.5 | 141.2 |
+| es-ceuta | 0.4 | 8.5 | 0.2 | 0.5 | 0.1 | 1.2 | 0.2 | 9.0 |
+| es-extremadura | 22.5 | 9.8 | 2.3 | 14.6 | 0.1 | 48.6 | 0.8 | 32.4 |
+| es-galicia | 58.7 | 101.5 | 76.7 | 537.5 | 0.1 | 0.1 | 0.1 | 160.2 |
+| es-islas-baleares | 15.4 | 10.0 | 1.1 | 13.8 | 0.1 | 45.3 | 0.9 | 25.4 |
+| es-la-rioja | 5.8 | 8.6 | 0.9 | 4.1 | 0.1 | 13.4 | 0.3 | 14.5 |
+| es-madrid | 38.9 | 10.7 | 3.2 | 51.8 | 0.1 | 166.7 | 4.1 | 49.7 |
+| es-melilla | 0.5 | 8.6 | 0.2 | 0.5 | 0.1 | 1.8 | 0.2 | 9.2 |
+| es-murcia | 13.8 | 101.4 | 76.7 | 537.7 | 0.1 | 0.1 | 0.1 | 115.2 |
+| es-navarra | 17.9 | 10.9 | 3.6 | 14.6 | 0.1 | 42.5 | 0.7 | 28.8 |
+| es-pais-vasco | 29.7 | 16.9 | 4.5 | 19.4 | 0.1 | 82.7 | 1.7 | 46.6 |
+| es-valencia | 55.6 | 12.0 | 4.1 | 60.1 | 0.1 | 199.7 | 2.8 | 67.6 |
 | fi-finland (its sub-regions put together) | 224.3 | 51.7 | 7.7 |  |  |  |  | 276.0 |
 | fi-finland-centre-and-north | 122.6 | 35.3 | 3.7 | 25.5 |  | 245.2 | 3.4 | 157.8 |
 | fi-finland-south | 106.3 | 25.1 | 2.1 | 50.5 |  | 345.8 | 5.6 | 131.4 |
@@ -114,19 +114,19 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | gb-wales | 39.1 | 36.8 | 3.1 | 87.7 |  | 137.1 | 3.3 | 75.9 |
 | ie-ireland-and-northern-ireland | 179.0 | 31.8 | 3.1 | 62.7 |  | 336.5 | 6.5 | 210.8 |
 | is-iceland | 20.1 | 14.7 | 1.1 | 3.6 |  | 40.3 | 0.7 | 34.8 |
-| it-centro | 125.6 | 31.5 | 25.4 | 227.6 |  |  |  | 157.1 |
-| it-isole | 74.2 | 22.0 | 11.3 | 135.7 |  |  |  | 96.2 |
-| it-nord-est | 178.5 | 40.3 | 36.7 | 242.2 |  |  |  | 218.9 |
-| it-nord-ovest | 187.5 | 45.4 | 51.9 | 330.8 |  |  |  | 232.8 |
-| it-sud | 110.3 | 18.7 | 15.2 | 162.7 |  |  |  | 129.1 |
-| jp-chubu | 86.3 | 24.6 | 17.7 | 470.5 |  |  |  | 110.9 |
-| jp-chugoku | 36.1 | 12.7 | 4.0 | 88.7 |  |  |  | 48.8 |
-| jp-hokkaido | 36.0 | 11.4 | 1.7 | 33.9 |  |  |  | 47.3 |
-| jp-kansai | 95.3 | 17.0 | 9.3 | 214.2 |  |  |  | 112.3 |
-| jp-kanto | 138.0 | 32.2 | 21.8 | 557.7 |  |  |  | 170.2 |
-| jp-kyushu | 53.9 | 23.0 | 5.3 | 120.7 |  |  |  | 77.0 |
-| jp-shikoku | 18.9 | 11.4 | 2.6 | 54.6 |  |  |  | 30.3 |
-| jp-tohoku | 60.0 | 12.6 | 3.8 | 69.8 |  |  |  | 72.6 |
+| it-centro | 125.8 | 31.6 | 25.5 | 250.9 |  | 385.2 | 7.4 | 157.4 |
+| it-isole | 74.4 | 22.0 | 11.3 | 149.7 |  | 226.2 | 3.9 | 96.4 |
+| it-nord-est | 178.9 | 40.4 | 36.7 | 266.8 |  | 501.2 | 10.2 | 219.3 |
+| it-nord-ovest | 188.0 | 45.5 | 51.9 | 363.4 |  | 572.5 | 12.6 | 233.4 |
+| it-sud | 110.6 | 18.7 | 15.2 | 179.5 |  | 354.9 | 5.5 | 129.3 |
+| jp-chubu | 86.7 | 24.7 | 17.7 | 508.1 |  | 597.0 | 6.6 | 111.4 |
+| jp-chugoku | 36.2 | 12.7 | 4.0 | 95.2 |  | 243.0 | 3.6 | 48.8 |
+| jp-hokkaido | 36.0 | 11.4 | 1.7 | 36.5 |  | 202.2 | 3.3 | 47.4 |
+| jp-kansai | 95.3 | 48.1 | 38.3 | 916.7 |  | 0.1 | 0.1 | 143.4 |
+| jp-kanto | 138.4 | 32.2 | 21.8 | 602.3 |  | 803.3 | 14.4 | 170.6 |
+| jp-kyushu | 54.1 | 23.1 | 5.3 | 130.0 |  | 415.2 | 4.7 | 77.1 |
+| jp-shikoku | 18.9 | 11.4 | 2.6 | 58.5 |  | 140.0 | 1.8 | 30.3 |
+| jp-tohoku | 60.0 | 48.1 | 38.3 | 908.4 |  | 0.1 | 0.1 | 108.1 |
 | lu-luxembourg | 11.2 | 14.5 | 1.2 | 8.4 |  | 0.1 | 0.1 | 25.8 |
 | nl-netherlands (its sub-regions put together) | 265.9 | 61.9 | 82.2 |  |  |  |  | 327.7 |
 | nl-netherlands-north-east-south | 164.3 | 40.6 | 83.2 | 116.8 | 0.1 | 0.1 | 0.1 | 204.9 |
@@ -274,97 +274,131 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | be-belgium-names | 2026-11 | 29.2 | 2026-11 | wikidata-labels |
 | be-belgium-navigation | 2026-11 | 0.1 | 2026-11 |  |
 | be-belgium-services | 2026-11 | 0.1 | 2026-11 |  |
-| ca-alberta | 2026-11 | 73.2 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, edmonton-business-licences, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-alberta | 2026-11 | 73.3 | 2026-11 | alltheplaces, calgary-business-licences, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, edmonton-business-licences, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-alberta-addresses | 2026-11 | 58.3 | 2026-11 | nrn-address-ranges, oda |
-| ca-alberta-businesses | 2026-11 | 51.2 | 2026-11 | alltheplaces, overture-places |
-| ca-alberta-extra | 2026-11 | 66.3 | 1788-01 | canada-contaminated-sites, canada-federal-property, canvec-named-lakes, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, edmonton-business-licences, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
+| ca-alberta-businesses | 2026-11 | 55.1 | 2026-11 | alltheplaces, overture-places |
+| ca-alberta-extra | 2026-11 | 66.4 | 1788-01 | calgary-business-licences, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, edmonton-business-licences, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-alberta-names | 2026-11 | 2.6 | 2026-11 | wikidata-labels |
-| ca-british-columbia | 2026-11 | 137.2 | 2026-11 | alltheplaces, bc-ferry-terminals, bc-rec-sites, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, vancouver-business-licences, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-alberta-navigation | 2026-11 | 291.0 | 2026-11 | osm-navigation |
+| ca-alberta-services | 2026-11 | 3.2 | 2026-11 | osm-services |
+| ca-british-columbia | 2026-11 | 137.7 | 2026-11 | alltheplaces, bc-ferry-terminals, bc-rec-sites, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, vancouver-business-licences, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-british-columbia-addresses | 2026-11 | 6.6 | 2026-11 | nrn-address-ranges, oda |
-| ca-british-columbia-businesses | 2026-11 | 180.7 | 2026-11 | alltheplaces, overture-places |
-| ca-british-columbia-extra | 2026-11 | 108.5 | 0001-01 | bc-ferry-terminals, bc-rec-sites, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, vancouver-business-licences, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
+| ca-british-columbia-businesses | 2026-11 | 193.4 | 2026-11 | alltheplaces, overture-places |
+| ca-british-columbia-extra | 2026-11 | 108.6 | 0001-01 | bc-ferry-terminals, bc-rec-sites, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, vancouver-business-licences, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-british-columbia-names | 2026-11 | 7.9 | 2026-11 | wikidata-labels |
-| ca-manitoba | 2026-11 | 37.2 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, winnipeg-business-licences, winnipeg-historical-resources |
+| ca-british-columbia-navigation | 2026-11 | 290.9 | 2026-11 | osm-navigation |
+| ca-british-columbia-services | 2026-11 | 5.7 | 2026-11 | osm-services |
+| ca-manitoba | 2026-11 | 37.2 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, winnipeg-business-licences, winnipeg-historical-resources |
 | ca-manitoba-addresses | 2026-11 | 16.0 | 2026-11 | nrn-address-ranges, oda |
-| ca-manitoba-businesses | 2026-11 | 13.2 | 2010-01 | alltheplaces, overture-places, winnipeg-business-licences |
+| ca-manitoba-businesses | 2026-11 | 14.1 | 2010-01 | alltheplaces, overture-places, winnipeg-business-licences |
 | ca-manitoba-extra | 2026-11 | 76.9 | 1670-01 | canada-contaminated-sites, canada-federal-property, canvec-named-lakes, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, winnipeg-historical-resources |
 | ca-manitoba-names | 2026-11 | 2.6 | 2026-11 | wikidata-labels |
-| ca-new-brunswick | 2026-11 | 20.9 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nb-public-schools, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-manitoba-navigation | 2026-11 | 73.3 | 2026-11 | osm-navigation |
+| ca-manitoba-services | 2026-11 | 0.9 | 2026-11 | osm-services |
+| ca-new-brunswick | 2026-11 | 20.9 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nb-public-schools, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-new-brunswick-addresses | 2026-11 | 17.2 | 2026-11 | nrn-address-ranges, oda |
-| ca-new-brunswick-businesses | 2026-11 | 22.0 | 2026-11 | alltheplaces, overture-places |
+| ca-new-brunswick-businesses | 2026-11 | 23.7 | 2026-11 | alltheplaces, overture-places |
 | ca-new-brunswick-extra | 2026-11 | 45.6 | 1020-01 | canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nb-public-schools, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-new-brunswick-names | 2026-11 | 2.7 | 2026-11 | wikidata-labels |
-| ca-newfoundland-and-labrador | 2026-11 | 37.6 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, ohm, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-new-brunswick-navigation | 2026-11 | 37.8 | 2026-11 | osm-navigation |
+| ca-new-brunswick-services | 2026-11 | 0.7 | 2026-11 | osm-services |
+| ca-newfoundland-and-labrador | 2026-11 | 37.7 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-newfoundland-and-labrador-addresses | 2026-11 | 3.1 | 2026-11 | nrn-address-ranges |
-| ca-newfoundland-and-labrador-businesses | 2026-11 | 25.7 | 2026-11 | alltheplaces, overture-places |
+| ca-newfoundland-and-labrador-businesses | 2026-11 | 27.5 | 2026-11 | alltheplaces, overture-places |
 | ca-newfoundland-and-labrador-extra | 2026-11 | 85.0 | 0985-01 | canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-newfoundland-and-labrador-names | 2026-11 | 6.4 | 2026-11 | wikidata-labels |
-| ca-northwest-territories | 2026-11 | 20.0 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-newfoundland-and-labrador-navigation | 2026-11 | 28.5 | 2026-11 | osm-navigation |
+| ca-newfoundland-and-labrador-services | 2026-11 | 0.4 | 2026-11 | osm-services |
+| ca-northwest-territories | 2026-11 | 20.0 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-northwest-territories-addresses | 2026-11 | 0.4 | 2026-11 | nrn-address-ranges, oda |
-| ca-northwest-territories-businesses | 2026-11 | 1.8 | 2026-11 | alltheplaces, overture-places |
+| ca-northwest-territories-businesses | 2026-11 | 1.9 | 2026-11 | alltheplaces, overture-places |
 | ca-northwest-territories-extra | 2026-11 | 79.9 | 1670-01 | canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
-| ca-northwest-territories-names | 2026-11 | 1.0 | 2026-11 | wikidata-labels |
-| ca-nova-scotia | 2026-11 | 38.3 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, ns-civic-addresses, ns-gaelic-placenames, ns-heritage-properties, ns-hospitals, ns-liquor-licences, ns-long-term-care, ns-museums, ns-public-schools, ns-tourism-operators, oda, ohm, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-northwest-territories-names | 2026-11 | 0.9 | 2026-11 | wikidata-labels |
+| ca-northwest-territories-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| ca-northwest-territories-services | 2026-11 | 0.1 | 2026-11 |  |
+| ca-nova-scotia | 2026-11 | 38.5 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, ns-civic-addresses, ns-gaelic-placenames, ns-heritage-properties, ns-hospitals, ns-liquor-licences, ns-long-term-care, ns-museums, ns-public-schools, ns-tourism-operators, oda, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-nova-scotia-addresses | 2026-11 | 37.6 | 2026-11 | nrn-address-ranges, ns-civic-addresses, oda |
-| ca-nova-scotia-businesses | 2026-11 | 19.6 | 2026-11 | alltheplaces, overture-places |
+| ca-nova-scotia-businesses | 2026-11 | 21.1 | 2026-11 | alltheplaces, overture-places |
 | ca-nova-scotia-extra | 2026-11 | 56.0 | 1020-01 | canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ns-gaelic-placenames, ns-heritage-properties, ns-hospitals, ns-liquor-licences, ns-long-term-care, ns-museums, ns-public-schools, ns-tourism-operators, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-nova-scotia-names | 2026-11 | 2.8 | 2026-11 | wikidata-labels |
-| ca-nunavut | 2026-11 | 60.0 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, ohm, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-nova-scotia-navigation | 2026-11 | 45.5 | 2026-11 | osm-navigation |
+| ca-nova-scotia-services | 2026-11 | 0.9 | 2026-11 | osm-services |
+| ca-nunavut | 2026-11 | 60.2 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-nunavut-addresses | 2026-11 | 0.2 | 2026-11 | nrn-address-ranges |
-| ca-nunavut-businesses | 2026-11 | 36.7 | 2026-11 | alltheplaces, overture-places |
-| ca-nunavut-extra | 2026-11 | 149.4 | 0990-01 | canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
+| ca-nunavut-businesses | 2026-11 | 39.3 | 2026-11 | alltheplaces, overture-places |
+| ca-nunavut-extra | 2026-11 | 149.5 | 0990-01 | canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-nunavut-names | 2026-11 | 7.5 | 2026-11 | wikidata-labels |
-| ca-ontario | 2026-11 | 214.9 | 2026-11 |  |
-| ca-ontario-east | 2026-11 | 53.2 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, ontario-fishing-access, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, toronto-dinesafe, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-nunavut-navigation | 2026-11 | 2.0 | 2026-11 | osm-navigation |
+| ca-nunavut-services | 2026-11 | 0.2 | 2026-11 | osm-services |
+| ca-ontario | 2026-11 | 215.3 | 2026-11 |  |
+| ca-ontario-east | 2026-11 | 53.3 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, ontario-fishing-access, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, toronto-dinesafe, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-ontario-east-addresses | 2026-11 | 35.4 | 2026-11 | nrn-address-ranges, oda |
-| ca-ontario-east-businesses | 2026-11 | 28.5 | 2026-11 | alltheplaces, overture-places, toronto-dinesafe |
+| ca-ontario-east-businesses | 2026-11 | 30.6 | 2026-11 | alltheplaces, overture-places, toronto-dinesafe |
 | ca-ontario-east-extra | 2026-11 | 17.9 | 1014-01 | canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ontario-fishing-access, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-ontario-east-names | 2026-11 | 5.1 | 2026-11 | wikidata-labels |
-| ca-ontario-extra | 2026-11 | 109.4 | 0187-01 |  |
+| ca-ontario-east-navigation | 2026-11 | 117.0 | 2026-11 | osm-navigation |
+| ca-ontario-east-services | 2026-11 | 5.5 | 2026-11 | osm-services |
+| ca-ontario-extra | 2026-11 | 110.9 | 0187-01 |  |
 | ca-ontario-names | 2026-11 | 21.1 | 2026-11 | wikidata-labels |
-| ca-ontario-north | 2026-11 | 79.1 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, ontario-fishing-access, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, toronto-dinesafe, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-ontario-north | 2026-11 | 79.2 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, ontario-fishing-access, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, toronto-dinesafe, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-ontario-north-addresses | 2026-11 | 8.6 | 2026-11 | nrn-address-ranges, oda |
-| ca-ontario-north-businesses | 2026-11 | 10.4 | 2026-11 | alltheplaces, overture-places, toronto-dinesafe |
+| ca-ontario-north-businesses | 2026-11 | 11.1 | 2026-11 | alltheplaces, overture-places, toronto-dinesafe |
 | ca-ontario-north-extra | 2026-11 | 60.7 | 1668-01 | canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ontario-fishing-access, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-ontario-north-names | 2026-11 | 6.1 | 2026-11 | wikidata-labels |
-| ca-ontario-south-west | 2026-11 | 30.4 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, ontario-fishing-access, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, toronto-dinesafe, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-ontario-north-navigation | 2026-11 | 43.8 | 2026-11 | osm-navigation |
+| ca-ontario-north-services | 2026-11 | 0.7 | 2026-11 | osm-services |
+| ca-ontario-south-west | 2026-11 | 30.5 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, ontario-fishing-access, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, toronto-dinesafe, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-ontario-south-west-addresses | 2026-11 | 27.2 | 2026-11 | nrn-address-ranges, oda |
-| ca-ontario-south-west-businesses | 2026-11 | 23.3 | 2026-11 | alltheplaces, overture-places, toronto-dinesafe |
+| ca-ontario-south-west-businesses | 2026-11 | 25.1 | 2026-11 | alltheplaces, overture-places, toronto-dinesafe |
 | ca-ontario-south-west-extra | 2026-11 | 16.5 | 1749-01 | canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ontario-fishing-access, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-ontario-south-west-names | 2026-11 | 1.4 | 2026-11 | wikidata-labels |
-| ca-ontario-toronto | 2026-11 | 61.5 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, ontario-fishing-access, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, toronto-dinesafe, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-ontario-south-west-navigation | 2026-11 | 121.0 | 2026-11 | osm-navigation |
+| ca-ontario-south-west-services | 2026-11 | 1.8 | 2026-11 | osm-services |
+| ca-ontario-toronto | 2026-11 | 61.7 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, ontario-fishing-access, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, toronto-dinesafe, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-ontario-toronto-addresses | 2026-11 | 53.5 | 2026-11 | nrn-address-ranges, oda |
-| ca-ontario-toronto-businesses | 2026-11 | 90.5 | 2023-11 | alltheplaces, overture-places, toronto-dinesafe |
-| ca-ontario-toronto-extra | 2026-11 | 37.6 | 0187-01 | canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ontario-fishing-access, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
+| ca-ontario-toronto-businesses | 2026-11 | 95.5 | 2023-11 | alltheplaces, overture-places, toronto-dinesafe |
+| ca-ontario-toronto-extra | 2026-11 | 39.1 | 0187-01 | canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ontario-fishing-access, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-ontario-toronto-names | 2026-11 | 1.1 | 2026-11 | wikidata-labels |
-| ca-prince-edward-island | 2026-11 | 5.4 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-ontario-toronto-navigation | 2026-11 | 289.1 | 2026-11 | osm-navigation |
+| ca-ontario-toronto-services | 2026-11 | 5.5 | 2026-11 | osm-services |
+| ca-prince-edward-island | 2026-11 | 5.4 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-prince-edward-island-addresses | 2026-11 | 3.9 | 2026-11 | nrn-address-ranges, oda |
-| ca-prince-edward-island-businesses | 2026-11 | 2.6 | 2026-11 | alltheplaces, overture-places |
+| ca-prince-edward-island-businesses | 2026-11 | 2.8 | 2026-11 | alltheplaces, overture-places |
 | ca-prince-edward-island-extra | 2026-11 | 24.9 | 1020-01 | canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-prince-edward-island-names | 2026-11 | 0.5 | 2026-11 | wikidata-labels |
+| ca-prince-edward-island-navigation | 2026-11 | 9.3 | 2026-11 | osm-navigation |
+| ca-prince-edward-island-services | 2026-11 | 0.3 | 2026-11 | osm-services |
 | ca-quebec | 2026-11 | 43.3 | 2026-11 |  |
-| ca-quebec-east-and-north | 2026-11 | 20.1 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, gtfs, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, ourairports, overture-places, quebec-sites-patrimoniaux, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-quebec-east-and-north | 2026-11 | 20.1 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, gtfs, gtfs-navigation, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, quebec-sites-patrimoniaux, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-quebec-east-and-north-addresses | 2026-11 | 4.2 | 2026-11 | nrn-address-ranges, oda |
-| ca-quebec-east-and-north-businesses | 2026-11 | 7.5 | 2026-11 | alltheplaces, overture-places |
+| ca-quebec-east-and-north-businesses | 2026-11 | 8.1 | 2026-11 | alltheplaces, overture-places |
 | ca-quebec-east-and-north-extra | 2026-11 | 65.4 | 1020-01 | canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, gtfs, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, quebec-sites-patrimoniaux, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-quebec-east-and-north-names | 2026-11 | 21.3 | 2026-11 | wikidata-labels |
+| ca-quebec-east-and-north-navigation | 2026-11 | 14.1 | 2026-11 | gtfs-navigation, osm-navigation |
+| ca-quebec-east-and-north-services | 2026-11 | 2.6 | 2026-11 | osm-services |
 | ca-quebec-extra | 2026-11 | 68.0 | 1020-01 |  |
-| ca-quebec-montreal | 2026-11 | 24.8 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, gtfs, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, ourairports, overture-places, quebec-sites-patrimoniaux, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-quebec-montreal | 2026-11 | 24.9 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, gtfs, gtfs-navigation, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, quebec-sites-patrimoniaux, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-quebec-montreal-addresses | 2026-11 | 9.4 | 2026-11 | nrn-address-ranges, oda |
-| ca-quebec-montreal-businesses | 2026-11 | 13.1 | 2026-11 | alltheplaces, overture-places |
+| ca-quebec-montreal-businesses | 2026-11 | 14.1 | 2026-11 | alltheplaces, overture-places |
 | ca-quebec-montreal-extra | 2026-11 | 12.5 | 1600-01 | canada-contaminated-sites, canada-federal-property, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, gtfs, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, quebec-sites-patrimoniaux, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-quebec-montreal-names | 2026-11 | 1.5 | 2026-11 | wikidata-labels |
+| ca-quebec-montreal-navigation | 2026-11 | 98.0 | 2026-11 | gtfs-navigation, osm-navigation |
+| ca-quebec-montreal-services | 2026-11 | 1.7 | 2026-11 | osm-services |
 | ca-quebec-names | 2026-11 | 20.4 | 2026-11 | wikidata-labels |
-| ca-saskatchewan | 2026-11 | 26.8 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-saskatchewan | 2026-11 | 26.9 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, oda, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-saskatchewan-addresses | 2026-11 | 16.7 | 2026-11 | nrn-address-ranges, oda |
-| ca-saskatchewan-businesses | 2026-11 | 12.2 | 2026-11 | alltheplaces, overture-places |
-| ca-saskatchewan-extra | 2026-11 | 94.9 | 1753-01 | canada-contaminated-sites, canada-federal-property, canvec-named-lakes, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
+| ca-saskatchewan-businesses | 2026-11 | 13.0 | 2026-11 | alltheplaces, overture-places |
+| ca-saskatchewan-extra | 2026-11 | 95.0 | 1753-01 | canada-contaminated-sites, canada-federal-property, canvec-named-lakes, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-saskatchewan-names | 2026-11 | 1.7 | 2026-11 | wikidata-labels |
-| ca-yukon | 2026-11 | 7.5 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, ohm, osm, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
+| ca-saskatchewan-navigation | 2026-11 | 103.6 | 2026-11 | osm-navigation |
+| ca-saskatchewan-services | 2026-11 | 0.8 | 2026-11 | osm-services |
+| ca-yukon | 2026-11 | 7.5 | 2026-11 | alltheplaces, canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, nrn-address-ranges, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels |
 | ca-yukon-addresses | 2026-11 | 0.7 | 2026-11 | nrn-address-ranges |
-| ca-yukon-businesses | 2026-11 | 1.3 | 2026-11 | alltheplaces, overture-places |
-| ca-yukon-extra | 2026-11 | 69.9 | 1868-01 | canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
+| ca-yukon-businesses | 2026-11 | 1.4 | 2026-11 | alltheplaces, overture-places |
+| ca-yukon-extra | 2026-11 | 70.0 | 1868-01 | canada-contaminated-sites, canada-federal-property, canvec-named-lakes, canvec-named-rivers, cgndb, clss-aboriginal-lands, cpcad, dfo-small-craft-harbours, geonames-na, isc-first-nations, isc-historic-treaties, isc-modern-treaties, natural-earth-lines, natural-earth-regions, nrcan-oil-gas-fields, nrcan-producing-mines, ohm, ourairports, statcan-csd, statcan-dpl, statcan-facilities, statcan-fsa, statcan-odbus, statcan-odhf2, statcan-odrsf, usgs-mrds, whosonfirst-neighbourhoods, wikidata, wikidata-filming |
 | ca-yukon-names | 2026-11 | 0.6 | 2026-11 | wikidata-labels |
+| ca-yukon-navigation | 2026-11 | 6.2 | 2026-11 | osm-navigation |
+| ca-yukon-services | 2026-11 | 0.2 | 2026-11 | osm-services |
 | ch-switzerland | 2026-11 | 159.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | ch-switzerland-businesses | 2026-11 | 184.7 | 2026-11 | alltheplaces, overture-places |
 | ch-switzerland-extra | 2026-11 | 33.3 | 0005-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
@@ -473,101 +507,139 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | dk-denmark-names | 2026-11 | 7.5 | 2026-11 | wikidata-labels |
 | dk-denmark-navigation | 2026-11 | 386.4 | 2026-11 | osm-navigation |
 | dk-denmark-services | 2026-11 | 6.1 | 2026-11 | osm-services |
-| es-andalucia | 2026-11 | 94.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-andalucia | 2026-11 | 94.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-andalucia-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-andalucia-businesses | 2026-11 | 77.7 | 2026-11 | alltheplaces, overture-places |
+| es-andalucia-businesses | 2026-11 | 83.8 | 2026-11 | alltheplaces, overture-places |
 | es-andalucia-extra | 2026-11 | 17.0 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-andalucia-names | 2026-11 | 9.3 | 2026-11 | wikidata-labels |
-| es-aragon | 2026-11 | 33.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-andalucia-navigation | 2026-11 | 277.9 | 2026-11 | osm-navigation |
+| es-andalucia-services | 2026-11 | 5.3 | 2026-11 | osm-services |
+| es-aragon | 2026-11 | 33.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-aragon-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-aragon-businesses | 2026-11 | 25.3 | 2026-11 | alltheplaces, overture-places |
-| es-aragon-extra | 2026-11 | 14.4 | 0040-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| es-aragon-names | 2026-11 | 7.1 | 2026-11 | wikidata-labels |
-| es-asturias | 2026-11 | 18.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-aragon-businesses | 2026-11 | 537.5 | 2026-11 | alltheplaces, overture-places |
+| es-aragon-extra | 2026-11 | 101.5 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| es-aragon-names | 2026-11 | 76.7 | 2026-11 | wikidata-labels |
+| es-aragon-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| es-aragon-services | 2026-11 | 0.1 | 2026-11 |  |
+| es-asturias | 2026-11 | 18.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-asturias-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-asturias-businesses | 2026-11 | 9.8 | 2026-11 | alltheplaces, overture-places |
+| es-asturias-businesses | 2026-11 | 10.6 | 2026-11 | alltheplaces, overture-places |
 | es-asturias-extra | 2026-11 | 15.8 | 0701-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-asturias-names | 2026-11 | 2.3 | 2026-11 | wikidata-labels |
-| es-canarias | 2026-11 | 22.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-asturias-navigation | 2026-11 | 43.8 | 2026-11 | osm-navigation |
+| es-asturias-services | 2026-11 | 0.8 | 2026-11 | osm-services |
+| es-canarias | 2026-11 | 22.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-canarias-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-canarias-businesses | 2026-11 | 19.3 | 2026-11 | alltheplaces, overture-places |
+| es-canarias-businesses | 2026-11 | 20.9 | 2026-11 | alltheplaces, overture-places |
 | es-canarias-extra | 2026-11 | 13.7 | 0016-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-canarias-names | 2026-11 | 1.4 | 2026-11 | wikidata-labels |
-| es-cantabria | 2026-11 | 12.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-canarias-navigation | 2026-11 | 77.1 | 2026-11 | osm-navigation |
+| es-canarias-services | 2026-11 | 1.3 | 2026-11 | osm-services |
+| es-cantabria | 2026-11 | 12.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-cantabria-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-cantabria-businesses | 2026-11 | 6.1 | 2026-11 | alltheplaces, overture-places |
+| es-cantabria-businesses | 2026-11 | 6.6 | 2026-11 | alltheplaces, overture-places |
 | es-cantabria-extra | 2026-11 | 14.7 | 0074-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-cantabria-names | 2026-11 | 1.0 | 2026-11 | wikidata-labels |
-| es-castilla-la-mancha | 2026-11 | 47.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-cantabria-navigation | 2026-11 | 34.6 | 2026-11 | osm-navigation |
+| es-cantabria-services | 2026-11 | 1.0 | 2026-11 | osm-services |
+| es-castilla-la-mancha | 2026-11 | 47.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-castilla-la-mancha-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-castilla-la-mancha-businesses | 2026-11 | 69.6 | 2026-11 | alltheplaces, overture-places |
+| es-castilla-la-mancha-businesses | 2026-11 | 75.0 | 2026-11 | alltheplaces, overture-places |
 | es-castilla-la-mancha-extra | 2026-11 | 13.7 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-castilla-la-mancha-names | 2026-11 | 7.7 | 2026-11 | wikidata-labels |
-| es-castilla-y-leon | 2026-11 | 93.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-castilla-la-mancha-navigation | 2026-11 | 105.0 | 2026-11 | osm-navigation |
+| es-castilla-la-mancha-services | 2026-11 | 1.5 | 2026-11 | osm-services |
+| es-castilla-y-leon | 2026-11 | 93.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-castilla-y-leon-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-castilla-y-leon-businesses | 2026-11 | 77.8 | 2026-11 | alltheplaces, overture-places |
-| es-castilla-y-leon-extra | 2026-11 | 16.6 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| es-castilla-y-leon-businesses | 2026-11 | 84.1 | 2026-11 | alltheplaces, overture-places |
+| es-castilla-y-leon-extra | 2026-11 | 16.8 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-castilla-y-leon-names | 2026-11 | 12.5 | 2026-11 | wikidata-labels |
-| es-cataluna | 2026-11 | 105.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-castilla-y-leon-navigation | 2026-11 | 199.2 | 2026-11 | osm-navigation |
+| es-castilla-y-leon-services | 2026-11 | 3.4 | 2026-11 | osm-services |
+| es-cataluna | 2026-11 | 105.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-cataluna-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-cataluna-businesses | 2026-11 | 69.9 | 2026-11 | alltheplaces, overture-places |
+| es-cataluna-businesses | 2026-11 | 75.6 | 2026-11 | alltheplaces, overture-places |
 | es-cataluna-extra | 2026-11 | 35.3 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-cataluna-names | 2026-11 | 18.2 | 2026-11 | wikidata-labels |
-| es-ceuta | 2026-11 | 0.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-cataluna-navigation | 2026-11 | 303.8 | 2026-11 | osm-navigation |
+| es-cataluna-services | 2026-11 | 6.5 | 2026-11 | osm-services |
+| es-ceuta | 2026-11 | 0.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-ceuta-addresses | 2026-11 | 0.1 | 2026-11 |  |
 | es-ceuta-businesses | 2026-11 | 0.5 | 2026-11 | alltheplaces, overture-places |
 | es-ceuta-extra | 2026-11 | 8.5 | 1061-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-ceuta-names | 2026-11 | 0.2 | 2026-11 | wikidata-labels |
-| es-extremadura | 2026-11 | 22.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-ceuta-navigation | 2026-11 | 1.2 | 2026-11 | osm-navigation |
+| es-ceuta-services | 2026-11 | 0.2 | 2026-11 | osm-services |
+| es-extremadura | 2026-11 | 22.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-extremadura-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-extremadura-businesses | 2026-11 | 13.5 | 2026-11 | alltheplaces, overture-places |
-| es-extremadura-extra | 2026-11 | 9.7 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| es-extremadura-businesses | 2026-11 | 14.6 | 2026-11 | alltheplaces, overture-places |
+| es-extremadura-extra | 2026-11 | 9.8 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-extremadura-names | 2026-11 | 2.3 | 2026-11 | wikidata-labels |
-| es-galicia | 2026-11 | 58.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-extremadura-navigation | 2026-11 | 48.6 | 2026-11 | osm-navigation |
+| es-extremadura-services | 2026-11 | 0.8 | 2026-11 | osm-services |
+| es-galicia | 2026-11 | 58.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-galicia-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-galicia-businesses | 2026-11 | 23.8 | 2026-11 | alltheplaces, overture-places |
-| es-galicia-extra | 2026-11 | 13.4 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| es-galicia-names | 2026-11 | 3.6 | 2026-11 | wikidata-labels |
-| es-islas-baleares | 2026-11 | 15.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-galicia-businesses | 2026-11 | 537.5 | 2026-11 | alltheplaces, overture-places |
+| es-galicia-extra | 2026-11 | 101.5 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| es-galicia-names | 2026-11 | 76.7 | 2026-11 | wikidata-labels |
+| es-galicia-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| es-galicia-services | 2026-11 | 0.1 | 2026-11 |  |
+| es-islas-baleares | 2026-11 | 15.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-islas-baleares-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-islas-baleares-businesses | 2026-11 | 12.8 | 2026-11 | alltheplaces, overture-places |
+| es-islas-baleares-businesses | 2026-11 | 13.8 | 2026-11 | alltheplaces, overture-places |
 | es-islas-baleares-extra | 2026-11 | 10.0 | 0500-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-islas-baleares-names | 2026-11 | 1.1 | 2026-11 | wikidata-labels |
-| es-la-rioja | 2026-11 | 5.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-islas-baleares-navigation | 2026-11 | 45.3 | 2026-11 | osm-navigation |
+| es-islas-baleares-services | 2026-11 | 0.9 | 2026-11 | osm-services |
+| es-la-rioja | 2026-11 | 5.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-la-rioja-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-la-rioja-businesses | 2026-11 | 3.8 | 2026-11 | alltheplaces, overture-places |
+| es-la-rioja-businesses | 2026-11 | 4.1 | 2026-11 | alltheplaces, overture-places |
 | es-la-rioja-extra | 2026-11 | 8.6 | 0002-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-la-rioja-names | 2026-11 | 0.9 | 2026-11 | wikidata-labels |
-| es-madrid | 2026-11 | 38.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-la-rioja-navigation | 2026-11 | 13.4 | 2026-11 | osm-navigation |
+| es-la-rioja-services | 2026-11 | 0.3 | 2026-11 | osm-services |
+| es-madrid | 2026-11 | 38.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-madrid-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-madrid-businesses | 2026-11 | 48.2 | 2026-11 | alltheplaces, overture-places |
+| es-madrid-businesses | 2026-11 | 51.8 | 2026-11 | alltheplaces, overture-places |
 | es-madrid-extra | 2026-11 | 10.7 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-madrid-names | 2026-11 | 3.2 | 2026-11 | wikidata-labels |
-| es-melilla | 2026-11 | 0.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-madrid-navigation | 2026-11 | 166.7 | 2026-11 | osm-navigation |
+| es-madrid-services | 2026-11 | 4.1 | 2026-11 | osm-services |
+| es-melilla | 2026-11 | 0.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-melilla-addresses | 2026-11 | 0.1 | 2026-11 |  |
 | es-melilla-businesses | 2026-11 | 0.5 | 2026-11 | alltheplaces, overture-places |
 | es-melilla-extra | 2026-11 | 8.6 | 1497-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-melilla-names | 2026-11 | 0.2 | 2026-11 | wikidata-labels |
-| es-murcia | 2026-11 | 13.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-melilla-navigation | 2026-11 | 1.8 | 2026-11 | osm-navigation |
+| es-melilla-services | 2026-11 | 0.2 | 2026-11 | osm-services |
+| es-murcia | 2026-11 | 13.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-murcia-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-murcia-businesses | 2026-11 | 26.9 | 2026-11 | alltheplaces, overture-places |
-| es-murcia-extra | 2026-11 | 10.1 | 0011-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| es-murcia-names | 2026-11 | 1.6 | 2026-11 | wikidata-labels |
-| es-navarra | 2026-11 | 17.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-murcia-businesses | 2026-11 | 537.7 | 2026-11 | alltheplaces, overture-places |
+| es-murcia-extra | 2026-11 | 101.4 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| es-murcia-names | 2026-11 | 76.7 | 2026-11 | wikidata-labels |
+| es-murcia-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| es-murcia-services | 2026-11 | 0.1 | 2026-11 |  |
+| es-navarra | 2026-11 | 17.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-navarra-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-navarra-businesses | 2026-11 | 13.5 | 2026-11 | alltheplaces, overture-places |
+| es-navarra-businesses | 2026-11 | 14.6 | 2026-11 | alltheplaces, overture-places |
 | es-navarra-extra | 2026-11 | 10.9 | 0002-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-navarra-names | 2026-11 | 3.6 | 2026-11 | wikidata-labels |
-| es-pais-vasco | 2026-11 | 29.6 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-navarra-navigation | 2026-11 | 42.5 | 2026-11 | osm-navigation |
+| es-navarra-services | 2026-11 | 0.7 | 2026-11 | osm-services |
+| es-pais-vasco | 2026-11 | 29.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-pais-vasco-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-pais-vasco-businesses | 2026-11 | 17.8 | 2026-11 | alltheplaces, overture-places |
+| es-pais-vasco-businesses | 2026-11 | 19.4 | 2026-11 | alltheplaces, overture-places |
 | es-pais-vasco-extra | 2026-11 | 16.9 | 0016-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-pais-vasco-names | 2026-11 | 4.5 | 2026-11 | wikidata-labels |
-| es-valencia | 2026-11 | 55.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| es-pais-vasco-navigation | 2026-11 | 82.7 | 2026-11 | osm-navigation |
+| es-pais-vasco-services | 2026-11 | 1.7 | 2026-11 | osm-services |
+| es-valencia | 2026-11 | 55.6 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | es-valencia-addresses | 2026-11 | 0.1 | 2026-11 |  |
-| es-valencia-businesses | 2026-11 | 55.9 | 2026-11 | alltheplaces, overture-places |
+| es-valencia-businesses | 2026-11 | 60.1 | 2026-11 | alltheplaces, overture-places |
 | es-valencia-extra | 2026-11 | 12.0 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | es-valencia-names | 2026-11 | 4.1 | 2026-11 | wikidata-labels |
+| es-valencia-navigation | 2026-11 | 199.7 | 2026-11 | osm-navigation |
+| es-valencia-services | 2026-11 | 2.8 | 2026-11 | osm-services |
 | fi-finland | 2026-11 | 224.3 | 2026-11 |  |
 | fi-finland-centre-and-north | 2026-11 | 122.6 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | fi-finland-centre-and-north-businesses | 2026-11 | 25.5 | 2026-11 | alltheplaces, overture-places |
@@ -818,58 +890,84 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | is-iceland-names | 2026-11 | 1.1 | 2026-11 | wikidata-labels |
 | is-iceland-navigation | 2026-11 | 40.3 | 2026-11 | osm-navigation |
 | is-iceland-services | 2026-11 | 0.7 | 2026-11 | osm-services |
-| it-centro | 2026-11 | 125.6 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| it-centro-businesses | 2026-11 | 227.6 | 2026-11 | alltheplaces, overture-places |
-| it-centro-extra | 2026-11 | 31.5 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| it-centro-names | 2026-11 | 25.4 | 2026-11 | wikidata-labels |
-| it-isole | 2026-11 | 74.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| it-isole-businesses | 2026-11 | 135.7 | 2026-11 | alltheplaces, overture-places |
+| it-centro | 2026-11 | 125.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| it-centro-businesses | 2026-11 | 250.9 | 2026-11 | alltheplaces, overture-places |
+| it-centro-extra | 2026-11 | 31.6 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| it-centro-names | 2026-11 | 25.5 | 2026-11 | wikidata-labels |
+| it-centro-navigation | 2026-11 | 385.2 | 2026-11 | osm-navigation |
+| it-centro-services | 2026-11 | 7.4 | 2026-11 | osm-services |
+| it-isole | 2026-11 | 74.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| it-isole-businesses | 2026-11 | 149.7 | 2026-11 | alltheplaces, overture-places |
 | it-isole-extra | 2026-11 | 22.0 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | it-isole-names | 2026-11 | 11.3 | 2026-11 | wikidata-labels |
-| it-nord-est | 2026-11 | 178.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| it-nord-est-businesses | 2026-11 | 242.2 | 2026-11 | alltheplaces, overture-places |
-| it-nord-est-extra | 2026-11 | 40.3 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| it-isole-navigation | 2026-11 | 226.2 | 2026-11 | osm-navigation |
+| it-isole-services | 2026-11 | 3.9 | 2026-11 | osm-services |
+| it-nord-est | 2026-11 | 178.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| it-nord-est-businesses | 2026-11 | 266.8 | 2026-11 | alltheplaces, overture-places |
+| it-nord-est-extra | 2026-11 | 40.4 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | it-nord-est-names | 2026-11 | 36.7 | 2026-11 | wikidata-labels |
-| it-nord-ovest | 2026-11 | 187.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| it-nord-ovest-businesses | 2026-11 | 330.8 | 2026-11 | alltheplaces, overture-places |
-| it-nord-ovest-extra | 2026-11 | 45.4 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| it-nord-est-navigation | 2026-11 | 501.2 | 2026-11 | osm-navigation |
+| it-nord-est-services | 2026-11 | 10.2 | 2026-11 | osm-services |
+| it-nord-ovest | 2026-11 | 188.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| it-nord-ovest-businesses | 2026-11 | 363.4 | 2026-11 | alltheplaces, overture-places |
+| it-nord-ovest-extra | 2026-11 | 45.5 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | it-nord-ovest-names | 2026-11 | 51.9 | 2026-11 | wikidata-labels |
-| it-sud | 2026-11 | 110.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| it-sud-businesses | 2026-11 | 162.7 | 2026-11 | alltheplaces, overture-places |
+| it-nord-ovest-navigation | 2026-11 | 572.5 | 2026-11 | osm-navigation |
+| it-nord-ovest-services | 2026-11 | 12.6 | 2026-11 | osm-services |
+| it-sud | 2026-11 | 110.6 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| it-sud-businesses | 2026-11 | 179.5 | 2026-11 | alltheplaces, overture-places |
 | it-sud-extra | 2026-11 | 18.7 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | it-sud-names | 2026-11 | 15.2 | 2026-11 | wikidata-labels |
-| jp-chubu | 2026-11 | 86.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| jp-chubu-businesses | 2026-11 | 470.5 | 2026-11 | alltheplaces, overture-places |
-| jp-chubu-extra | 2026-11 | 24.6 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| it-sud-navigation | 2026-11 | 354.9 | 2026-11 | osm-navigation |
+| it-sud-services | 2026-11 | 5.5 | 2026-11 | osm-services |
+| jp-chubu | 2026-11 | 86.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| jp-chubu-businesses | 2026-11 | 508.1 | 2026-11 | alltheplaces, overture-places |
+| jp-chubu-extra | 2026-11 | 24.7 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | jp-chubu-names | 2026-11 | 17.7 | 2026-11 | wikidata-labels |
-| jp-chugoku | 2026-11 | 36.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| jp-chugoku-businesses | 2026-11 | 88.7 | 2026-11 | alltheplaces, overture-places |
+| jp-chubu-navigation | 2026-11 | 597.0 | 2026-11 | osm-navigation |
+| jp-chubu-services | 2026-11 | 6.6 | 2026-11 | osm-services |
+| jp-chugoku | 2026-11 | 36.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| jp-chugoku-businesses | 2026-11 | 95.2 | 2026-11 | alltheplaces, overture-places |
 | jp-chugoku-extra | 2026-11 | 12.7 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | jp-chugoku-names | 2026-11 | 4.0 | 2026-11 | wikidata-labels |
-| jp-hokkaido | 2026-11 | 36.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| jp-hokkaido-businesses | 2026-11 | 33.9 | 2026-11 | alltheplaces, overture-places |
+| jp-chugoku-navigation | 2026-11 | 243.0 | 2026-11 | osm-navigation |
+| jp-chugoku-services | 2026-11 | 3.6 | 2026-11 | osm-services |
+| jp-hokkaido | 2026-11 | 36.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| jp-hokkaido-businesses | 2026-11 | 36.5 | 2026-11 | alltheplaces, overture-places |
 | jp-hokkaido-extra | 2026-11 | 11.4 | 0826-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | jp-hokkaido-names | 2026-11 | 1.7 | 2026-11 | wikidata-labels |
-| jp-kansai | 2026-11 | 95.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| jp-kansai-businesses | 2026-11 | 214.2 | 2026-11 | alltheplaces, overture-places |
-| jp-kansai-extra | 2026-11 | 17.0 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| jp-kansai-names | 2026-11 | 9.3 | 2026-11 | wikidata-labels |
-| jp-kanto | 2026-11 | 138.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| jp-kanto-businesses | 2026-11 | 557.7 | 2026-11 | alltheplaces, overture-places |
+| jp-hokkaido-navigation | 2026-11 | 202.2 | 2026-11 | osm-navigation |
+| jp-hokkaido-services | 2026-11 | 3.3 | 2026-11 | osm-services |
+| jp-kansai | 2026-11 | 95.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| jp-kansai-businesses | 2026-11 | 916.7 | 2026-11 | alltheplaces, overture-places |
+| jp-kansai-extra | 2026-11 | 48.1 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| jp-kansai-names | 2026-11 | 38.3 | 2026-11 | wikidata-labels |
+| jp-kansai-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| jp-kansai-services | 2026-11 | 0.1 | 2026-11 |  |
+| jp-kanto | 2026-11 | 138.4 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| jp-kanto-businesses | 2026-11 | 602.3 | 2026-11 | alltheplaces, overture-places |
 | jp-kanto-extra | 2026-11 | 32.2 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | jp-kanto-names | 2026-11 | 21.8 | 2026-11 | wikidata-labels |
-| jp-kyushu | 2026-11 | 53.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| jp-kyushu-businesses | 2026-11 | 120.7 | 2026-11 | alltheplaces, overture-places |
-| jp-kyushu-extra | 2026-11 | 23.0 | 0057-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| jp-kanto-navigation | 2026-11 | 803.3 | 2026-11 | osm-navigation |
+| jp-kanto-services | 2026-11 | 14.4 | 2026-11 | osm-services |
+| jp-kyushu | 2026-11 | 54.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| jp-kyushu-businesses | 2026-11 | 130.0 | 2026-11 | alltheplaces, overture-places |
+| jp-kyushu-extra | 2026-11 | 23.1 | 0057-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | jp-kyushu-names | 2026-11 | 5.3 | 2026-11 | wikidata-labels |
-| jp-shikoku | 2026-11 | 18.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| jp-shikoku-businesses | 2026-11 | 54.6 | 2026-11 | alltheplaces, overture-places |
+| jp-kyushu-navigation | 2026-11 | 415.2 | 2026-11 | osm-navigation |
+| jp-kyushu-services | 2026-11 | 4.7 | 2026-11 | osm-services |
+| jp-shikoku | 2026-11 | 18.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| jp-shikoku-businesses | 2026-11 | 58.5 | 2026-11 | alltheplaces, overture-places |
 | jp-shikoku-extra | 2026-11 | 11.4 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | jp-shikoku-names | 2026-11 | 2.6 | 2026-11 | wikidata-labels |
-| jp-tohoku | 2026-11 | 60.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| jp-tohoku-businesses | 2026-11 | 69.8 | 2026-11 | alltheplaces, overture-places |
-| jp-tohoku-extra | 2026-11 | 12.6 | 0110-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| jp-tohoku-names | 2026-11 | 3.8 | 2026-11 | wikidata-labels |
+| jp-shikoku-navigation | 2026-11 | 140.0 | 2026-11 | osm-navigation |
+| jp-shikoku-services | 2026-11 | 1.8 | 2026-11 | osm-services |
+| jp-tohoku | 2026-11 | 60.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| jp-tohoku-businesses | 2026-11 | 908.4 | 2026-11 | alltheplaces, overture-places |
+| jp-tohoku-extra | 2026-11 | 48.1 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| jp-tohoku-names | 2026-11 | 38.3 | 2026-11 | wikidata-labels |
+| jp-tohoku-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| jp-tohoku-services | 2026-11 | 0.1 | 2026-11 |  |
 | lu-luxembourg | 2026-11 | 11.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | lu-luxembourg-businesses | 2026-11 | 8.4 | 2026-11 | alltheplaces, overture-places |
 | lu-luxembourg-extra | 2026-11 | 14.5 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
@@ -1551,14 +1649,14 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | be-belgium-names | wikidata-labels | ok | 150226 |
 | be-belgium-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
 | be-belgium-services | osm-services | failed | HTTP Error 404: Not Found |
-| ca-alberta | osm | ok | 2026-11-10T21:21:39Z |
+| ca-alberta | osm | ok | 2026-11-21T21:20:51Z |
 | ca-alberta-addresses | nrn-address-ranges | ok | 192832 |
 | ca-alberta-addresses | oda | ok | 1776750 |
 | ca-alberta-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-alberta |
-| ca-alberta-businesses | alltheplaces | ok | 9267 |
+| ca-alberta-businesses | alltheplaces | ok | 10352 |
 | ca-alberta-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-alberta-businesses | overture-places | ok | 191215 |
-| ca-alberta-extra | calgary-business-licences | failed | <urlopen error [Errno 104] Connection reset by peer> |
+| ca-alberta-businesses | overture-places | ok | 193029 |
+| ca-alberta-extra | calgary-business-licences | ok | 19158 |
 | ca-alberta-extra | canada-contaminated-sites | ok | 1607 |
 | ca-alberta-extra | canada-federal-property | ok | 939 |
 | ca-alberta-extra | canvec-named-lakes | ok | 3875 |
@@ -1566,7 +1664,7 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-alberta-extra | clss-aboriginal-lands | ok | 236 |
 | ca-alberta-extra | cpcad | ok | 2248 |
 | ca-alberta-extra | dfo-small-craft-harbours | ok | 5 |
-| ca-alberta-extra | edmonton-business-licences | ok | 17714 |
+| ca-alberta-extra | edmonton-business-licences | ok | 17682 |
 | ca-alberta-extra | geonames-na | ok | 1698 |
 | ca-alberta-extra | gtfs | skipped | no feed of this region in the Mobility Database lists an open licence |
 | ca-alberta-extra | isc-first-nations | ok | 62 |
@@ -1576,7 +1674,7 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-alberta-extra | natural-earth-regions | ok | 8 |
 | ca-alberta-extra | nrcan-oil-gas-fields | ok | 149 |
 | ca-alberta-extra | nrcan-producing-mines | ok | 27 |
-| ca-alberta-extra | ohm | ok | 490 |
+| ca-alberta-extra | ohm | ok | 545 |
 | ca-alberta-extra | ourairports | ok | 585 |
 | ca-alberta-extra | statcan-csd | ok | 587 |
 | ca-alberta-extra | statcan-dpl | ok | 408 |
@@ -1587,16 +1685,19 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-alberta-extra | statcan-odrsf | ok | 5794 |
 | ca-alberta-extra | usgs-mrds | ok | 124 |
 | ca-alberta-extra | whosonfirst-neighbourhoods | ok | 419 |
-| ca-alberta-extra | wikidata | ok | 25783 |
+| ca-alberta-extra | wikidata | ok | 25791 |
 | ca-alberta-extra | wikidata-filming | ok | 35 |
-| ca-alberta-names | wikidata-labels | ok | 17948 |
-| ca-british-columbia | osm | ok | 2026-11-10T21:21:39Z |
+| ca-alberta-names | wikidata-labels | ok | 17953 |
+| ca-alberta-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-alberta-navigation | osm-navigation | ok | 866225 |
+| ca-alberta-services | osm-services | ok | 24960 |
+| ca-british-columbia | osm | ok | 2026-11-21T21:20:51Z |
 | ca-british-columbia-addresses | nrn-address-ranges | ok | 0 in this region |
 | ca-british-columbia-addresses | oda | ok | 796178 |
 | ca-british-columbia-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-british-columbia |
-| ca-british-columbia-businesses | alltheplaces | ok | 17426 |
+| ca-british-columbia-businesses | alltheplaces | ok | 17013 |
 | ca-british-columbia-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-british-columbia-businesses | overture-places | ok | 691029 |
+| ca-british-columbia-businesses | overture-places | ok | 702449 |
 | ca-british-columbia-extra | bc-ferry-terminals | ok | 104 |
 | ca-british-columbia-extra | bc-rec-sites | ok | 1527 |
 | ca-british-columbia-extra | canada-contaminated-sites | ok | 5219 |
@@ -1614,7 +1715,7 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-british-columbia-extra | natural-earth-regions | ok | 21 |
 | ca-british-columbia-extra | nrcan-oil-gas-fields | ok | 124 |
 | ca-british-columbia-extra | nrcan-producing-mines | ok | 34 |
-| ca-british-columbia-extra | ohm | ok | 5026 |
+| ca-british-columbia-extra | ohm | ok | 5079 |
 | ca-british-columbia-extra | ourairports | ok | 756 |
 | ca-british-columbia-extra | statcan-csd | ok | 948 |
 | ca-british-columbia-extra | statcan-dpl | ok | 435 |
@@ -1624,18 +1725,21 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-british-columbia-extra | statcan-odhf2 | ok | 6545 |
 | ca-british-columbia-extra | statcan-odrsf | ok | 3958 |
 | ca-british-columbia-extra | usgs-mrds | ok | 1788 |
-| ca-british-columbia-extra | vancouver-business-licences | ok | 89459 |
+| ca-british-columbia-extra | vancouver-business-licences | ok | 89693 |
 | ca-british-columbia-extra | whosonfirst-neighbourhoods | ok | 701 |
-| ca-british-columbia-extra | wikidata | ok | 72125 |
-| ca-british-columbia-extra | wikidata-filming | ok | 128 |
-| ca-british-columbia-names | wikidata-labels | ok | 51194 |
-| ca-manitoba | osm | ok | 2026-11-10T21:21:39Z |
+| ca-british-columbia-extra | wikidata | ok | 72136 |
+| ca-british-columbia-extra | wikidata-filming | ok | 127 |
+| ca-british-columbia-names | wikidata-labels | ok | 51200 |
+| ca-british-columbia-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-british-columbia-navigation | osm-navigation | ok | 902120 |
+| ca-british-columbia-services | osm-services | ok | 47965 |
+| ca-manitoba | osm | ok | 2026-11-21T21:20:51Z |
 | ca-manitoba-addresses | nrn-address-ranges | ok | 68454 |
 | ca-manitoba-addresses | oda | ok | 236847 |
 | ca-manitoba-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-manitoba |
-| ca-manitoba-businesses | alltheplaces | ok | 2632 |
+| ca-manitoba-businesses | alltheplaces | ok | 3035 |
 | ca-manitoba-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-manitoba-businesses | overture-places | ok | 48198 |
+| ca-manitoba-businesses | overture-places | ok | 48715 |
 | ca-manitoba-businesses | winnipeg-business-licences | ok | 387 |
 | ca-manitoba-extra | canada-contaminated-sites | ok | 2013 |
 | ca-manitoba-extra | canada-federal-property | ok | 694 |
@@ -1664,17 +1768,20 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-manitoba-extra | statcan-odrsf | ok | 414 |
 | ca-manitoba-extra | usgs-mrds | ok | 129 |
 | ca-manitoba-extra | whosonfirst-neighbourhoods | ok | 121 |
-| ca-manitoba-extra | wikidata | ok | 36108 |
+| ca-manitoba-extra | wikidata | ok | 36111 |
 | ca-manitoba-extra | wikidata-filming | ok | 11 |
 | ca-manitoba-extra | winnipeg-historical-resources | ok | 711 |
-| ca-manitoba-names | wikidata-labels | ok | 20837 |
-| ca-new-brunswick | osm | ok | 2026-11-10T21:21:39Z |
+| ca-manitoba-names | wikidata-labels | ok | 20842 |
+| ca-manitoba-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-manitoba-navigation | osm-navigation | ok | 192344 |
+| ca-manitoba-services | osm-services | ok | 5864 |
+| ca-new-brunswick | osm | ok | 2026-11-21T21:20:51Z |
 | ca-new-brunswick-addresses | nrn-address-ranges | ok | 56759 |
 | ca-new-brunswick-addresses | oda | ok | 406040 |
 | ca-new-brunswick-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-new-brunswick |
-| ca-new-brunswick-businesses | alltheplaces | ok | 3103 |
+| ca-new-brunswick-businesses | alltheplaces | ok | 3395 |
 | ca-new-brunswick-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-new-brunswick-businesses | overture-places | ok | 82822 |
+| ca-new-brunswick-businesses | overture-places | ok | 83698 |
 | ca-new-brunswick-extra | canada-contaminated-sites | ok | 1318 |
 | ca-new-brunswick-extra | canada-federal-property | ok | 894 |
 | ca-new-brunswick-extra | canvec-named-lakes | ok | 1692 |
@@ -1704,22 +1811,25 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-new-brunswick-extra | statcan-odrsf | ok | 641 |
 | ca-new-brunswick-extra | usgs-mrds | ok | 183 |
 | ca-new-brunswick-extra | whosonfirst-neighbourhoods | ok | 242 |
-| ca-new-brunswick-extra | wikidata | ok | 33626 |
+| ca-new-brunswick-extra | wikidata | ok | 33629 |
 | ca-new-brunswick-extra | wikidata-filming | ok | 20 |
-| ca-new-brunswick-names | wikidata-labels | ok | 19123 |
-| ca-newfoundland-and-labrador | osm | ok | 2026-11-10T21:21:39Z |
+| ca-new-brunswick-names | wikidata-labels | ok | 19124 |
+| ca-new-brunswick-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-new-brunswick-navigation | osm-navigation | ok | 107282 |
+| ca-new-brunswick-services | osm-services | ok | 4421 |
+| ca-newfoundland-and-labrador | osm | ok | 2026-11-21T21:20:51Z |
 | ca-newfoundland-and-labrador-addresses | nrn-address-ranges | ok | 15407 |
 | ca-newfoundland-and-labrador-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-newfoundland-and-labrador |
-| ca-newfoundland-and-labrador-businesses | alltheplaces | ok | 2220 |
+| ca-newfoundland-and-labrador-businesses | alltheplaces | ok | 2290 |
 | ca-newfoundland-and-labrador-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-newfoundland-and-labrador-businesses | overture-places | ok | 97946 |
+| ca-newfoundland-and-labrador-businesses | overture-places | ok | 99031 |
 | ca-newfoundland-and-labrador-extra | canada-contaminated-sites | ok | 3651 |
 | ca-newfoundland-and-labrador-extra | canada-federal-property | ok | 1973 |
 | ca-newfoundland-and-labrador-extra | cgndb | ok | 6387 |
 | ca-newfoundland-and-labrador-extra | clss-aboriginal-lands | ok | 93 |
 | ca-newfoundland-and-labrador-extra | cpcad | ok | 5817 |
 | ca-newfoundland-and-labrador-extra | dfo-small-craft-harbours | ok | 625 |
-| ca-newfoundland-and-labrador-extra | geonames-na | ok | 1491 |
+| ca-newfoundland-and-labrador-extra | geonames-na | ok | 1490 |
 | ca-newfoundland-and-labrador-extra | gtfs | skipped | no feed of this region in the Mobility Database lists an open licence |
 | ca-newfoundland-and-labrador-extra | isc-first-nations | ok | 42 |
 | ca-newfoundland-and-labrador-extra | isc-historic-treaties | ok | 1 |
@@ -1740,24 +1850,27 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-newfoundland-and-labrador-extra | usgs-mrds | ok | 42 |
 | ca-newfoundland-and-labrador-extra | whosonfirst-neighbourhoods | ok | 13 |
 | ca-newfoundland-and-labrador-extra | wikidata | ok | 90102 |
-| ca-newfoundland-and-labrador-extra | wikidata-filming | ok | 31 |
-| ca-newfoundland-and-labrador-names | wikidata-labels | ok | 47995 |
-| ca-northwest-territories | osm | ok | 2026-11-10T21:21:39Z |
-| ca-northwest-territories-addresses | nrn-address-ranges | ok | 1038 |
+| ca-newfoundland-and-labrador-extra | wikidata-filming | ok | 33 |
+| ca-newfoundland-and-labrador-names | wikidata-labels | ok | 47996 |
+| ca-newfoundland-and-labrador-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-newfoundland-and-labrador-navigation | osm-navigation | ok | 75561 |
+| ca-newfoundland-and-labrador-services | osm-services | ok | 2364 |
+| ca-northwest-territories | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
+| ca-northwest-territories-addresses | nrn-address-ranges | ok | 1036 |
 | ca-northwest-territories-addresses | oda | ok | 6996 |
 | ca-northwest-territories-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-northwest-territories |
-| ca-northwest-territories-businesses | alltheplaces | ok | 572 |
+| ca-northwest-territories-businesses | alltheplaces | ok | 282 |
 | ca-northwest-territories-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-northwest-territories-businesses | overture-places | ok | 5971 |
+| ca-northwest-territories-businesses | overture-places | ok | 5933 |
 | ca-northwest-territories-extra | canada-contaminated-sites | ok | 2004 |
 | ca-northwest-territories-extra | canada-federal-property | ok | 761 |
 | ca-northwest-territories-extra | cgndb | ok | 2595 |
 | ca-northwest-territories-extra | clss-aboriginal-lands | ok | 26 |
-| ca-northwest-territories-extra | cpcad | ok | 130 |
+| ca-northwest-territories-extra | cpcad | ok | 127 |
 | ca-northwest-territories-extra | dfo-small-craft-harbours | ok | 3 |
 | ca-northwest-territories-extra | geonames-na | ok | 58 |
 | ca-northwest-territories-extra | gtfs | skipped | no feed of this region in the Mobility Database lists an open licence |
-| ca-northwest-territories-extra | isc-first-nations | ok | 36 |
+| ca-northwest-territories-extra | isc-first-nations | ok | 34 |
 | ca-northwest-territories-extra | isc-historic-treaties | ok | 4 |
 | ca-northwest-territories-extra | isc-modern-treaties | ok | 17 |
 | ca-northwest-territories-extra | natural-earth-lines | ok | 1 |
@@ -1766,7 +1879,7 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-northwest-territories-extra | nrcan-producing-mines | ok | 5 |
 | ca-northwest-territories-extra | ohm | ok | 6 |
 | ca-northwest-territories-extra | ourairports | ok | 181 |
-| ca-northwest-territories-extra | statcan-csd | ok | 85 |
+| ca-northwest-territories-extra | statcan-csd | ok | 82 |
 | ca-northwest-territories-extra | statcan-dpl | ok | 3 |
 | ca-northwest-territories-extra | statcan-facilities | ok | 23 |
 | ca-northwest-territories-extra | statcan-fsa | ok | 14 |
@@ -1775,17 +1888,20 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-northwest-territories-extra | statcan-odrsf | ok | 27 |
 | ca-northwest-territories-extra | usgs-mrds | ok | 41 |
 | ca-northwest-territories-extra | whosonfirst-neighbourhoods | ok | 0 in this region |
-| ca-northwest-territories-extra | wikidata | ok | 8893 |
+| ca-northwest-territories-extra | wikidata | ok | 8695 |
 | ca-northwest-territories-extra | wikidata-filming | ok | 1 |
-| ca-northwest-territories-names | wikidata-labels | ok | 6120 |
-| ca-nova-scotia | osm | ok | 2026-11-10T21:21:39Z |
+| ca-northwest-territories-names | wikidata-labels | ok | 5992 |
+| ca-northwest-territories-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-northwest-territories-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| ca-northwest-territories-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
+| ca-nova-scotia | osm | ok | 2026-11-21T21:20:51Z |
 | ca-nova-scotia-addresses | nrn-address-ranges | ok | 108726 |
 | ca-nova-scotia-addresses | ns-civic-addresses | ok | 485644 |
 | ca-nova-scotia-addresses | oda | ok | 883501 |
 | ca-nova-scotia-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-nova-scotia |
-| ca-nova-scotia-businesses | alltheplaces | ok | 3962 |
+| ca-nova-scotia-businesses | alltheplaces | ok | 4474 |
 | ca-nova-scotia-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-nova-scotia-businesses | overture-places | ok | 72312 |
+| ca-nova-scotia-businesses | overture-places | ok | 73034 |
 | ca-nova-scotia-extra | canada-contaminated-sites | ok | 2419 |
 | ca-nova-scotia-extra | canada-federal-property | ok | 1601 |
 | ca-nova-scotia-extra | canvec-named-lakes | ok | 11292 |
@@ -1825,12 +1941,15 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-nova-scotia-extra | wikidata | ok | 41650 |
 | ca-nova-scotia-extra | wikidata-filming | ok | 15 |
 | ca-nova-scotia-names | wikidata-labels | ok | 21519 |
-| ca-nunavut | osm | ok | 2026-11-10T21:21:39Z |
+| ca-nova-scotia-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-nova-scotia-navigation | osm-navigation | ok | 131696 |
+| ca-nova-scotia-services | osm-services | ok | 6507 |
+| ca-nunavut | osm | ok | 2026-11-21T21:20:51Z |
 | ca-nunavut-addresses | nrn-address-ranges | ok | 334 |
 | ca-nunavut-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-nunavut |
-| ca-nunavut-businesses | alltheplaces | ok | 6730 |
+| ca-nunavut-businesses | alltheplaces | ok | 6472 |
 | ca-nunavut-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-nunavut-businesses | overture-places | ok | 136895 |
+| ca-nunavut-businesses | overture-places | ok | 138217 |
 | ca-nunavut-extra | canada-contaminated-sites | ok | 4488 |
 | ca-nunavut-extra | canada-federal-property | ok | 1581 |
 | ca-nunavut-extra | cgndb | ok | 3934 |
@@ -1846,7 +1965,7 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-nunavut-extra | natural-earth-regions | ok | 47 |
 | ca-nunavut-extra | nrcan-oil-gas-fields | ok | 174 |
 | ca-nunavut-extra | nrcan-producing-mines | ok | 56 |
-| ca-nunavut-extra | ohm | ok | 177 |
+| ca-nunavut-extra | ohm | ok | 194 |
 | ca-nunavut-extra | ourairports | ok | 807 |
 | ca-nunavut-extra | statcan-csd | ok | 1268 |
 | ca-nunavut-extra | statcan-dpl | ok | 474 |
@@ -1857,17 +1976,20 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-nunavut-extra | statcan-odrsf | ok | 0 in this region |
 | ca-nunavut-extra | usgs-mrds | ok | 137 |
 | ca-nunavut-extra | whosonfirst-neighbourhoods | ok | 257 |
-| ca-nunavut-extra | wikidata | ok | 85663 |
-| ca-nunavut-extra | wikidata-filming | ok | 38 |
-| ca-nunavut-names | wikidata-labels | ok | 55545 |
+| ca-nunavut-extra | wikidata | ok | 85679 |
+| ca-nunavut-extra | wikidata-filming | ok | 39 |
+| ca-nunavut-names | wikidata-labels | ok | 55557 |
+| ca-nunavut-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-nunavut-navigation | osm-navigation | ok | 4640 |
+| ca-nunavut-services | osm-services | ok | 328 |
 | ca-ontario | osm | ok | 0 |
 | ca-ontario-east | osm | ok |  |
 | ca-ontario-east-addresses | nrn-address-ranges | ok | 122321 |
 | ca-ontario-east-addresses | oda | ok | 741837 |
 | ca-ontario-east-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-ontario |
-| ca-ontario-east-businesses | alltheplaces | ok | 7648 |
+| ca-ontario-east-businesses | alltheplaces | ok | 8761 |
 | ca-ontario-east-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-ontario-east-businesses | overture-places | ok | 547378 |
+| ca-ontario-east-businesses | overture-places | ok | 553109 |
 | ca-ontario-east-businesses | toronto-dinesafe | ok | 0 in this region |
 | ca-ontario-east-extra | canada-contaminated-sites | ok | 1341 |
 | ca-ontario-east-extra | canada-federal-property | ok | 1708 |
@@ -1875,7 +1997,7 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-ontario-east-extra | clss-aboriginal-lands | ok | 22 |
 | ca-ontario-east-extra | cpcad | ok | 1125 |
 | ca-ontario-east-extra | dfo-small-craft-harbours | ok | 30 |
-| ca-ontario-east-extra | geonames-na | ok | 1351 |
+| ca-ontario-east-extra | geonames-na | ok | 1344 |
 | ca-ontario-east-extra | gtfs | skipped | no feed of this region in the Mobility Database lists an open licence |
 | ca-ontario-east-extra | isc-first-nations | ok | 11 |
 | ca-ontario-east-extra | isc-historic-treaties | ok | 3 |
@@ -1896,16 +2018,19 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-ontario-east-extra | statcan-odrsf | ok | 3634 |
 | ca-ontario-east-extra | usgs-mrds | ok | 29 |
 | ca-ontario-east-extra | whosonfirst-neighbourhoods | ok | 313 |
-| ca-ontario-east-extra | wikidata | ok | 48303 |
-| ca-ontario-east-extra | wikidata-filming | ok | 111 |
-| ca-ontario-east-names | wikidata-labels | ok | 29251 |
+| ca-ontario-east-extra | wikidata | ok | 55724 |
+| ca-ontario-east-extra | wikidata-filming | ok | 106 |
+| ca-ontario-east-names | wikidata-labels | ok | 29259 |
+| ca-ontario-east-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-ontario-east-navigation | osm-navigation | ok | 342755 |
+| ca-ontario-east-services | osm-services | ok | 53481 |
 | ca-ontario-extra | canada-contaminated-sites | ok | 4209 |
-| ca-ontario-extra | canada-federal-property | ok | 3100 |
+| ca-ontario-extra | canada-federal-property | ok | 3111 |
 | ca-ontario-extra | cgndb | ok | 33879 |
 | ca-ontario-extra | clss-aboriginal-lands | ok | 233 |
 | ca-ontario-extra | cpcad | ok | 3326 |
 | ca-ontario-extra | dfo-small-craft-harbours | ok | 86 |
-| ca-ontario-extra | geonames-na | ok | 5851 |
+| ca-ontario-extra | geonames-na | ok | 5841 |
 | ca-ontario-extra | gtfs | skipped | no feed of this region in the Mobility Database lists an open licence |
 | ca-ontario-extra | isc-first-nations | ok | 138 |
 | ca-ontario-extra | isc-historic-treaties | ok | 15 |
@@ -1926,24 +2051,24 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-ontario-extra | statcan-odrsf | ok | 17450 |
 | ca-ontario-extra | usgs-mrds | ok | 346 |
 | ca-ontario-extra | whosonfirst-neighbourhoods | ok | 1233 |
-| ca-ontario-extra | wikidata | ok | 130054 |
-| ca-ontario-extra | wikidata-filming | ok | 218 |
+| ca-ontario-extra | wikidata | ok | 144866 |
+| ca-ontario-extra | wikidata-filming | ok | 208 |
 | ca-ontario-names | wikidata-labels | ok | 123953 |
 | ca-ontario-north | osm | ok |  |
 | ca-ontario-north-addresses | nrn-address-ranges | ok | 33981 |
 | ca-ontario-north-addresses | oda | ok | 65942 |
 | ca-ontario-north-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-ontario |
-| ca-ontario-north-businesses | alltheplaces | ok | 2954 |
+| ca-ontario-north-businesses | alltheplaces | ok | 2115 |
 | ca-ontario-north-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-ontario-north-businesses | overture-places | ok | 91458 |
+| ca-ontario-north-businesses | overture-places | ok | 92897 |
 | ca-ontario-north-businesses | toronto-dinesafe | ok | 0 in this region |
 | ca-ontario-north-extra | canada-contaminated-sites | ok | 1616 |
-| ca-ontario-north-extra | canada-federal-property | ok | 481 |
+| ca-ontario-north-extra | canada-federal-property | ok | 482 |
 | ca-ontario-north-extra | cgndb | ok | 22242 |
 | ca-ontario-north-extra | clss-aboriginal-lands | ok | 176 |
 | ca-ontario-north-extra | cpcad | ok | 796 |
 | ca-ontario-north-extra | dfo-small-craft-harbours | ok | 17 |
-| ca-ontario-north-extra | geonames-na | ok | 2638 |
+| ca-ontario-north-extra | geonames-na | ok | 2636 |
 | ca-ontario-north-extra | gtfs | skipped | no feed of this region in the Mobility Database lists an open licence |
 | ca-ontario-north-extra | isc-first-nations | ok | 93 |
 | ca-ontario-north-extra | isc-historic-treaties | ok | 7 |
@@ -1966,14 +2091,17 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-ontario-north-extra | whosonfirst-neighbourhoods | ok | 43 |
 | ca-ontario-north-extra | wikidata | ok | 57701 |
 | ca-ontario-north-extra | wikidata-filming | ok | 26 |
-| ca-ontario-north-names | wikidata-labels | ok | 46633 |
+| ca-ontario-north-names | wikidata-labels | ok | 46638 |
+| ca-ontario-north-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-ontario-north-navigation | osm-navigation | ok | 111904 |
+| ca-ontario-north-services | osm-services | ok | 3999 |
 | ca-ontario-south-west | osm | ok |  |
 | ca-ontario-south-west-addresses | nrn-address-ranges | ok | 92977 |
 | ca-ontario-south-west-addresses | oda | ok | 816564 |
 | ca-ontario-south-west-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-ontario |
-| ca-ontario-south-west-businesses | alltheplaces | ok | 5362 |
+| ca-ontario-south-west-businesses | alltheplaces | ok | 6720 |
 | ca-ontario-south-west-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-ontario-south-west-businesses | overture-places | ok | 265943 |
+| ca-ontario-south-west-businesses | overture-places | ok | 271503 |
 | ca-ontario-south-west-businesses | toronto-dinesafe | ok | 0 in this region |
 | ca-ontario-south-west-extra | canada-contaminated-sites | ok | 843 |
 | ca-ontario-south-west-extra | canada-federal-property | ok | 507 |
@@ -2002,24 +2130,27 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-ontario-south-west-extra | statcan-odrsf | ok | 2705 |
 | ca-ontario-south-west-extra | usgs-mrds | ok | 19 |
 | ca-ontario-south-west-extra | whosonfirst-neighbourhoods | ok | 220 |
-| ca-ontario-south-west-extra | wikidata | ok | 12996 |
+| ca-ontario-south-west-extra | wikidata | ok | 12999 |
 | ca-ontario-south-west-extra | wikidata-filming | ok | 19 |
-| ca-ontario-south-west-names | wikidata-labels | ok | 6882 |
+| ca-ontario-south-west-names | wikidata-labels | ok | 6883 |
+| ca-ontario-south-west-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-ontario-south-west-navigation | osm-navigation | ok | 378442 |
+| ca-ontario-south-west-services | osm-services | ok | 12916 |
 | ca-ontario-toronto | osm | ok |  |
 | ca-ontario-toronto-addresses | nrn-address-ranges | ok | 166518 |
 | ca-ontario-toronto-addresses | oda | ok | 2608080 |
 | ca-ontario-toronto-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-ontario |
-| ca-ontario-toronto-businesses | alltheplaces | ok | 61632 |
+| ca-ontario-toronto-businesses | alltheplaces | ok | 64300 |
 | ca-ontario-toronto-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-ontario-toronto-businesses | overture-places | ok | 274726 |
-| ca-ontario-toronto-businesses | toronto-dinesafe | ok | 20130 |
+| ca-ontario-toronto-businesses | overture-places | ok | 276476 |
+| ca-ontario-toronto-businesses | toronto-dinesafe | ok | 20386 |
 | ca-ontario-toronto-extra | canada-contaminated-sites | ok | 409 |
-| ca-ontario-toronto-extra | canada-federal-property | ok | 404 |
+| ca-ontario-toronto-extra | canada-federal-property | ok | 414 |
 | ca-ontario-toronto-extra | cgndb | ok | 274 |
 | ca-ontario-toronto-extra | clss-aboriginal-lands | ok | 6 |
 | ca-ontario-toronto-extra | cpcad | ok | 439 |
 | ca-ontario-toronto-extra | dfo-small-craft-harbours | ok | 10 |
-| ca-ontario-toronto-extra | geonames-na | ok | 1212 |
+| ca-ontario-toronto-extra | geonames-na | ok | 1211 |
 | ca-ontario-toronto-extra | gtfs | skipped | no feed of this region in the Mobility Database lists an open licence |
 | ca-ontario-toronto-extra | isc-first-nations | ok | 17 |
 | ca-ontario-toronto-extra | isc-historic-treaties | ok | 2 |
@@ -2040,16 +2171,19 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-ontario-toronto-extra | statcan-odrsf | ok | 10557 |
 | ca-ontario-toronto-extra | usgs-mrds | ok | 6 |
 | ca-ontario-toronto-extra | whosonfirst-neighbourhoods | ok | 657 |
-| ca-ontario-toronto-extra | wikidata | ok | 11054 |
-| ca-ontario-toronto-extra | wikidata-filming | ok | 62 |
-| ca-ontario-toronto-names | wikidata-labels | ok | 4441 |
-| ca-prince-edward-island | osm | ok | 2026-11-10T21:21:39Z |
+| ca-ontario-toronto-extra | wikidata | ok | 18442 |
+| ca-ontario-toronto-extra | wikidata-filming | ok | 57 |
+| ca-ontario-toronto-names | wikidata-labels | ok | 4447 |
+| ca-ontario-toronto-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-ontario-toronto-navigation | osm-navigation | ok | 961769 |
+| ca-ontario-toronto-services | osm-services | ok | 44657 |
+| ca-prince-edward-island | osm | ok | 2026-11-21T21:20:51Z |
 | ca-prince-edward-island-addresses | nrn-address-ranges | ok | 15643 |
 | ca-prince-edward-island-addresses | oda | ok | 74412 |
 | ca-prince-edward-island-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-prince-edward-island |
-| ca-prince-edward-island-businesses | alltheplaces | ok | 429 |
+| ca-prince-edward-island-businesses | alltheplaces | ok | 516 |
 | ca-prince-edward-island-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-prince-edward-island-businesses | overture-places | ok | 9479 |
+| ca-prince-edward-island-businesses | overture-places | ok | 9585 |
 | ca-prince-edward-island-extra | canada-contaminated-sites | ok | 368 |
 | ca-prince-edward-island-extra | canada-federal-property | ok | 294 |
 | ca-prince-edward-island-extra | canvec-named-lakes | ok | 856 |
@@ -2081,21 +2215,24 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-prince-edward-island-extra | wikidata | ok | 4725 |
 | ca-prince-edward-island-extra | wikidata-filming | ok | 1 |
 | ca-prince-edward-island-names | wikidata-labels | ok | 2235 |
+| ca-prince-edward-island-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-prince-edward-island-navigation | osm-navigation | ok | 27071 |
+| ca-prince-edward-island-services | osm-services | ok | 1027 |
 | ca-quebec | osm | ok | 0 |
 | ca-quebec-east-and-north | osm | ok |  |
 | ca-quebec-east-and-north-addresses | nrn-address-ranges | ok | 9892 |
 | ca-quebec-east-and-north-addresses | oda | ok | 80573 |
 | ca-quebec-east-and-north-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-quebec |
-| ca-quebec-east-and-north-businesses | alltheplaces | ok | 2920 |
+| ca-quebec-east-and-north-businesses | alltheplaces | ok | 2959 |
 | ca-quebec-east-and-north-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-quebec-east-and-north-businesses | overture-places | ok | 408894 |
+| ca-quebec-east-and-north-businesses | overture-places | ok | 412966 |
 | ca-quebec-east-and-north-extra | canada-contaminated-sites | ok | 3112 |
 | ca-quebec-east-and-north-extra | canada-federal-property | ok | 1984 |
 | ca-quebec-east-and-north-extra | cgndb | ok | 3847 |
 | ca-quebec-east-and-north-extra | clss-aboriginal-lands | ok | 51 |
 | ca-quebec-east-and-north-extra | cpcad | ok | 2790 |
 | ca-quebec-east-and-north-extra | dfo-small-craft-harbours | ok | 313 |
-| ca-quebec-east-and-north-extra | geonames-na | ok | 895 |
+| ca-quebec-east-and-north-extra | geonames-na | ok | 894 |
 | ca-quebec-east-and-north-extra | gtfs | ok | 324 |
 | ca-quebec-east-and-north-extra | isc-first-nations | ok | 11 |
 | ca-quebec-east-and-north-extra | isc-historic-treaties | ok | 2 |
@@ -2116,16 +2253,19 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-quebec-east-and-north-extra | statcan-odrsf | ok | 126 |
 | ca-quebec-east-and-north-extra | usgs-mrds | ok | 14 |
 | ca-quebec-east-and-north-extra | whosonfirst-neighbourhoods | ok | 84 |
-| ca-quebec-east-and-north-extra | wikidata | ok | 196752 |
-| ca-quebec-east-and-north-extra | wikidata-filming | ok | 163 |
-| ca-quebec-east-and-north-names | wikidata-labels | ok | 163796 |
+| ca-quebec-east-and-north-extra | wikidata | ok | 196786 |
+| ca-quebec-east-and-north-extra | wikidata-filming | ok | 164 |
+| ca-quebec-east-and-north-names | wikidata-labels | ok | 163825 |
+| ca-quebec-east-and-north-navigation | gtfs-navigation | ok | 324 |
+| ca-quebec-east-and-north-navigation | osm-navigation | ok | 35515 |
+| ca-quebec-east-and-north-services | osm-services | ok | 26557 |
 | ca-quebec-extra | canada-contaminated-sites | ok | 3514 |
 | ca-quebec-extra | canada-federal-property | ok | 2290 |
 | ca-quebec-extra | cgndb | ok | 4180 |
 | ca-quebec-extra | clss-aboriginal-lands | ok | 55 |
 | ca-quebec-extra | cpcad | ok | 2982 |
 | ca-quebec-extra | dfo-small-craft-harbours | ok | 315 |
-| ca-quebec-extra | geonames-na | ok | 1745 |
+| ca-quebec-extra | geonames-na | ok | 1743 |
 | ca-quebec-extra | gtfs | ok | 0 in this region |
 | ca-quebec-extra | isc-first-nations | ok | 0 in this region |
 | ca-quebec-extra | isc-historic-treaties | ok | 3 |
@@ -2146,22 +2286,22 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-quebec-extra | statcan-odrsf | ok | 762 |
 | ca-quebec-extra | usgs-mrds | ok | 15 |
 | ca-quebec-extra | whosonfirst-neighbourhoods | ok | 273 |
-| ca-quebec-extra | wikidata | ok | 206003 |
-| ca-quebec-extra | wikidata-filming | ok | 203 |
+| ca-quebec-extra | wikidata | ok | 206045 |
+| ca-quebec-extra | wikidata-filming | ok | 204 |
 | ca-quebec-montreal | osm | ok |  |
 | ca-quebec-montreal-addresses | nrn-address-ranges | ok | 20426 |
 | ca-quebec-montreal-addresses | oda | ok | 723346 |
 | ca-quebec-montreal-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-quebec |
-| ca-quebec-montreal-businesses | alltheplaces | ok | 5958 |
+| ca-quebec-montreal-businesses | alltheplaces | ok | 6240 |
 | ca-quebec-montreal-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-quebec-montreal-businesses | overture-places | ok | 113438 |
+| ca-quebec-montreal-businesses | overture-places | ok | 114296 |
 | ca-quebec-montreal-extra | canada-contaminated-sites | ok | 402 |
 | ca-quebec-montreal-extra | canada-federal-property | ok | 306 |
 | ca-quebec-montreal-extra | cgndb | ok | 333 |
 | ca-quebec-montreal-extra | clss-aboriginal-lands | ok | 4 |
 | ca-quebec-montreal-extra | cpcad | ok | 192 |
 | ca-quebec-montreal-extra | dfo-small-craft-harbours | ok | 2 |
-| ca-quebec-montreal-extra | geonames-na | ok | 850 |
+| ca-quebec-montreal-extra | geonames-na | ok | 849 |
 | ca-quebec-montreal-extra | gtfs | ok | 0 in this region |
 | ca-quebec-montreal-extra | isc-first-nations | ok | 0 in this region |
 | ca-quebec-montreal-extra | isc-historic-treaties | ok | 1 |
@@ -2182,17 +2322,20 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-quebec-montreal-extra | statcan-odrsf | ok | 636 |
 | ca-quebec-montreal-extra | usgs-mrds | ok | 1 |
 | ca-quebec-montreal-extra | whosonfirst-neighbourhoods | ok | 189 |
-| ca-quebec-montreal-extra | wikidata | ok | 9251 |
+| ca-quebec-montreal-extra | wikidata | ok | 9259 |
 | ca-quebec-montreal-extra | wikidata-filming | ok | 40 |
-| ca-quebec-montreal-names | wikidata-labels | ok | 8434 |
+| ca-quebec-montreal-names | wikidata-labels | ok | 8442 |
+| ca-quebec-montreal-navigation | gtfs-navigation | ok | 0 in this region |
+| ca-quebec-montreal-navigation | osm-navigation | ok | 364699 |
+| ca-quebec-montreal-services | osm-services | ok | 15106 |
 | ca-quebec-names | wikidata-labels | ok | 157939 |
-| ca-saskatchewan | osm | ok | 2026-11-10T21:21:39Z |
+| ca-saskatchewan | osm | ok | 2026-11-21T21:20:51Z |
 | ca-saskatchewan-addresses | nrn-address-ranges | ok | 77564 |
 | ca-saskatchewan-addresses | oda | ok | 157710 |
 | ca-saskatchewan-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-saskatchewan |
-| ca-saskatchewan-businesses | alltheplaces | ok | 2334 |
+| ca-saskatchewan-businesses | alltheplaces | ok | 2650 |
 | ca-saskatchewan-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-saskatchewan-businesses | overture-places | ok | 45092 |
+| ca-saskatchewan-businesses | overture-places | ok | 45634 |
 | ca-saskatchewan-extra | canada-contaminated-sites | ok | 1889 |
 | ca-saskatchewan-extra | canada-federal-property | ok | 687 |
 | ca-saskatchewan-extra | canvec-named-lakes | ok | 20602 |
@@ -2220,15 +2363,18 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-saskatchewan-extra | statcan-odrsf | ok | 1072 |
 | ca-saskatchewan-extra | usgs-mrds | ok | 41 |
 | ca-saskatchewan-extra | whosonfirst-neighbourhoods | ok | 92 |
-| ca-saskatchewan-extra | wikidata | ok | 17618 |
+| ca-saskatchewan-extra | wikidata | ok | 17644 |
 | ca-saskatchewan-extra | wikidata-filming | ok | 5 |
-| ca-saskatchewan-names | wikidata-labels | ok | 11885 |
-| ca-yukon | osm | ok | 2026-11-10T21:21:39Z |
+| ca-saskatchewan-names | wikidata-labels | ok | 11900 |
+| ca-saskatchewan-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-saskatchewan-navigation | osm-navigation | ok | 275197 |
+| ca-saskatchewan-services | osm-services | ok | 5853 |
+| ca-yukon | osm | ok | 2026-11-21T21:20:51Z |
 | ca-yukon-addresses | nrn-address-ranges | ok | 2348 |
 | ca-yukon-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/ca-yukon |
-| ca-yukon-businesses | alltheplaces | ok | 393 |
+| ca-yukon-businesses | alltheplaces | ok | 164 |
 | ca-yukon-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| ca-yukon-businesses | overture-places | ok | 4275 |
+| ca-yukon-businesses | overture-places | ok | 4334 |
 | ca-yukon-extra | canada-contaminated-sites | ok | 799 |
 | ca-yukon-extra | canada-federal-property | ok | 484 |
 | ca-yukon-extra | canvec-named-lakes | ok | 21338 |
@@ -2260,6 +2406,9 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ca-yukon-extra | wikidata | ok | 6154 |
 | ca-yukon-extra | wikidata-filming | ok | 1 |
 | ca-yukon-names | wikidata-labels | ok | 4050 |
+| ca-yukon-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
+| ca-yukon-navigation | osm-navigation | ok | 11801 |
+| ca-yukon-services | osm-services | ok | 610 |
 | ch-switzerland | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
 | ch-switzerland-businesses | alltheplaces | ok | 166876 |
 | ch-switzerland-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
@@ -2494,107 +2643,123 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | dk-denmark-names | wikidata-labels | ok | 41754 |
 | dk-denmark-navigation | osm-navigation | ok | 1121770 |
 | dk-denmark-services | osm-services | ok | 60486 |
-| es-andalucia | osm | ok | 2026-11-10T21:21:39Z |
+| es-andalucia | osm | ok | 2026-11-22T21:20:48Z |
 | es-andalucia-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-andalucia-businesses | alltheplaces | ok | 14438 |
+| es-andalucia-businesses | alltheplaces | ok | 17123 |
 | es-andalucia-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-andalucia-businesses | overture-places | ok | 294063 |
+| es-andalucia-businesses | overture-places | ok | 298239 |
 | es-andalucia-extra | geonames | ok | 5888 |
 | es-andalucia-extra | natural-earth-lines | ok | 0 in this region |
 | es-andalucia-extra | natural-earth-regions | ok | 6 |
 | es-andalucia-extra | ourairports | ok | 120 |
-| es-andalucia-extra | wikidata | ok | 39583 |
-| es-andalucia-extra | wikidata-filming | ok | 79 |
-| es-andalucia-names | wikidata-labels | ok | 47827 |
-| es-aragon | osm | ok | 2026-11-10T21:21:39Z |
+| es-andalucia-extra | wikidata | ok | 39643 |
+| es-andalucia-extra | wikidata-filming | ok | 84 |
+| es-andalucia-names | wikidata-labels | ok | 47841 |
+| es-andalucia-navigation | osm-navigation | ok | 878581 |
+| es-andalucia-services | osm-services | ok | 45832 |
+| es-aragon | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
 | es-aragon-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-aragon-businesses | alltheplaces | ok | 5644 |
+| es-aragon-businesses | alltheplaces | ok | 148405 |
 | es-aragon-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-aragon-businesses | overture-places | ok | 95048 |
-| es-aragon-extra | geonames | ok | 2746 |
+| es-aragon-businesses | overture-places | ok | 1990581 |
+| es-aragon-extra | geonames | ok | 32988 |
 | es-aragon-extra | natural-earth-lines | ok | 0 in this region |
-| es-aragon-extra | natural-earth-regions | ok | 3 |
-| es-aragon-extra | ourairports | ok | 62 |
-| es-aragon-extra | wikidata | ok | 32811 |
-| es-aragon-extra | wikidata-filming | ok | 58 |
-| es-aragon-names | wikidata-labels | ok | 37264 |
-| es-asturias | osm | ok | 2026-11-10T21:21:39Z |
+| es-aragon-extra | natural-earth-regions | ok | 33 |
+| es-aragon-extra | ourairports | ok | 589 |
+| es-aragon-extra | wikidata | ok | 430572 |
+| es-aragon-extra | wikidata-filming | ok | 799 |
+| es-aragon-names | wikidata-labels | ok | 404884 |
+| es-aragon-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| es-aragon-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
+| es-asturias | osm | ok | 2026-11-22T21:20:48Z |
 | es-asturias-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-asturias-businesses | alltheplaces | ok | 1390 |
+| es-asturias-businesses | alltheplaces | ok | 2060 |
 | es-asturias-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-asturias-businesses | overture-places | ok | 37292 |
+| es-asturias-businesses | overture-places | ok | 37824 |
 | es-asturias-extra | geonames | ok | 938 |
 | es-asturias-extra | natural-earth-lines | ok | 0 in this region |
 | es-asturias-extra | natural-earth-regions | ok | 3 |
 | es-asturias-extra | ourairports | ok | 14 |
-| es-asturias-extra | wikidata | ok | 9426 |
+| es-asturias-extra | wikidata | ok | 9437 |
 | es-asturias-extra | wikidata-filming | ok | 12 |
-| es-asturias-names | wikidata-labels | ok | 9289 |
-| es-canarias | osm | ok | 2026-11-11T21:22:47Z |
+| es-asturias-names | wikidata-labels | ok | 9302 |
+| es-asturias-navigation | osm-navigation | ok | 137228 |
+| es-asturias-services | osm-services | ok | 7108 |
+| es-canarias | osm | ok | 2026-11-22T21:20:48Z |
 | es-canarias-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-canarias-businesses | alltheplaces | ok | 2657 |
+| es-canarias-businesses | alltheplaces | ok | 2892 |
 | es-canarias-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-canarias-businesses | overture-places | ok | 73335 |
+| es-canarias-businesses | overture-places | ok | 74337 |
 | es-canarias-extra | geonames | ok | 3374 |
 | es-canarias-extra | natural-earth-lines | ok | 0 in this region |
 | es-canarias-extra | natural-earth-regions | ok | 8 |
 | es-canarias-extra | ourairports | ok | 26 |
-| es-canarias-extra | wikidata | ok | 5051 |
+| es-canarias-extra | wikidata | ok | 5052 |
 | es-canarias-extra | wikidata-filming | ok | 28 |
-| es-canarias-names | wikidata-labels | ok | 6879 |
-| es-cantabria | osm | ok | 2026-11-10T21:21:39Z |
+| es-canarias-names | wikidata-labels | ok | 6880 |
+| es-canarias-navigation | osm-navigation | ok | 270266 |
+| es-canarias-services | osm-services | ok | 11752 |
+| es-cantabria | osm | ok | 2026-11-22T21:20:48Z |
 | es-cantabria-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-cantabria-businesses | alltheplaces | ok | 1039 |
+| es-cantabria-businesses | alltheplaces | ok | 1548 |
 | es-cantabria-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-cantabria-businesses | overture-places | ok | 23048 |
+| es-cantabria-businesses | overture-places | ok | 23450 |
 | es-cantabria-extra | geonames | ok | 758 |
 | es-cantabria-extra | natural-earth-lines | ok | 0 in this region |
 | es-cantabria-extra | natural-earth-regions | ok | 3 |
 | es-cantabria-extra | ourairports | ok | 10 |
-| es-cantabria-extra | wikidata | ok | 3104 |
+| es-cantabria-extra | wikidata | ok | 3105 |
 | es-cantabria-extra | wikidata-filming | ok | 11 |
-| es-cantabria-names | wikidata-labels | ok | 5294 |
-| es-castilla-la-mancha | osm | ok | 2026-11-10T21:21:39Z |
+| es-cantabria-names | wikidata-labels | ok | 5295 |
+| es-cantabria-navigation | osm-navigation | ok | 120997 |
+| es-cantabria-services | osm-services | ok | 7744 |
+| es-castilla-la-mancha | osm | ok | 2026-11-22T21:20:48Z |
 | es-castilla-la-mancha-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-castilla-la-mancha-businesses | alltheplaces | ok | 15819 |
+| es-castilla-la-mancha-businesses | alltheplaces | ok | 18368 |
 | es-castilla-la-mancha-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-castilla-la-mancha-businesses | overture-places | ok | 260926 |
+| es-castilla-la-mancha-businesses | overture-places | ok | 264460 |
 | es-castilla-la-mancha-extra | geonames | ok | 3888 |
 | es-castilla-la-mancha-extra | natural-earth-lines | ok | 0 in this region |
 | es-castilla-la-mancha-extra | natural-earth-regions | ok | 2 |
 | es-castilla-la-mancha-extra | ourairports | ok | 162 |
-| es-castilla-la-mancha-extra | wikidata | ok | 26790 |
-| es-castilla-la-mancha-extra | wikidata-filming | ok | 92 |
-| es-castilla-la-mancha-names | wikidata-labels | ok | 34952 |
-| es-castilla-y-leon | osm | ok | 2026-11-10T21:21:39Z |
+| es-castilla-la-mancha-extra | wikidata | ok | 26800 |
+| es-castilla-la-mancha-extra | wikidata-filming | ok | 94 |
+| es-castilla-la-mancha-names | wikidata-labels | ok | 34988 |
+| es-castilla-la-mancha-navigation | osm-navigation | ok | 310371 |
+| es-castilla-la-mancha-services | osm-services | ok | 12640 |
+| es-castilla-y-leon | osm | ok | 2026-11-22T21:20:48Z |
 | es-castilla-y-leon-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-castilla-y-leon-businesses | alltheplaces | ok | 17318 |
+| es-castilla-y-leon-businesses | alltheplaces | ok | 21698 |
 | es-castilla-y-leon-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-castilla-y-leon-businesses | overture-places | ok | 292149 |
+| es-castilla-y-leon-businesses | overture-places | ok | 295940 |
 | es-castilla-y-leon-extra | geonames | ok | 4696 |
 | es-castilla-y-leon-extra | natural-earth-lines | ok | 0 in this region |
 | es-castilla-y-leon-extra | natural-earth-regions | ok | 3 |
 | es-castilla-y-leon-extra | ourairports | ok | 120 |
-| es-castilla-y-leon-extra | wikidata | ok | 43140 |
+| es-castilla-y-leon-extra | wikidata | ok | 43738 |
 | es-castilla-y-leon-extra | wikidata-filming | ok | 142 |
-| es-castilla-y-leon-names | wikidata-labels | ok | 60923 |
-| es-cataluna | osm | ok | 2026-11-10T21:21:39Z |
+| es-castilla-y-leon-names | wikidata-labels | ok | 60970 |
+| es-castilla-y-leon-navigation | osm-navigation | ok | 612322 |
+| es-castilla-y-leon-services | osm-services | ok | 29953 |
+| es-cataluna | osm | ok | 2026-11-22T21:20:48Z |
 | es-cataluna-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-cataluna-businesses | alltheplaces | ok | 17205 |
+| es-cataluna-businesses | alltheplaces | ok | 21172 |
 | es-cataluna-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-cataluna-businesses | overture-places | ok | 261370 |
-| es-cataluna-extra | geonames | ok | 6775 |
+| es-cataluna-businesses | overture-places | ok | 265308 |
+| es-cataluna-extra | geonames | ok | 6786 |
 | es-cataluna-extra | natural-earth-lines | ok | 0 in this region |
 | es-cataluna-extra | natural-earth-regions | ok | 3 |
 | es-cataluna-extra | ourairports | ok | 86 |
-| es-cataluna-extra | wikidata | ok | 147810 |
+| es-cataluna-extra | wikidata | ok | 147958 |
 | es-cataluna-extra | wikidata-filming | ok | 219 |
-| es-cataluna-names | wikidata-labels | ok | 98375 |
-| es-ceuta | osm | ok | 2026-11-10T21:21:39Z |
+| es-cataluna-names | wikidata-labels | ok | 98509 |
+| es-cataluna-navigation | osm-navigation | ok | 1080292 |
+| es-cataluna-services | osm-services | ok | 56271 |
+| es-ceuta | osm | ok | 2026-11-22T21:20:48Z |
 | es-ceuta-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-ceuta-businesses | alltheplaces | ok | 74 |
+| es-ceuta-businesses | alltheplaces | ok | 102 |
 | es-ceuta-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-ceuta-businesses | overture-places | ok | 1368 |
+| es-ceuta-businesses | overture-places | ok | 1386 |
 | es-ceuta-extra | geonames | ok | 82 |
 | es-ceuta-extra | natural-earth-lines | ok | 0 in this region |
 | es-ceuta-extra | natural-earth-regions | ok | 2 |
@@ -2602,126 +2767,148 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | es-ceuta-extra | wikidata | ok | 295 |
 | es-ceuta-extra | wikidata-filming | ok | 1 |
 | es-ceuta-names | wikidata-labels | ok | 321 |
-| es-extremadura | osm | ok | 2026-11-10T21:21:39Z |
+| es-ceuta-navigation | osm-navigation | ok | 3239 |
+| es-ceuta-services | osm-services | ok | 167 |
+| es-extremadura | osm | ok | 2026-11-22T21:20:48Z |
 | es-extremadura-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-extremadura-businesses | alltheplaces | ok | 3832 |
+| es-extremadura-businesses | alltheplaces | ok | 3817 |
 | es-extremadura-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-extremadura-businesses | overture-places | ok | 49689 |
-| es-extremadura-extra | geonames | ok | 849 |
+| es-extremadura-businesses | overture-places | ok | 50377 |
+| es-extremadura-extra | geonames | ok | 850 |
 | es-extremadura-extra | natural-earth-lines | ok | 0 in this region |
 | es-extremadura-extra | natural-earth-regions | ok | 2 |
 | es-extremadura-extra | ourairports | ok | 37 |
-| es-extremadura-extra | wikidata | ok | 7836 |
+| es-extremadura-extra | wikidata | ok | 8245 |
 | es-extremadura-extra | wikidata-filming | ok | 10 |
-| es-extremadura-names | wikidata-labels | ok | 9573 |
-| es-galicia | osm | ok | 2026-11-10T21:21:39Z |
+| es-extremadura-names | wikidata-labels | ok | 9577 |
+| es-extremadura-navigation | osm-navigation | ok | 136587 |
+| es-extremadura-services | osm-services | ok | 5424 |
+| es-galicia | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
 | es-galicia-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-galicia-businesses | alltheplaces | ok | 3489 |
+| es-galicia-businesses | alltheplaces | ok | 148405 |
 | es-galicia-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-galicia-businesses | overture-places | ok | 90832 |
-| es-galicia-extra | geonames | ok | 1657 |
+| es-galicia-businesses | overture-places | ok | 1990581 |
+| es-galicia-extra | geonames | ok | 32988 |
 | es-galicia-extra | natural-earth-lines | ok | 0 in this region |
-| es-galicia-extra | natural-earth-regions | ok | 2 |
-| es-galicia-extra | ourairports | ok | 42 |
-| es-galicia-extra | wikidata | ok | 29253 |
-| es-galicia-extra | wikidata-filming | ok | 13 |
-| es-galicia-names | wikidata-labels | ok | 21404 |
-| es-islas-baleares | osm | ok | 2026-11-10T21:21:39Z |
+| es-galicia-extra | natural-earth-regions | ok | 33 |
+| es-galicia-extra | ourairports | ok | 589 |
+| es-galicia-extra | wikidata | ok | 430622 |
+| es-galicia-extra | wikidata-filming | ok | 799 |
+| es-galicia-names | wikidata-labels | ok | 404884 |
+| es-galicia-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| es-galicia-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
+| es-islas-baleares | osm | ok | 2026-11-22T21:20:48Z |
 | es-islas-baleares-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-islas-baleares-businesses | alltheplaces | ok | 1722 |
+| es-islas-baleares-businesses | alltheplaces | ok | 2106 |
 | es-islas-baleares-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-islas-baleares-businesses | overture-places | ok | 49221 |
+| es-islas-baleares-businesses | overture-places | ok | 49896 |
 | es-islas-baleares-extra | geonames | ok | 3698 |
 | es-islas-baleares-extra | natural-earth-lines | ok | 0 in this region |
 | es-islas-baleares-extra | natural-earth-regions | ok | 5 |
 | es-islas-baleares-extra | ourairports | ok | 32 |
-| es-islas-baleares-extra | wikidata | ok | 6922 |
-| es-islas-baleares-extra | wikidata-filming | ok | 19 |
-| es-islas-baleares-names | wikidata-labels | ok | 6056 |
-| es-la-rioja | osm | ok | 2026-11-10T21:21:39Z |
+| es-islas-baleares-extra | wikidata | ok | 6927 |
+| es-islas-baleares-extra | wikidata-filming | ok | 18 |
+| es-islas-baleares-names | wikidata-labels | ok | 6064 |
+| es-islas-baleares-navigation | osm-navigation | ok | 152935 |
+| es-islas-baleares-services | osm-services | ok | 7653 |
+| es-la-rioja | osm | ok | 2026-11-22T21:20:48Z |
 | es-la-rioja-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-la-rioja-businesses | alltheplaces | ok | 936 |
+| es-la-rioja-businesses | alltheplaces | ok | 1215 |
 | es-la-rioja-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-la-rioja-businesses | overture-places | ok | 13960 |
+| es-la-rioja-businesses | overture-places | ok | 14221 |
 | es-la-rioja-extra | geonames | ok | 245 |
 | es-la-rioja-extra | natural-earth-lines | ok | 0 in this region |
 | es-la-rioja-extra | natural-earth-regions | ok | 2 |
 | es-la-rioja-extra | ourairports | ok | 8 |
-| es-la-rioja-extra | wikidata | ok | 2200 |
+| es-la-rioja-extra | wikidata | ok | 2201 |
 | es-la-rioja-extra | wikidata-filming | ok | 4 |
-| es-la-rioja-names | wikidata-labels | ok | 3786 |
-| es-madrid | osm | ok | 2026-11-10T21:21:39Z |
+| es-la-rioja-names | wikidata-labels | ok | 3789 |
+| es-la-rioja-navigation | osm-navigation | ok | 42038 |
+| es-la-rioja-services | osm-services | ok | 1474 |
+| es-madrid | osm | ok | 2026-11-22T21:20:48Z |
 | es-madrid-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-madrid-businesses | alltheplaces | ok | 9879 |
+| es-madrid-businesses | alltheplaces | ok | 12279 |
 | es-madrid-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-madrid-businesses | overture-places | ok | 181460 |
+| es-madrid-businesses | overture-places | ok | 183627 |
 | es-madrid-extra | geonames | ok | 2218 |
 | es-madrid-extra | natural-earth-lines | ok | 0 in this region |
 | es-madrid-extra | natural-earth-regions | ok | 1 |
 | es-madrid-extra | ourairports | ok | 53 |
-| es-madrid-extra | wikidata | ok | 11975 |
+| es-madrid-extra | wikidata | ok | 11979 |
 | es-madrid-extra | wikidata-filming | ok | 72 |
-| es-madrid-names | wikidata-labels | ok | 13846 |
-| es-melilla | osm | ok | 2026-11-10T21:21:39Z |
+| es-madrid-names | wikidata-labels | ok | 13859 |
+| es-madrid-navigation | osm-navigation | ok | 575006 |
+| es-madrid-services | osm-services | ok | 34233 |
+| es-melilla | osm | ok | 2026-11-22T21:20:48Z |
 | es-melilla-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-melilla-businesses | alltheplaces | ok | 67 |
+| es-melilla-businesses | alltheplaces | ok | 93 |
 | es-melilla-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-melilla-businesses | overture-places | ok | 1422 |
+| es-melilla-businesses | overture-places | ok | 1470 |
 | es-melilla-extra | geonames | ok | 47 |
 | es-melilla-extra | natural-earth-lines | ok | 0 in this region |
 | es-melilla-extra | natural-earth-regions | ok | 3 |
 | es-melilla-extra | ourairports | ok | 2 |
 | es-melilla-extra | wikidata | ok | 339 |
 | es-melilla-extra | wikidata-filming | ok | 1 |
-| es-melilla-names | wikidata-labels | ok | 407 |
-| es-murcia | osm | ok | 2026-11-10T21:21:39Z |
+| es-melilla-names | wikidata-labels | ok | 408 |
+| es-melilla-navigation | osm-navigation | ok | 4592 |
+| es-melilla-services | osm-services | ok | 154 |
+| es-murcia | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
 | es-murcia-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-murcia-businesses | alltheplaces | ok | 4696 |
+| es-murcia-businesses | alltheplaces | ok | 148405 |
 | es-murcia-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-murcia-businesses | overture-places | ok | 102005 |
-| es-murcia-extra | geonames | ok | 1519 |
+| es-murcia-businesses | overture-places | ok | 1990581 |
+| es-murcia-extra | geonames | ok | 32988 |
 | es-murcia-extra | natural-earth-lines | ok | 0 in this region |
-| es-murcia-extra | natural-earth-regions | ok | 3 |
-| es-murcia-extra | ourairports | ok | 36 |
-| es-murcia-extra | wikidata | ok | 5854 |
-| es-murcia-extra | wikidata-filming | ok | 11 |
-| es-murcia-names | wikidata-labels | ok | 8590 |
-| es-navarra | osm | ok | 2026-11-10T21:21:39Z |
+| es-murcia-extra | natural-earth-regions | ok | 33 |
+| es-murcia-extra | ourairports | ok | 589 |
+| es-murcia-extra | wikidata | ok | 430622 |
+| es-murcia-extra | wikidata-filming | ok | 799 |
+| es-murcia-names | wikidata-labels | ok | 404884 |
+| es-murcia-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| es-murcia-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
+| es-navarra | osm | ok | 2026-11-22T21:20:48Z |
 | es-navarra-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-navarra-businesses | alltheplaces | ok | 3799 |
+| es-navarra-businesses | alltheplaces | ok | 4675 |
 | es-navarra-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-navarra-businesses | overture-places | ok | 49607 |
+| es-navarra-businesses | overture-places | ok | 50287 |
 | es-navarra-extra | geonames | ok | 1475 |
 | es-navarra-extra | natural-earth-lines | ok | 0 in this region |
 | es-navarra-extra | natural-earth-regions | ok | 3 |
 | es-navarra-extra | ourairports | ok | 15 |
-| es-navarra-extra | wikidata | ok | 14317 |
+| es-navarra-extra | wikidata | ok | 14417 |
 | es-navarra-extra | wikidata-filming | ok | 65 |
-| es-navarra-names | wikidata-labels | ok | 22988 |
-| es-pais-vasco | osm | ok | 2026-11-10T21:21:39Z |
+| es-navarra-names | wikidata-labels | ok | 23086 |
+| es-navarra-navigation | osm-navigation | ok | 125026 |
+| es-navarra-services | osm-services | ok | 4818 |
+| es-pais-vasco | osm | ok | 2026-11-22T21:20:48Z |
 | es-pais-vasco-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-pais-vasco-businesses | alltheplaces | ok | 5298 |
+| es-pais-vasco-businesses | alltheplaces | ok | 6628 |
 | es-pais-vasco-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-pais-vasco-businesses | overture-places | ok | 65619 |
+| es-pais-vasco-businesses | overture-places | ok | 66436 |
 | es-pais-vasco-extra | geonames | ok | 1613 |
 | es-pais-vasco-extra | natural-earth-lines | ok | 0 in this region |
 | es-pais-vasco-extra | natural-earth-regions | ok | 4 |
 | es-pais-vasco-extra | ourairports | ok | 20 |
-| es-pais-vasco-extra | wikidata | ok | 14690 |
+| es-pais-vasco-extra | wikidata | ok | 14693 |
 | es-pais-vasco-extra | wikidata-filming | ok | 100 |
-| es-pais-vasco-names | wikidata-labels | ok | 30370 |
-| es-valencia | osm | ok | 2026-11-10T21:21:39Z |
+| es-pais-vasco-names | wikidata-labels | ok | 30375 |
+| es-pais-vasco-navigation | osm-navigation | ok | 280851 |
+| es-pais-vasco-services | osm-services | ok | 15430 |
+| es-valencia | osm | ok | 2026-11-22T21:20:48Z |
 | es-valencia-addresses | cartociudad | skipped | needs a hand-supplied file in inputs/cartociudad |
-| es-valencia-businesses | alltheplaces | ok | 9911 |
+| es-valencia-businesses | alltheplaces | ok | 12229 |
 | es-valencia-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| es-valencia-businesses | overture-places | ok | 212190 |
-| es-valencia-extra | geonames | ok | 4365 |
+| es-valencia-businesses | overture-places | ok | 215036 |
+| es-valencia-extra | geonames | ok | 4366 |
 | es-valencia-extra | natural-earth-lines | ok | 0 in this region |
 | es-valencia-extra | natural-earth-regions | ok | 3 |
 | es-valencia-extra | ourairports | ok | 83 |
-| es-valencia-extra | wikidata | ok | 17674 |
+| es-valencia-extra | wikidata | ok | 17677 |
 | es-valencia-extra | wikidata-filming | ok | 51 |
-| es-valencia-names | wikidata-labels | ok | 23223 |
+| es-valencia-names | wikidata-labels | ok | 23234 |
+| es-valencia-navigation | osm-navigation | ok | 675357 |
+| es-valencia-services | osm-services | ok | 26310 |
 | fi-finland | osm | ok | 0 |
 | fi-finland-centre-and-north | osm | ok |  |
 | fi-finland-centre-and-north-businesses | alltheplaces | ok | 36313 |
@@ -3265,149 +3452,175 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | is-iceland-names | wikidata-labels | ok | 5472 |
 | is-iceland-navigation | osm-navigation | ok | 110838 |
 | is-iceland-services | osm-services | ok | 5111 |
-| it-centro | osm | ok | 2026-11-10T21:21:39Z |
-| it-centro-businesses | alltheplaces | ok | 53002 |
+| it-centro | osm | ok | 2026-11-22T21:20:48Z |
+| it-centro-businesses | alltheplaces | ok | 83868 |
 | it-centro-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| it-centro-businesses | overture-places | ok | 846935 |
-| it-centro-extra | geonames | ok | 16615 |
+| it-centro-businesses | overture-places | ok | 856291 |
+| it-centro-extra | geonames | ok | 16622 |
 | it-centro-extra | natural-earth-lines | ok | 0 in this region |
 | it-centro-extra | natural-earth-regions | ok | 9 |
 | it-centro-extra | ourairports | ok | 312 |
-| it-centro-extra | wikidata | ok | 79754 |
-| it-centro-extra | wikidata-filming | ok | 145 |
-| it-centro-names | wikidata-labels | ok | 108391 |
-| it-isole | osm | ok | 2026-11-10T21:21:39Z |
-| it-isole-businesses | alltheplaces | ok | 26369 |
+| it-centro-extra | wikidata | ok | 80035 |
+| it-centro-extra | wikidata-filming | ok | 147 |
+| it-centro-names | wikidata-labels | ok | 108657 |
+| it-centro-navigation | osm-navigation | ok | 1245925 |
+| it-centro-services | osm-services | ok | 66603 |
+| it-isole | osm | ok | 2026-11-22T21:20:48Z |
+| it-isole-businesses | alltheplaces | ok | 42071 |
 | it-isole-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| it-isole-businesses | overture-places | ok | 509267 |
+| it-isole-businesses | overture-places | ok | 515165 |
 | it-isole-extra | geonames | ok | 8799 |
 | it-isole-extra | natural-earth-lines | ok | 0 in this region |
 | it-isole-extra | natural-earth-regions | ok | 9 |
 | it-isole-extra | ourairports | ok | 180 |
-| it-isole-extra | wikidata | ok | 40237 |
+| it-isole-extra | wikidata | ok | 40262 |
 | it-isole-extra | wikidata-filming | ok | 65 |
-| it-isole-names | wikidata-labels | ok | 52548 |
-| it-nord-est | osm | ok | 2026-11-10T21:21:39Z |
-| it-nord-est-businesses | alltheplaces | ok | 69140 |
+| it-isole-names | wikidata-labels | ok | 52585 |
+| it-isole-navigation | osm-navigation | ok | 654696 |
+| it-isole-services | osm-services | ok | 34940 |
+| it-nord-est | osm | ok | 2026-11-22T21:20:48Z |
+| it-nord-est-businesses | alltheplaces | ok | 105368 |
 | it-nord-est-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| it-nord-est-businesses | overture-places | ok | 890068 |
-| it-nord-est-extra | geonames | ok | 14560 |
+| it-nord-est-businesses | overture-places | ok | 897260 |
+| it-nord-est-extra | geonames | ok | 14566 |
 | it-nord-est-extra | natural-earth-lines | ok | 0 in this region |
 | it-nord-est-extra | natural-earth-regions | ok | 7 |
 | it-nord-est-extra | ourairports | ok | 345 |
-| it-nord-est-extra | wikidata | ok | 132118 |
+| it-nord-est-extra | wikidata | ok | 132289 |
 | it-nord-est-extra | wikidata-filming | ok | 229 |
-| it-nord-est-names | wikidata-labels | ok | 168552 |
-| it-nord-ovest | osm | ok | 2026-11-10T21:21:39Z |
-| it-nord-ovest-businesses | alltheplaces | ok | 119558 |
+| it-nord-est-names | wikidata-labels | ok | 168673 |
+| it-nord-est-navigation | osm-navigation | ok | 1576173 |
+| it-nord-est-services | osm-services | ok | 93734 |
+| it-nord-ovest | osm | ok | 2026-11-22T21:20:48Z |
+| it-nord-ovest-businesses | alltheplaces | ok | 167395 |
 | it-nord-ovest-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| it-nord-ovest-businesses | overture-places | ok | 1193939 |
-| it-nord-ovest-extra | geonames | ok | 12428 |
+| it-nord-ovest-businesses | overture-places | ok | 1204294 |
+| it-nord-ovest-extra | geonames | ok | 12436 |
 | it-nord-ovest-extra | natural-earth-lines | ok | 0 in this region |
 | it-nord-ovest-extra | natural-earth-regions | ok | 5 |
 | it-nord-ovest-extra | ourairports | ok | 508 |
-| it-nord-ovest-extra | wikidata | ok | 165161 |
+| it-nord-ovest-extra | wikidata | ok | 165436 |
 | it-nord-ovest-extra | wikidata-filming | ok | 315 |
-| it-nord-ovest-names | wikidata-labels | ok | 245896 |
-| it-sud | osm | ok | 2026-11-10T21:21:39Z |
-| it-sud-businesses | alltheplaces | ok | 33272 |
+| it-nord-ovest-names | wikidata-labels | ok | 246027 |
+| it-nord-ovest-navigation | osm-navigation | ok | 1888517 |
+| it-nord-ovest-services | osm-services | ok | 111996 |
+| it-sud | osm | ok | 2026-11-22T21:20:48Z |
+| it-sud-businesses | alltheplaces | ok | 53380 |
 | it-sud-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| it-sud-businesses | overture-places | ok | 609989 |
+| it-sud-businesses | overture-places | ok | 617657 |
 | it-sud-extra | geonames | ok | 8917 |
 | it-sud-extra | natural-earth-lines | ok | 0 in this region |
 | it-sud-extra | natural-earth-regions | ok | 8 |
 | it-sud-extra | ourairports | ok | 259 |
-| it-sud-extra | wikidata | ok | 49072 |
+| it-sud-extra | wikidata | ok | 49087 |
 | it-sud-extra | wikidata-filming | ok | 73 |
-| it-sud-names | wikidata-labels | ok | 65259 |
-| jp-chubu | osm | ok | 2026-11-11T21:22:47Z |
-| jp-chubu-businesses | alltheplaces | ok | 343396 |
+| it-sud-names | wikidata-labels | ok | 65261 |
+| it-sud-navigation | osm-navigation | ok | 1030880 |
+| it-sud-services | osm-services | ok | 49123 |
+| jp-chubu | osm | ok | 2026-11-22T21:20:48Z |
+| jp-chubu-businesses | alltheplaces | ok | 391470 |
 | jp-chubu-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| jp-chubu-businesses | overture-places | ok | 1534440 |
+| jp-chubu-businesses | overture-places | ok | 1532449 |
 | jp-chubu-extra | geonames | ok | 13822 |
 | jp-chubu-extra | natural-earth-lines | ok | 0 in this region |
 | jp-chubu-extra | natural-earth-regions | ok | 5 |
 | jp-chubu-extra | ourairports | ok | 2296 |
-| jp-chubu-extra | wikidata | ok | 73572 |
+| jp-chubu-extra | wikidata | ok | 73638 |
 | jp-chubu-extra | wikidata-filming | ok | 82 |
-| jp-chubu-names | wikidata-labels | ok | 99112 |
-| jp-chugoku | osm | ok | 2026-11-11T21:22:47Z |
-| jp-chugoku-businesses | alltheplaces | ok | 64649 |
+| jp-chubu-names | wikidata-labels | ok | 99200 |
+| jp-chubu-navigation | osm-navigation | ok | 2077970 |
+| jp-chubu-services | osm-services | ok | 55975 |
+| jp-chugoku | osm | ok | 2026-11-22T21:20:48Z |
+| jp-chugoku-businesses | alltheplaces | ok | 72002 |
 | jp-chugoku-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| jp-chugoku-businesses | overture-places | ok | 289368 |
-| jp-chugoku-extra | geonames | ok | 5049 |
+| jp-chugoku-businesses | overture-places | ok | 291121 |
+| jp-chugoku-extra | geonames | ok | 5050 |
 | jp-chugoku-extra | natural-earth-lines | ok | 0 in this region |
 | jp-chugoku-extra | natural-earth-regions | ok | 5 |
 | jp-chugoku-extra | ourairports | ok | 432 |
-| jp-chugoku-extra | wikidata | ok | 16023 |
-| jp-chugoku-extra | wikidata-filming | ok | 15 |
-| jp-chugoku-names | wikidata-labels | ok | 22844 |
-| jp-hokkaido | osm | ok | 2026-11-11T21:22:47Z |
-| jp-hokkaido-businesses | alltheplaces | ok | 17912 |
+| jp-chugoku-extra | wikidata | ok | 16031 |
+| jp-chugoku-extra | wikidata-filming | ok | 14 |
+| jp-chugoku-names | wikidata-labels | ok | 22851 |
+| jp-chugoku-navigation | osm-navigation | ok | 851117 |
+| jp-chugoku-services | osm-services | ok | 29599 |
+| jp-hokkaido | osm | ok | 2026-11-22T21:20:48Z |
+| jp-hokkaido-businesses | alltheplaces | ok | 20057 |
 | jp-hokkaido-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| jp-hokkaido-businesses | overture-places | ok | 115671 |
+| jp-hokkaido-businesses | overture-places | ok | 117325 |
 | jp-hokkaido-extra | geonames | ok | 3413 |
 | jp-hokkaido-extra | natural-earth-lines | ok | 0 in this region |
 | jp-hokkaido-extra | natural-earth-regions | ok | 7 |
 | jp-hokkaido-extra | ourairports | ok | 206 |
-| jp-hokkaido-extra | wikidata | ok | 6646 |
+| jp-hokkaido-extra | wikidata | ok | 6648 |
 | jp-hokkaido-extra | wikidata-filming | ok | 14 |
-| jp-hokkaido-names | wikidata-labels | ok | 7971 |
-| jp-kansai | osm | ok | 2026-11-11T21:22:47Z |
-| jp-kansai-businesses | alltheplaces | ok | 147513 |
+| jp-hokkaido-names | wikidata-labels | ok | 7975 |
+| jp-hokkaido-navigation | osm-navigation | ok | 681552 |
+| jp-hokkaido-services | osm-services | ok | 26796 |
+| jp-kansai | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
+| jp-kansai-businesses | alltheplaces | ok | 679195 |
 | jp-kansai-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| jp-kansai-businesses | overture-places | ok | 706388 |
-| jp-kansai-extra | geonames | ok | 6988 |
+| jp-kansai-businesses | overture-places | ok | 2927014 |
+| jp-kansai-extra | geonames | ok | 33151 |
 | jp-kansai-extra | natural-earth-lines | ok | 0 in this region |
-| jp-kansai-extra | natural-earth-regions | ok | 3 |
-| jp-kansai-extra | ourairports | ok | 1176 |
-| jp-kansai-extra | wikidata | ok | 38285 |
-| jp-kansai-extra | wikidata-filming | ok | 29 |
-| jp-kansai-names | wikidata-labels | ok | 51467 |
-| jp-kanto | osm | ok | 2026-11-11T21:22:47Z |
-| jp-kanto-businesses | alltheplaces | ok | 401180 |
+| jp-kansai-extra | natural-earth-regions | ok | 25 |
+| jp-kansai-extra | ourairports | ok | 3746 |
+| jp-kansai-extra | wikidata | ok | 181110 |
+| jp-kansai-extra | wikidata-filming | ok | 162 |
+| jp-kansai-names | wikidata-labels | ok | 213275 |
+| jp-kansai-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| jp-kansai-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
+| jp-kanto | osm | ok | 2026-11-22T21:20:48Z |
+| jp-kanto-businesses | alltheplaces | ok | 456578 |
 | jp-kanto-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| jp-kanto-businesses | overture-places | ok | 1822266 |
+| jp-kanto-businesses | overture-places | ok | 1821533 |
 | jp-kanto-extra | geonames | ok | 16254 |
 | jp-kanto-extra | natural-earth-lines | ok | 1 |
 | jp-kanto-extra | natural-earth-regions | ok | 9 |
 | jp-kanto-extra | ourairports | ok | 2700 |
-| jp-kanto-extra | wikidata | ok | 90262 |
+| jp-kanto-extra | wikidata | ok | 90340 |
 | jp-kanto-extra | wikidata-filming | ok | 93 |
-| jp-kanto-names | wikidata-labels | ok | 122358 |
-| jp-kyushu | osm | ok | 2026-11-11T21:22:47Z |
-| jp-kyushu-businesses | alltheplaces | ok | 79543 |
+| jp-kanto-names | wikidata-labels | ok | 122482 |
+| jp-kanto-navigation | osm-navigation | ok | 2720632 |
+| jp-kanto-services | osm-services | ok | 134239 |
+| jp-kyushu | osm | ok | 2026-11-22T21:20:48Z |
+| jp-kyushu-businesses | alltheplaces | ok | 90092 |
 | jp-kyushu-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| jp-kyushu-businesses | overture-places | ok | 401189 |
-| jp-kyushu-extra | geonames | ok | 7754 |
+| jp-kyushu-businesses | overture-places | ok | 403012 |
+| jp-kyushu-extra | geonames | ok | 7755 |
 | jp-kyushu-extra | natural-earth-lines | ok | 1 |
 | jp-kyushu-extra | natural-earth-regions | ok | 17 |
 | jp-kyushu-extra | ourairports | ok | 435 |
-| jp-kyushu-extra | wikidata | ok | 24124 |
+| jp-kyushu-extra | wikidata | ok | 24136 |
 | jp-kyushu-extra | wikidata-filming | ok | 24 |
-| jp-kyushu-names | wikidata-labels | ok | 29552 |
-| jp-shikoku | osm | ok | 2026-11-11T21:22:47Z |
-| jp-shikoku-businesses | alltheplaces | ok | 45964 |
+| jp-kyushu-names | wikidata-labels | ok | 29564 |
+| jp-kyushu-navigation | osm-navigation | ok | 1456468 |
+| jp-kyushu-services | osm-services | ok | 39803 |
+| jp-shikoku | osm | ok | 2026-11-22T21:20:48Z |
+| jp-shikoku-businesses | alltheplaces | ok | 50835 |
 | jp-shikoku-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| jp-shikoku-businesses | overture-places | ok | 173070 |
+| jp-shikoku-businesses | overture-places | ok | 174411 |
 | jp-shikoku-extra | geonames | ok | 3267 |
 | jp-shikoku-extra | natural-earth-lines | ok | 0 in this region |
 | jp-shikoku-extra | natural-earth-regions | ok | 4 |
 | jp-shikoku-extra | ourairports | ok | 427 |
-| jp-shikoku-extra | wikidata | ok | 10150 |
-| jp-shikoku-extra | wikidata-filming | ok | 11 |
-| jp-shikoku-names | wikidata-labels | ok | 14698 |
-| jp-tohoku | osm | ok | 2026-11-11T21:22:47Z |
-| jp-tohoku-businesses | alltheplaces | ok | 53667 |
+| jp-shikoku-extra | wikidata | ok | 10157 |
+| jp-shikoku-extra | wikidata-filming | ok | 10 |
+| jp-shikoku-names | wikidata-labels | ok | 14705 |
+| jp-shikoku-navigation | osm-navigation | ok | 466916 |
+| jp-shikoku-services | osm-services | ok | 13193 |
+| jp-tohoku | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
+| jp-tohoku-businesses | alltheplaces | ok | 679195 |
 | jp-tohoku-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| jp-tohoku-businesses | overture-places | ok | 224759 |
-| jp-tohoku-extra | geonames | ok | 4659 |
+| jp-tohoku-businesses | overture-places | ok | 2927014 |
+| jp-tohoku-extra | geonames | ok | 33151 |
 | jp-tohoku-extra | natural-earth-lines | ok | 0 in this region |
-| jp-tohoku-extra | natural-earth-regions | ok | 3 |
-| jp-tohoku-extra | ourairports | ok | 244 |
-| jp-tohoku-extra | wikidata | ok | 16068 |
-| jp-tohoku-extra | wikidata-filming | ok | 9 |
-| jp-tohoku-names | wikidata-labels | ok | 22640 |
+| jp-tohoku-extra | natural-earth-regions | ok | 25 |
+| jp-tohoku-extra | ourairports | ok | 3746 |
+| jp-tohoku-extra | wikidata | ok | 181110 |
+| jp-tohoku-extra | wikidata-filming | ok | 162 |
+| jp-tohoku-names | wikidata-labels | ok | 213275 |
+| jp-tohoku-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| jp-tohoku-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
 | lu-luxembourg | osm | failed | HTTP Error 404: Not Found |
 | lu-luxembourg-businesses | alltheplaces | ok | 4953 |
 | lu-luxembourg-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |

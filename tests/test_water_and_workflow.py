@@ -3,6 +3,7 @@ token used, the order of the uploads and the keep-alive. Also the national split
 
 import json
 import os
+import re
 import sys
 
 import pytest
@@ -67,7 +68,18 @@ def test_the_workflow():
     on = doc.get("on", doc.get(True))
     assert on["schedule"][0]["cron"].split()[2] == "2"
     assert set(on["workflow_dispatch"]["inputs"]) == {"regions", "force", "seed_history", "also_from_run", "publish_only"}
-    assert doc["permissions"] == {"contents": "write", "actions": "read"}      # actions: an earlier run's packs
+    # Read-only by default; write only for the jobs that change releases (actions: an earlier run's packs).
+    assert doc["permissions"] == {"contents": "read"}
+    assert doc["jobs"]["publish"]["permissions"] == {"contents": "write", "actions": "read"}
+    assert doc["jobs"]["build"]["permissions"] == {"contents": "write"}                 # the "seeds" release
+    assert "permissions" not in doc["jobs"]["plan"] and "permissions" not in doc["jobs"]["prepare"]
+    # Every action pinned to a commit; only publish (which pushes sources-status.md) keeps the checkout's token.
+    for name, job in doc["jobs"].items():
+        for step in job["steps"]:
+            if "uses" in step:
+                assert re.fullmatch(r"actions/[\w/-]+@[0-9a-f]{40}", step["uses"]), step["uses"]
+            if step.get("uses", "").startswith("actions/checkout@"):
+                assert step.get("with", {}).get("persist-credentials", True) is (name == "publish"), name
     assert "secrets." not in text and "github.token" in text
     jobs = doc["jobs"]
     assert list(jobs) == ["plan", "prepare", "build", "publish"]

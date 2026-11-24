@@ -1,6 +1,6 @@
 # Place packs status, 2026-11-24
 
-1102 packs published, 77.02 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
+1132 packs published, 97.18 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
 
 ## Packs by region
 
@@ -78,21 +78,21 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | fi-finland (its sub-regions put together) | 224.3 | 51.7 | 7.7 |  |  |  |  | 276.0 |
 | fi-finland-centre-and-north | 122.6 | 35.3 | 3.7 | 25.5 |  | 245.2 | 3.4 | 157.8 |
 | fi-finland-south | 106.3 | 25.1 | 2.1 | 50.5 |  | 345.8 | 5.6 | 131.4 |
-| fr-alsace | 35.1 | 18.6 | 8.4 | 51.3 | 10.6 |  |  | 53.6 |
-| fr-aquitaine | 87.3 | 21.1 | 12.4 | 60.1 | 42.9 |  |  | 108.4 |
-| fr-auvergne | 46.0 | 16.8 | 5.8 | 21.3 | 22.1 |  |  | 62.8 |
-| fr-basse-normandie | 42.0 | 17.9 | 6.8 | 23.5 | 23.8 |  |  | 59.9 |
-| fr-bourgogne | 51.9 | 18.2 | 7.8 | 22.7 | 20.9 |  |  | 70.2 |
-| fr-bretagne | 77.3 | 18.8 | 10.1 | 43.0 | 35.4 |  |  | 96.2 |
-| fr-centre | 70.0 | 29.4 | 24.8 | 109.7 | 49.0 |  |  | 99.5 |
-| fr-champagne-ardenne | 38.2 | 18.0 | 7.7 | 22.4 | 16.2 |  |  | 56.1 |
-| fr-corse | 9.6 | 8.7 | 1.0 | 4.3 | 2.1 |  |  | 18.3 |
-| fr-franche-comte | 31.7 | 17.5 | 6.8 | 32.4 | 11.1 |  |  | 49.3 |
-| fr-haute-normandie | 29.6 | 16.5 | 4.5 | 17.4 | 14.6 |  |  | 46.1 |
-| fr-ile-de-france | 99.5 | 28.0 | 21.4 | 95.2 | 28.4 |  |  | 127.5 |
-| fr-languedoc-roussillon | 66.5 | 21.3 | 10.5 | 46.4 | 33.1 |  |  | 87.8 |
-| fr-limousin | 24.6 | 15.2 | 2.9 | 10.3 | 12.3 |  |  | 39.8 |
-| fr-lorraine | 55.3 | 19.1 | 9.4 | 42.9 | 18.4 |  |  | 74.5 |
+| fr-alsace | 35.1 | 18.7 | 8.5 | 57.4 | 10.6 | 85.4 | 3.1 | 53.7 |
+| fr-aquitaine | 87.3 | 26.9 | 233.7 | 1348.6 | 339.5 | 0.1 | 0.1 | 114.2 |
+| fr-auvergne | 46.2 | 16.9 | 5.8 | 23.5 | 22.1 | 106.0 | 2.9 | 63.1 |
+| fr-basse-normandie | 42.1 | 18.1 | 6.9 | 26.2 | 23.8 | 120.4 | 3.6 | 60.2 |
+| fr-bourgogne | 51.9 | 176.5 | 233.7 | 1346.2 | 339.5 | 0.1 | 0.1 | 228.4 |
+| fr-bretagne | 77.5 | 18.9 | 10.1 | 47.6 | 35.4 | 237.4 | 7.0 | 96.4 |
+| fr-centre | 70.3 | 29.6 | 24.9 | 121.8 | 49.0 | 159.8 | 5.4 | 99.9 |
+| fr-champagne-ardenne | 38.2 | 24.3 | 233.7 | 1346.1 | 339.5 | 0.1 | 0.1 | 62.5 |
+| fr-corse | 9.6 | 176.4 | 233.7 | 1344.9 | 339.5 | 0.1 | 0.1 | 186.1 |
+| fr-franche-comte | 31.7 | 23.9 | 233.7 | 1346.3 | 339.5 | 0.1 | 0.1 | 55.6 |
+| fr-haute-normandie | 29.6 | 176.4 | 233.7 | 1345.7 | 339.5 | 0.1 | 0.1 | 206.0 |
+| fr-ile-de-france | 99.5 | 33.8 | 233.7 | 1350.1 | 339.5 | 0.1 | 0.1 | 133.3 |
+| fr-languedoc-roussillon | 66.5 | 27.2 | 233.7 | 1347.8 | 339.5 | 0.1 | 0.1 | 93.6 |
+| fr-limousin | 24.6 | 176.5 | 233.7 | 1345.3 | 339.5 | 0.1 | 0.1 | 201.0 |
+| fr-lorraine | 55.3 | 176.5 | 233.7 | 1347.3 | 339.5 | 0.1 | 0.1 | 231.8 |
 | fr-midi-pyrenees | 88.3 | 21.8 | 13.3 | 50.1 | 43.1 |  |  | 110.1 |
 | fr-nord-pas-de-calais | 52.5 | 20.0 | 9.8 | 74.5 | 20.1 |  |  | 72.6 |
 | fr-pays-de-la-loire | 79.9 | 18.9 | 11.6 | 52.1 | 47.6 |  |  | 98.8 |
@@ -551,81 +551,111 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | fi-finland-south-names | 2026-11 | 2.1 | 2026-11 | wikidata-labels |
 | fi-finland-south-navigation | 2026-11 | 345.8 | 2026-11 | osm-navigation |
 | fi-finland-south-services | 2026-11 | 5.6 | 2026-11 | osm-services |
-| fr-alsace | 2026-11 | 35.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-alsace-addresses | 2026-11 | 10.6 | 2026-11 |  |
-| fr-alsace-businesses | 2026-11 | 51.3 | 2026-11 | alltheplaces, overture-places |
-| fr-alsace-extra | 2026-11 | 18.6 | 0083-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-alsace-names | 2026-11 | 8.4 | 2026-11 | wikidata-labels |
-| fr-aquitaine | 2026-11 | 87.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-aquitaine-addresses | 2026-11 | 42.9 | 2026-11 |  |
-| fr-aquitaine-businesses | 2026-11 | 60.1 | 2026-11 | alltheplaces, overture-places |
-| fr-aquitaine-extra | 2026-11 | 21.1 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-aquitaine-names | 2026-11 | 12.4 | 2026-11 | wikidata-labels |
-| fr-auvergne | 2026-11 | 46.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-auvergne-addresses | 2026-11 | 22.1 | 2026-11 |  |
-| fr-auvergne-businesses | 2026-11 | 21.3 | 2026-11 | alltheplaces, overture-places |
-| fr-auvergne-extra | 2026-11 | 16.8 | 0016-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| fr-alsace | 2026-11 | 35.1 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fr-alsace-addresses | 2026-11 | 10.6 | 2026-11 | ban |
+| fr-alsace-businesses | 2026-11 | 57.4 | 2026-11 | alltheplaces, overture-places |
+| fr-alsace-extra | 2026-11 | 18.7 | 0083-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| fr-alsace-names | 2026-11 | 8.5 | 2026-11 | wikidata-labels |
+| fr-alsace-navigation | 2026-11 | 85.4 | 2026-11 | osm-navigation |
+| fr-alsace-services | 2026-11 | 3.1 | 2026-11 | osm-services |
+| fr-aquitaine | 2026-11 | 87.3 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| fr-aquitaine-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-aquitaine-businesses | 2026-11 | 1348.6 | 2026-11 | alltheplaces, overture-places |
+| fr-aquitaine-extra | 2026-11 | 26.9 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| fr-aquitaine-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-aquitaine-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-aquitaine-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-auvergne | 2026-11 | 46.2 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fr-auvergne-addresses | 2026-11 | 22.1 | 2026-11 | ban |
+| fr-auvergne-businesses | 2026-11 | 23.5 | 2026-11 | alltheplaces, overture-places |
+| fr-auvergne-extra | 2026-11 | 16.9 | 0016-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | fr-auvergne-names | 2026-11 | 5.8 | 2026-11 | wikidata-labels |
-| fr-basse-normandie | 2026-11 | 42.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-basse-normandie-addresses | 2026-11 | 23.8 | 2026-11 |  |
-| fr-basse-normandie-businesses | 2026-11 | 23.5 | 2026-11 | alltheplaces, overture-places |
-| fr-basse-normandie-extra | 2026-11 | 17.9 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-basse-normandie-names | 2026-11 | 6.8 | 2026-11 | wikidata-labels |
-| fr-bourgogne | 2026-11 | 51.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-bourgogne-addresses | 2026-11 | 20.9 | 2026-11 |  |
-| fr-bourgogne-businesses | 2026-11 | 22.7 | 2026-11 | alltheplaces, overture-places |
-| fr-bourgogne-extra | 2026-11 | 18.2 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-bourgogne-names | 2026-11 | 7.8 | 2026-11 | wikidata-labels |
-| fr-bretagne | 2026-11 | 77.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-bretagne-addresses | 2026-11 | 35.4 | 2026-11 |  |
-| fr-bretagne-businesses | 2026-11 | 43.0 | 2026-11 | alltheplaces, overture-places |
-| fr-bretagne-extra | 2026-11 | 18.8 | 0050-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| fr-auvergne-navigation | 2026-11 | 106.0 | 2026-11 | osm-navigation |
+| fr-auvergne-services | 2026-11 | 2.9 | 2026-11 | osm-services |
+| fr-basse-normandie | 2026-11 | 42.1 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fr-basse-normandie-addresses | 2026-11 | 23.8 | 2026-11 | ban |
+| fr-basse-normandie-businesses | 2026-11 | 26.2 | 2026-11 | alltheplaces, overture-places |
+| fr-basse-normandie-extra | 2026-11 | 18.1 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| fr-basse-normandie-names | 2026-11 | 6.9 | 2026-11 | wikidata-labels |
+| fr-basse-normandie-navigation | 2026-11 | 120.4 | 2026-11 | osm-navigation |
+| fr-basse-normandie-services | 2026-11 | 3.6 | 2026-11 | osm-services |
+| fr-bourgogne | 2026-11 | 51.9 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fr-bourgogne-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-bourgogne-businesses | 2026-11 | 1346.2 | 2026-11 | alltheplaces, overture-places |
+| fr-bourgogne-extra | 2026-11 | 176.5 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| fr-bourgogne-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-bourgogne-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-bourgogne-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-bretagne | 2026-11 | 77.5 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fr-bretagne-addresses | 2026-11 | 35.4 | 2026-11 | ban |
+| fr-bretagne-businesses | 2026-11 | 47.6 | 2026-11 | alltheplaces, overture-places |
+| fr-bretagne-extra | 2026-11 | 18.9 | 0050-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | fr-bretagne-names | 2026-11 | 10.1 | 2026-11 | wikidata-labels |
-| fr-centre | 2026-11 | 70.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-centre-addresses | 2026-11 | 49.0 | 2026-11 |  |
-| fr-centre-businesses | 2026-11 | 109.7 | 2026-11 | alltheplaces, overture-places |
-| fr-centre-extra | 2026-11 | 29.4 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-centre-names | 2026-11 | 24.8 | 2026-11 | wikidata-labels |
-| fr-champagne-ardenne | 2026-11 | 38.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-champagne-ardenne-addresses | 2026-11 | 16.2 | 2026-11 |  |
-| fr-champagne-ardenne-businesses | 2026-11 | 22.4 | 2026-11 | alltheplaces, overture-places |
-| fr-champagne-ardenne-extra | 2026-11 | 18.0 | 0300-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-champagne-ardenne-names | 2026-11 | 7.7 | 2026-11 | wikidata-labels |
-| fr-corse | 2026-11 | 9.6 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-corse-addresses | 2026-11 | 2.1 | 2026-11 |  |
-| fr-corse-businesses | 2026-11 | 4.3 | 2026-11 | alltheplaces, overture-places |
-| fr-corse-extra | 2026-11 | 8.7 | 0600-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-corse-names | 2026-11 | 1.0 | 2026-11 | wikidata-labels |
-| fr-franche-comte | 2026-11 | 31.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-franche-comte-addresses | 2026-11 | 11.1 | 2026-11 |  |
-| fr-franche-comte-businesses | 2026-11 | 32.4 | 2026-11 | alltheplaces, overture-places |
-| fr-franche-comte-extra | 2026-11 | 17.5 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-franche-comte-names | 2026-11 | 6.8 | 2026-11 | wikidata-labels |
-| fr-haute-normandie | 2026-11 | 29.6 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-haute-normandie-addresses | 2026-11 | 14.6 | 2026-11 |  |
-| fr-haute-normandie-businesses | 2026-11 | 17.4 | 2026-11 | alltheplaces, overture-places |
-| fr-haute-normandie-extra | 2026-11 | 16.5 | 0538-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-haute-normandie-names | 2026-11 | 4.5 | 2026-11 | wikidata-labels |
-| fr-ile-de-france | 2026-11 | 99.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-ile-de-france-addresses | 2026-11 | 28.4 | 2026-11 |  |
-| fr-ile-de-france-businesses | 2026-11 | 95.2 | 2026-11 | alltheplaces, overture-places |
-| fr-ile-de-france-extra | 2026-11 | 28.0 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-ile-de-france-names | 2026-11 | 21.4 | 2026-11 | wikidata-labels |
-| fr-languedoc-roussillon | 2026-11 | 66.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-languedoc-roussillon-addresses | 2026-11 | 33.1 | 2026-11 |  |
-| fr-languedoc-roussillon-businesses | 2026-11 | 46.4 | 2026-11 | alltheplaces, overture-places |
-| fr-languedoc-roussillon-extra | 2026-11 | 21.3 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-languedoc-roussillon-names | 2026-11 | 10.5 | 2026-11 | wikidata-labels |
-| fr-limousin | 2026-11 | 24.6 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-limousin-addresses | 2026-11 | 12.3 | 2026-11 |  |
-| fr-limousin-businesses | 2026-11 | 10.3 | 2026-11 | alltheplaces, overture-places |
-| fr-limousin-extra | 2026-11 | 15.2 | 0016-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-limousin-names | 2026-11 | 2.9 | 2026-11 | wikidata-labels |
-| fr-lorraine | 2026-11 | 55.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-lorraine-addresses | 2026-11 | 18.4 | 2026-11 |  |
-| fr-lorraine-businesses | 2026-11 | 42.9 | 2026-11 | alltheplaces, overture-places |
-| fr-lorraine-extra | 2026-11 | 19.1 | 0310-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-lorraine-names | 2026-11 | 9.4 | 2026-11 | wikidata-labels |
+| fr-bretagne-navigation | 2026-11 | 237.4 | 2026-11 | osm-navigation |
+| fr-bretagne-services | 2026-11 | 7.0 | 2026-11 | osm-services |
+| fr-centre | 2026-11 | 70.3 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fr-centre-addresses | 2026-11 | 49.0 | 2026-11 | ban |
+| fr-centre-businesses | 2026-11 | 121.8 | 2026-11 | alltheplaces, overture-places |
+| fr-centre-extra | 2026-11 | 29.6 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| fr-centre-names | 2026-11 | 24.9 | 2026-11 | wikidata-labels |
+| fr-centre-navigation | 2026-11 | 159.8 | 2026-11 | osm-navigation |
+| fr-centre-services | 2026-11 | 5.4 | 2026-11 | osm-services |
+| fr-champagne-ardenne | 2026-11 | 38.2 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| fr-champagne-ardenne-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-champagne-ardenne-businesses | 2026-11 | 1346.1 | 2026-11 | alltheplaces, overture-places |
+| fr-champagne-ardenne-extra | 2026-11 | 24.3 | 0300-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| fr-champagne-ardenne-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-champagne-ardenne-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-champagne-ardenne-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-corse | 2026-11 | 9.6 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fr-corse-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-corse-businesses | 2026-11 | 1344.9 | 2026-11 | alltheplaces, overture-places |
+| fr-corse-extra | 2026-11 | 176.4 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| fr-corse-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-corse-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-corse-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-franche-comte | 2026-11 | 31.7 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| fr-franche-comte-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-franche-comte-businesses | 2026-11 | 1346.3 | 2026-11 | alltheplaces, overture-places |
+| fr-franche-comte-extra | 2026-11 | 23.9 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| fr-franche-comte-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-franche-comte-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-franche-comte-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-haute-normandie | 2026-11 | 29.6 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fr-haute-normandie-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-haute-normandie-businesses | 2026-11 | 1345.7 | 2026-11 | alltheplaces, overture-places |
+| fr-haute-normandie-extra | 2026-11 | 176.4 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| fr-haute-normandie-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-haute-normandie-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-haute-normandie-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-ile-de-france | 2026-11 | 99.5 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| fr-ile-de-france-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-ile-de-france-businesses | 2026-11 | 1350.1 | 2026-11 | alltheplaces, overture-places |
+| fr-ile-de-france-extra | 2026-11 | 33.8 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| fr-ile-de-france-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-ile-de-france-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-ile-de-france-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-languedoc-roussillon | 2026-11 | 66.5 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| fr-languedoc-roussillon-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-languedoc-roussillon-businesses | 2026-11 | 1347.8 | 2026-11 | alltheplaces, overture-places |
+| fr-languedoc-roussillon-extra | 2026-11 | 27.2 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| fr-languedoc-roussillon-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-languedoc-roussillon-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-languedoc-roussillon-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-limousin | 2026-11 | 24.6 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fr-limousin-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-limousin-businesses | 2026-11 | 1345.3 | 2026-11 | alltheplaces, overture-places |
+| fr-limousin-extra | 2026-11 | 176.5 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| fr-limousin-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-limousin-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-limousin-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-lorraine | 2026-11 | 55.3 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fr-lorraine-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-lorraine-businesses | 2026-11 | 1347.3 | 2026-11 | alltheplaces, overture-places |
+| fr-lorraine-extra | 2026-11 | 176.5 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| fr-lorraine-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-lorraine-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-lorraine-services | 2026-11 | 0.1 | 2026-11 |  |
 | fr-midi-pyrenees | 2026-11 | 88.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | fr-midi-pyrenees-addresses | 2026-11 | 43.1 | 2026-11 |  |
 | fr-midi-pyrenees-businesses | 2026-11 | 50.1 | 2026-11 | alltheplaces, overture-places |
@@ -2648,186 +2678,216 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | fi-finland-south-names | wikidata-labels | ok | 11627 |
 | fi-finland-south-navigation | osm-navigation | ok | 1057885 |
 | fi-finland-south-services | osm-services | ok | 45123 |
-| fr-alsace | osm | ok | 2026-11-10T21:21:39Z |
-| fr-alsace-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-alsace-businesses | alltheplaces | ok | 29392 |
+| fr-alsace | osm | ok | 2026-11-21T21:20:51Z |
+| fr-alsace-addresses | ban | ok | 853340 |
+| fr-alsace-businesses | alltheplaces | ok | 41491 |
 | fr-alsace-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-alsace-businesses | overture-places | ok | 173093 |
-| fr-alsace-extra | geonames | ok | 1423 |
+| fr-alsace-businesses | overture-places | ok | 175033 |
+| fr-alsace-extra | geonames | ok | 1424 |
 | fr-alsace-extra | natural-earth-lines | ok | 0 in this region |
 | fr-alsace-extra | natural-earth-regions | ok | 4 |
 | fr-alsace-extra | ourairports | ok | 54 |
-| fr-alsace-extra | wikidata | ok | 25003 |
-| fr-alsace-extra | wikidata-filming | ok | 28 |
-| fr-alsace-names | wikidata-labels | ok | 43349 |
-| fr-aquitaine | osm | ok | 2026-11-10T21:21:39Z |
-| fr-aquitaine-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-aquitaine-businesses | alltheplaces | ok | 31299 |
+| fr-alsace-extra | wikidata | ok | 25424 |
+| fr-alsace-extra | wikidata-filming | ok | 29 |
+| fr-alsace-names | wikidata-labels | ok | 43759 |
+| fr-alsace-navigation | osm-navigation | ok | 285013 |
+| fr-alsace-services | osm-services | ok | 23393 |
+| fr-aquitaine | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
+| fr-aquitaine-addresses | ban | ok | 25290050 |
+| fr-aquitaine-businesses | alltheplaces | ok | 781073 |
 | fr-aquitaine-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-aquitaine-businesses | overture-places | ok | 204327 |
-| fr-aquitaine-extra | geonames | ok | 2906 |
+| fr-aquitaine-businesses | overture-places | ok | 4538021 |
+| fr-aquitaine-extra | geonames | ok | 28726 |
 | fr-aquitaine-extra | natural-earth-lines | ok | 0 in this region |
-| fr-aquitaine-extra | natural-earth-regions | ok | 4 |
-| fr-aquitaine-extra | ourairports | ok | 277 |
-| fr-aquitaine-extra | wikidata | ok | 36738 |
-| fr-aquitaine-extra | wikidata-filming | ok | 88 |
-| fr-aquitaine-names | wikidata-labels | ok | 70056 |
-| fr-auvergne | osm | ok | 2026-11-10T21:21:39Z |
-| fr-auvergne-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-auvergne-businesses | alltheplaces | ok | 10787 |
+| fr-aquitaine-extra | natural-earth-regions | ok | 16 |
+| fr-aquitaine-extra | ourairports | ok | 1788 |
+| fr-aquitaine-extra | wikidata | failed | took longer than 90 min |
+| fr-aquitaine-extra | wikidata-filming | ok | 2130 |
+| fr-aquitaine-names | wikidata-labels | ok | 1269663 |
+| fr-aquitaine-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| fr-aquitaine-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
+| fr-auvergne | osm | ok | 2026-11-21T21:20:51Z |
+| fr-auvergne-addresses | ban | ok | 1405216 |
+| fr-auvergne-businesses | alltheplaces | ok | 13432 |
 | fr-auvergne-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-auvergne-businesses | overture-places | ok | 72237 |
+| fr-auvergne-businesses | overture-places | ok | 72983 |
 | fr-auvergne-extra | geonames | ok | 1482 |
 | fr-auvergne-extra | natural-earth-lines | ok | 0 in this region |
 | fr-auvergne-extra | natural-earth-regions | ok | 2 |
 | fr-auvergne-extra | ourairports | ok | 98 |
-| fr-auvergne-extra | wikidata | ok | 15816 |
-| fr-auvergne-extra | wikidata-filming | ok | 78 |
-| fr-auvergne-names | wikidata-labels | ok | 32976 |
-| fr-basse-normandie | osm | ok | 2026-11-10T21:21:39Z |
-| fr-basse-normandie-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-basse-normandie-businesses | alltheplaces | ok | 12656 |
+| fr-auvergne-extra | wikidata | ok | 16303 |
+| fr-auvergne-extra | wikidata-filming | ok | 79 |
+| fr-auvergne-names | wikidata-labels | ok | 33438 |
+| fr-auvergne-navigation | osm-navigation | ok | 312847 |
+| fr-auvergne-services | osm-services | ok | 20387 |
+| fr-basse-normandie | osm | ok | 2026-11-21T21:20:51Z |
+| fr-basse-normandie-addresses | ban | ok | 1570926 |
+| fr-basse-normandie-businesses | alltheplaces | ok | 16854 |
 | fr-basse-normandie-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-basse-normandie-businesses | overture-places | ok | 79463 |
+| fr-basse-normandie-businesses | overture-places | ok | 80419 |
 | fr-basse-normandie-extra | geonames | ok | 1042 |
 | fr-basse-normandie-extra | natural-earth-lines | ok | 0 in this region |
 | fr-basse-normandie-extra | natural-earth-regions | ok | 4 |
 | fr-basse-normandie-extra | ourairports | ok | 92 |
-| fr-basse-normandie-extra | wikidata | ok | 19771 |
-| fr-basse-normandie-extra | wikidata-filming | ok | 65 |
-| fr-basse-normandie-names | wikidata-labels | ok | 35500 |
-| fr-bourgogne | osm | ok | 2026-11-10T21:21:39Z |
-| fr-bourgogne-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-bourgogne-businesses | alltheplaces | ok | 11733 |
+| fr-basse-normandie-extra | wikidata | ok | 20584 |
+| fr-basse-normandie-extra | wikidata-filming | ok | 66 |
+| fr-basse-normandie-names | wikidata-labels | ok | 36315 |
+| fr-basse-normandie-navigation | osm-navigation | ok | 380779 |
+| fr-basse-normandie-services | osm-services | ok | 26060 |
+| fr-bourgogne | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
+| fr-bourgogne-addresses | ban | ok | 25290050 |
+| fr-bourgogne-businesses | alltheplaces | ok | 781073 |
 | fr-bourgogne-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-bourgogne-businesses | overture-places | ok | 77008 |
-| fr-bourgogne-extra | geonames | ok | 963 |
+| fr-bourgogne-businesses | overture-places | ok | 4538021 |
+| fr-bourgogne-extra | geonames | ok | 28726 |
 | fr-bourgogne-extra | natural-earth-lines | ok | 0 in this region |
-| fr-bourgogne-extra | natural-earth-regions | ok | 3 |
-| fr-bourgogne-extra | ourairports | ok | 131 |
-| fr-bourgogne-extra | wikidata | ok | 23172 |
-| fr-bourgogne-extra | wikidata-filming | ok | 32 |
-| fr-bourgogne-names | wikidata-labels | ok | 42805 |
-| fr-bretagne | osm | ok | 2026-11-10T21:21:39Z |
-| fr-bretagne-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-bretagne-businesses | alltheplaces | ok | 18971 |
+| fr-bourgogne-extra | natural-earth-regions | ok | 16 |
+| fr-bourgogne-extra | ourairports | ok | 1788 |
+| fr-bourgogne-extra | wikidata | ok | 870145 |
+| fr-bourgogne-extra | wikidata-filming | ok | 2130 |
+| fr-bourgogne-names | wikidata-labels | ok | 1269664 |
+| fr-bourgogne-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| fr-bourgogne-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
+| fr-bretagne | osm | ok | 2026-11-21T21:20:51Z |
+| fr-bretagne-addresses | ban | ok | 2609518 |
+| fr-bretagne-businesses | alltheplaces | ok | 25388 |
 | fr-bretagne-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-bretagne-businesses | overture-places | ok | 149768 |
+| fr-bretagne-businesses | overture-places | ok | 151323 |
 | fr-bretagne-extra | geonames | ok | 2123 |
 | fr-bretagne-extra | natural-earth-lines | ok | 0 in this region |
 | fr-bretagne-extra | natural-earth-regions | ok | 3 |
 | fr-bretagne-extra | ourairports | ok | 86 |
-| fr-bretagne-extra | wikidata | ok | 26479 |
-| fr-bretagne-extra | wikidata-filming | ok | 128 |
-| fr-bretagne-names | wikidata-labels | ok | 58091 |
-| fr-centre | osm | ok | 2026-11-10T21:21:39Z |
-| fr-centre-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-centre-businesses | alltheplaces | ok | 79481 |
+| fr-bretagne-extra | wikidata | ok | 26850 |
+| fr-bretagne-extra | wikidata-filming | ok | 127 |
+| fr-bretagne-names | wikidata-labels | ok | 58459 |
+| fr-bretagne-navigation | osm-navigation | ok | 764138 |
+| fr-bretagne-services | osm-services | ok | 51905 |
+| fr-centre | osm | ok | 2026-11-21T21:20:51Z |
+| fr-centre-addresses | ban | ok | 3898221 |
+| fr-centre-businesses | alltheplaces | ok | 98629 |
 | fr-centre-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-centre-businesses | overture-places | ok | 351457 |
-| fr-centre-extra | geonames | ok | 5223 |
+| fr-centre-businesses | overture-places | ok | 355672 |
+| fr-centre-extra | geonames | ok | 5225 |
 | fr-centre-extra | natural-earth-lines | ok | 0 in this region |
 | fr-centre-extra | natural-earth-regions | ok | 2 |
 | fr-centre-extra | ourairports | ok | 214 |
-| fr-centre-extra | wikidata | ok | 82328 |
-| fr-centre-extra | wikidata-filming | ok | 541 |
-| fr-centre-names | wikidata-labels | ok | 131160 |
-| fr-champagne-ardenne | osm | ok | 2026-11-10T21:21:39Z |
-| fr-champagne-ardenne-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-champagne-ardenne-businesses | alltheplaces | ok | 10858 |
+| fr-centre-extra | wikidata | ok | 83071 |
+| fr-centre-extra | wikidata-filming | ok | 538 |
+| fr-centre-names | wikidata-labels | ok | 131896 |
+| fr-centre-navigation | osm-navigation | ok | 503543 |
+| fr-centre-services | osm-services | ok | 39058 |
+| fr-champagne-ardenne | osm | failed | HTTP Error 404: Not Found |
+| fr-champagne-ardenne-addresses | ban | ok | 25290050 |
+| fr-champagne-ardenne-businesses | alltheplaces | ok | 781073 |
 | fr-champagne-ardenne-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-champagne-ardenne-businesses | overture-places | ok | 77298 |
-| fr-champagne-ardenne-extra | geonames | ok | 679 |
+| fr-champagne-ardenne-businesses | overture-places | ok | 4538021 |
+| fr-champagne-ardenne-extra | geonames | ok | 28726 |
 | fr-champagne-ardenne-extra | natural-earth-lines | ok | 0 in this region |
-| fr-champagne-ardenne-extra | natural-earth-regions | ok | 4 |
-| fr-champagne-ardenne-extra | ourairports | ok | 129 |
-| fr-champagne-ardenne-extra | wikidata | ok | 22180 |
-| fr-champagne-ardenne-extra | wikidata-filming | ok | 27 |
-| fr-champagne-ardenne-names | wikidata-labels | ok | 39970 |
-| fr-corse | osm | ok | 2026-11-10T21:21:39Z |
-| fr-corse-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-corse-businesses | alltheplaces | ok | 1330 |
+| fr-champagne-ardenne-extra | natural-earth-regions | ok | 16 |
+| fr-champagne-ardenne-extra | ourairports | ok | 1788 |
+| fr-champagne-ardenne-extra | wikidata | failed | took longer than 90 min |
+| fr-champagne-ardenne-extra | wikidata-filming | ok | 2130 |
+| fr-champagne-ardenne-names | wikidata-labels | ok | 1269663 |
+| fr-champagne-ardenne-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| fr-champagne-ardenne-services | osm-services | failed | HTTP Error 404: Not Found |
+| fr-corse | osm | failed | HTTP Error 404: Not Found |
+| fr-corse-addresses | ban | ok | 25290050 |
+| fr-corse-businesses | alltheplaces | ok | 781073 |
 | fr-corse-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-corse-businesses | overture-places | ok | 15447 |
-| fr-corse-extra | geonames | ok | 989 |
+| fr-corse-businesses | overture-places | ok | 4538021 |
+| fr-corse-extra | geonames | ok | 28726 |
 | fr-corse-extra | natural-earth-lines | ok | 0 in this region |
-| fr-corse-extra | natural-earth-regions | ok | 3 |
-| fr-corse-extra | ourairports | ok | 18 |
-| fr-corse-extra | wikidata | ok | 3229 |
-| fr-corse-extra | wikidata-filming | ok | 5 |
-| fr-corse-names | wikidata-labels | ok | 4947 |
-| fr-franche-comte | osm | ok | 2026-11-10T21:21:39Z |
-| fr-franche-comte-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-franche-comte-businesses | alltheplaces | ok | 27182 |
+| fr-corse-extra | natural-earth-regions | ok | 16 |
+| fr-corse-extra | ourairports | ok | 1788 |
+| fr-corse-extra | wikidata | ok | 870145 |
+| fr-corse-extra | wikidata-filming | ok | 2130 |
+| fr-corse-names | wikidata-labels | ok | 1269664 |
+| fr-corse-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| fr-corse-services | osm-services | failed | HTTP Error 404: Not Found |
+| fr-franche-comte | osm | failed | HTTP Error 404: Not Found |
+| fr-franche-comte-addresses | ban | ok | 25290050 |
+| fr-franche-comte-businesses | alltheplaces | ok | 781073 |
 | fr-franche-comte-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-franche-comte-businesses | overture-places | ok | 100961 |
-| fr-franche-comte-extra | geonames | ok | 762 |
+| fr-franche-comte-businesses | overture-places | ok | 4538021 |
+| fr-franche-comte-extra | geonames | ok | 28726 |
 | fr-franche-comte-extra | natural-earth-lines | ok | 0 in this region |
-| fr-franche-comte-extra | natural-earth-regions | ok | 4 |
-| fr-franche-comte-extra | ourairports | ok | 74 |
-| fr-franche-comte-extra | wikidata | ok | 19671 |
-| fr-franche-comte-extra | wikidata-filming | ok | 28 |
-| fr-franche-comte-names | wikidata-labels | ok | 34623 |
-| fr-haute-normandie | osm | ok | 2026-11-10T21:21:39Z |
-| fr-haute-normandie-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-haute-normandie-businesses | alltheplaces | ok | 10003 |
+| fr-franche-comte-extra | natural-earth-regions | ok | 16 |
+| fr-franche-comte-extra | ourairports | ok | 1788 |
+| fr-franche-comte-extra | wikidata | failed | took longer than 90 min |
+| fr-franche-comte-extra | wikidata-filming | ok | 2130 |
+| fr-franche-comte-names | wikidata-labels | ok | 1269662 |
+| fr-franche-comte-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| fr-franche-comte-services | osm-services | failed | HTTP Error 404: Not Found |
+| fr-haute-normandie | osm | failed | HTTP Error 404: Not Found |
+| fr-haute-normandie-addresses | ban | ok | 25290050 |
+| fr-haute-normandie-businesses | alltheplaces | ok | 781073 |
 | fr-haute-normandie-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-haute-normandie-businesses | overture-places | ok | 58338 |
-| fr-haute-normandie-extra | geonames | ok | 592 |
+| fr-haute-normandie-businesses | overture-places | ok | 4538021 |
+| fr-haute-normandie-extra | geonames | ok | 28726 |
 | fr-haute-normandie-extra | natural-earth-lines | ok | 0 in this region |
-| fr-haute-normandie-extra | natural-earth-regions | ok | 4 |
-| fr-haute-normandie-extra | ourairports | ok | 56 |
-| fr-haute-normandie-extra | wikidata | ok | 11074 |
-| fr-haute-normandie-extra | wikidata-filming | ok | 47 |
-| fr-haute-normandie-names | wikidata-labels | ok | 22854 |
-| fr-ile-de-france | osm | ok | 2026-11-10T21:21:39Z |
-| fr-ile-de-france-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-ile-de-france-businesses | alltheplaces | ok | 70582 |
+| fr-haute-normandie-extra | natural-earth-regions | ok | 16 |
+| fr-haute-normandie-extra | ourairports | ok | 1788 |
+| fr-haute-normandie-extra | wikidata | ok | 870145 |
+| fr-haute-normandie-extra | wikidata-filming | ok | 2130 |
+| fr-haute-normandie-names | wikidata-labels | ok | 1269664 |
+| fr-haute-normandie-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| fr-haute-normandie-services | osm-services | failed | HTTP Error 404: Not Found |
+| fr-ile-de-france | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
+| fr-ile-de-france-addresses | ban | ok | 25290050 |
+| fr-ile-de-france-businesses | alltheplaces | ok | 781073 |
 | fr-ile-de-france-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-ile-de-france-businesses | overture-places | ok | 303625 |
-| fr-ile-de-france-extra | geonames | ok | 4391 |
+| fr-ile-de-france-businesses | overture-places | ok | 4538021 |
+| fr-ile-de-france-extra | geonames | ok | 28726 |
 | fr-ile-de-france-extra | natural-earth-lines | ok | 0 in this region |
-| fr-ile-de-france-extra | natural-earth-regions | ok | 2 |
-| fr-ile-de-france-extra | ourairports | ok | 98 |
-| fr-ile-de-france-extra | wikidata | ok | 75117 |
-| fr-ile-de-france-extra | wikidata-filming | ok | 554 |
-| fr-ile-de-france-names | wikidata-labels | ok | 111241 |
-| fr-languedoc-roussillon | osm | ok | 2026-11-10T21:21:39Z |
-| fr-languedoc-roussillon-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-languedoc-roussillon-businesses | alltheplaces | ok | 18074 |
+| fr-ile-de-france-extra | natural-earth-regions | ok | 16 |
+| fr-ile-de-france-extra | ourairports | ok | 1788 |
+| fr-ile-de-france-extra | wikidata | failed | took longer than 90 min |
+| fr-ile-de-france-extra | wikidata-filming | ok | 2130 |
+| fr-ile-de-france-names | wikidata-labels | ok | 1269663 |
+| fr-ile-de-france-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| fr-ile-de-france-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
+| fr-languedoc-roussillon | osm | failed | HTTP Error 404: Not Found |
+| fr-languedoc-roussillon-addresses | ban | ok | 25290050 |
+| fr-languedoc-roussillon-businesses | alltheplaces | ok | 781073 |
 | fr-languedoc-roussillon-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-languedoc-roussillon-businesses | overture-places | ok | 164873 |
-| fr-languedoc-roussillon-extra | geonames | ok | 2852 |
+| fr-languedoc-roussillon-businesses | overture-places | ok | 4538021 |
+| fr-languedoc-roussillon-extra | geonames | ok | 28726 |
 | fr-languedoc-roussillon-extra | natural-earth-lines | ok | 0 in this region |
-| fr-languedoc-roussillon-extra | natural-earth-regions | ok | 4 |
-| fr-languedoc-roussillon-extra | ourairports | ok | 155 |
-| fr-languedoc-roussillon-extra | wikidata | ok | 38086 |
-| fr-languedoc-roussillon-extra | wikidata-filming | ok | 141 |
-| fr-languedoc-roussillon-names | wikidata-labels | ok | 61917 |
-| fr-limousin | osm | ok | 2026-11-10T21:21:39Z |
-| fr-limousin-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-limousin-businesses | alltheplaces | ok | 5211 |
+| fr-languedoc-roussillon-extra | natural-earth-regions | ok | 16 |
+| fr-languedoc-roussillon-extra | ourairports | ok | 1788 |
+| fr-languedoc-roussillon-extra | wikidata | failed | took longer than 90 min |
+| fr-languedoc-roussillon-extra | wikidata-filming | ok | 2130 |
+| fr-languedoc-roussillon-names | wikidata-labels | ok | 1269663 |
+| fr-languedoc-roussillon-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| fr-languedoc-roussillon-services | osm-services | failed | HTTP Error 404: Not Found |
+| fr-limousin | osm | failed | HTTP Error 404: Not Found |
+| fr-limousin-addresses | ban | ok | 25290050 |
+| fr-limousin-businesses | alltheplaces | ok | 781073 |
 | fr-limousin-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-limousin-businesses | overture-places | ok | 35074 |
-| fr-limousin-extra | geonames | ok | 509 |
+| fr-limousin-businesses | overture-places | ok | 4538021 |
+| fr-limousin-extra | geonames | ok | 28726 |
 | fr-limousin-extra | natural-earth-lines | ok | 0 in this region |
-| fr-limousin-extra | natural-earth-regions | ok | 2 |
-| fr-limousin-extra | ourairports | ok | 71 |
-| fr-limousin-extra | wikidata | ok | 7360 |
-| fr-limousin-extra | wikidata-filming | ok | 22 |
-| fr-limousin-names | wikidata-labels | ok | 15805 |
-| fr-lorraine | osm | ok | 2026-11-10T21:21:39Z |
-| fr-lorraine-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-lorraine-businesses | alltheplaces | ok | 18806 |
+| fr-limousin-extra | natural-earth-regions | ok | 16 |
+| fr-limousin-extra | ourairports | ok | 1788 |
+| fr-limousin-extra | wikidata | ok | 870145 |
+| fr-limousin-extra | wikidata-filming | ok | 2130 |
+| fr-limousin-names | wikidata-labels | ok | 1269664 |
+| fr-limousin-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| fr-limousin-services | osm-services | failed | HTTP Error 404: Not Found |
+| fr-lorraine | osm | failed | HTTP Error 404: Not Found |
+| fr-lorraine-addresses | ban | ok | 25290050 |
+| fr-lorraine-businesses | alltheplaces | ok | 781073 |
 | fr-lorraine-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-lorraine-businesses | overture-places | ok | 149878 |
-| fr-lorraine-extra | geonames | ok | 1650 |
+| fr-lorraine-businesses | overture-places | ok | 4538021 |
+| fr-lorraine-extra | geonames | ok | 28726 |
 | fr-lorraine-extra | natural-earth-lines | ok | 0 in this region |
-| fr-lorraine-extra | natural-earth-regions | ok | 4 |
-| fr-lorraine-extra | ourairports | ok | 123 |
-| fr-lorraine-extra | wikidata | ok | 27925 |
-| fr-lorraine-extra | wikidata-filming | ok | 32 |
-| fr-lorraine-names | wikidata-labels | ok | 50837 |
+| fr-lorraine-extra | natural-earth-regions | ok | 16 |
+| fr-lorraine-extra | ourairports | ok | 1788 |
+| fr-lorraine-extra | wikidata | ok | 870145 |
+| fr-lorraine-extra | wikidata-filming | ok | 2130 |
+| fr-lorraine-names | wikidata-labels | ok | 1269664 |
+| fr-lorraine-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| fr-lorraine-services | osm-services | failed | HTTP Error 404: Not Found |
 | fr-midi-pyrenees | osm | ok | 2026-11-10T21:21:39Z |
 | fr-midi-pyrenees-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
 | fr-midi-pyrenees-businesses | alltheplaces | ok | 21893 |

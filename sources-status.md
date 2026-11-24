@@ -1,6 +1,6 @@
 # Place packs status, 2026-11-24
 
-1132 packs published, 97.18 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
+1146 packs published, 110.17 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
 
 ## Packs by region
 
@@ -93,13 +93,13 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | fr-languedoc-roussillon | 66.5 | 27.2 | 233.7 | 1347.8 | 339.5 | 0.1 | 0.1 | 93.6 |
 | fr-limousin | 24.6 | 176.5 | 233.7 | 1345.3 | 339.5 | 0.1 | 0.1 | 201.0 |
 | fr-lorraine | 55.3 | 176.5 | 233.7 | 1347.3 | 339.5 | 0.1 | 0.1 | 231.8 |
-| fr-midi-pyrenees | 88.3 | 21.8 | 13.3 | 50.1 | 43.1 |  |  | 110.1 |
-| fr-nord-pas-de-calais | 52.5 | 20.0 | 9.8 | 74.5 | 20.1 |  |  | 72.6 |
-| fr-pays-de-la-loire | 79.9 | 18.9 | 11.6 | 52.1 | 47.6 |  |  | 98.8 |
-| fr-picardie | 32.5 | 26.7 | 19.6 | 89.5 | 35.1 |  |  | 59.2 |
-| fr-poitou-charentes | 52.7 | 16.6 | 6.1 | 29.8 | 31.1 |  |  | 69.3 |
-| fr-provence-alpes-cote-d-azur | 87.5 | 20.2 | 11.7 | 88.4 | 32.0 |  |  | 107.7 |
-| fr-rhone-alpes | 148.7 | 23.8 | 17.6 | 88.8 | 43.5 |  |  | 172.5 |
+| fr-midi-pyrenees | 88.3 | 27.5 | 233.7 | 1348.2 | 339.5 | 0.1 | 0.1 | 115.8 |
+| fr-nord-pas-de-calais | 52.5 | 177.6 | 233.7 | 1360.4 | 339.5 | 0.1 | 0.1 | 230.1 |
+| fr-pays-de-la-loire | 79.9 | 25.2 | 233.7 | 1348.2 | 339.5 | 0.1 | 0.1 | 105.1 |
+| fr-picardie | 32.5 | 176.5 | 233.7 | 1349.7 | 339.5 | 0.1 | 0.1 | 209.0 |
+| fr-poitou-charentes | 52.7 | 23.0 | 233.7 | 1346.7 | 339.5 | 0.1 | 0.1 | 75.7 |
+| fr-provence-alpes-cote-d-azur | 87.5 | 25.9 | 233.7 | 1350.4 | 339.5 | 0.1 | 0.1 | 113.4 |
+| fr-rhone-alpes | 148.7 | 29.4 | 233.7 | 1350.2 | 339.5 | 0.1 | 0.1 | 178.1 |
 | gb-england (its sub-regions put together) | 574.0 | 118.3 | 25.4 |  |  |  |  | 692.3 |
 | gb-england-east | 75.6 | 21.7 | 5.6 | 94.6 |  | 265.9 | 12.1 | 97.3 |
 | gb-england-east-midlands | 57.7 | 15.6 | 3.1 | 68.1 |  | 185.5 | 7.8 | 73.3 |
@@ -656,41 +656,55 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | fr-lorraine-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
 | fr-lorraine-navigation | 2026-11 | 0.1 | 2026-11 |  |
 | fr-lorraine-services | 2026-11 | 0.1 | 2026-11 |  |
-| fr-midi-pyrenees | 2026-11 | 88.3 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-midi-pyrenees-addresses | 2026-11 | 43.1 | 2026-11 |  |
-| fr-midi-pyrenees-businesses | 2026-11 | 50.1 | 2026-11 | alltheplaces, overture-places |
-| fr-midi-pyrenees-extra | 2026-11 | 21.8 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-midi-pyrenees-names | 2026-11 | 13.3 | 2026-11 | wikidata-labels |
-| fr-nord-pas-de-calais | 2026-11 | 52.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-nord-pas-de-calais-addresses | 2026-11 | 20.1 | 2026-11 |  |
-| fr-nord-pas-de-calais-businesses | 2026-11 | 74.5 | 2026-11 | alltheplaces, overture-places |
-| fr-nord-pas-de-calais-extra | 2026-11 | 20.0 | 0170-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-nord-pas-de-calais-names | 2026-11 | 9.8 | 2026-11 | wikidata-labels |
-| fr-pays-de-la-loire | 2026-11 | 79.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-pays-de-la-loire-addresses | 2026-11 | 47.6 | 2026-11 |  |
-| fr-pays-de-la-loire-businesses | 2026-11 | 52.1 | 2026-11 | alltheplaces, overture-places |
-| fr-pays-de-la-loire-extra | 2026-11 | 18.9 | 0050-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-pays-de-la-loire-names | 2026-11 | 11.6 | 2026-11 | wikidata-labels |
-| fr-picardie | 2026-11 | 32.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-picardie-addresses | 2026-11 | 35.1 | 2026-11 |  |
-| fr-picardie-businesses | 2026-11 | 89.5 | 2026-11 | alltheplaces, overture-places |
-| fr-picardie-extra | 2026-11 | 26.7 | 0150-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-picardie-names | 2026-11 | 19.6 | 2026-11 | wikidata-labels |
-| fr-poitou-charentes | 2026-11 | 52.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-poitou-charentes-addresses | 2026-11 | 31.1 | 2026-11 |  |
-| fr-poitou-charentes-businesses | 2026-11 | 29.8 | 2026-11 | alltheplaces, overture-places |
-| fr-poitou-charentes-extra | 2026-11 | 16.6 | 0018-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-poitou-charentes-names | 2026-11 | 6.1 | 2026-11 | wikidata-labels |
-| fr-provence-alpes-cote-d-azur | 2026-11 | 87.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-provence-alpes-cote-d-azur-addresses | 2026-11 | 32.0 | 2026-11 |  |
-| fr-provence-alpes-cote-d-azur-businesses | 2026-11 | 88.4 | 2026-11 | alltheplaces, overture-places |
-| fr-provence-alpes-cote-d-azur-extra | 2026-11 | 20.2 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-provence-alpes-cote-d-azur-names | 2026-11 | 11.7 | 2026-11 | wikidata-labels |
-| fr-rhone-alpes | 2026-11 | 148.7 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| fr-rhone-alpes-addresses | 2026-11 | 43.5 | 2026-11 |  |
-| fr-rhone-alpes-businesses | 2026-11 | 88.8 | 2026-11 | alltheplaces, overture-places |
-| fr-rhone-alpes-extra | 2026-11 | 23.8 | 0005-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| fr-rhone-alpes-names | 2026-11 | 17.6 | 2026-11 | wikidata-labels |
+| fr-midi-pyrenees | 2026-11 | 88.3 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| fr-midi-pyrenees-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-midi-pyrenees-businesses | 2026-11 | 1348.2 | 2026-11 | alltheplaces, overture-places |
+| fr-midi-pyrenees-extra | 2026-11 | 27.5 | 0100-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| fr-midi-pyrenees-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-midi-pyrenees-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-midi-pyrenees-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-nord-pas-de-calais | 2026-11 | 52.5 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fr-nord-pas-de-calais-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-nord-pas-de-calais-businesses | 2026-11 | 1360.4 | 2026-11 | alltheplaces, overture-places |
+| fr-nord-pas-de-calais-extra | 2026-11 | 177.6 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| fr-nord-pas-de-calais-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-nord-pas-de-calais-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-nord-pas-de-calais-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-pays-de-la-loire | 2026-11 | 79.9 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| fr-pays-de-la-loire-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-pays-de-la-loire-businesses | 2026-11 | 1348.2 | 2026-11 | alltheplaces, overture-places |
+| fr-pays-de-la-loire-extra | 2026-11 | 25.2 | 0050-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| fr-pays-de-la-loire-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-pays-de-la-loire-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-pays-de-la-loire-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-picardie | 2026-11 | 32.5 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| fr-picardie-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-picardie-businesses | 2026-11 | 1349.7 | 2026-11 | alltheplaces, overture-places |
+| fr-picardie-extra | 2026-11 | 176.5 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| fr-picardie-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-picardie-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-picardie-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-poitou-charentes | 2026-11 | 52.7 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| fr-poitou-charentes-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-poitou-charentes-businesses | 2026-11 | 1346.7 | 2026-11 | alltheplaces, overture-places |
+| fr-poitou-charentes-extra | 2026-11 | 23.0 | 0018-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| fr-poitou-charentes-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-poitou-charentes-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-poitou-charentes-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-provence-alpes-cote-d-azur | 2026-11 | 87.5 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| fr-provence-alpes-cote-d-azur-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-provence-alpes-cote-d-azur-businesses | 2026-11 | 1350.4 | 2026-11 | alltheplaces, overture-places |
+| fr-provence-alpes-cote-d-azur-extra | 2026-11 | 25.9 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| fr-provence-alpes-cote-d-azur-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-provence-alpes-cote-d-azur-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-provence-alpes-cote-d-azur-services | 2026-11 | 0.1 | 2026-11 |  |
+| fr-rhone-alpes | 2026-11 | 148.7 | 2026-11 | alltheplaces, ban, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| fr-rhone-alpes-addresses | 2026-11 | 339.5 | 2026-11 | ban |
+| fr-rhone-alpes-businesses | 2026-11 | 1350.2 | 2026-11 | alltheplaces, overture-places |
+| fr-rhone-alpes-extra | 2026-11 | 29.4 | 0005-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| fr-rhone-alpes-names | 2026-11 | 233.7 | 2026-11 | wikidata-labels |
+| fr-rhone-alpes-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| fr-rhone-alpes-services | 2026-11 | 0.1 | 2026-11 |  |
 | gb-england | 2026-11 | 574.0 | 2026-11 |  |
 | gb-england-east | 2026-11 | 75.6 | 2026-11 | alltheplaces, fsa-hygiene, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | gb-england-east-businesses | 2026-11 | 94.6 | 2001-10 | alltheplaces, fsa-hygiene, overture-places |
@@ -2888,90 +2902,104 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | fr-lorraine-names | wikidata-labels | ok | 1269664 |
 | fr-lorraine-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
 | fr-lorraine-services | osm-services | failed | HTTP Error 404: Not Found |
-| fr-midi-pyrenees | osm | ok | 2026-11-10T21:21:39Z |
-| fr-midi-pyrenees-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-midi-pyrenees-businesses | alltheplaces | ok | 21893 |
+| fr-midi-pyrenees | osm | failed | HTTP Error 404: Not Found |
+| fr-midi-pyrenees-addresses | ban | ok | 25290050 |
+| fr-midi-pyrenees-businesses | alltheplaces | ok | 781073 |
 | fr-midi-pyrenees-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-midi-pyrenees-businesses | overture-places | ok | 175139 |
-| fr-midi-pyrenees-extra | geonames | ok | 3309 |
+| fr-midi-pyrenees-businesses | overture-places | ok | 4538021 |
+| fr-midi-pyrenees-extra | geonames | ok | 28726 |
 | fr-midi-pyrenees-extra | natural-earth-lines | ok | 0 in this region |
-| fr-midi-pyrenees-extra | natural-earth-regions | ok | 4 |
-| fr-midi-pyrenees-extra | ourairports | ok | 307 |
-| fr-midi-pyrenees-extra | wikidata | ok | 39749 |
-| fr-midi-pyrenees-extra | wikidata-filming | ok | 119 |
-| fr-midi-pyrenees-names | wikidata-labels | ok | 74926 |
-| fr-nord-pas-de-calais | osm | ok | 2026-11-10T21:21:39Z |
-| fr-nord-pas-de-calais-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-nord-pas-de-calais-businesses | alltheplaces | ok | 28025 |
+| fr-midi-pyrenees-extra | natural-earth-regions | ok | 16 |
+| fr-midi-pyrenees-extra | ourairports | ok | 1788 |
+| fr-midi-pyrenees-extra | wikidata | failed | took longer than 90 min |
+| fr-midi-pyrenees-extra | wikidata-filming | ok | 2130 |
+| fr-midi-pyrenees-names | wikidata-labels | ok | 1269664 |
+| fr-midi-pyrenees-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| fr-midi-pyrenees-services | osm-services | failed | HTTP Error 404: Not Found |
+| fr-nord-pas-de-calais | osm | failed | HTTP Error 404: Not Found |
+| fr-nord-pas-de-calais-addresses | ban | ok | 25290050 |
+| fr-nord-pas-de-calais-businesses | alltheplaces | ok | 781073 |
 | fr-nord-pas-de-calais-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-nord-pas-de-calais-businesses | overture-places | ok | 268508 |
-| fr-nord-pas-de-calais-extra | geonames | ok | 749 |
+| fr-nord-pas-de-calais-businesses | overture-places | ok | 4538021 |
+| fr-nord-pas-de-calais-extra | geonames | ok | 28726 |
 | fr-nord-pas-de-calais-extra | natural-earth-lines | ok | 0 in this region |
-| fr-nord-pas-de-calais-extra | natural-earth-regions | ok | 4 |
-| fr-nord-pas-de-calais-extra | ourairports | ok | 145 |
-| fr-nord-pas-de-calais-extra | wikidata | ok | 31219 |
-| fr-nord-pas-de-calais-extra | wikidata-filming | ok | 49 |
-| fr-nord-pas-de-calais-names | wikidata-labels | ok | 50880 |
-| fr-pays-de-la-loire | osm | ok | 2026-11-10T21:21:39Z |
-| fr-pays-de-la-loire-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-pays-de-la-loire-businesses | alltheplaces | ok | 25899 |
+| fr-nord-pas-de-calais-extra | natural-earth-regions | ok | 16 |
+| fr-nord-pas-de-calais-extra | ourairports | ok | 1788 |
+| fr-nord-pas-de-calais-extra | wikidata | ok | 870145 |
+| fr-nord-pas-de-calais-extra | wikidata-filming | ok | 2130 |
+| fr-nord-pas-de-calais-names | wikidata-labels | ok | 1269665 |
+| fr-nord-pas-de-calais-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| fr-nord-pas-de-calais-services | osm-services | failed | HTTP Error 404: Not Found |
+| fr-pays-de-la-loire | osm | failed | HTTP Error 404: Not Found |
+| fr-pays-de-la-loire-addresses | ban | ok | 25290050 |
+| fr-pays-de-la-loire-businesses | alltheplaces | ok | 781073 |
 | fr-pays-de-la-loire-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-pays-de-la-loire-businesses | overture-places | ok | 178229 |
-| fr-pays-de-la-loire-extra | geonames | ok | 1780 |
+| fr-pays-de-la-loire-businesses | overture-places | ok | 4538021 |
+| fr-pays-de-la-loire-extra | geonames | ok | 28726 |
 | fr-pays-de-la-loire-extra | natural-earth-lines | ok | 0 in this region |
-| fr-pays-de-la-loire-extra | natural-earth-regions | ok | 3 |
-| fr-pays-de-la-loire-extra | ourairports | ok | 164 |
-| fr-pays-de-la-loire-extra | wikidata | ok | 26834 |
-| fr-pays-de-la-loire-extra | wikidata-filming | ok | 70 |
-| fr-pays-de-la-loire-names | wikidata-labels | ok | 66864 |
-| fr-picardie | osm | ok | 2026-11-10T21:21:39Z |
-| fr-picardie-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-picardie-businesses | alltheplaces | ok | 71752 |
+| fr-pays-de-la-loire-extra | natural-earth-regions | ok | 16 |
+| fr-pays-de-la-loire-extra | ourairports | ok | 1788 |
+| fr-pays-de-la-loire-extra | wikidata | failed | took longer than 90 min |
+| fr-pays-de-la-loire-extra | wikidata-filming | ok | 2130 |
+| fr-pays-de-la-loire-names | wikidata-labels | ok | 1269664 |
+| fr-pays-de-la-loire-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| fr-pays-de-la-loire-services | osm-services | failed | HTTP Error 404: Not Found |
+| fr-picardie | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
+| fr-picardie-addresses | ban | ok | 25290050 |
+| fr-picardie-businesses | alltheplaces | ok | 781073 |
 | fr-picardie-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-picardie-businesses | overture-places | ok | 279825 |
-| fr-picardie-extra | geonames | ok | 4452 |
+| fr-picardie-businesses | overture-places | ok | 4538021 |
+| fr-picardie-extra | geonames | ok | 28726 |
 | fr-picardie-extra | natural-earth-lines | ok | 0 in this region |
-| fr-picardie-extra | natural-earth-regions | ok | 5 |
-| fr-picardie-extra | ourairports | ok | 179 |
-| fr-picardie-extra | wikidata | ok | 64354 |
-| fr-picardie-extra | wikidata-filming | ok | 477 |
-| fr-picardie-names | wikidata-labels | ok | 101046 |
-| fr-poitou-charentes | osm | ok | 2026-11-10T21:21:39Z |
-| fr-poitou-charentes-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-poitou-charentes-businesses | alltheplaces | ok | 15323 |
+| fr-picardie-extra | natural-earth-regions | ok | 16 |
+| fr-picardie-extra | ourairports | ok | 1788 |
+| fr-picardie-extra | wikidata | ok | 870145 |
+| fr-picardie-extra | wikidata-filming | ok | 2130 |
+| fr-picardie-names | wikidata-labels | ok | 1269665 |
+| fr-picardie-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| fr-picardie-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
+| fr-poitou-charentes | osm | failed | HTTP Error 404: Not Found |
+| fr-poitou-charentes-addresses | ban | ok | 25290050 |
+| fr-poitou-charentes-businesses | alltheplaces | ok | 781073 |
 | fr-poitou-charentes-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-poitou-charentes-businesses | overture-places | ok | 101297 |
-| fr-poitou-charentes-extra | geonames | ok | 1135 |
+| fr-poitou-charentes-businesses | overture-places | ok | 4538021 |
+| fr-poitou-charentes-extra | geonames | ok | 28726 |
 | fr-poitou-charentes-extra | natural-earth-lines | ok | 0 in this region |
-| fr-poitou-charentes-extra | natural-earth-regions | ok | 2 |
-| fr-poitou-charentes-extra | ourairports | ok | 148 |
-| fr-poitou-charentes-extra | wikidata | ok | 14814 |
-| fr-poitou-charentes-extra | wikidata-filming | ok | 30 |
-| fr-poitou-charentes-names | wikidata-labels | ok | 34848 |
-| fr-provence-alpes-cote-d-azur | osm | ok | 2026-11-10T21:21:39Z |
-| fr-provence-alpes-cote-d-azur-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-provence-alpes-cote-d-azur-businesses | alltheplaces | ok | 33860 |
+| fr-poitou-charentes-extra | natural-earth-regions | ok | 16 |
+| fr-poitou-charentes-extra | ourairports | ok | 1788 |
+| fr-poitou-charentes-extra | wikidata | failed | took longer than 90 min |
+| fr-poitou-charentes-extra | wikidata-filming | ok | 2130 |
+| fr-poitou-charentes-names | wikidata-labels | ok | 1269664 |
+| fr-poitou-charentes-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| fr-poitou-charentes-services | osm-services | failed | HTTP Error 404: Not Found |
+| fr-provence-alpes-cote-d-azur | osm | failed | HTTP Error 404: Not Found |
+| fr-provence-alpes-cote-d-azur-addresses | ban | ok | 25290050 |
+| fr-provence-alpes-cote-d-azur-businesses | alltheplaces | ok | 781073 |
 | fr-provence-alpes-cote-d-azur-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-provence-alpes-cote-d-azur-businesses | overture-places | ok | 315036 |
-| fr-provence-alpes-cote-d-azur-extra | geonames | ok | 5103 |
+| fr-provence-alpes-cote-d-azur-businesses | overture-places | ok | 4538021 |
+| fr-provence-alpes-cote-d-azur-extra | geonames | ok | 28726 |
 | fr-provence-alpes-cote-d-azur-extra | natural-earth-lines | ok | 0 in this region |
-| fr-provence-alpes-cote-d-azur-extra | natural-earth-regions | ok | 4 |
-| fr-provence-alpes-cote-d-azur-extra | ourairports | ok | 181 |
-| fr-provence-alpes-cote-d-azur-extra | wikidata | ok | 30360 |
-| fr-provence-alpes-cote-d-azur-extra | wikidata-filming | ok | 137 |
-| fr-provence-alpes-cote-d-azur-names | wikidata-labels | ok | 63805 |
-| fr-rhone-alpes | osm | ok | 2026-11-10T21:21:39Z |
-| fr-rhone-alpes-addresses | ban | skipped | could not be downloaded: HTTP Error 404: Not Found |
-| fr-rhone-alpes-businesses | alltheplaces | ok | 49993 |
+| fr-provence-alpes-cote-d-azur-extra | natural-earth-regions | ok | 16 |
+| fr-provence-alpes-cote-d-azur-extra | ourairports | ok | 1788 |
+| fr-provence-alpes-cote-d-azur-extra | wikidata | failed | took longer than 90 min |
+| fr-provence-alpes-cote-d-azur-extra | wikidata-filming | ok | 2130 |
+| fr-provence-alpes-cote-d-azur-names | wikidata-labels | ok | 1269663 |
+| fr-provence-alpes-cote-d-azur-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| fr-provence-alpes-cote-d-azur-services | osm-services | failed | HTTP Error 404: Not Found |
+| fr-rhone-alpes | osm | failed | HTTP Error 404: Not Found |
+| fr-rhone-alpes-addresses | ban | ok | 25290050 |
+| fr-rhone-alpes-businesses | alltheplaces | ok | 781073 |
 | fr-rhone-alpes-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| fr-rhone-alpes-businesses | overture-places | ok | 300900 |
-| fr-rhone-alpes-extra | geonames | ok | 5666 |
+| fr-rhone-alpes-businesses | overture-places | ok | 4538021 |
+| fr-rhone-alpes-extra | geonames | ok | 28726 |
 | fr-rhone-alpes-extra | natural-earth-lines | ok | 0 in this region |
-| fr-rhone-alpes-extra | natural-earth-regions | ok | 5 |
-| fr-rhone-alpes-extra | ourairports | ok | 253 |
-| fr-rhone-alpes-extra | wikidata | ok | 50111 |
-| fr-rhone-alpes-extra | wikidata-filming | ok | 185 |
-| fr-rhone-alpes-names | wikidata-labels | ok | 96340 |
+| fr-rhone-alpes-extra | natural-earth-regions | ok | 16 |
+| fr-rhone-alpes-extra | ourairports | ok | 1788 |
+| fr-rhone-alpes-extra | wikidata | failed | took longer than 90 min |
+| fr-rhone-alpes-extra | wikidata-filming | ok | 2130 |
+| fr-rhone-alpes-names | wikidata-labels | ok | 1269664 |
+| fr-rhone-alpes-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| fr-rhone-alpes-services | osm-services | failed | HTTP Error 404: Not Found |
 | gb-england | os-open-names | skipped | needs a hand-supplied file in inputs/os-open-names |
 | gb-england | osm | ok | 0 |
 | gb-england-east | os-open-names | skipped | needs a hand-supplied file in inputs/os-open-names |

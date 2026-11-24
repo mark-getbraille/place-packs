@@ -1,6 +1,6 @@
 # Place packs status, 2026-11-24
 
-1146 packs published, 110.17 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
+1178 packs published, 127.81 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
 
 ## Packs by region
 
@@ -39,22 +39,22 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | ca-saskatchewan | 26.8 | 94.9 | 1.7 | 12.2 | 16.7 |  |  | 121.7 |
 | ca-yukon | 7.5 | 69.9 | 0.6 | 1.3 | 0.7 |  |  | 77.5 |
 | ch-switzerland | 159.4 | 33.3 | 29.8 | 184.7 |  | 0.1 | 0.1 | 192.7 |
-| de-baden-wuerttemberg | 196.8 | 35.0 | 31.3 | 196.0 |  |  |  | 231.8 |
-| de-bayern | 221.8 | 70.7 | 65.1 | 238.3 |  |  |  | 292.5 |
-| de-berlin | 32.0 | 20.6 | 12.7 | 37.0 |  |  |  | 52.6 |
-| de-brandenburg | 84.2 | 29.0 | 23.5 | 78.5 |  |  |  | 113.2 |
-| de-bremen | 6.8 | 14.5 | 1.7 | 9.2 |  |  |  | 21.3 |
-| de-hamburg | 15.9 | 17.4 | 7.7 | 34.8 |  |  |  | 33.3 |
-| de-hessen | 100.1 | 30.0 | 30.8 | 106.2 |  |  |  | 130.2 |
-| de-mecklenburg-vorpommern | 34.9 | 17.6 | 4.9 | 25.6 |  |  |  | 52.5 |
-| de-niedersachsen | 154.8 | 41.1 | 39.5 | 236.4 |  |  |  | 195.9 |
-| de-nordrhein-westfalen | 235.5 | 46.1 | 46.2 | 247.3 |  |  |  | 281.6 |
-| de-rheinland-pfalz | 72.5 | 23.3 | 15.4 | 104.5 |  |  |  | 95.8 |
-| de-saarland | 14.9 | 14.9 | 1.7 | 11.9 |  |  |  | 29.7 |
-| de-sachsen | 82.1 | 36.4 | 29.5 | 71.8 |  |  |  | 118.4 |
-| de-sachsen-anhalt | 48.8 | 23.2 | 15.3 | 47.7 |  |  |  | 72.0 |
-| de-schleswig-holstein | 48.0 | 20.9 | 12.1 | 65.0 |  |  |  | 68.9 |
-| de-thueringen | 45.8 | 24.7 | 16.6 | 45.6 |  |  |  | 70.5 |
+| de-baden-wuerttemberg | 196.8 | 42.2 | 224.8 | 1050.7 |  | 0.1 | 0.1 | 239.0 |
+| de-bayern | 221.8 | 179.8 | 224.8 | 1050.4 |  | 0.1 | 0.1 | 401.7 |
+| de-berlin | 32.0 | 29.4 | 224.8 | 1037.6 |  | 0.1 | 0.1 | 61.4 |
+| de-brandenburg | 84.2 | 179.3 | 224.8 | 1040.0 |  | 0.1 | 0.1 | 263.5 |
+| de-bremen | 6.8 | 23.3 | 224.8 | 1035.8 |  | 0.1 | 0.1 | 30.1 |
+| de-hamburg | 15.9 | 26.1 | 224.8 | 1037.2 |  | 0.1 | 0.1 | 42.0 |
+| de-hessen | 100.1 | 179.3 | 224.8 | 1041.0 |  | 0.1 | 0.1 | 279.4 |
+| de-mecklenburg-vorpommern | 34.9 | 179.2 | 224.8 | 1036.8 |  | 0.1 | 0.1 | 214.1 |
+| de-niedersachsen | 154.8 | 48.1 | 224.8 | 1047.7 |  | 0.1 | 0.1 | 202.8 |
+| de-nordrhein-westfalen | 235.5 | 185.9 | 224.8 | 1070.7 |  | 0.1 | 0.1 | 421.4 |
+| de-rheinland-pfalz | 72.5 | 179.3 | 224.8 | 1041.1 |  | 0.1 | 0.1 | 251.7 |
+| de-saarland | 14.9 | 179.2 | 224.8 | 1036.0 |  | 0.1 | 0.1 | 194.1 |
+| de-sachsen | 82.1 | 180.1 | 224.8 | 1041.9 |  | 0.1 | 0.1 | 262.2 |
+| de-sachsen-anhalt | 48.8 | 179.2 | 224.8 | 1037.9 |  | 0.1 | 0.1 | 228.0 |
+| de-schleswig-holstein | 48.0 | 21.0 | 12.1 | 71.7 |  | 140.0 | 5.4 | 69.0 |
+| de-thueringen | 45.9 | 24.7 | 16.6 | 50.1 |  | 129.2 | 4.8 | 70.6 |
 | dk-denmark | 107.1 | 26.5 | 7.5 | 119.0 |  | 386.4 | 6.1 | 133.6 |
 | es-andalucia | 94.1 | 17.0 | 9.3 | 77.7 | 0.1 |  |  | 111.1 |
 | es-aragon | 33.1 | 14.4 | 7.1 | 25.3 | 0.1 |  |  | 47.5 |
@@ -371,70 +371,102 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | ch-switzerland-names | 2026-11 | 29.8 | 2026-11 | wikidata-labels |
 | ch-switzerland-navigation | 2026-11 | 0.1 | 2026-11 |  |
 | ch-switzerland-services | 2026-11 | 0.1 | 2026-11 |  |
-| de-baden-wuerttemberg | 2026-11 | 196.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-baden-wuerttemberg-businesses | 2026-11 | 196.0 | 2026-11 | alltheplaces, overture-places |
-| de-baden-wuerttemberg-extra | 2026-11 | 35.0 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-baden-wuerttemberg-names | 2026-11 | 31.3 | 2026-11 | wikidata-labels |
-| de-bayern | 2026-11 | 221.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-bayern-businesses | 2026-11 | 238.3 | 2026-11 | alltheplaces, overture-places |
-| de-bayern-extra | 2026-11 | 70.7 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-bayern-names | 2026-11 | 65.1 | 2026-11 | wikidata-labels |
-| de-berlin | 2026-11 | 32.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-berlin-businesses | 2026-11 | 37.0 | 2026-11 | alltheplaces, overture-places |
-| de-berlin-extra | 2026-11 | 20.6 | 0020-10 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-berlin-names | 2026-11 | 12.7 | 2026-11 | wikidata-labels |
-| de-brandenburg | 2026-11 | 84.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-brandenburg-businesses | 2026-11 | 78.5 | 2026-11 | alltheplaces, overture-places |
-| de-brandenburg-extra | 2026-11 | 29.0 | 0020-10 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-brandenburg-names | 2026-11 | 23.5 | 2026-11 | wikidata-labels |
-| de-bremen | 2026-11 | 6.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-bremen-businesses | 2026-11 | 9.2 | 2026-11 | alltheplaces, overture-places |
-| de-bremen-extra | 2026-11 | 14.5 | 0789-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-bremen-names | 2026-11 | 1.7 | 2026-11 | wikidata-labels |
-| de-hamburg | 2026-11 | 15.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-hamburg-businesses | 2026-11 | 34.8 | 2026-11 | alltheplaces, overture-places |
-| de-hamburg-extra | 2026-11 | 17.4 | 0700-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-hamburg-names | 2026-11 | 7.7 | 2026-11 | wikidata-labels |
-| de-hessen | 2026-11 | 100.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-hessen-businesses | 2026-11 | 106.2 | 2026-11 | alltheplaces, overture-places |
-| de-hessen-extra | 2026-11 | 30.0 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-hessen-names | 2026-11 | 30.8 | 2026-11 | wikidata-labels |
-| de-mecklenburg-vorpommern | 2026-11 | 34.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-mecklenburg-vorpommern-businesses | 2026-11 | 25.6 | 2026-11 | alltheplaces, overture-places |
-| de-mecklenburg-vorpommern-extra | 2026-11 | 17.6 | 0800-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-mecklenburg-vorpommern-names | 2026-11 | 4.9 | 2026-11 | wikidata-labels |
-| de-niedersachsen | 2026-11 | 154.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-niedersachsen-businesses | 2026-11 | 236.4 | 2026-11 | alltheplaces, overture-places |
-| de-niedersachsen-extra | 2026-11 | 41.1 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-niedersachsen-names | 2026-11 | 39.5 | 2026-11 | wikidata-labels |
-| de-nordrhein-westfalen | 2026-11 | 235.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-nordrhein-westfalen-businesses | 2026-11 | 247.3 | 2026-11 | alltheplaces, overture-places |
-| de-nordrhein-westfalen-extra | 2026-11 | 46.1 | 0027-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-nordrhein-westfalen-names | 2026-11 | 46.2 | 2026-11 | wikidata-labels |
-| de-rheinland-pfalz | 2026-11 | 72.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-rheinland-pfalz-businesses | 2026-11 | 104.5 | 2026-11 | alltheplaces, overture-places |
-| de-rheinland-pfalz-extra | 2026-11 | 23.3 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-rheinland-pfalz-names | 2026-11 | 15.4 | 2026-11 | wikidata-labels |
-| de-saarland | 2026-11 | 14.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-saarland-businesses | 2026-11 | 11.9 | 2026-11 | alltheplaces, overture-places |
-| de-saarland-extra | 2026-11 | 14.9 | 0369-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-saarland-names | 2026-11 | 1.7 | 2026-11 | wikidata-labels |
-| de-sachsen | 2026-11 | 82.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-sachsen-anhalt | 2026-11 | 48.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-sachsen-anhalt-businesses | 2026-11 | 47.7 | 2026-11 | alltheplaces, overture-places |
-| de-sachsen-anhalt-extra | 2026-11 | 23.2 | 0600-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-sachsen-anhalt-names | 2026-11 | 15.3 | 2026-11 | wikidata-labels |
-| de-sachsen-businesses | 2026-11 | 71.8 | 2026-11 | alltheplaces, overture-places |
-| de-sachsen-extra | 2026-11 | 36.4 | 0020-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
-| de-sachsen-names | 2026-11 | 29.5 | 2026-11 | wikidata-labels |
-| de-schleswig-holstein | 2026-11 | 48.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-schleswig-holstein-businesses | 2026-11 | 65.0 | 2026-11 | alltheplaces, overture-places |
-| de-schleswig-holstein-extra | 2026-11 | 20.9 | 0200-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| de-baden-wuerttemberg | 2026-11 | 196.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| de-baden-wuerttemberg-businesses | 2026-11 | 1050.7 | 2026-11 | alltheplaces, overture-places |
+| de-baden-wuerttemberg-extra | 2026-11 | 42.2 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| de-baden-wuerttemberg-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-baden-wuerttemberg-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-baden-wuerttemberg-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-bayern | 2026-11 | 221.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| de-bayern-businesses | 2026-11 | 1050.4 | 2026-11 | alltheplaces, overture-places |
+| de-bayern-extra | 2026-11 | 179.8 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| de-bayern-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-bayern-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-bayern-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-berlin | 2026-11 | 32.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| de-berlin-businesses | 2026-11 | 1037.6 | 2026-11 | alltheplaces, overture-places |
+| de-berlin-extra | 2026-11 | 29.4 | 0020-10 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| de-berlin-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-berlin-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-berlin-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-brandenburg | 2026-11 | 84.2 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| de-brandenburg-businesses | 2026-11 | 1040.0 | 2026-11 | alltheplaces, overture-places |
+| de-brandenburg-extra | 2026-11 | 179.3 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| de-brandenburg-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-brandenburg-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-brandenburg-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-bremen | 2026-11 | 6.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| de-bremen-businesses | 2026-11 | 1035.8 | 2026-11 | alltheplaces, overture-places |
+| de-bremen-extra | 2026-11 | 23.3 | 0789-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| de-bremen-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-bremen-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-bremen-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-hamburg | 2026-11 | 15.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| de-hamburg-businesses | 2026-11 | 1037.2 | 2026-11 | alltheplaces, overture-places |
+| de-hamburg-extra | 2026-11 | 26.1 | 0700-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| de-hamburg-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-hamburg-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-hamburg-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-hessen | 2026-11 | 100.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| de-hessen-businesses | 2026-11 | 1041.0 | 2026-11 | alltheplaces, overture-places |
+| de-hessen-extra | 2026-11 | 179.3 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| de-hessen-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-hessen-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-hessen-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-mecklenburg-vorpommern | 2026-11 | 34.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| de-mecklenburg-vorpommern-businesses | 2026-11 | 1036.8 | 2026-11 | alltheplaces, overture-places |
+| de-mecklenburg-vorpommern-extra | 2026-11 | 179.2 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| de-mecklenburg-vorpommern-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-mecklenburg-vorpommern-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-mecklenburg-vorpommern-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-niedersachsen | 2026-11 | 154.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata-filming, wikidata-labels |
+| de-niedersachsen-businesses | 2026-11 | 1047.7 | 2026-11 | alltheplaces, overture-places |
+| de-niedersachsen-extra | 2026-11 | 48.1 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata-filming |
+| de-niedersachsen-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-niedersachsen-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-niedersachsen-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-nordrhein-westfalen | 2026-11 | 235.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| de-nordrhein-westfalen-businesses | 2026-11 | 1070.7 | 2026-11 | alltheplaces, overture-places |
+| de-nordrhein-westfalen-extra | 2026-11 | 185.9 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| de-nordrhein-westfalen-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-nordrhein-westfalen-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-nordrhein-westfalen-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-rheinland-pfalz | 2026-11 | 72.5 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| de-rheinland-pfalz-businesses | 2026-11 | 1041.1 | 2026-11 | alltheplaces, overture-places |
+| de-rheinland-pfalz-extra | 2026-11 | 179.3 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| de-rheinland-pfalz-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-rheinland-pfalz-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-rheinland-pfalz-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-saarland | 2026-11 | 14.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| de-saarland-businesses | 2026-11 | 1036.0 | 2026-11 | alltheplaces, overture-places |
+| de-saarland-extra | 2026-11 | 179.2 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| de-saarland-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-saarland-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-saarland-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-sachsen | 2026-11 | 82.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| de-sachsen-anhalt | 2026-11 | 48.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| de-sachsen-anhalt-businesses | 2026-11 | 1037.9 | 2026-11 | alltheplaces, overture-places |
+| de-sachsen-anhalt-extra | 2026-11 | 179.2 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| de-sachsen-anhalt-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-sachsen-anhalt-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-sachsen-anhalt-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-sachsen-businesses | 2026-11 | 1041.9 | 2026-11 | alltheplaces, overture-places |
+| de-sachsen-extra | 2026-11 | 180.1 | 0001-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
+| de-sachsen-names | 2026-11 | 224.8 | 2026-11 | wikidata-labels |
+| de-sachsen-navigation | 2026-11 | 0.1 | 2026-11 |  |
+| de-sachsen-services | 2026-11 | 0.1 | 2026-11 |  |
+| de-schleswig-holstein | 2026-11 | 48.0 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| de-schleswig-holstein-businesses | 2026-11 | 71.7 | 2026-11 | alltheplaces, overture-places |
+| de-schleswig-holstein-extra | 2026-11 | 21.0 | 0200-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | de-schleswig-holstein-names | 2026-11 | 12.1 | 2026-11 | wikidata-labels |
-| de-thueringen | 2026-11 | 45.8 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
-| de-thueringen-businesses | 2026-11 | 45.6 | 2026-11 | alltheplaces, overture-places |
+| de-schleswig-holstein-navigation | 2026-11 | 140.0 | 2026-11 | osm-navigation |
+| de-schleswig-holstein-services | 2026-11 | 5.4 | 2026-11 | osm-services |
+| de-thueringen | 2026-11 | 45.9 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
+| de-thueringen-businesses | 2026-11 | 50.1 | 2026-11 | alltheplaces, overture-places |
 | de-thueringen-extra | 2026-11 | 24.7 | 0700-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
 | de-thueringen-names | 2026-11 | 16.6 | 2026-11 | wikidata-labels |
+| de-thueringen-navigation | 2026-11 | 129.2 | 2026-11 | osm-navigation |
+| de-thueringen-services | 2026-11 | 4.8 | 2026-11 | osm-services |
 | dk-denmark | 2026-11 | 107.1 | 2026-11 | alltheplaces, geonames, natural-earth-lines, natural-earth-regions, osm, osm-navigation, osm-services, ourairports, overture-places, wikidata, wikidata-filming, wikidata-labels |
 | dk-denmark-businesses | 2026-11 | 119.0 | 2026-11 | alltheplaces, overture-places |
 | dk-denmark-extra | 2026-11 | 26.5 | 0003-01 | geonames, natural-earth-lines, natural-earth-regions, ourairports, wikidata, wikidata-filming |
@@ -2241,182 +2273,214 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | ch-switzerland-names | wikidata-labels | ok | 157215 |
 | ch-switzerland-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
 | ch-switzerland-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
-| de-baden-wuerttemberg | osm | ok | 2026-11-10T21:21:39Z |
-| de-baden-wuerttemberg-businesses | alltheplaces | ok | 93951 |
+| de-baden-wuerttemberg | osm | failed | HTTP Error 404: Not Found |
+| de-baden-wuerttemberg-businesses | alltheplaces | ok | 537009 |
 | de-baden-wuerttemberg-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-baden-wuerttemberg-businesses | overture-places | ok | 677307 |
-| de-baden-wuerttemberg-extra | geonames | ok | 9589 |
+| de-baden-wuerttemberg-businesses | overture-places | ok | 3542452 |
+| de-baden-wuerttemberg-extra | geonames | ok | 55314 |
 | de-baden-wuerttemberg-extra | natural-earth-lines | ok | 0 in this region |
-| de-baden-wuerttemberg-extra | natural-earth-regions | ok | 4 |
-| de-baden-wuerttemberg-extra | ourairports | ok | 275 |
-| de-baden-wuerttemberg-extra | wikidata | ok | 109287 |
-| de-baden-wuerttemberg-extra | wikidata-filming | ok | 76 |
-| de-baden-wuerttemberg-names | wikidata-labels | ok | 175450 |
-| de-bayern | osm | ok | 2026-11-10T21:21:39Z |
-| de-bayern-businesses | alltheplaces | ok | 85493 |
+| de-baden-wuerttemberg-extra | natural-earth-regions | ok | 12 |
+| de-baden-wuerttemberg-extra | ourairports | ok | 1435 |
+| de-baden-wuerttemberg-extra | wikidata | failed | took longer than 90 min |
+| de-baden-wuerttemberg-extra | wikidata-filming | ok | 888 |
+| de-baden-wuerttemberg-names | wikidata-labels | ok | 1259798 |
+| de-baden-wuerttemberg-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| de-baden-wuerttemberg-services | osm-services | failed | HTTP Error 404: Not Found |
+| de-bayern | osm | failed | HTTP Error 404: Not Found |
+| de-bayern-businesses | alltheplaces | ok | 537009 |
 | de-bayern-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-bayern-businesses | overture-places | ok | 849260 |
-| de-bayern-extra | geonames | ok | 15034 |
+| de-bayern-businesses | overture-places | ok | 3542452 |
+| de-bayern-extra | geonames | ok | 55314 |
 | de-bayern-extra | natural-earth-lines | ok | 0 in this region |
-| de-bayern-extra | natural-earth-regions | ok | 4 |
-| de-bayern-extra | ourairports | ok | 488 |
-| de-bayern-extra | wikidata | ok | 297692 |
-| de-bayern-extra | wikidata-filming | ok | 328 |
-| de-bayern-names | wikidata-labels | ok | 425809 |
-| de-berlin | osm | ok | 2026-11-10T21:21:39Z |
-| de-berlin-businesses | alltheplaces | ok | 11902 |
+| de-bayern-extra | natural-earth-regions | ok | 12 |
+| de-bayern-extra | ourairports | ok | 1435 |
+| de-bayern-extra | wikidata | ok | 876113 |
+| de-bayern-extra | wikidata-filming | ok | 888 |
+| de-bayern-names | wikidata-labels | ok | 1259798 |
+| de-bayern-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| de-bayern-services | osm-services | failed | HTTP Error 404: Not Found |
+| de-berlin | osm | failed | HTTP Error 404: Not Found |
+| de-berlin-businesses | alltheplaces | ok | 537009 |
 | de-berlin-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-berlin-businesses | overture-places | ok | 132546 |
-| de-berlin-extra | geonames | ok | 1888 |
+| de-berlin-businesses | overture-places | ok | 3542452 |
+| de-berlin-extra | geonames | ok | 55314 |
 | de-berlin-extra | natural-earth-lines | ok | 0 in this region |
-| de-berlin-extra | natural-earth-regions | ok | 1 |
-| de-berlin-extra | ourairports | ok | 21 |
-| de-berlin-extra | wikidata | ok | 37080 |
-| de-berlin-extra | wikidata-filming | ok | 88 |
-| de-berlin-names | wikidata-labels | ok | 46057 |
-| de-brandenburg | osm | ok | 2026-11-10T21:21:39Z |
-| de-brandenburg-businesses | alltheplaces | ok | 28888 |
+| de-berlin-extra | natural-earth-regions | ok | 12 |
+| de-berlin-extra | ourairports | ok | 1435 |
+| de-berlin-extra | wikidata | failed | took longer than 90 min |
+| de-berlin-extra | wikidata-filming | ok | 888 |
+| de-berlin-names | wikidata-labels | ok | 1259798 |
+| de-berlin-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| de-berlin-services | osm-services | failed | HTTP Error 404: Not Found |
+| de-brandenburg | osm | failed | HTTP Error 404: Not Found |
+| de-brandenburg-businesses | alltheplaces | ok | 537009 |
 | de-brandenburg-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-brandenburg-businesses | overture-places | ok | 278226 |
-| de-brandenburg-extra | geonames | ok | 8123 |
+| de-brandenburg-businesses | overture-places | ok | 3542452 |
+| de-brandenburg-extra | geonames | ok | 55314 |
 | de-brandenburg-extra | natural-earth-lines | ok | 0 in this region |
-| de-brandenburg-extra | natural-earth-regions | ok | 2 |
-| de-brandenburg-extra | ourairports | ok | 174 |
-| de-brandenburg-extra | wikidata | ok | 77471 |
-| de-brandenburg-extra | wikidata-filming | ok | 126 |
-| de-brandenburg-names | wikidata-labels | ok | 100910 |
-| de-bremen | osm | ok | 2026-11-10T21:21:39Z |
-| de-bremen-businesses | alltheplaces | ok | 2566 |
+| de-brandenburg-extra | natural-earth-regions | ok | 12 |
+| de-brandenburg-extra | ourairports | ok | 1435 |
+| de-brandenburg-extra | wikidata | ok | 876113 |
+| de-brandenburg-extra | wikidata-filming | ok | 888 |
+| de-brandenburg-names | wikidata-labels | ok | 1259798 |
+| de-brandenburg-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| de-brandenburg-services | osm-services | failed | HTTP Error 404: Not Found |
+| de-bremen | osm | failed | HTTP Error 404: Not Found |
+| de-bremen-businesses | alltheplaces | ok | 537009 |
 | de-bremen-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-bremen-businesses | overture-places | ok | 32989 |
-| de-bremen-extra | geonames | ok | 412 |
+| de-bremen-businesses | overture-places | ok | 3542452 |
+| de-bremen-extra | geonames | ok | 55314 |
 | de-bremen-extra | natural-earth-lines | ok | 0 in this region |
-| de-bremen-extra | natural-earth-regions | ok | 1 |
-| de-bremen-extra | ourairports | ok | 12 |
-| de-bremen-extra | wikidata | ok | 4749 |
-| de-bremen-extra | wikidata-filming | ok | 4 |
-| de-bremen-names | wikidata-labels | ok | 6639 |
-| de-hamburg | osm | ok | 2026-11-10T21:21:39Z |
-| de-hamburg-businesses | alltheplaces | ok | 8636 |
+| de-bremen-extra | natural-earth-regions | ok | 12 |
+| de-bremen-extra | ourairports | ok | 1435 |
+| de-bremen-extra | wikidata | failed | took longer than 90 min |
+| de-bremen-extra | wikidata-filming | ok | 888 |
+| de-bremen-names | wikidata-labels | ok | 1259799 |
+| de-bremen-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| de-bremen-services | osm-services | failed | HTTP Error 404: Not Found |
+| de-hamburg | osm | failed | HTTP Error 404: Not Found |
+| de-hamburg-businesses | alltheplaces | ok | 537009 |
 | de-hamburg-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-hamburg-businesses | overture-places | ok | 126719 |
-| de-hamburg-extra | geonames | ok | 1733 |
+| de-hamburg-businesses | overture-places | ok | 3542452 |
+| de-hamburg-extra | geonames | ok | 55314 |
 | de-hamburg-extra | natural-earth-lines | ok | 0 in this region |
-| de-hamburg-extra | natural-earth-regions | ok | 2 |
-| de-hamburg-extra | ourairports | ok | 31 |
-| de-hamburg-extra | wikidata | ok | 19430 |
-| de-hamburg-extra | wikidata-filming | ok | 20 |
-| de-hamburg-names | wikidata-labels | ok | 23301 |
-| de-hessen | osm | ok | 2026-11-10T21:21:39Z |
-| de-hessen-businesses | alltheplaces | ok | 32122 |
+| de-hamburg-extra | natural-earth-regions | ok | 12 |
+| de-hamburg-extra | ourairports | ok | 1435 |
+| de-hamburg-extra | wikidata | failed | took longer than 90 min |
+| de-hamburg-extra | wikidata-filming | ok | 888 |
+| de-hamburg-names | wikidata-labels | ok | 1259800 |
+| de-hamburg-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| de-hamburg-services | osm-services | failed | HTTP Error 404: Not Found |
+| de-hessen | osm | failed | HTTP Error 404: Not Found |
+| de-hessen-businesses | alltheplaces | ok | 537009 |
 | de-hessen-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-hessen-businesses | overture-places | ok | 382893 |
-| de-hessen-extra | geonames | ok | 10145 |
+| de-hessen-businesses | overture-places | ok | 3542452 |
+| de-hessen-extra | geonames | ok | 55314 |
 | de-hessen-extra | natural-earth-lines | ok | 0 in this region |
-| de-hessen-extra | natural-earth-regions | ok | 3 |
-| de-hessen-extra | ourairports | ok | 249 |
-| de-hessen-extra | wikidata | ok | 82515 |
-| de-hessen-extra | wikidata-filming | ok | 29 |
-| de-hessen-names | wikidata-labels | ok | 195508 |
-| de-mecklenburg-vorpommern | osm | ok | 2026-11-10T21:21:39Z |
-| de-mecklenburg-vorpommern-businesses | alltheplaces | ok | 7890 |
+| de-hessen-extra | natural-earth-regions | ok | 12 |
+| de-hessen-extra | ourairports | ok | 1435 |
+| de-hessen-extra | wikidata | ok | 876113 |
+| de-hessen-extra | wikidata-filming | ok | 888 |
+| de-hessen-names | wikidata-labels | ok | 1259798 |
+| de-hessen-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| de-hessen-services | osm-services | failed | HTTP Error 404: Not Found |
+| de-mecklenburg-vorpommern | osm | failed | HTTP Error 404: Not Found |
+| de-mecklenburg-vorpommern-businesses | alltheplaces | ok | 537009 |
 | de-mecklenburg-vorpommern-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-mecklenburg-vorpommern-businesses | overture-places | ok | 91645 |
-| de-mecklenburg-vorpommern-extra | geonames | ok | 4738 |
+| de-mecklenburg-vorpommern-businesses | overture-places | ok | 3542452 |
+| de-mecklenburg-vorpommern-extra | geonames | ok | 55314 |
 | de-mecklenburg-vorpommern-extra | natural-earth-lines | ok | 0 in this region |
-| de-mecklenburg-vorpommern-extra | natural-earth-regions | ok | 3 |
-| de-mecklenburg-vorpommern-extra | ourairports | ok | 51 |
-| de-mecklenburg-vorpommern-extra | wikidata | ok | 18268 |
-| de-mecklenburg-vorpommern-extra | wikidata-filming | ok | 30 |
-| de-mecklenburg-vorpommern-names | wikidata-labels | ok | 24994 |
-| de-niedersachsen | osm | ok | 2026-11-10T21:21:39Z |
-| de-niedersachsen-businesses | alltheplaces | ok | 63910 |
+| de-mecklenburg-vorpommern-extra | natural-earth-regions | ok | 12 |
+| de-mecklenburg-vorpommern-extra | ourairports | ok | 1435 |
+| de-mecklenburg-vorpommern-extra | wikidata | ok | 876113 |
+| de-mecklenburg-vorpommern-extra | wikidata-filming | ok | 888 |
+| de-mecklenburg-vorpommern-names | wikidata-labels | ok | 1259803 |
+| de-mecklenburg-vorpommern-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| de-mecklenburg-vorpommern-services | osm-services | failed | HTTP Error 404: Not Found |
+| de-niedersachsen | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
+| de-niedersachsen-businesses | alltheplaces | ok | 537009 |
 | de-niedersachsen-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-niedersachsen-businesses | overture-places | ok | 861830 |
-| de-niedersachsen-extra | geonames | ok | 12449 |
+| de-niedersachsen-businesses | overture-places | ok | 3542452 |
+| de-niedersachsen-extra | geonames | ok | 55314 |
 | de-niedersachsen-extra | natural-earth-lines | ok | 0 in this region |
-| de-niedersachsen-extra | natural-earth-regions | ok | 3 |
-| de-niedersachsen-extra | ourairports | ok | 323 |
-| de-niedersachsen-extra | wikidata | ok | 144541 |
-| de-niedersachsen-extra | wikidata-filming | ok | 95 |
-| de-niedersachsen-names | wikidata-labels | ok | 178963 |
-| de-nordrhein-westfalen | osm | ok | 2026-11-10T21:21:39Z |
-| de-nordrhein-westfalen-businesses | alltheplaces | ok | 60179 |
+| de-niedersachsen-extra | natural-earth-regions | ok | 12 |
+| de-niedersachsen-extra | ourairports | ok | 1435 |
+| de-niedersachsen-extra | wikidata | failed | took longer than 90 min |
+| de-niedersachsen-extra | wikidata-filming | ok | 888 |
+| de-niedersachsen-names | wikidata-labels | ok | 1259809 |
+| de-niedersachsen-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| de-niedersachsen-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
+| de-nordrhein-westfalen | osm | failed | HTTP Error 404: Not Found |
+| de-nordrhein-westfalen-businesses | alltheplaces | ok | 537009 |
 | de-nordrhein-westfalen-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-nordrhein-westfalen-businesses | overture-places | ok | 913630 |
-| de-nordrhein-westfalen-extra | geonames | ok | 9316 |
+| de-nordrhein-westfalen-businesses | overture-places | ok | 3542452 |
+| de-nordrhein-westfalen-extra | geonames | ok | 55314 |
 | de-nordrhein-westfalen-extra | natural-earth-lines | ok | 0 in this region |
-| de-nordrhein-westfalen-extra | natural-earth-regions | ok | 2 |
-| de-nordrhein-westfalen-extra | ourairports | ok | 270 |
-| de-nordrhein-westfalen-extra | wikidata | ok | 178712 |
-| de-nordrhein-westfalen-extra | wikidata-filming | ok | 95 |
-| de-nordrhein-westfalen-names | wikidata-labels | ok | 247375 |
-| de-rheinland-pfalz | osm | ok | 2026-11-10T21:21:39Z |
-| de-rheinland-pfalz-businesses | alltheplaces | ok | 34549 |
+| de-nordrhein-westfalen-extra | natural-earth-regions | ok | 12 |
+| de-nordrhein-westfalen-extra | ourairports | ok | 1435 |
+| de-nordrhein-westfalen-extra | wikidata | ok | 876113 |
+| de-nordrhein-westfalen-extra | wikidata-filming | ok | 888 |
+| de-nordrhein-westfalen-names | wikidata-labels | ok | 1259805 |
+| de-nordrhein-westfalen-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| de-nordrhein-westfalen-services | osm-services | failed | HTTP Error 404: Not Found |
+| de-rheinland-pfalz | osm | failed | HTTP Error 404: Not Found |
+| de-rheinland-pfalz-businesses | alltheplaces | ok | 537009 |
 | de-rheinland-pfalz-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-rheinland-pfalz-businesses | overture-places | ok | 375855 |
-| de-rheinland-pfalz-extra | geonames | ok | 6935 |
+| de-rheinland-pfalz-businesses | overture-places | ok | 3542452 |
+| de-rheinland-pfalz-extra | geonames | ok | 55314 |
 | de-rheinland-pfalz-extra | natural-earth-lines | ok | 0 in this region |
-| de-rheinland-pfalz-extra | natural-earth-regions | ok | 3 |
-| de-rheinland-pfalz-extra | ourairports | ok | 170 |
-| de-rheinland-pfalz-extra | wikidata | ok | 48901 |
-| de-rheinland-pfalz-extra | wikidata-filming | ok | 34 |
-| de-rheinland-pfalz-names | wikidata-labels | ok | 79800 |
-| de-saarland | osm | ok | 2026-11-10T21:21:39Z |
-| de-saarland-businesses | alltheplaces | ok | 4318 |
+| de-rheinland-pfalz-extra | natural-earth-regions | ok | 12 |
+| de-rheinland-pfalz-extra | ourairports | ok | 1435 |
+| de-rheinland-pfalz-extra | wikidata | ok | 876114 |
+| de-rheinland-pfalz-extra | wikidata-filming | ok | 888 |
+| de-rheinland-pfalz-names | wikidata-labels | ok | 1259809 |
+| de-rheinland-pfalz-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| de-rheinland-pfalz-services | osm-services | failed | HTTP Error 404: Not Found |
+| de-saarland | osm | failed | HTTP Error 404: Not Found |
+| de-saarland-businesses | alltheplaces | ok | 537009 |
 | de-saarland-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-saarland-businesses | overture-places | ok | 42245 |
-| de-saarland-extra | geonames | ok | 683 |
+| de-saarland-businesses | overture-places | ok | 3542452 |
+| de-saarland-extra | geonames | ok | 55314 |
 | de-saarland-extra | natural-earth-lines | ok | 0 in this region |
-| de-saarland-extra | natural-earth-regions | ok | 2 |
-| de-saarland-extra | ourairports | ok | 15 |
-| de-saarland-extra | wikidata | ok | 5846 |
-| de-saarland-extra | wikidata-filming | ok | 2 |
-| de-saarland-names | wikidata-labels | ok | 8614 |
-| de-sachsen | osm | ok | 2026-11-10T21:21:39Z |
-| de-sachsen-anhalt | osm | ok | 2026-11-10T21:21:39Z |
-| de-sachsen-anhalt-businesses | alltheplaces | ok | 18739 |
+| de-saarland-extra | natural-earth-regions | ok | 12 |
+| de-saarland-extra | ourairports | ok | 1435 |
+| de-saarland-extra | wikidata | ok | 876115 |
+| de-saarland-extra | wikidata-filming | ok | 888 |
+| de-saarland-names | wikidata-labels | ok | 1259810 |
+| de-saarland-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| de-saarland-services | osm-services | failed | HTTP Error 404: Not Found |
+| de-sachsen | osm | failed | <urlopen error [Errno 101] Network is unreachable> |
+| de-sachsen-anhalt | osm | failed | HTTP Error 404: Not Found |
+| de-sachsen-anhalt-businesses | alltheplaces | ok | 537009 |
 | de-sachsen-anhalt-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-sachsen-anhalt-businesses | overture-places | ok | 167225 |
-| de-sachsen-anhalt-extra | geonames | ok | 5626 |
+| de-sachsen-anhalt-businesses | overture-places | ok | 3542452 |
+| de-sachsen-anhalt-extra | geonames | ok | 55314 |
 | de-sachsen-anhalt-extra | natural-earth-lines | ok | 0 in this region |
-| de-sachsen-anhalt-extra | natural-earth-regions | ok | 2 |
-| de-sachsen-anhalt-extra | ourairports | ok | 176 |
-| de-sachsen-anhalt-extra | wikidata | ok | 49099 |
-| de-sachsen-anhalt-extra | wikidata-filming | ok | 58 |
-| de-sachsen-anhalt-names | wikidata-labels | ok | 81546 |
-| de-sachsen-businesses | alltheplaces | ok | 28887 |
+| de-sachsen-anhalt-extra | natural-earth-regions | ok | 12 |
+| de-sachsen-anhalt-extra | ourairports | ok | 1435 |
+| de-sachsen-anhalt-extra | wikidata | ok | 876085 |
+| de-sachsen-anhalt-extra | wikidata-filming | ok | 888 |
+| de-sachsen-anhalt-names | wikidata-labels | ok | 1259813 |
+| de-sachsen-anhalt-navigation | osm-navigation | failed | HTTP Error 404: Not Found |
+| de-sachsen-anhalt-services | osm-services | failed | HTTP Error 404: Not Found |
+| de-sachsen-businesses | alltheplaces | ok | 537009 |
 | de-sachsen-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-sachsen-businesses | overture-places | ok | 254266 |
-| de-sachsen-extra | geonames | ok | 3826 |
+| de-sachsen-businesses | overture-places | ok | 3542452 |
+| de-sachsen-extra | geonames | ok | 55314 |
 | de-sachsen-extra | natural-earth-lines | ok | 0 in this region |
-| de-sachsen-extra | natural-earth-regions | ok | 3 |
-| de-sachsen-extra | ourairports | ok | 133 |
-| de-sachsen-extra | wikidata | ok | 124382 |
-| de-sachsen-extra | wikidata-filming | ok | 129 |
-| de-sachsen-names | wikidata-labels | ok | 180994 |
-| de-schleswig-holstein | osm | ok | 2026-11-10T21:21:39Z |
-| de-schleswig-holstein-businesses | alltheplaces | ok | 15905 |
+| de-sachsen-extra | natural-earth-regions | ok | 12 |
+| de-sachsen-extra | ourairports | ok | 1435 |
+| de-sachsen-extra | wikidata | ok | 876121 |
+| de-sachsen-extra | wikidata-filming | ok | 888 |
+| de-sachsen-names | wikidata-labels | ok | 1259813 |
+| de-sachsen-navigation | osm-navigation | failed | <urlopen error [Errno 101] Network is unreachable> |
+| de-sachsen-services | osm-services | failed | <urlopen error [Errno 101] Network is unreachable> |
+| de-schleswig-holstein | osm | ok | 2026-11-22T21:20:48Z |
+| de-schleswig-holstein-businesses | alltheplaces | ok | 28369 |
 | de-schleswig-holstein-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-schleswig-holstein-businesses | overture-places | ok | 237375 |
-| de-schleswig-holstein-extra | geonames | ok | 4281 |
+| de-schleswig-holstein-businesses | overture-places | ok | 239350 |
+| de-schleswig-holstein-extra | geonames | ok | 4282 |
 | de-schleswig-holstein-extra | natural-earth-lines | ok | 0 in this region |
 | de-schleswig-holstein-extra | natural-earth-regions | ok | 4 |
 | de-schleswig-holstein-extra | ourairports | ok | 86 |
-| de-schleswig-holstein-extra | wikidata | ok | 36472 |
+| de-schleswig-holstein-extra | wikidata | ok | 36498 |
 | de-schleswig-holstein-extra | wikidata-filming | ok | 53 |
-| de-schleswig-holstein-names | wikidata-labels | ok | 46216 |
-| de-thueringen | osm | ok | 2026-11-10T21:21:39Z |
-| de-thueringen-businesses | alltheplaces | ok | 15260 |
+| de-schleswig-holstein-names | wikidata-labels | ok | 46259 |
+| de-schleswig-holstein-navigation | osm-navigation | ok | 465690 |
+| de-schleswig-holstein-services | osm-services | ok | 45391 |
+| de-thueringen | osm | ok | 2026-11-22T21:20:48Z |
+| de-thueringen-businesses | alltheplaces | ok | 23697 |
 | de-thueringen-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
-| de-thueringen-businesses | overture-places | ok | 162298 |
+| de-thueringen-businesses | overture-places | ok | 163561 |
 | de-thueringen-extra | geonames | ok | 6157 |
 | de-thueringen-extra | natural-earth-lines | ok | 0 in this region |
 | de-thueringen-extra | natural-earth-regions | ok | 3 |
 | de-thueringen-extra | ourairports | ok | 146 |
-| de-thueringen-extra | wikidata | ok | 56637 |
+| de-thueringen-extra | wikidata | ok | 56702 |
 | de-thueringen-extra | wikidata-filming | ok | 23 |
-| de-thueringen-names | wikidata-labels | ok | 96071 |
+| de-thueringen-names | wikidata-labels | ok | 96172 |
+| de-thueringen-navigation | osm-navigation | ok | 434496 |
+| de-thueringen-services | osm-services | ok | 39156 |
 | dk-denmark | osm | ok | 2026-11-22T21:20:48Z |
 | dk-denmark-businesses | alltheplaces | ok | 53505 |
 | dk-denmark-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |

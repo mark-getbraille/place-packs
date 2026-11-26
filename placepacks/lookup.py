@@ -43,6 +43,24 @@ POINT_CLASSES = AREA_CLASSES | {"building", "business", "street", "public", "tra
 FACILITY_CLASSES = {"public", "campus", "landmark", "transit", "business", "park", "cemetery"}
 NOT_A_NAME = {"settlement", "town", "zip", "admin", "region", "range", "address", "county"}
 BUSINESS_SOURCES = {"overture-places", "fsq-places"}
+# The sources whose phone, website and opening hours are in a businesses part's biz_details table, best first: when
+# several sources list one business, a lookup takes each detail from the first that has it (OpenStreetMap's own
+# details, the services part's svc_details, come before all of them). FORMAT.md, "Business contact details".
+DETAIL_ORDER = ("alltheplaces", "overture-places", "fsq-places")
+DETAIL_FIELDS = ("phone", "website", "opening_hours")
+
+
+def join_details(found):
+    """One business's details from several sources: found is [(source, {field: value})]; each field is taken from
+    the best source that has it (OpenStreetMap's "osm" and "osm-services" first, then DETAIL_ORDER). Returns {field: value} with only the fields
+    found."""
+    order = {s: i for i, s in enumerate(("osm", "osm-services") + DETAIL_ORDER)}
+    out = {}
+    for _, details in sorted(found, key=lambda f: order.get(f[0], len(order))):
+        for k, v in (details or {}).items():
+            if v and not out.get(k):
+                out[k] = v
+    return out
 
 
 def is_business_source(pack, source):
@@ -344,6 +362,9 @@ class PackReader:
             self.notes = {r["id"]: texts.get(r["note"]) for r in self._rows("SELECT id, note FROM point_notes")}
         # Names of places in other languages, in the optional "names" part (data only): key -> {lang: name}.
         self.has_labels = "labels" in tables
+        # The phone, website and opening hours of businesses (businesses part, since November 2026; none in older
+        # packs): see details_of.
+        self.has_details = "biz_details" in tables
         _open.add(self)
 
     def notes_for(self, key):
@@ -352,6 +373,17 @@ class PackReader:
             return []
         return [self.notes[r["id"]] for r in self._rows("SELECT id FROM points WHERE key = ?", (key,))
                 if self.notes.get(r["id"])]
+
+    def details_of(self, key):
+        """{"phone", "website", "opening_hours"} (only those given) of the business listed now under a key
+        ("alltheplaces:made_up_burgers:12", "overture-places:08f2...", "fsq-places:4b5c..."), from the businesses
+        part's biz_details; {} for a pack without the table (made before November 2026) or a key without details.
+        Only the current row of a key has details: a closed or renamed business's older rows never do."""
+        if not self.has_details or not key:
+            return {}
+        rows = self._rows("SELECT d.phone, d.website, d.opening_hours FROM points p JOIN biz_details d ON d.id = "
+                          "p.id WHERE p.key = ? ORDER BY p.last IS NULL DESC, p.last DESC LIMIT 1", (key,))
+        return {k: v for k, v in rows[0].items() if v} if rows else {}
 
     def labels(self, key):
         """{language: name} of a place's key in a "names" part pack ({} in other packs)."""

@@ -14,14 +14,15 @@ phrases of OpenStreetMap's shop, amenity, craft and healthcare tags, of Overture
 NAICS codes and of religions and denominations) is one of those phrases, or holds all the words asked ("bicycle"
 finds "bicycle shop"), is a candidate, in every pack of the folder: core, extra, businesses and the services part's
 offices. A place listed by several sources is given once; the phone, opening hours, website and wheelchair access
-come from the services part (svc_details) where OpenStreetMap gives them. Closed places (not seen at the last build)
+come from the services part (svc_details) where OpenStreetMap gives them, else from the businesses part's
+biz_details (All The Places, then Overture, then Foursquare: lookup.join_details). Closed places (not seen at the last build)
 are left out. Polling places are only of past elections and are always said with their election date.
 """
 
 import re
 
 from placepacks import fmt
-from placepacks.lookup import default_folder, normal_name, open_packs
+from placepacks.lookup import default_folder, join_details, normal_name, open_packs
 from placepacks.water import bearing_word
 
 # Plain words -> the type phrases they mean (the first is the one said). Words not listed are matched against every
@@ -155,13 +156,21 @@ class Finder:
         return out
 
     def details(self, key):
-        """{phone, opening_hours, website, wheelchair} of a place's key from a services part, or {}."""
+        """{phone, opening_hours, website, wheelchair} of a place's key (only those given): OpenStreetMap's from a
+        services part (svc_details), else a business's from a businesses part (biz_details: phone, website and
+        opening hours of the record listed now; PackReader.details_of). {} when no pack has any (a pack made before
+        biz_details simply has none)."""
         for p in self.packs:
             if p.part == "services":
                 rows = p._rows("SELECT phone, opening_hours, website, wheelchair FROM svc_details WHERE key = ?",
                                (key,))
                 if rows:
                     return {k: v for k, v in rows[0].items() if v}
+        for p in self.packs:
+            if getattr(p, "has_details", False):
+                got = p.details_of(key)
+                if got:
+                    return got
         return {}
 
     def candidates(self, lat, lon, phrases, service_kind, rings):
@@ -181,13 +190,17 @@ class Finder:
             ids = [i for i, name in p.types.items() if name in phrases]
             if not ids:
                 continue
-            for r in p._rows(f"SELECT p.key, p.source, p.name, p.lat, p.lon, p.last, t.type FROM points p JOIN "
-                             f"point_types t ON t.id = p.id WHERE t.type IN ({','.join(map(str, ids))}) AND p.ccell IN "
-                             f"({cells})"):
+            # A business's phone, website and hours (biz_details) come with it; a pack without the table has none.
+            has = getattr(p, "has_details", False)
+            joined = (", d.phone, d.website, d.opening_hours" if has else "")
+            for r in p._rows(f"SELECT p.key, p.source, p.name, p.lat, p.lon, p.last, t.type{joined} FROM points p JOIN "
+                             f"point_types t ON t.id = p.id " + ("LEFT JOIN biz_details d ON d.id = p.id " if has else "")
+                             + f"WHERE t.type IN ({','.join(map(str, ids))}) AND p.ccell IN ({cells})"):
                 if r["last"] and p.latest and r["last"] < p.latest:
                     continue                    # closed, or no longer listed
                 out.append({"key": r["key"], "source": r["source"], "name": r["name"], "lat": r["lat"],
-                            "lon": r["lon"], "type": p.types.get(r["type"], ""), "pack": p, "details": ""})
+                            "lon": r["lon"], "type": p.types.get(r["type"], ""), "pack": p, "details": "",
+                            "contact": {k: r.get(k) for k in ("phone", "website", "opening_hours") if r.get(k)}})
         for r in out:
             r["lat"], r["lon"] = r["lat"] / fmt.SCALE, r["lon"] / fmt.SCALE
             r["d"] = fmt.metres(lat, lon, r["lat"], r["lon"])
@@ -228,19 +241,26 @@ class Finder:
                          fmt.metres(m["lat"], m["lon"], r["lat"], r["lon"]) < 150), None)
             if same:
                 same["sources"].add(r["source"])
+                same["found"].append(r)
                 continue
-            merged.append(dict(r, sources={r["source"]}))
+            merged.append(dict(r, sources={r["source"]}, found=[r]))
         out = []
         for r in merged[:limit]:
-            info = {}
-            if r.get("details"):
-                import json
-                d = json.loads(r["details"])
-                info = {"phone": d.get("phone") or d.get("contact:phone"), "opening_hours": d.get("opening_hours"),
-                        "website": d.get("website"), "wheelchair": d.get("wheelchair")}
-            for k, v in self.details(r["key"]).items():
-                if not info.get(k):
-                    info[k] = v
+            # Every source's details of this one place, the best first (lookup.join_details): OpenStreetMap's own
+            # (the services part's office details and svc_details), then the businesses part's biz_details.
+            listed = []
+            for c in r["found"]:
+                if c.get("details"):
+                    import json
+                    d = json.loads(c["details"])
+                    listed.append(("osm-services", {"phone": d.get("phone") or d.get("contact:phone"),
+                                                    "opening_hours": d.get("opening_hours"),
+                                                    "website": d.get("website"), "wheelchair": d.get("wheelchair")}))
+                if c.get("contact"):
+                    listed.append((c["source"], c["contact"]))
+                else:
+                    listed.append(("osm", self.details(c["key"])))     # OpenStreetMap's svc_details, if any
+            info = join_details(listed)
             out.append({"name": r["name"], "type": r["type"], "lat": r["lat"], "lon": r["lon"],
                         "distance_m": round(r["d"]), "bearing": bearing_word(lat, lon, r["lat"], r["lon"]),
                         "phone": info.get("phone") or "", "opening_hours": info.get("opening_hours") or "",

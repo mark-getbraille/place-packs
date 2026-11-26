@@ -22,7 +22,7 @@ import math
 import re
 
 from placepacks import fmt
-from placepacks.lookup import default_folder, inside_rings, normal_name, open_packs
+from placepacks.lookup import default_folder, inside_rings, join_details, normal_name, open_packs
 from placepacks.water import bearing_word
 
 # For each kind: the type phrases and tags of the other parts' places that are the same kind, and a name pattern.
@@ -101,9 +101,13 @@ class LocalServices:
             if "points" not in tables or pack.part not in ("core", "extra", "businesses"):
                 continue
             typed = {"types", "point_types"} <= tables
+            # A business's phone, website and hours (the businesses part's biz_details; none in older packs).
+            has = "biz_details" in tables
             sql = ("SELECT p.key, p.source, p.name, p.tag, p.lat, p.lon, p.last" +
+                   (", d.phone, d.website, d.opening_hours" if has else "") +
                    (", t.name AS type FROM points p LEFT JOIN point_types l ON l.id = p.id LEFT JOIN types t ON "
-                    "t.id = l.type" if typed else ", NULL AS type FROM points p") + f" WHERE p.ccell IN ({cells})")
+                    "t.id = l.type" if typed else ", NULL AS type FROM points p") +
+                   (" LEFT JOIN biz_details d ON d.id = p.id" if has else "") + f" WHERE p.ccell IN ({cells})")
             for r in pack._rows(sql):
                 if r["last"] and pack.latest and r["last"] < pack.latest:
                     continue                    # closed or gone: only places listed at the last build
@@ -111,7 +115,8 @@ class LocalServices:
                     (pattern is not None and pattern.search(r["name"] or ""))
                 if hit:
                     out.append({"key": r["key"], "source": r["source"], "kind": kind, "name": r["name"],
-                                "lat": r["lat"], "lon": r["lon"], "details": {},
+                                "lat": r["lat"], "lon": r["lon"],
+                                "details": {k: r[k] for k in ("phone", "website", "opening_hours") if r.get(k)},
                                 "attribution": (pack.sources.get(r["source"]) or {}).get("attribution", "")})
         for r in out:
             r["lat"], r["lon"] = r["lat"] / fmt.SCALE, r["lon"] / fmt.SCALE
@@ -139,10 +144,13 @@ class LocalServices:
                          fmt.metres(m["lat"], m["lon"], r["lat"], r["lon"]) < 150), None)
             if same:
                 same["sources"].add(r["source"])
-                for k, v in r["details"].items():
-                    same["details"].setdefault(k, v)
+                same["found"].append((r["source"], r["details"]))
+                # each detail from the best source that has it: OpenStreetMap, then All The Places, Overture,
+                # Foursquare (lookup.join_details)
+                same["details"] = join_details(same["found"])
             else:
-                merged.append(dict(r, sources={r["source"]}, details=dict(r["details"])))
+                merged.append(dict(r, sources={r["source"]}, details=dict(r["details"]),
+                                   found=[(r["source"], r["details"])]))
         places = []
         for r in merged[:limit]:
             d = r["details"]

@@ -67,12 +67,16 @@ def test_the_workflow():
     doc = yaml.safe_load(text)
     on = doc.get("on", doc.get(True))
     assert on["schedule"][0]["cron"].split()[2] == "2"
-    assert set(on["workflow_dispatch"]["inputs"]) == {"regions", "force", "seed_history", "also_from_run", "publish_only"}
+    assert set(on["workflow_dispatch"]["inputs"]) == {"regions", "force", "seed_history", "seed_chain_history",
+                                                   "also_from_run", "publish_only"}
     # Read-only by default; write only for the jobs that change releases (actions: an earlier run's packs).
     assert doc["permissions"] == {"contents": "read"}
     assert doc["jobs"]["publish"]["permissions"] == {"contents": "write", "actions": "read"}
     assert doc["jobs"]["build"]["permissions"] == {"contents": "write"}                 # the "seeds" release
     assert "permissions" not in doc["jobs"]["plan"] and "permissions" not in doc["jobs"]["prepare"]
+    # The chain store history seed: only the job that stores it in the "seeds" release may write.
+    assert doc["jobs"]["chain-store"]["permissions"] == {"contents": "write"}
+    assert "permissions" not in doc["jobs"]["chain-plan"] and "permissions" not in doc["jobs"]["chain-read"]
     # Every action pinned to a commit; only publish (which pushes sources-status.md) keeps the checkout's token.
     for name, job in doc["jobs"].items():
         for step in job["steps"]:
@@ -82,7 +86,7 @@ def test_the_workflow():
                 assert step.get("with", {}).get("persist-credentials", True) is (name == "publish"), name
     assert "secrets." not in text and "github.token" in text
     jobs = doc["jobs"]
-    assert list(jobs) == ["plan", "prepare", "build", "publish"]
+    assert list(jobs) == ["plan", "chain-plan", "chain-read", "chain-store", "prepare", "build", "publish"]
     assert jobs["build"]["strategy"]["max-parallel"] <= 10 and jobs["build"]["timeout-minutes"] <= 360
     # A leg that times out must not stop the publishing of the regions that finished.
     assert "needs.build.result != 'cancelled'" not in jobs["publish"]["if"] and "always()" in jobs["publish"]["if"]

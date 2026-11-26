@@ -239,3 +239,28 @@ def test_no_seed_leaves_the_csv_as_it_was(tmp_path):
     assert atp_history.apply(str(target), str(tmp_path / "nothing")) is None
     assert atp_history.apply(str(target), "") is None
     assert target.read_text() == before
+
+
+def test_the_workflow_seeds_once_and_the_monthly_prepare_reads_the_seed():
+    """seed_chain_history: plan, one read job per group (read-only, one archive at a time on /mnt), one store job
+    (the only one that writes, uploading the list last); every prepare job downloads the stored seed and points the
+    All The Places conversion at it; inputs and matrix values only through the environment."""
+    import yaml
+    root = os.path.join(os.path.dirname(__file__), "..")
+    text = open(os.path.join(root, ".github", "workflows", "build-packs.yml"), encoding="utf-8").read()
+    jobs = yaml.safe_load(text)["jobs"]
+    assert jobs["chain-plan"]["if"] == "${{ inputs.seed_chain_history }}"
+    assert jobs["chain-read"]["strategy"]["matrix"]["group"] == "${{ fromJSON(needs.chain-plan.outputs.groups) }}"
+    assert jobs["chain-read"]["timeout-minutes"] <= 360 and jobs["chain-store"]["timeout-minutes"] <= 360
+    read = "\n".join(s.get("run", "") for s in jobs["chain-read"]["steps"])
+    assert "atp_history read" in read and "/mnt/scratch" in read and '"$RUNS"' in read
+    store = "\n".join(s.get("run", "") for s in jobs["chain-store"]["steps"])
+    assert "atp_history combine" in store and "gh release upload seeds" in store
+    assert store.index("chain-history.json; do") < store.index("delete-asset")    # the list last, old files after
+    assert "chain-store" in jobs["prepare"]["needs"] and "always()" in jobs["prepare"]["if"]
+    prepare = "\n".join(s.get("run", "") for s in jobs["prepare"]["steps"])
+    assert "PLACEPACKS_ATP_HISTORY" in prepare and "--pattern chain-history.json" in prepare
+    assert prepare.index("PLACEPACKS_ATP_HISTORY") < prepare.index("fetch --prepare")
+    for job in ("chain-plan", "chain-read", "chain-store"):
+        for step in jobs[job]["steps"]:
+            assert "${{ inputs" not in step.get("run", "") and "${{ matrix" not in step.get("run", "")

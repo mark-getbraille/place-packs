@@ -220,7 +220,7 @@ def main(argv=None):
     # workflow's "slice") and keeps what is in it.
     regions = {rid: r for rid, r in regions.items() if not r.get("parent")}
     for entry in cat["accepted"]:
-        if entry["fetch"]["method"] not in ("national", "duckdb_national"):
+        if entry["fetch"]["method"] not in ("national", "duckdb_national", "uploaded_national"):
             continue
         folder = os.path.join(a.national, entry["id"])
         if not os.path.isdir(folder):
@@ -241,7 +241,7 @@ def main(argv=None):
             path = os.path.join(folder, name)
             # One source that cannot be split is reported and left out; the others are still split.
             try:
-                if entry["fetch"]["method"] == "duckdb_national" and name.endswith(".parquet"):
+                if entry["fetch"]["method"] in ("duckdb_national", "uploaded_national") and name.endswith(".parquet"):
                     counts = split_parquet(entry, path, a.out, regions)
                 elif entry["reader"] == "shapes":
                     counts = split_shapes(entry, path, a.out, regions)

@@ -11,7 +11,6 @@
   "nad_seed_releases": [],
   "overture_release": "latest",
   "overture_seed_releases": [],
-  "fsq_release": "latest",
   "nces_year": "2324",
   "tiger_seed_sources": [
    "tiger-addrfeat",
@@ -885,11 +884,14 @@
    "attribution": "Foursquare Open Source Places, Copyright 2024 Foursquare Labs, Inc., under the Apache License 2.0 (NOTICE and licence text in LICENSES/).",
    "url": "https://docs.foursquare.com/data-products/docs/fsq-places-open-source",
    "reader": "duckdb",
-   "s3_region": "us-east-1",
-   "remote": "s3://fsq-os-places-us-east-1/release/dt={fsq_release}/places/parquet/*.parquet",
    "fetch": {
-    "method": "duckdb_national",
-    "file": "fsq.slice.parquet"
+    "method": "uploaded_national",
+    "release": "uploaded-sources",
+    "prefix": "fsq",
+    "file": "fsq.slice.parquet",
+    "also_countries": [
+     "PR"
+    ]
    },
    "query": "SELECT fsq_place_id AS key, name, COALESCE(fsq_category_labels[1], '') AS cls, latitude AS lat, longitude AS lon, CAST(date_created AS VARCHAR) AS first, CAST(date_closed AS VARCHAR) AS last FROM read_parquet('{src}') WHERE longitude BETWEEN {west} AND {east} AND latitude BETWEEN {south} AND {north}",
    "class_map": {
@@ -902,16 +904,9 @@
     "*": "business"
    },
    "history": "The dates Foursquare records: when a place was created and when it closed (date_closed), so closed businesses are kept closed. Keyed by fsq_place_id.",
-   "release_setting": "fsq_release",
-   "release_list": {
-    "bucket": "https://fsq-os-places-us-east-1.s3.us-east-1.amazonaws.com",
-    "prefix": "release/",
-    "pattern": "release/dt=(\\d{4}-\\d{2}-\\d{2})/"
-   },
    "prepare_query": "SELECT fsq_place_id, name, fsq_category_labels, latitude, longitude, date_created, date_closed FROM read_parquet('{src}') WHERE country IN ({countries})",
    "local_query": "SELECT fsq_place_id AS key, name, COALESCE(fsq_category_labels[1], '') AS cls, latitude AS lat, longitude AS lon, CAST(date_created AS VARCHAR) AS first, CAST(date_closed AS VARCHAR) AS last FROM read_parquet('{src}') WHERE longitude BETWEEN {west} AND {east} AND latitude BETWEEN {south} AND {north}",
-   "notes": "Foursquare's files are not sorted by place, so the prepare job reads them once for every covered country and each region takes its box from that local copy (one download instead of one per region).",
-   "unavailable_reason": "Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE)"
+   "notes": "Foursquare's official copy is the Hugging Face dataset foursquare/fsq-os-places (https://huggingface.co/datasets/foursquare/fsq-os-places), behind a free sign-in. The owner's Program Downloader copies each month's files, unchanged, into this repository's release \"uploaded-sources\" (fsq-<date>-<file>, fsq-<date>-NOTICE.txt and the manifest fsq-<date>.json). The prepare job reads the newest upload once, file by file, keeping only the covered countries (and PR, Puerto Rico, which Foursquare files as its own country) and the columns the build uses, and each region takes its box from that local copy. Until the first upload is there, the source is skipped (waiting for the owner's upload from Program Downloader)."
   },
   {
    "id": "gnis",

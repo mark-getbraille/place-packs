@@ -119,21 +119,23 @@ def test_catalogue_fixes():
     assert "%22{code}%22" in entry_of("fdic-branches")["fetch"]["url"]          # STALP:"OR" (OR is a keyword)
     oda = entry_of("oda")
     assert {"ca-newfoundland-and-labrador", "ca-nunavut", "ca-yukon"}.isdisjoint(oda["regions"])
-    assert "no longer publishes" in entry_of("fsq-places")["unavailable_reason"]
+    assert entry_of("fsq-places")["fetch"]["method"] == "uploaded_national"
     for sid, at_least in (("nhd-named-flowlines", 120), ("nhd-named-waterbodies", 60), ("wikidata", 90),
                           ("padus", 60)):
         assert entry_of(sid)["time_limit_min"] >= at_least, sid
     assert entry_of("nhd-named-flowlines")["fetch"]["parallel"] >= 2
 
 
-def test_foursquare_without_a_release_is_skipped(monkeypatch):
-    def none(entry, opener=None):
-        raise ValueError("no release found in https://fsq-os-places-us-east-1.s3.us-east-1.amazonaws.com")
-    monkeypatch.setattr(fetch, "latest_release", none)
+def test_foursquare_without_an_upload_is_skipped(monkeypatch):
+    from placepacks import uploaded
+
+    def none(entry):
+        raise uploaded.Waiting(uploaded.WAITING)
+    monkeypatch.setattr(uploaded, "newest", none)
     entry = entry_of("fsq-places")
     region = catalogue.regions()["us-vermont"]
     got = fetch._fetch_one(entry, region, catalogue.load(), "work", None, False)
-    assert got["status"] == "skipped" and got["reason"].startswith("Foursquare no longer publishes")
+    assert got["status"] == "skipped" and got["reason"] == "waiting for the owner's upload from Program Downloader"
 
 
 def test_the_wikidata_tile_plan_is_shared_by_the_region_sources():

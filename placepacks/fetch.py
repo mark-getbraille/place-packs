@@ -8,7 +8,12 @@ Each source's catalogue "fetch" says how:
   http            one file (a Geofabrik extract is checked against its .md5 file)
   national        a file for the whole country, downloaded once by --prepare and read by every region
   tiger_counties  the TIGER/Line files of the region's counties (listed from the Census directory page)
-  duckdb          the region's slice of remote Parquet (Overture, Foursquare), by bounding box (range reads)
+  duckdb          the region's slice of remote Parquet (Overture), by bounding box (range reads)
+  duckdb_national a remote Parquet source sliced once for every covered country by --prepare, read per region
+  uploaded_national  a sign-in-only dataset the owner uploads unchanged to the release "uploaded-sources" with
+                  Program Downloader (Foursquare Open Source Places, from Hugging Face): --prepare reads the newest
+                  upload once, file by file, into a national slice; skipped, "waiting for the owner's upload from
+                  Program Downloader", until the first upload is there (placepacks/uploaded.py)
   wikidata        one query to the Wikidata Query Service, by bounding box
   overpass        one query to an Overpass API (OpenHistoricalMap), by bounding box
   gtfs            the region's feeds of the Mobility Database catalogue whose licence allows redistribution
@@ -1097,7 +1102,7 @@ def fetch_wfs(entry, folder, fingerprint, opener=None, sleep=time.sleep):
 def resolve(entry, values, opener=None):
     """The placeholders of a source with any "latest" release replaced by the newest one found."""
     values = dict(values)
-    for key in ("overture_release", "fsq_release"):
+    for key in ("overture_release",):
         if values.get(key) == "latest" and entry.get("release_setting") == key:
             try:
                 values[key] = latest_release(entry, opener)
@@ -1142,6 +1147,31 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
                    if os.path.exists(path) else "")
         if not out["ok"]:
             out.update(status="skipped", reason=f"needs a hand-supplied file in {f['folder'].format(**values)}")
+        return out
+    if method == "uploaded_national":
+        # A sign-in-only dataset the owner uploads to the release "uploaded-sources" (placepacks/uploaded.py): the
+        # prepare job read the newest upload once into national/<id>/<id>.parquet and split it per region; the
+        # region's slice is read from that local file, as for duckdb_national.
+        from placepacks import uploaded
+        try:
+            out["version"] = uploaded.version(entry)
+        except uploaded.Waiting as e:
+            raise SourceUnavailable(str(e)) from None
+        if fingerprint:
+            out["ok"] = True
+            return out
+        local = os.path.join(national or "national", entry["id"], entry["id"] + ".parquet")
+        if not os.path.exists(local):
+            note = os.path.join(national or "national", entry["id"], FAILED)
+            why = open(note, encoding="utf-8").read().strip() if os.path.exists(note) else ""
+            out.update(status="skipped", reason=f"could not be prepared: {why}" if why else
+                       "the national slice was not prepared (see the prepare job)")
+            return out
+        from placepacks.readers.parquet import fetch_slice
+        target = os.path.join(folder, f["file"])
+        os.makedirs(folder, exist_ok=True)
+        fetch_slice({**entry, "remote": local, "query": entry["local_query"]}, region, target)
+        out.update(ok=True, path=target, date=datetime.date.today().isoformat())
         return out
     if method == "duckdb_national":
         # The source was sliced once for every covered country by --prepare (national/<id>/<id>.parquet); the
@@ -1630,6 +1660,9 @@ def prepare(national, cat=None):
         if entry["fetch"]["method"] == "duckdb_national":
             prepare_parquet(entry, national, cat)
             continue
+        if entry["fetch"]["method"] == "uploaded_national":
+            prepare_uploaded(entry, national)
+            continue
         if entry["fetch"]["method"] != "national":
             continue
         try:
@@ -1744,6 +1777,26 @@ def prepare_national(entry, national, values):
             if os.path.exists(p + ".version"):
                 os.remove(p + ".version")
         print(f"{entry['id']}: {count:,} records from {len(paths)} files ({failed} not downloaded)")
+
+
+def prepare_uploaded(entry, national):
+    """Read the newest upload of a sign-in-only dataset from the release "uploaded-sources" once, file by file, into
+    national/<id>/<id>.parquet (placepacks/uploaded.py). No upload yet, or a failure, leaves the layer out this time
+    (never the build): the regions then say why, from the FAILED note."""
+    from placepacks import uploaded
+    folder = os.path.join(national, entry["id"])
+    try:
+        uploaded.prepare(entry, national, notice_path=os.path.join(catalogue.ROOT, "NOTICE"))
+        return
+    except uploaded.Waiting as e:
+        print(f"{entry['id']}: skipped ({e})")
+        why = str(e)
+    except Exception as e:  # noqa: BLE001 - that layer is left out this time
+        print(f"{entry['id']}: not prepared ({e})")
+        why = str(e)
+    os.makedirs(folder, exist_ok=True)
+    with open(os.path.join(folder, FAILED), "w", encoding="utf-8") as fh:
+        fh.write(why[:300])
 
 
 def prepare_parquet(entry, national, cat):

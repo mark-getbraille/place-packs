@@ -12,8 +12,9 @@ facilities, Overture Maps and Foursquare Open Source Places, Wikidata, GeoNames 
 business records: restaurant inspections, liquor and business licences, bank and credit union branches, health
 care organisations (pharmacies, clinics, dentists, opticians), fuel and charging stations, the UK's food hygiene
 ratings and Victoria's Sands & McDougall directories (1896–1974), and US federal layers: historic places, parks
-and protected areas, bridges, dams, airports, stations, schools, libraries and the county boundaries of every date
-since the 1600s. Each source is
+and protected areas, bridges, dams, airports, stations, schools, libraries, government offices and health
+facilities (VA, USDA Service Centers, certified hospitals and nursing homes) and the county boundaries of every
+date since the 1600s. Each source is
 listed with its licence in [SOURCES.md](SOURCES.md). The packs are made for the
 [Digital Accessibility Toolkit](https://getbraille.com)'s picture describer and the Photo Location Identifier
 (`photo-location-identifier/`), and anyone may use them under their licences.
@@ -77,6 +78,8 @@ How far back each layer goes:
 | FDIC bank branches | Each branch under its bank's name since the bank took it over, or since it opened. |
 | Credit union offices (NCUA), since November 2026 | From the first build (the quarterly branch file has no opening dates; its older quarters, back to the 1990s, could seed earlier years later). Each office under its credit union's name. |
 | Health care organisations (CMS NPPES), since November 2026: pharmacies, clinics and urgent care, dentists, optometrists and opticians, hearing aid shops, physical therapy, chiropractors, laboratories, medical supply stores | Each organisation from the date it got its NPI (2005 at the earliest), closed when its NPI is deactivated. Organisations only, never individual providers; hospitals and federally qualified health centres come from other layers. |
+| SNAP grocery and convenience stores (USDA), since November 2026 | Each store from its SNAP authorization date to its end date (every store authorized in the past 20 years, back to the 1990s for long-standing ones); the file is renewed once a year. |
+| Government offices and health facilities, since November 2026: VA medical centers, clinics and vet centers; VA benefits offices (with the owner's key); certified hospitals, nursing homes, dialysis centers and rural health clinics (HRSA Site Dashboard); USDA Service Centers; Pennsylvania state offices, New York DMV offices, Washington DC agencies | VA health sites from their opening dates (back to the 1920s); the others from the first build. |
 | Fuel and charging stations (DOE Alternative Fuels Data Center), since November 2026 | Each public station from its open date; the charging network (ChargePoint, Tesla, EVgo, Electrify America ...) as its brand. |
 | UK food hygiene ratings (FSA) | Each business from its latest rating date, then month by month. |
 | Victoria, Australia: Sands & McDougall directories | The directory years 1896–1974 each business was listed in. |
@@ -262,7 +265,9 @@ files up to 2 GB each with no total limit. A user downloads only the regions the
   optional key: the repository secret `NREL_API_KEY` (free from developer.nlr.gov/signup, sent by email), which the
   prepare step uses for the Alternative Fuels Data Center's stations. Without it the public `DEMO_KEY` is used, which
   is enough for that one request a month unless the build machine's address has used it up; then the stations are
-  skipped that month and their history stays. The key is sent in a request header and never printed.
+  skipped that month and their history stays. The key is sent in a request header and never printed. A second
+  optional key, the repository secret `VA_API_KEY` (free from developer.va.gov), is given only to the region fetch
+  step for the VA's benefits offices (one request a state); without it that source is skipped.
 - **Keep-alive:** GitHub turns off scheduled workflows in repositories with no activity for 60 days. Each run
   commits an updated `sources-status.md`, which keeps the schedule alive.
 

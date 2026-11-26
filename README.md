@@ -13,8 +13,10 @@ business records: restaurant inspections, liquor and business licences, bank and
 care organisations (pharmacies, clinics, dentists, opticians), fuel and charging stations, the UK's food hygiene
 ratings and Victoria's Sands & McDougall directories (1896–1974), and US federal layers: historic places, parks
 and protected areas, bridges, dams, airports, stations, schools, libraries, government offices and health
-facilities (VA, USDA Service Centers, certified hospitals and nursing homes) and the county boundaries of every
-date since the 1600s. Each source is
+facilities (VA, USDA Service Centers, certified hospitals and nursing homes), braille and talking-book
+libraries, recreation sites of the BLM, Reclamation and the TVA (with BLM's accessibility descriptions), fire
+departments, federal prisons, border crossings, locks and bike-share stations, the water and electric utility
+serving each place, and the county boundaries of every date since the 1600s. Each source is
 listed with its licence in [SOURCES.md](SOURCES.md). The packs are made for the
 [Digital Accessibility Toolkit](https://getbraille.com)'s picture describer and the Photo Location Identifier
 (`photo-location-identifier/`), and anyone may use them under their licences.
@@ -80,6 +82,7 @@ How far back each layer goes:
 | Health care organisations (CMS NPPES), since November 2026: pharmacies, clinics and urgent care, dentists, optometrists and opticians, hearing aid shops, physical therapy, chiropractors, laboratories, medical supply stores | Each organisation from the date it got its NPI (2005 at the earliest), closed when its NPI is deactivated. Organisations only, never individual providers; hospitals and federally qualified health centres come from other layers. |
 | SNAP grocery and convenience stores (USDA), since November 2026 | Each store from its SNAP authorization date to its end date (every store authorized in the past 20 years, back to the 1990s for long-standing ones); the file is renewed once a year. |
 | Government offices and health facilities, since November 2026: VA medical centers, clinics and vet centers; VA benefits offices (with the owner's key); certified hospitals, nursing homes, dialysis centers and rural health clinics (HRSA Site Dashboard); USDA Service Centers; Pennsylvania state offices, New York DMV offices, Washington DC agencies | VA health sites from their opening dates (back to the 1920s); the others from the first build. |
+| Federal and state lists of the 26 November 2026 pass: NLS braille and talking-book libraries, Medicare medical equipment suppliers (pharmacies, opticians, medical supply), BLM, Reclamation and TVA recreation sites, HUD housing authorities, fire departments and stations, federal prisons, border crossings, locks, bike-share stations, stadiums, hospital and police heliports; New York and Florida lottery retailers, licensed child care centres (Texas, Pennsylvania, Connecticut, Delaware, Colorado, Michigan; centres only, never homes), New York, Iowa, Hawaii and Connecticut health facilities, Kentucky, Utah and Connecticut outdoor places | Border crossings from their first month of traffic (1996 on) to their last; locks from the year they opened (1800s on); stadiums, Medicare suppliers, New York health facilities, Iowa facilities, Texas and Connecticut child care centres and Pennsylvania dispensaries from their opening, participation or first licence dates (Connecticut's closed centres end at their last licence); bike-share stations by the yearly listings (2015 on); Connecticut nursing homes by reporting year under each former name; closed public airports at the FAA's last report; the others from the first build. |
 | Fuel and charging stations (DOE Alternative Fuels Data Center), since November 2026 | Each public station from its open date; the charging network (ChargePoint, Tesla, EVgo, Electrify America ...) as its brand. |
 | UK food hygiene ratings (FSA) | Each business from its latest rating date, then month by month. |
 | Victoria, Australia: Sands & McDougall directories | The directory years 1896–1974 each business was listed in. |
@@ -118,7 +121,8 @@ for region in regions_near(44.26, -72.58):      # ["us-vermont"] (and a neighbou
 f = Finder()
 r = f.lookup(44.26, -72.58, when=(2005, 2006), detail="street", altitude=None)
 print(r.phrase(units="miles"), "|", r.short("street"), "|", r.details())
-print(f.areas_at(44.26, -72.58))                 # every named area holding the point, smallest first
+print(f.areas_at(44.26, -72.58))                 # every named area holding the point, smallest first,
+                                                 # with the water and electric utility serving it
 ```
 
 The API:

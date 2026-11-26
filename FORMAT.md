@@ -77,7 +77,18 @@ candidates are in `Result.others` (name, type, brand, distance), data only, neve
 A point may carry a short note, stored once in `notes` and linked from `point_notes` like the types and brands.
 Wikidata's filming locations ("filming location of A; B; C") are written as rows of class `note` with the place's own
 key (`wikidata:Q...`), so a lookup that names the place gives `Result.note`; the note is data for future programs,
-never spoken.
+never spoken. Some sources put a note on their own points (the tabular reader's "note_column"): the accessibility
+descriptions of BLM's accessible recreation sites ("Accessibility: accessible vault toilet; firm gravel path ...")
+and the access descriptions of New York's career centers. E-mail addresses and telephone numbers are taken out of
+every such note, and it is cut to about 1,200 characters.
+
+## Utility service areas (November 2026, no pack change)
+
+The extra part has the service areas of community water systems (EPA, `epa-water-service-areas`) and the retail
+territories of electric utilities (`electric-retail-territories`) as areas of class `region` with the fine types
+"water utility service area" and "electric utility service area". Like every `region` area, they are never said as
+the name of a place; `Finder.areas_at(lat, lon)` lists them, so a program can say which water utility and which
+electric company serve a place. EPA's water areas are partly modelled, so they are estimates.
 
 ## Parts: core, extra, names, businesses and addresses
 

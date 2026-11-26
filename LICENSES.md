@@ -111,6 +111,17 @@ licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD
 - **NCUA credit union offices, CMS NPPES health care organisations:** US government works (public domain). From
   NPPES only organisations are read, never individual providers, and no official's name or telephone number is
   kept; organisations' names and located points only.
+- **Federal and state lists of 26 November 2026:** the federal lists (Library of Congress NLS, CMS, BLM, Reclamation,
+  TVA, EPA, HUD, USFA, BOP, BTS, USACE, FAA) are US government works. The TVA's layer says only that it is "made
+  publicly available"; the TVA is a corporate agency of the United States, so its work is treated as a government
+  work. The electric territories are a copy (on an NTIA organisation's ArcGIS account, after HIFLD Open closed) of
+  ORNL's and DOE CESER's layer, credited to them. Kentucky's KDFWR and KyGovMaps layers, Iowa's health facilities
+  and Connecticut DEEP's access points are CC0 (credit KDFWR as asked); Utah's boat ramps are CC BY 4.0 (credit
+  UGRC). Colorado's and Michigan's child care layers and Hawaii's health facilities state "no restrictions" or
+  "public domain" in their own words and are read as public domain marks. The Florida Lottery retailer list has no
+  licence and is used, like the DBPR files, as a Florida public record (Chapter 119). New York's lottery, career
+  center, Commission for the Blind and health facility lists are under the OPEN-NY terms. Child care lists keep
+  centres only (never family or group homes) and no director's or contact person's name, telephone or e-mail.
 - **OpenHistoricalMap:** CC0, except features with their own `license` tag, which the packs leave out.
 - **Personal data:** the business sources keep only a business's trade name, class, position and dates. Records
   that may be someone's home (home-based businesses, contractors, mobile caterers, childminders, short-term rentals,

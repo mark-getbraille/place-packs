@@ -4199,6 +4199,541 @@
    "notes": "Active federally owned and leased buildings (courthouses, federal buildings, offices) with their own names. The contact people's names and e-mail addresses in the layer are never read."
   },
   {
+   "id": "va-health-facilities",
+   "name": "Veterans Health Administration health care facilities (VA medical centers, clinics and vet centers)",
+   "short": "the Department of Veterans Affairs",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "VA health care facilities from the Veterans Health Administration's Site Tracking database (VAST), as published on the Health Resources and Services Administration's GIS portal, a work of the United States government (public domain).",
+   "url": "https://gisportal.hrsa.gov/server/rest/services/HealthCareFacilities/VHAFacilities_FS/MapServer/0",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "veterans health facility",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://gisportal.hrsa.gov/server/rest/services/HealthCareFacilities/VHAFacilities_FS/MapServer/0",
+    "where": "VHA_SUSPENDED = 'N' AND VHA_MOBILE = 0",
+    "fields": "VHA_STA_NO,VHA_STA_NAME,VHA_PRIM_SVC,VHA_OPERA_DAT",
+    "page": 500,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "blank_values": [
+    "1900-01-01"
+   ],
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "VHA_STA_NAME",
+    "key": "VHA_STA_NO",
+    "first": "VHA_OPERA_DAT",
+    "class_column": "VHA_PRIM_SVC"
+   },
+   "class_map": {
+    "VAMC": "public:veterans medical center",
+    "HCC": "public:veterans health care center",
+    "MSCBOC": "public:veterans clinic",
+    "PCCBOC": "public:veterans clinic",
+    "OOS": "public:veterans clinic",
+    "VTCR": "public:vet center",
+    "CLC": "public:veterans nursing home",
+    "DRRTP": "public:veterans residential treatment center",
+    "MVCTR": "",
+    "*": "public:veterans health facility"
+   },
+   "history": "Each facility from its first day of operation (VAST's operation date, back to the 1920s for the oldest medical centers; a date VAST does not know, written 1900-01-01, is left out and the facility starts at the first build); a facility dropped from the layer is closed at its last build.",
+   "notes": "About 1,570 fixed VA health sites, typed by their primary service: VA medical centers (172), health care centers, community-based outpatient clinics and other outpatient sites (about 1,050), community living centers, residential treatment programs and vet centers (315, counselling centers for veterans and their families). Mobile vet centers and mobile clinics (VHA_MOBILE) and suspended sites are left out. Phone and fax numbers are never read; the layer names no staff."
+  },
+  {
+   "id": "va-benefits-offices",
+   "name": "VA benefits offices (VA Facilities API, with the owner's free key)",
+   "short": "the Department of Veterans Affairs",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "VA benefits offices from the Department of Veterans Affairs' Facilities API (developer.va.gov), a work of the United States government (public domain).",
+   "url": "https://developer.va.gov/explore/api/va-facilities",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "veterans benefits office",
+   "verify": true,
+   "fetch": {
+    "method": "json_api",
+    "url": "https://api.va.gov/services/va_facilities/v1/facilities",
+    "params": {
+     "state": "{code}",
+     "type": "benefits"
+    },
+    "paging": {
+     "style": "page",
+     "page": "page",
+     "size": "per_page",
+     "first": 1,
+     "page_size": 200
+    },
+    "records": "data",
+    "fields": [
+     "id",
+     "attributes.name",
+     "attributes.classification",
+     "attributes.lat",
+     "attributes.long"
+    ],
+    "key_env": "VA_API_KEY",
+    "key_header": "apikey",
+    "pause": 2
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "attributes_lat",
+    "lon": "attributes_long",
+    "name": "attributes_name",
+    "key": "id"
+   },
+   "exclude_pattern": [
+    {
+     "column": "attributes_classification",
+     "pattern": "vet ?success|intake|outbased|mobile"
+    }
+   ],
+   "history": "From the first build on (the API has no opening dates); an office that leaves the API is closed at its last build.",
+   "notes": "Veterans Benefits Administration regional offices and benefits offices (the HRSA layer above has only health facilities). The API needs a free key: the owner asks for one at developer.va.gov and stores it as the repository secret VA_API_KEY, which the build's fetch step reads; it is sent in a header, never in the address, and never printed. Without the secret this source is skipped and the build goes on. One request a state each month. VetSuccess on Campus counsellors (inside college buildings), intake sites on military bases and out-based staff are left out: they would name a desk inside another place. Only names and positions are kept (no phone numbers)."
+  },
+  {
+   "id": "hrsa-site-dashboard",
+   "name": "HRSA Site Dashboard: Medicare- and Medicaid-certified hospitals, nursing homes, dialysis centers, rural health clinics and surgery centers",
+   "short": "the Health Resources and Services Administration",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Hospitals, nursing homes, dialysis centers, rural health clinics, surgery centers and mental health centers from the Health Resources and Services Administration's Site Dashboard (data.hrsa.gov; the Centers for Medicare & Medicaid Services' certified providers, geocoded by HRSA), a work of the United States government (public domain).",
+   "url": "https://data.hrsa.gov/data/download",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "health facility",
+   "fetch": {
+    "method": "national",
+    "url": "https://data.hrsa.gov/DataDownload/DD_Files/SITE_DASHBOARD.csv",
+    "pause": 2
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "State",
+    "equals": "{code}"
+   },
+   "columns": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "name": "Site Name",
+    "key": "Site Dashboard Surrogate Key",
+    "class_column": [
+     "Site Category",
+     "Site Type",
+     "Site Subtype"
+    ]
+   },
+   "class_map": {
+    "Centers for Medicare & Medicaid Services Hospital *": "public:hospital",
+    "Centers for Medicare & Medicaid Services Hospital Short Term*": "public:hospital",
+    "Centers for Medicare & Medicaid Services Hospital Critical Access*": "public:critical access hospital",
+    "Centers for Medicare & Medicaid Services Hospital Psychiatric*": "public:psychiatric hospital",
+    "Centers for Medicare & Medicaid Services Hospital Rehabilitation*": "public:rehabilitation hospital",
+    "Centers for Medicare & Medicaid Services Hospital Long Term*": "public:long-term care hospital",
+    "Centers for Medicare & Medicaid Services Hospital Children*": "public:children's hospital",
+    "Centers for Medicare & Medicaid Services Hospital Religious*": "",
+    "Centers for Medicare & Medicaid Services Skilled Nursing*": "public:nursing home",
+    "Centers for Medicare & Medicaid Services Nursing Facility*": "public:nursing home",
+    "Centers for Medicare & Medicaid Services End Stage Renal*": "public:dialysis center",
+    "Centers for Medicare & Medicaid Services Ambulatory Surgical*": "public:ambulatory surgery center",
+    "Centers for Medicare & Medicaid Services Community Mental Health*": "public:community mental health center",
+    "Centers for Medicare & Medicaid Services Psychiatric Residential*": "public:psychiatric residential treatment facility",
+    "Centers for Medicare & Medicaid Services Comprehensive Outpatient*": "public:outpatient rehabilitation facility",
+    "Centers for Medicare & Medicaid Services Rural Health*": "public:rural health clinic",
+    "Rural Health Clinic *": "public:rural health clinic",
+    "*": ""
+   },
+   "skip_points": [
+    [
+     0,
+     0
+    ]
+   ],
+   "name_replace": [
+    [
+     "\\bHosp\\b\\.?",
+     "Hospital"
+    ],
+    [
+     "\\bMed Ctr\\b",
+     "Medical Center"
+    ],
+    [
+     "\\bCtr\\b",
+     "Center"
+    ],
+    [
+     "\\bMem\\b",
+     "Memorial"
+    ]
+   ],
+   "history": "From the first build on (the file has no opening dates; a facility that leaves it is closed at its last build). The CMS Provider of Services file has participation and termination dates and could seed the history of closed hospitals and nursing homes later.",
+   "notes": "About 50,000 certified health facilities with HRSA's own positions (no geocoding needed): hospitals (short-term, critical access, psychiatric, rehabilitation, long-term care, children's), nursing homes, dialysis centers, ambulatory surgery centers, rural health clinics, community mental health centers, psychiatric residential treatment facilities and outpatient rehabilitation facilities. One national file (about 38 MB, renewed daily) read once by the prepare job and split by state. Left out, as other sources have them or they are not places people visit: health center sites (hrsa-health-centers), VA sites (va-health-facilities), National Health Service Corps sites (many are private practices, some named after a person), Ryan White HIV/AIDS sites, home health agencies and hospices (care at home), intermediate care facilities for people with intellectual disabilities (often ordinary houses: privacy), federally qualified health centers (already in hrsa-health-centers), outpatient therapy, portable X-ray suppliers and organ procurement organizations. Telephone numbers are never read; only the name, kind and position are kept."
+  },
+  {
+   "id": "usda-snap-retailers",
+   "name": "USDA SNAP authorized retailers (Historical SNAP Retailer Locator Data, 2005 on)",
+   "short": "the U.S. Department of Agriculture",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Stores authorized to accept SNAP benefits, from the Historical SNAP Retailer Locator Data of the U.S. Department of Agriculture's Food and Nutrition Service (now the Food and Nutrition Administration), a work of the United States government (public domain).",
+   "url": "https://www.fna.usda.gov/snap/retailer-locator/data",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "national",
+    "listing": "https://www.fna.usda.gov/snap/retailer-locator/data",
+    "pattern": "[^\"'\\s>]*snap-retailer-locator-data\\d{4}-\\d{4}\\.zip",
+    "latest": "data\\d{4}-(\\d{4})\\.zip",
+    "pause": 2
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "State",
+    "equals": "{code}"
+   },
+   "columns": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "name": "Store Name",
+    "key": "Record ID",
+    "first": "Authorization Date",
+    "last": "End Date",
+    "class_column": "Store Type"
+   },
+   "class_map": {
+    "Convenience Store": "business:convenience store",
+    "Combination Grocery/Other": "business:store",
+    "Small Grocery Store": "business:grocery store",
+    "Medium Grocery Store": "business:grocery store",
+    "Large Grocery Store": "business:supermarket",
+    "Supermarket": "business:supermarket",
+    "Super Store": "business:supermarket",
+    "Meat/Poultry Specialty": "business:butcher",
+    "Bakery Specialty": "business:bakery",
+    "Farmers' Market": "business:farmers market",
+    "Seafood Specialty": "business:seafood market",
+    "Fruits/Veg Specialty": "business:produce market",
+    "Food Buying Co-op": "business:food co-op",
+    "Military Commissary": "business:commissary",
+    "Delivery Route": "",
+    "Wholesaler": "",
+    "Unknown": "",
+    "*": ""
+   },
+   "name_strip": "\\s+(#\\s*)?\\d{2,}\\s*$",
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "history": "Each store from its SNAP authorization date (back to the 1990s for long-standing stores) to its end date: the file lists every store authorized at any time in the past 20 years, so a corner shop that closed in 2010 keeps its name with its dates. USDA renews the file once a year (a store authorized since then appears with the next file). Keyed by USDA's record id.",
+   "notes": "About 700,000 grocery stores, supermarkets, convenience stores, bakeries, butchers, farmers' markets and other food retailers, past and present, with USDA's own positions (one national file of about 24 MB, found on USDA's page each build, read once by the prepare job and split by state). Delivery routes (no fixed place), wholesalers and stores of unknown type are left out; a chain's store number at the end of a name is removed (\"Dollar General 21977\" -> \"Dollar General\"); a name written like a person's (\"Surname, Given\") is left out. The current retailer locator layer is not read as well, to keep each store once."
+  },
+  {
+   "id": "usda-fsa-offices",
+   "name": "USDA Service Centers and Farm Service Agency offices",
+   "short": "the USDA Farm Service Agency",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "USDA Service Centers and offices from the Farm Service Agency's FSA Offices layer (ArcGIS Online), a work of the United States government (public domain).",
+   "url": "https://services.arcgis.com/LLVEmB8Lsae3Um4s/arcgis/rest/services/FSA_Offices_view/FeatureServer/0",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "USDA office",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services.arcgis.com/LLVEmB8Lsae3Um4s/arcgis/rest/services/FSA_Offices_view/FeatureServer/0",
+    "where": "1=1",
+    "fields": "site_id,site_name,office_type",
+    "page": 500,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "site_name",
+    "key": "site_id",
+    "class_column": "office_type"
+   },
+   "class_map": {
+    "Service Center": "public:USDA service center",
+    "State Office": "public:USDA state office",
+    "*": "public:USDA office"
+   },
+   "name_replace": [
+    [
+     "(?i)\\bService Center$",
+     "USDA Service Center"
+    ],
+    [
+     "(?i)\\bJctn\\b",
+     "Junction"
+    ],
+    [
+     "\\bUsda\\b",
+     "USDA"
+    ],
+    [
+     "\\bFsa\\b",
+     "FSA"
+    ],
+    [
+     "\\bNrcs\\b",
+     "NRCS"
+    ],
+    [
+     "\\bAnd\\b",
+     "and"
+    ]
+   ],
+   "history": "From the first build on (a closed office leaves the layer and is closed at its last build).",
+   "notes": "About 2,200 USDA Service Centers (the county offices where the Farm Service Agency, the Natural Resources Conservation Service and often Rural Development meet farmers), state offices and other FSA offices, with FSA's own GPS or checked positions (\"Brattleboro Service Center\" is written \"Brattleboro USDA Service Center\"). Only the site name and position are kept: the editors' user ids in the layer are never read. Rural Development's own offices have no official open layer yet."
+  },
+  {
+   "id": "pa-state-offices",
+   "name": "Pennsylvania state government offices (PennDOT driver and vehicle centers, State Police stations, County Assistance Offices, CareerLink and others)",
+   "short": "the Commonwealth of Pennsylvania",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-pennsylvania"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Pennsylvania state offices from the Commonwealth's statewide location datasets (data.pa.gov, datasets xm6j-3r29, et8z-r5sr, 373d-qjbe and da8t-93kj), public domain.",
+   "url": "https://data.pa.gov/d/xm6j-3r29",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.pa.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "xm6j-3r29",
+      "select": "upper('Pennsylvania State Police ' || name || ' Station') AS name, layername AS kind, the_geom AS point",
+      "where": "layername = 'State Police Station' AND the_geom IS NOT NULL"
+     },
+     {
+      "dataset": "xm6j-3r29",
+      "select": "upper('State Correctional Institution ' || name) AS name, layername AS kind, the_geom AS point",
+      "where": "layername = 'State Correctional Institutions' AND the_geom IS NOT NULL"
+     },
+     {
+      "dataset": "xm6j-3r29",
+      "select": "name, layername AS kind, the_geom AS point",
+      "where": "layername IN ('Driver Vehicle Services Locations', 'Parole Office Locations', 'DEP Regional Office') AND the_geom IS NOT NULL"
+     },
+     {
+      "dataset": "et8z-r5sr",
+      "select": "name, layername AS kind, the_geom AS point",
+      "where": "layername IN ('County Assistance Office', 'CareerLink Office') AND the_geom IS NOT NULL"
+     },
+     {
+      "dataset": "373d-qjbe",
+      "select": "name, layername AS kind, the_geom AS point",
+      "where": "the_geom IS NOT NULL"
+     },
+     {
+      "dataset": "da8t-93kj",
+      "select": "name, layername AS kind, the_geom AS point",
+      "where": "layername IN ('State Health Center', 'Area Agencies on Aging', 'County Drug and Alcohol Office', 'Veteran Home') AND the_geom IS NOT NULL"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "class_column": "kind"
+   },
+   "class_map": {
+    "State Police Station": "public:police station",
+    "State Correctional Institutions": "public:prison",
+    "Driver Vehicle Services Locations": "public:motor vehicle office",
+    "Parole Office Locations": "public:parole office",
+    "DEP Regional Office": "public:government office",
+    "County Assistance Office": "public:social services office",
+    "CareerLink Office": "public:job center",
+    "Revenue or Lottery": "public:government office",
+    "State Health Center": "public:health center",
+    "Area Agencies on Aging": "public:area agency on aging",
+    "County Drug and Alcohol Office": "public:social services office",
+    "Veteran Home": "public:veterans home",
+    "*": ""
+   },
+   "name_replace": [
+    [
+     "(?i)\\bCAO$",
+     "County Assistance Office"
+    ],
+    [
+     "\\bAAA$",
+     "Area Agency on Aging"
+    ],
+    [
+     "\\s+D\\.O\\.$",
+     " District Parole Office"
+    ],
+    [
+     "\\s+S\\.O\\.$",
+     " Parole Sub-Office"
+    ],
+    [
+     "PA CareerLink®",
+     "PA CareerLink"
+    ]
+   ],
+   "history": "From the first build on (an office dropped from the lists is closed at its last build).",
+   "notes": "About 600 state offices: PennDOT driver license and photo centers, State Police stations, state prisons, parole offices, DEP regional offices, County Assistance Offices (benefits), PA CareerLink job centers, Revenue taxpayer assistance and Lottery offices, State Health Centers, Area Agencies on Aging, county drug and alcohol offices and state veterans' homes. The datasets are refreshed daily by the agencies. Park-and-ride lots and turnpike plazas come from their own sources; the community corrections centers (many run by private contractors) and the datasets' child care, personal care homes and schools are left out (other sources, or privacy). Only names, kinds and positions are kept."
+  },
+  {
+   "id": "ny-dmv-offices",
+   "name": "New York State DMV offices",
+   "short": "the New York State Department of Motor Vehicles",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "Department of Motor Vehicle (DMV) Office Locations of the New York State Department of Motor Vehicles (data.ny.gov, dataset 9upz-c7xg); office names, kinds and positions only.",
+   "url": "https://data.ny.gov/d/9upz-c7xg",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ny.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "9upz-c7xg",
+      "select": "office_type || ' ' || office_name AS key, office_name AS name, office_type AS kind, georeference AS point",
+      "where": "georeference IS NOT NULL AND office_type IN ('COUNTY OFFICE', 'DISTRICT OFFICE', 'TVB OFFICE')",
+      "order": "office_name"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "class_column": "kind"
+   },
+   "class_map": {
+    "COUNTY OFFICE": "public:motor vehicle office",
+    "DISTRICT OFFICE": "public:motor vehicle office",
+    "TVB OFFICE": "public:traffic violations bureau",
+    "*": ""
+   },
+   "name_template": "{name} DMV Office",
+   "history": "From the first build on (an office dropped from the list is closed at its last build).",
+   "notes": "About 125 DMV offices run by the State (district offices) and by the county clerks (county offices), and the Traffic Violations Bureau offices, named by their place (\"Massapequa DMV Office\"). Mobile offices and AAA branches that issue DMV documents are left out. Phone numbers and opening hours are not read.",
+   "name_replace": [
+    [
+     "\\s+Tvb DMV Office$",
+     " Traffic Violations Bureau"
+    ]
+   ]
+  },
+  {
+   "id": "dc-government-locations",
+   "name": "Washington, DC government agency locations (with the DMV's service centers)",
+   "short": "the District of Columbia government",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-district-of-columbia"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "DC Government Locations of the Office of the Chief Technology Officer (DC GIS, opendata.dc.gov), Creative Commons Attribution 4.0 International.",
+   "url": "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Service_WebMercator/MapServer/3",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "government office",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Public_Service_WebMercator/MapServer/3",
+    "where": "1=1",
+    "fields": "GLOBALID,NAME,ABBREV",
+    "page": 500,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "NAME",
+    "key": "GLOBALID",
+    "class_column": "ABBREV"
+   },
+   "class_map": {
+    "DMV": "public:motor vehicle office",
+    "MPD": "public:police station",
+    "DCCOURTS": "public:courthouse",
+    "DCCOURTA": "public:courthouse",
+    "DCPL": "public:library",
+    "*": "public:government office"
+   },
+   "exclude_pattern": [
+    {
+     "column": "NAME",
+     "pattern": "kiosk"
+    }
+   ],
+   "name_replace": [
+    [
+     "^(.+) Service Center$",
+     "\\1 DMV Service Center"
+    ],
+    [
+     "^Inspection Station$",
+     "DC DMV Inspection Station"
+    ],
+    [
+     "^Adjudication Services$",
+     "DC DMV Adjudication Services"
+    ]
+   ],
+   "history": "From the first build on (an office dropped from the layer is closed at its last build).",
+   "notes": "About 145 offices of the District's agencies, boards and commissions (many share the John A. Wilson Building or One Judiciary Square) and the DMV's service centers, inspection station and road test center. Self-service emissions kiosks are left out."
+  },
+  {
    "id": "abpp-battlefields",
    "name": "NPS American Battlefield Protection Program battlefields",
    "short": "the National Park Service",
@@ -10627,7 +11162,7 @@
   {
    "name": "CMS Hospital General Information",
    "licence": "Public domain",
-   "reason": "Has addresses but no coordinates; hospitals come from OpenStreetMap, GNIS, Overture and Foursquare."
+   "reason": "Superseded: the HRSA Site Dashboard (hrsa-site-dashboard) lists the same certified hospitals with positions."
   },
   {
    "name": "County assessor and parcel websites directly",
@@ -10852,7 +11387,7 @@
   {
    "name": "VA Facilities API and the NCA Gravesite Locator",
    "licence": "API key / burial records",
-   "reason": "The Facilities API needs a key, and the Gravesite Locator holds burial records, which are never used; the VA's own cemetery-sites dataset is used."
+   "reason": "The Gravesite Locator holds burial records, which are never used; the VA's own cemetery-sites dataset is used. The Facilities API is used for benefits offices with the owner's free key (va-benefits-offices)."
   },
   {
    "name": "Find a Grave and BillionGraves",
@@ -10877,7 +11412,7 @@
   {
    "name": "TTB permittees (wineries, breweries, distilleries) and the CMS Provider of Services file",
    "licence": "Public domain",
-   "reason": "Addresses without coordinates; placepacks has no address geocoder (lookups go from a position to a name, not back)."
+   "reason": "TTB permittees: addresses without coordinates, not added yet. The CMS Provider of Services file (data.cms.gov, open, addresses only; checked 26 November 2026) is not needed for current facilities: the HRSA Site Dashboard has the same certified providers with positions (hrsa-site-dashboard). Its participation and termination dates could seed the history of closed hospitals and nursing homes later, through the offline geocoder (the json_api fetch can read it per state from the CMS data API)."
   },
   {
    "name": "National Heritage Areas, BLM recreation sites and Bureau of Reclamation lakes",
@@ -11182,12 +11717,57 @@
   {
    "name": "Social Security Administration office locator (ssa.gov)",
    "licence": "US government work",
-   "reason": "ssa.gov refuses programs (its server answers \"Access Denied\" even to robots.txt, read 22 November 2026) and SSA publishes no download of its field offices; the services part finds Social Security offices in OpenStreetMap (and GSA's federal buildings in the extra part) instead."
+   "reason": "ssa.gov refuses programs (its server answers \"Access Denied\" even to robots.txt, read 22 November 2026) and SSA publishes no download of its field offices; the services part finds Social Security offices in OpenStreetMap (and GSA's federal buildings in the extra part) instead. Re-checked 26 November 2026: the only ArcGIS copies (SSA Field Offices) are made by Esri staff, with no licence and no SSA source statement, and data.gov has none."
   },
   {
-   "name": "VA Facilities API (api.va.gov)",
+   "name": "IRS Taxpayer Assistance Centers",
    "licence": "US government work",
-   "reason": "Public, but every request needs a free API key; none has been added (it would go only in the owner's settings or a repository secret). VA offices and clinics come from OpenStreetMap (veterans office) and VA national cemeteries from the extra part."
+   "reason": "Published only as web pages by state (irs.gov's contact-your-local-office pages), with no download or service of the offices; about 360 offices, most of them inside federal buildings already in the GSA inventory."
+  },
+  {
+   "name": "State Department passport agencies and acceptance facilities (iafdb.travel.state.gov)",
+   "licence": "US government work",
+   "reason": "The acceptance facility search answers one ZIP code at a time and no bulk list is published; the 29 passport agencies and centers are a short list inside federal buildings (GSA inventory). Post offices, which hold most acceptance desks, come from other sources."
+  },
+  {
+   "name": "USCIS field offices",
+   "licence": "US government work",
+   "reason": "Only web pages (about 88 offices); no download or service. Skipped as trivial, as the owner suggested for small office lists."
+  },
+  {
+   "name": "HUD field offices (HUD eGIS, HUD_FIELD_OFFICE)",
+   "licence": "US government work",
+   "reason": "Open, but trivial: 66 regional and field offices, last edited in 2023, most of them inside federal buildings already in the GSA inventory. Skipped as the owner suggested for small office lists."
+  },
+  {
+   "name": "Head Start centers (headstart.gov center locator; HHS ACF's Head_Start_Centers layer)",
+   "licence": "US government work",
+   "reason": "headstart.gov answers programs with 403 Forbidden and offers no bulk download; the Administration for Children and Families' ArcGIS layer (21,600 centers) was last edited in February 2021, and many centers are rooms in schools or churches, so a five-year-old copy would mislead."
+  },
+  {
+   "name": "American Job Centers (CareerOneStop)",
+   "licence": "Terms of use",
+   "reason": "careeronestop.org answers programs with 403 Forbidden and its web API needs a registered key under its own terms; the ArcGIS copies are made by individuals or counties without a licence. Pennsylvania's CareerLink offices come from data.pa.gov (pa-state-offices); OpenStreetMap tags others."
+  },
+  {
+   "name": "WIC clinics (state and city lists)",
+   "licence": "Varies",
+   "reason": "No national list; the city and state lists found (Dallas, Chicago) state no licence. New York's WIC vendors (stores) are used (ny-wic-vendors)."
+  },
+  {
+   "name": "USDA Service Centers (Esri copy, USDA_Service_Centers) and Rural Development offices",
+   "licence": "Not stated",
+   "reason": "The layer of that name is a copy made by Esri staff with the staff's contact names and no licence; FSA's own FSA Offices layer is used instead (usda-fsa-offices). Rural Development's offices have only a personal copy (usda_rd_offices) without a licence."
+  },
+  {
+   "name": "Missouri Department of Revenue license offices (data.mo.gov 835g-7keg); Denver DMV offices",
+   "licence": "Not stated / Denver terms",
+   "reason": "Missouri's dataset states no licence (as the other data.mo.gov datasets); Denver's is under Denver's terms, which are rejected. New York's and Pennsylvania's lists and DC's agency locations are used."
+  },
+  {
+   "name": "Statewide courthouse and county office layers (Kentucky, Texas THC, county portals)",
+   "licence": "Disclaimers only",
+   "reason": "The layers found carry only disclaimers ('as is', 'informational purposes') or ask to check with another agency, and state no licence; courthouses come from the GSA inventory (federal), the USGS National Structures Dataset (courthouses, city halls) and Wikidata."
   },
   {
    "name": "SAMHSA FindTreatment.gov treatment locator",
@@ -11217,7 +11797,7 @@
   {
    "name": "State DMV office lists",
    "licence": "Varies by state",
-   "reason": "No national open list; few states publish one. Motor vehicle offices come from OpenStreetMap by name and government tag (motor vehicle office); a state's open list can be added as its own source once its licence is checked."
+   "reason": "No national open list; few states publish one. Motor vehicle offices come from OpenStreetMap by name and government tag (motor vehicle office); New York's (ny-dmv-offices), Pennsylvania's (pa-state-offices) and the District of Columbia's (dc-government-locations) open lists are used."
   },
   {
    "name": "Vote.org polling place locator",

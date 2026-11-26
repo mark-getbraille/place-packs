@@ -364,9 +364,13 @@ jobs:
             sleep 30
           done
           exit 1
+      # VA_API_KEY (optional): the owner's free key for the VA's Facilities API (developer.va.gov), for the VA
+      # benefits offices (one request a state, sent in a header, never printed). Without the secret that source is
+      # skipped and the build goes on. Only this step sees it.
       - name: Fetch the region's sources and its previous packs
         env:
           GH_TOKEN: ${{ github.token }}
+          VA_API_KEY: ${{ secrets.VA_API_KEY }}
           REGION: ${{ matrix.region.id }}
           SLICE: ${{ matrix.region.slice }}
         run: |

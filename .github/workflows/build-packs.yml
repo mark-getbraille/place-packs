@@ -6,7 +6,7 @@
 #   even when nothing changed, and "seed_history" to seed the US address-range history from older TIGER years.
 # - plan: the regions to build. prepare: the national files (NAD, ZIP areas, public and private schools, colleges,
 #   libraries, historical counties, Canadian names, GeoNames, the UK's food hygiene ratings, and the Foursquare
-#   places of every covered country, read once), split into one
+#   places of every covered country, read once from the owner's upload in the release "uploaded-sources"), split into one
 #   slice per region; the NAD (found from its data.transportation.gov metadata) is kept in the Actions cache between
 #   runs and downloaded again only when its blobId or rowsUpdatedAt changes. The city and state open-data sources
 #   (Socrata portals) and the federal ArcGIS layers (historic places, PAD-US, bridges, dams, airports, stations,
@@ -130,8 +130,17 @@ jobs:
       # 7z, both on ubuntu-latest; installed here only if missing.
       - name: Check the zip tools
         run: command -v unzip >/dev/null || (sudo apt-get update && sudo apt-get install -y unzip)
+      # Foursquare's places come from this repository's release "uploaded-sources" (the owner's upload from Program
+      # Downloader, about 12 GB a month): read once here, one file at a time, into the national slice the regions
+      # share (placepacks/uploaded.py). The raw files wait on the runner's second, larger disk (/mnt) when it has
+      # one; gh uses this job's read-only token.
       - name: Download and split the national files
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          if [ -d /mnt ] && sudo mkdir -p /mnt/scratch && sudo chown "$(id -u):$(id -g)" /mnt/scratch; then
+            export PLACEPACKS_SCRATCH=/mnt/scratch
+          fi
           python -m placepacks.fetch --prepare --national national
           python -m placepacks.split national --out national-split
       - name: Save the NAD download in the cache

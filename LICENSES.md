@@ -122,6 +122,18 @@ licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD
   licence and is used, like the DBPR files, as a Florida public record (Chapter 119). New York's lottery, career
   center, Commission for the Blind and health facility lists are under the OPEN-NY terms. Child care lists keep
   centres only (never family or group homes) and no director's or contact person's name, telephone or e-mail.
+- **Government facts (licence `government-facts`, since November 2026):** the Social Security field offices
+  (`ssa-field-offices`, an ArcGIS copy of the Social Security Administration's office list published by Esri staff
+  without a licence; ssa.gov itself refuses programs), Recreation.gov's RIDB export (`ridb-recreation`, whose API
+  agreement keeps the vendor's rights and which states no licence) and California's health and human services files
+  (`ca-health-facilities`, `ca-child-care-centers`; the portal names only its "Terms of Use"). The owner decided (26
+  November 2026) to use government data regardless of a copy's missing licence or a site's own terms or robots.txt.
+  Federal works are public domain (17 U.S.C. 105), facts are not protected by copyright in the United States (Feist
+  v. Rural Telephone, 1991), and state facility lists are public records. Only facts are kept, collected politely
+  (identified, slow, never past a refusal or a challenge); staff names, personal telephone numbers, e-mail addresses
+  and internal figures are never kept. The National Park Service's Data API (`nps-places`) and the Forest Service's
+  Recreation Opportunities details are US government works (public domain); from the NPS only facts are read, never
+  its photos (often credited to others) or long descriptions.
 - **Chain store locators (source `chain-locators`, since November 2026):** store positions, addresses, phone
   numbers, store web pages and opening hours read by this project from big US chains' own public store locators
   (`placepacks/chains`). The chains grant no licence; these are facts, which are not protected by copyright in the

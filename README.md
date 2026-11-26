@@ -316,6 +316,39 @@ and others), and Buick, GMC, Ford and Lincoln dealers.
   Health Mart, Citgo, Choice Hotels, H&R Block, Best Western, the Stellantis dealers, Fastenal, Tractor Supply,
   Goodwill and Bitcoin Depot. They are listed with what each site answered in `placepacks/chains/__init__.py`.
 
+### Government places with details
+
+Some government lists give more than a name and a position. Since November 2026 the packs carry their public
+telephone numbers, opening hours (in OpenStreetMap's syntax, such as "Mo-Fr 09:00-16:00"), web pages and short
+accessibility notes, so a lookup such as "the nearest Social Security office" can say the address, the phone number
+and the hours (`placepacks/gov_details.py`):
+
+- **Social Security field offices** (`ssa-field-offices`, about 1,170): named "Social Security office, <city>",
+  with the address, phone number and weekday hours. ssa.gov refuses every program, so the list comes from an ArcGIS
+  copy of SSA's own office list (published by Esri staff, without a licence); the owner decided on 26 November 2026
+  to use it. Only the office's name, address, phone and hours are read; the copy's internal figures (costs, staff,
+  leases, waiting times, local statistics, fax numbers) are never asked for.
+- **Forest Service recreation sites** (`usfs-recreation-sites`): the existing sites now get their hours, season,
+  fees, reservation information, accessibility and phone number from the Forest Service's Recreation Opportunities
+  layer, joined by the site's id (or the same name within 300 m). No site is listed twice.
+- **National Park Service** (`nps-places`): parks, visitor centers, campgrounds and places from the NPS Data API,
+  with hours (including dated closures), phone and TTY numbers, web pages, campground accessibility and amenities.
+  It needs the owner's free key in the repository secret `NPS_API_KEY` (sign up at nps.gov/subjects/developer);
+  without it the source is skipped. A place the NPS's own points already have keeps that point and takes these
+  details.
+- **Recreation.gov** (`ridb-recreation`, about 15,000 places of every federal agency): campgrounds, day-use sites,
+  visitor centers, recreation areas and permit entry points, with phone, a reservable flag, ADA access and the first
+  sentence of the description. Included by the owner's decision of 26 November 2026, regardless of Recreation.gov's
+  terms. A place an agency's own layer already has (the same name within 100 m) is not added again; the agency's
+  point takes the details instead.
+- **California** (`ca-health-facilities`, `ca-child-care-centers`): CDPH's licensed hospitals, clinics and nursing
+  homes and CDSS's child care centres (never family child care homes), names and positions only.
+
+Government sites that refused a single polite request on 26 November 2026 (Head Start's locator, CareerOneStop,
+FDA's mammography file, the passport acceptance facility search, USCIS, ssa.gov) are recorded as blocked in
+sources.json's rejected list; nothing is done to get past a refusal. No staff names, personal phone numbers or
+e-mail addresses are kept from any of these lists.
+
 To build one region yourself:
 
 ```

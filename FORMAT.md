@@ -19,7 +19,7 @@ A pack is one SQLite file. Coordinates are whole microdegrees. Months are YYYYMM
 | area_types | id, type | an area's fine type: areas.id -> types.id |
 | brands | id, name, wikidata | the chain brands of the pack, each once ("Made-up Burgers", "Q9999901"; wikidata may be ""); since November 2026, absent in older packs |
 | point_brands | id, brand | a chain location's brand: points.id -> brands.id |
-| biz_details | id, phone, website, opening_hours | only in the businesses part, since November 2026 (absent in older packs): a business's contact details, points.id -> its phone, web address and opening hours ("Business contact details") |
+| biz_details | id, phone, website, opening_hours | in the businesses part, and in the extra part for the government sources' offices and sites, since November 2026 (absent in older packs): a business's or a public office's contact details, points.id -> its phone, web address and opening hours ("Business contact details", "Government places with details") |
 | notes | id, text | short notes about places, each once ("filming location of ..."); data only, never spoken |
 | point_notes | id, note | a point's note: points.id -> notes.id |
 | labels | key, lang, name | only in the optional "names" part: a place's name in another language, by the key of the place in the main packs ("wikidata:Q42", "fr", "Lac Champlain") |
@@ -92,7 +92,8 @@ table. Written by `placepacks/writer.py` (`PackWriter.add_point(..., contact=...
 `placepacks/contact.py`), read by `PackReader.details_of(key)` and by the "nearest" lookups (`placepacks.find`,
 `placepacks.local`), which join it to the points.
 
-Only the business directories give details (`contact.CONTACT_SOURCES`), and only these fields:
+Only the business directories and the government sources of public offices and sites give details
+(`contact.CONTACT_SOURCES`; the government ones are below, "Government places with details"), and only these fields:
 
 | Source | phone | website | opening_hours |
 |---|---|---|---|
@@ -134,6 +135,30 @@ and Foursquare
 (`lookup.join_details`). Size: about 50 bytes for each business of the directories on average (measured on a
 made-up pack with 70% phones, 55% web addresses and All The Places' hours; most of it is the web address), so a
 businesses part grows by about a quarter; the licence lists' points add nothing.
+
+## Government places with details (November 2026, still version 2)
+
+No new table: the extra part's `biz_details` (above) also holds the public phone, web page and opening hours of
+government offices and sites, and their notes hold the rest (`placepacks/gov_details.py`):
+
+| Source | phone | website | opening_hours | note |
+|---|---|---|---|---|
+| Social Security field offices (`ssa-field-offices`) | the office's number | none | weekday hours ("Mo-Fr 09:00-16:00") | "Address: 68 Sewall St, Ste 209, Augusta, ME 04330" |
+| Forest Service recreation sites (`usfs-recreation-sites`) | the site's number | its fs.usda.gov page | when the Recreation Opportunities layer's words are plain ("06:00-22:00", "24/7", "sunrise-sunset") | season, other hours, fees, reservations, accessibility, a closed status at the build |
+| National Park Service (`nps-places`) | the first voice number | its nps.gov page | the standard week and the exceptions not yet over ("Mo-Su 09:00-17:00; 2026 Nov 01-2027 Apr 30 off") | TTY, hours that could not be written, accessibility, amenities, reservable sites |
+| Recreation.gov (`ridb-recreation`) | the facility's number | a reservable campground's booking page | none | managing agency, reservable, ADA access, accessibility text, the description's first sentence |
+
+The person-name check of the directories does not apply to these sources (a "Lost Lake Campground" is not a
+person), and a note of `nps-places` keeps its TTY number (`note_keep_phones`); every other note still loses
+telephone numbers and e-mail addresses. `LocalServices.nearest` says an office's address from a note that starts
+"Address: " when the place has no OpenStreetMap address.
+
+Places listed twice: a source with `dedupe_against` and `dedupe_carry` (`nps-places` against `nps-poi` within
+400 m; `ridb-recreation` against the Forest Service, Park Service, BLM, Reclamation and TVA layers within 100 m) is
+not added where another source has the same normalised name nearby; instead the point that stays takes the removed
+point's phone, web page and hours that it lacks, and its note after its own (`PackWriter.drop_duplicates`). A lookup
+then gives each detail from the best source (`lookup.DETAIL_ORDER`: OpenStreetMap, All The Places, the chain store
+locators, the government sources, Overture, Foursquare).
 
 ## Utility service areas (November 2026, no pack change)
 

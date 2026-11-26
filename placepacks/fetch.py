@@ -834,45 +834,109 @@ ATP_PERSONAL = {"office": {"insurance", "estate_agent", "financial_advisor", "fi
 _PERSON = re.compile(r"^[A-Z][a-z]+(?: [A-Z]\.?)?(?: [A-Z][a-z'-]+){1,2}(?:,? (?:Jr|Sr|II|III)\.?)?$")
 
 
+ATP_FIELDS = ["key", "spider", "name", "branch", "brand", "brand_wikidata", "main_key", "main_value", "type", "lat",
+              "lon", "first", "last"]
+
+
+def _atp_members(path):
+    """(member name, bytes) of every .geojson file of an All The Places run: the .zip of the runs since November 2022
+    or the .tar.gz of the older ones (placepacks.atp_history reads those). A member larger than MAX_MEMBER_BYTES is
+    left out (read whole into memory, it could fill the runner's memory)."""
+    import tarfile
+    with open(path, "rb") as fh:
+        magic = fh.read(2)
+    if magic == b"PK":
+        with zipfile.ZipFile(path) as z:
+            for info in z.infolist():
+                if not info.filename.endswith(".geojson"):
+                    continue
+                try:
+                    yield info.filename, _read_member(z, info)
+                except ValueError:
+                    continue
+        return
+    with tarfile.open(path, "r:*") as tar:      # streamed, member by member; nothing is extracted to disk
+        for m in tar:
+            if not m.isfile() or not m.name.endswith(".geojson") or m.size > MAX_MEMBER_BYTES:
+                continue
+            fh = tar.extractfile(m)
+            if fh is not None:
+                yield m.name, fh.read(MAX_MEMBER_BYTES + 1)
+
+
+def _atp_features(data):
+    """The features of one spider's GeoJSON file. Some older runs have files that are not one valid document (cut
+    off, or one feature per line): then each line that is a feature on its own is read. An empty file gives none."""
+    try:
+        return json.loads(data.decode("utf-8", "replace")).get("features", []) or []
+    except (ValueError, AttributeError):
+        pass
+    found = []
+    for line in data.decode("utf-8", "replace").splitlines():
+        line = line.strip().rstrip(",")
+        if line.startswith("{") and '"Feature"' in line:
+            try:
+                found.append(json.loads(line))
+            except ValueError:
+                continue
+    return found
+
+
+def iter_atp(path, boxes):
+    """Every chain location of an All The Places run (a .zip or .tar.gz of one GeoJSON FeatureCollection per spider)
+    that falls in any of boxes ([(west, south, east, north)]), as a dict of ATP_FIELDS plus "skip": "" for a row
+    to keep, "personal" for an individual's office (insurance or estate agent, lawyer; left out), "noname" for a
+    location with neither a name nor a brand or with a person's name (left out). The key is the spider's name and
+    the spider's own reference for the store ("made_up_burgers:1234"), else the run's feature id: the same store
+    keeps it from run to run as long as the chain's locator keeps its reference."""
+    from placepacks import types as place_types
+    from placepacks.readers.osm import main_tag
+    for _, data in _atp_members(path):
+        for feat in _atp_features(data):
+            if not isinstance(feat, dict):
+                continue
+            geom, tags = feat.get("geometry") or {}, feat.get("properties") or {}
+            if geom.get("type") != "Point":
+                continue
+            try:
+                lon, lat = float(geom["coordinates"][0]), float(geom["coordinates"][1])
+            except (KeyError, IndexError, TypeError, ValueError):
+                continue
+            if not any(wb <= lon <= eb and sb <= lat <= nb for wb, sb, eb, nb in boxes):
+                continue
+            spider = str(tags.get("@spider", ""))
+            row = {"key": f"{spider}:{tags.get('ref') or feat.get('id', '')}", "spider": spider, "lat": f"{lat:.6f}",
+                   "lon": f"{lon:.6f}", "first": "", "last": "", "skip": ""}
+            if any(tags.get(k) in v for k, v in ATP_PERSONAL.items()):
+                row["skip"] = "personal"
+                yield row
+                continue
+            name = str(tags.get("name") or tags.get("brand") or "").strip()
+            if not name or _PERSON.match(name):
+                row["skip"] = "noname"
+                yield row
+                continue
+            text = {k: str(v) for k, v in tags.items()}
+            found = main_tag(text)
+            row.update(name=name, branch=text.get("branch", ""), brand=text.get("brand", ""),
+                       brand_wikidata=text.get("brand:wikidata", ""), main_key=found[0] if found else "",
+                       main_value=found[1] if found else "", type=place_types.osm(text))
+            yield row
+
+
 def atp_to_csv(zip_path, target, boxes):
     """Write the chain locations of an All The Places run (a .zip of one GeoJSON FeatureCollection per spider) that
     fall in any of boxes ([(west, south, east, north)]) as one CSV: key, spider, name, branch, brand, brand_wikidata,
-    the OSM-style tags that give the class and type, lat, lon. Offices of individuals and names that are a person's
-    are left out. Returns the number of rows."""
-    import zipfile
-    from placepacks import types as place_types
-    from placepacks.readers.osm import main_tag
+    the OSM-style tags that give the class and type, lat, lon, and first and last (empty here: the seeded history,
+    placepacks.atp_history.apply, fills them). Offices of individuals and names that are a person's are left out.
+    Returns the number of rows."""
     count = 0
-    fields = ["key", "spider", "name", "branch", "brand", "brand_wikidata", "main_key", "main_value", "type", "lat",
-              "lon"]
-    with zipfile.ZipFile(zip_path) as z, open(target, "w", newline="", encoding="utf-8") as out:
-        w = csv.writer(out)
-        w.writerow(fields)
-        for info in z.infolist():
-            if not info.filename.endswith(".geojson"):
-                continue
-            try:
-                data = json.loads(_read_member(z, info).decode("utf-8"))
-            except ValueError:
-                continue
-            for feat in data.get("features", []):
-                geom, tags = feat.get("geometry") or {}, feat.get("properties") or {}
-                if geom.get("type") != "Point":
-                    continue
-                lon, lat = geom["coordinates"][:2]
-                if not any(wb <= lon <= eb and sb <= lat <= nb for wb, sb, eb, nb in boxes):
-                    continue
-                if any(tags.get(k) in v for k, v in ATP_PERSONAL.items()):
-                    continue
-                name = (tags.get("name") or tags.get("brand") or "").strip()
-                if not name or _PERSON.match(name):
-                    continue
-                found = main_tag({k: str(v) for k, v in tags.items()})
-                spider = tags.get("@spider", "")
-                w.writerow([f"{spider}:{tags.get('ref') or feat.get('id', '')}", spider, name, tags.get("branch", ""),
-                            tags.get("brand", ""), tags.get("brand:wikidata", ""), found[0] if found else "",
-                            found[1] if found else "", place_types.osm({k: str(v) for k, v in tags.items()}),
-                            f"{lat:.6f}", f"{lon:.6f}"])
+    with open(target, "w", newline="", encoding="utf-8") as out:
+        w = csv.DictWriter(out, fieldnames=ATP_FIELDS, extrasaction="ignore")
+        w.writeheader()
+        for row in iter_atp(zip_path, boxes):
+            if not row["skip"]:
+                w.writerow(row)
                 count += 1
     return count
 
@@ -1785,12 +1849,27 @@ def prepare_national(entry, national, values):
         regions = [r for r in catalogue.regions().values() if catalogue.country_code(r) in entry["countries"] and
                    not r.get("parent")]         # a sub-region's cells are inside its parent's box
         from placepacks.regions import boxes_of
-        count = atp_to_csv(paths[0], os.path.join(folder, entry["id"] + ".csv"), [b for r in regions for b in boxes_of(r)])
+        target = os.path.join(folder, entry["id"] + ".csv")
+        count = atp_to_csv(paths[0], target, [b for r in regions for b in boxes_of(r)])
         for p in paths:
             os.remove(p)
             if os.path.exists(p + ".version"):
                 os.remove(p + ".version")
         print(f"{entry['id']}: {count:,} chain locations in the covered regions")
+        # The history seeded once from All The Places' archived runs (placepacks.atp_history; the workflow
+        # downloads it from the "seeds" release into PLACEPACKS_ATP_HISTORY): first months back to 2018, and the
+        # stores that have closed since. A seed that cannot be read leaves the CSV as it is (history from now on).
+        seed = os.environ.get("PLACEPACKS_ATP_HISTORY", "")
+        if seed:
+            from placepacks import atp_history
+            try:
+                got = atp_history.apply(target, seed)
+            except Exception as e:  # noqa: BLE001 - the latest run is still used, without the older months
+                print(f"{entry['id']}: the chain history seed was not used ({str(e)[:200]})")
+            else:
+                if got:
+                    print(f"{entry['id']}: chain history seed: {got[0]:,} stores with earlier months, "
+                          f"{got[1]:,} closed stores added")
     if f.get("convert") == "light_list":
         paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
         count = light_list_to_csv(paths, os.path.join(folder, entry["id"] + ".csv"))

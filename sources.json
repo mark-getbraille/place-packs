@@ -4003,7 +4003,9 @@
     "lon": "lon",
     "name": "name",
     "key": "key",
-    "class_column": "main_value"
+    "class_column": "main_value",
+    "first": "first",
+    "last": "last"
    },
    "class_map": {
     "*": "business"
@@ -4012,8 +4014,13 @@
    "type_map": "humanise",
    "brand_column": "brand",
    "brand_wikidata_column": "brand_wikidata",
-   "history": "The latest weekly run, then month by month from the first build (a store that leaves the chains' locators is closed at its last build).",
-   "notes": "About 40 million locations worldwide from 5,800 spiders over chains' own store locators, kept by the covered regions' boxes. Offices of individuals (insurance and estate agents, financial advisers, lawyers) and names that are a person's are left out. The brand and its Wikidata id are kept beside each location (data only). Past runs back to 2017 are archived and could seed earlier dates (one a quarter: 55 MB in 2020, 2.4 GB in 2026)."
+   "history": "Seeded once from the archived past runs (placepacks.atp_history, the workflow's seed_chain_history): the largest run of each quarter since April 2018, when the archive's files start, so a store has its first and last quarter back to 2018 and a store that closed since is kept, closed at its last quarter. Then the latest weekly run, month by month (a store that leaves the chains' locators is closed at its last build).",
+   "history_seed": {
+    "history": "https://data.alltheplaces.xyz/runs/history.json",
+    "from_year": 2017,
+    "group_bytes": 5000000000
+   },
+   "notes": "About 40 million locations worldwide from 5,800 spiders over chains' own store locators, kept by the covered regions' boxes. Offices of individuals (insurance and estate agents, financial advisers, lawyers) and names that are a person's are left out. The brand and its Wikidata id are kept beside each location (data only). Past runs are archived from April 2018 (the 2017 runs are listed without files): one a quarter, 35 MB in 2018 and 2.7 GB in 2026, about 16 GB in all, read once by the history seed, whose result (about 1 GB) is kept in the \"seeds\" release. Stores are followed by spider and reference; when a reference changes, by the same name or brand within about 100 m."
   },
   {
    "id": "ny-thruway-travel-plazas",

@@ -61,8 +61,8 @@ def test_units():
 
 
 def test_the_workflow():
-    """Monthly on the 2nd and by hand (regions, force, seed); only GITHUB_TOKEN; packs, then packs-previous.json,
-    then packs.json; the keep-alive commit; untrusted inputs only through the environment."""
+    """Monthly on the 2nd and by hand (regions, force, seed); only GITHUB_TOKEN (and one read-only API key); packs,
+    then packs-previous.json, then packs.json; the keep-alive commit; untrusted inputs only through the environment."""
     text = open(os.path.join(ROOT, ".github", "workflows", "build-packs.yml"), encoding="utf-8").read()
     doc = yaml.safe_load(text)
     on = doc.get("on", doc.get(True))
@@ -84,7 +84,10 @@ def test_the_workflow():
                 assert re.fullmatch(r"actions/[\w/-]+@[0-9a-f]{40}", step["uses"]), step["uses"]
             if step.get("uses", "").startswith("actions/checkout@"):
                 assert step.get("with", {}).get("persist-credentials", True) is (name == "publish"), name
-    assert "secrets." not in text and "github.token" in text
+    # Besides GITHUB_TOKEN, only optional read-only API keys (such as NREL_API_KEY for the AFDC's fuel stations, given
+    # to the prepare job's download step alone: tests/test_federal_lists.py); never a token that could write.
+    assert all(re.fullmatch(r"secrets\.[A-Z0-9_]+_API_KEY", s) for s in re.findall(r"secrets\.\w+", text))
+    assert "github.token" in text
     jobs = doc["jobs"]
     assert list(jobs) == ["plan", "chain-plan", "chain-read", "chain-store", "prepare", "build", "publish"]
     assert jobs["build"]["strategy"]["max-parallel"] <= 10 and jobs["build"]["timeout-minutes"] <= 360

@@ -18,7 +18,9 @@
 #   "seeds" release. publish: the new packs under dated names (core and extra in the "packs" release; names,
 #   businesses and addresses in their own "packs-detail-YYYYMMDD" release, packs.json "release"), then packs-previous.json (the list before), then
 #   packs.json last; then the files neither list names are deleted. Only the repository's own GITHUB_TOKEN is used,
-#   and one optional read-only key: the secret NREL_API_KEY for the fuel stations, given to the prepare step alone.
+#   and optional read-only keys: the secrets NREL_API_KEY (fuel stations) and NPS_API_KEY (the National Park
+#   Service's Data API: park, visitor center and campground details), given to the prepare step alone, and
+#   VA_API_KEY (VA benefits offices), given to the region fetch step alone.
 # - Parts: core, extra, names, businesses, addresses, navigation and services (placepacks/fmt.py). Sub-regions: a region too large for one
 #   pack (England, Texas, ...) is built as its children (regions.json "children"); each child reads its parent's
 #   national slice and its parent's OpenStreetMap extract, clipped with osmium-tool. A child's first build takes its
@@ -261,10 +263,15 @@ jobs:
       # NREL_API_KEY (optional): the free key of the National Laboratory of the Rockies' developer network, for the
       # Alternative Fuels Data Center's stations (one request a month, sent in a header, never printed). Without the
       # secret the public DEMO_KEY is used. Only this step sees it.
+      # NPS_API_KEY (optional): the owner's free key for the National Park Service's Data API (nps.gov/subjects/
+      # developer), for the parks', visitor centers' and campgrounds' hours, phones and accessibility (source
+      # nps-places, about 25 requests a month, sent in a header, never printed). Without the secret that source is
+      # skipped and the build goes on. Only this step sees it.
       - name: Download and split the national files
         env:
           GH_TOKEN: ${{ github.token }}
           NREL_API_KEY: ${{ secrets.NREL_API_KEY }}
+          NPS_API_KEY: ${{ secrets.NPS_API_KEY }}
         run: |
           if [ -d /mnt ] && sudo mkdir -p /mnt/scratch && sudo chown "$(id -u):$(id -g)" /mnt/scratch; then
             export PLACEPACKS_SCRATCH=/mnt/scratch

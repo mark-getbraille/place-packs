@@ -50,6 +50,12 @@ Each source's catalogue "fetch" says how:
                   (loc.gov/nls/find-your-library/), read once a month into a CSV of library names and street
                   addresses (nls_to_csv; librarians' names, telephone numbers and e-mail addresses are never read),
                   then placed by the offline geocoder
+  national + "convert": "ssa_offices", "nps_api" or "ridb": government places with their phone, opening hours,
+                  web page and accessibility (Social Security offices, the National Park Service's Data API with the
+                  NPS_API_KEY secret, Recreation.gov's RIDB export), each read by its own module into one CSV
+                  (placepacks/gov_details.py)
+  arcgis + "join": a second layer's details joined to the first layer's rows (the Forest Service's Recreation
+                  Opportunities joined to its recreation sites, placepacks/usfs_details.py)
   national + "key_header": an API that wants a key (the AFDC fuel stations): the key is read from an environment
                   variable (a GitHub secret) and sent in a header, with the publisher's demonstration key when the
                   variable is empty (key_headers)
@@ -876,6 +882,11 @@ def fetch_arcgis(entry, region, folder, fingerprint, sleep=time.sleep):
                 w.writerow(row)
                 rows += 1
     os.replace(target + ".partial", target)
+    if f.get("join"):
+        # The Forest Service's recreation details (hours, season, accessibility), joined to its sites
+        # (placepacks/usfs_details.py): the region's records of a second layer, matched to these rows.
+        from placepacks import usfs_details
+        usfs_details.join(entry, region, folder, target, sleep)
     return {"ok": True, "version": version, "path": target, "date": datetime.date.today().isoformat()}
 
 
@@ -2126,6 +2137,12 @@ def prepare_national(entry, national, values):
     folder = os.path.join(national, entry["id"])
     if f.get("queries"):
         prepare_socrata(entry, folder)
+        return
+    from placepacks import gov_details
+    if f.get("convert") in gov_details.CONVERTERS:
+        # Government places with details (Social Security offices, the NPS Data API, Recreation.gov's RIDB):
+        # their own module asks the publisher and writes the CSV (placepacks/gov_details.py).
+        gov_details.prepare(entry, folder)
         return
     files = national_files(entry, values)
     if not files:

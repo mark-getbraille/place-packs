@@ -126,6 +126,8 @@ def test_round_twelve_sources_are_open():
     assert {"usgs-structures", "us-post-offices", "statcan-odbus", "cpcad", "ourairports", "statcan-csd"} <= ids
     assert not {"bc-parks", "ontario-parks", "parks-canada-boundaries", "ny-rest-areas"} & ids
     names = " ".join(r["name"] for r in catalogue.load()["rejected"])
-    for n in ("Intercity Bus Atlas", "RIDB", "NHGIS", "MINFILE", "Abandoned Mines", "Canadian Register of Historic",
+    # RIDB moved to the accepted sources (ridb-recreation) by the owner's decision of 26 November 2026.
+    assert "ridb-recreation" in ids
+    for n in ("Intercity Bus Atlas", "NHGIS", "MINFILE", "Abandoned Mines", "Canadian Register of Historic",
               "OSHA", "Wage and Hour", "County Business Patterns"):
         assert n in names, n

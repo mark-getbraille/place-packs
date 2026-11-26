@@ -114,11 +114,13 @@ def test_the_rejected_list_is_updated():
     assert "abuse detection" in rejected["FDA certified mammography facilities (accessdata.fda.gov public.zip)"]
     hospices = next(v for k, v in rejected.items() if k.startswith("CMS Provider Data: nursing homes"))
     assert "hospices" in hospices and "on purpose" in hospices
-    assert any(k.startswith("California CHHS") for k in rejected)
+    # California's licensing files are used since the owner's decision of 26 November 2026 (government data
+    # regardless of the portal's terms): ca-health-facilities and ca-child-care-centers.
+    assert not any(k.startswith("California CHHS") for k in rejected)
 
 
 def test_hospices_and_home_care_stay_out_of_every_health_list():
-    for sid in ("ny-health-facilities", "ia-health-facilities", "hi-health-facilities"):
+    for sid in ("ny-health-facilities", "ia-health-facilities", "hi-health-facilities", "ca-health-facilities"):
         cmap = entry_of(sid)["class_map"]
         assert cmap["*"] == ""
         assert not any(re.search(r"hospice|home health|home care|foster", k, re.I) for k in cmap), sid

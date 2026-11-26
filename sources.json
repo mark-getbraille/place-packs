@@ -1,5 +1,5 @@
 {
- "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). One exception, by the owner's decision of 26 November 2026: chain-locators, facts read from big chains' own store locators (licence store-locator-facts). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
+ "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). Two exceptions, by the owner's decisions of 26 November 2026: chain-locators, facts read from big chains' own store locators (licence store-locator-facts), and government facts used regardless of a copy's missing licence or a site's own terms (licence government-facts: the Social Security offices' ArcGIS copy, Recreation.gov's RIDB export, California's health and human services files). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
  "settings": {
   "tiger_year": "2025",
   "tiger_seed_years": [
@@ -163,6 +163,11 @@
   "store-locator-facts": {
    "name": "Facts read from each chain's own public store locator (store positions, addresses, telephone numbers, web pages and opening hours). The chains grant no licence; facts are not protected by copyright in the United States (Feist Publications v. Rural Telephone Service, 499 U.S. 340, 1991). Collected and published by the owner's decision of 26 November 2026, also where a chain's terms or robots.txt say otherwise; collected politely (identified, rate-limited, never past a refusal or a challenge)",
    "url": "https://supreme.justia.com/cases/federal/us/499/340/",
+   "file": ""
+  },
+  "government-facts": {
+   "name": "Facts published by US government agencies, used by the owner's decision of 26 November 2026 even where the copy carries no licence or the site's own terms or robots.txt say otherwise (the Esri-hosted copy of the Social Security Administration's field office list, Recreation.gov's RIDB export, the California Health and Human Services open data portal). Federal works are public domain (17 U.S.C. 105) and facts are not protected by copyright in the United States (Feist Publications v. Rural Telephone Service, 499 U.S. 340, 1991); state agencies' facility lists are public records. Only facts are kept (names, positions, addresses, public telephone numbers, hours, accessibility), collected politely (identified, rate-limited, never past a refusal or a challenge)",
+   "url": "https://www.usa.gov/government-works",
    "file": ""
   }
  },
@@ -3299,14 +3304,14 @@
   },
   {
    "id": "usfs-recreation-sites",
-   "name": "US Forest Service recreation sites",
+   "name": "US Forest Service recreation sites, with their hours, season, fees, accessibility and telephone number",
    "short": "the US Forest Service",
    "part": "extra",
    "countries": [
     "US"
    ],
    "licence": "US-Government-Work",
-   "attribution": "Recreation sites from the US Forest Service's Enterprise Data Warehouse (public domain).",
+   "attribution": "Recreation sites from the US Forest Service's Enterprise Data Warehouse (InfraRecreationSites), with their visitor details from its Recreation Opportunities layer (public domain).",
    "url": "https://data.fs.usda.gov/geodata/edw/datasets.php",
    "reader": "tabular",
    "kind": "points",
@@ -3314,9 +3319,20 @@
     "method": "arcgis",
     "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_InfraRecreationSites_01/MapServer/0",
     "where": "development_status = 'EXISTING'",
-    "fields": "site_id,site_name,site_subtype",
+    "fields": "site_id,site_name,site_subtype,site_cn,site_phone_nbr",
     "page": 500,
-    "pause": 0.5
+    "pause": 0.5,
+    "join": {
+     "url": "https://apps.fs.usda.gov/arcx/rest/services/EDW/EDW_RecreationOpportunities_01/MapServer/0",
+     "where": "1=1",
+     "fields": "recareaname,recareaid,infra_cn,recareaurl,open_season_start,open_season_end,operational_hours,feedescription,reservation_info,accessibility,openstatus",
+     "on": "site_cn",
+     "join_on": "infra_cn",
+     "name": "site_name",
+     "join_name": "recareaname",
+     "page": 500,
+     "pause": 0.5
+    }
    },
    "member": "*.csv",
    "columns": {
@@ -3348,9 +3364,16 @@
     "*": ""
    },
    "history": "From the first build on.",
-   "notes": "Read from the Forest Service's EDW map service (no RIDB key). Existing developed sites only; recreation residences (private cabins), dispersed camping spots and single camp units are left out.",
+   "notes": "Read from the Forest Service's EDW map service (no RIDB key). Existing developed sites only; recreation residences (private cabins), dispersed camping spots and single camp units are left out. Details (November 2026): the region's records of the Recreation Opportunities layer (about 14,200 in the country, the data behind fs.usda.gov's recreation pages; public domain, no key) are joined to these sites when they are fetched, by its infra_cn (the site's site_cn), else by the same name within 300 m (placepacks/usfs_details.py). A record that matches no site is not added, so no place is listed twice. The note holds the season, hours that are not plain enough for OpenStreetMap's syntax, fees, reservation information, the accessibility text and a closed status at the build (data only, never spoken); HTML is taken out, and so are telephone numbers and e-mail addresses inside the text. The layer's long descriptions are not read.",
    "type_column": "site_subtype",
-   "type_map": "humanise"
+   "type_map": "humanise",
+   "contact_columns": {
+    "phone": "site_phone_nbr",
+    "website": "_website",
+    "opening_hours": "_hours"
+   },
+   "note_column": "_note",
+   "contact": "The site's own telephone number (site_phone_nbr, a Forest Service office number), its page on fs.usda.gov and its opening hours in OpenStreetMap's syntax when the Recreation Opportunities layer's words are plain enough (placepacks/hours.py, from_text); otherwise the words are kept in the note. Cleaned by placepacks/contact.py."
   },
   {
    "id": "nces-private-schools",
@@ -4101,6 +4124,63 @@
    "notes": "Named, publicly displayed park trails as lines (about 31,000 segments nationally)."
   },
   {
+   "id": "nps-places",
+   "name": "National Park Service parks, visitor centers, campgrounds and places, with hours, telephone and TTY, accessibility and amenities (NPS Data API, with the owner's free key)",
+   "short": "the National Park Service",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Parks, visitor centers, campgrounds and places from the National Park Service's Data API (developer.nps.gov), a work of the United States government (public domain); facts only.",
+   "url": "https://www.nps.gov/subjects/developer/index.htm",
+   "reader": "tabular",
+   "kind": "points",
+   "verify": true,
+   "fetch": {
+    "method": "national",
+    "convert": "nps_api",
+    "key_env": "NPS_API_KEY",
+    "pause": 2
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "class_column": "kind"
+   },
+   "class_map": {
+    "park": "park:national park unit",
+    "visitor center": "public:visitor center",
+    "campground": "park:campground",
+    "place": "landmark:point of interest",
+    "*": ""
+   },
+   "type_column": "type",
+   "type_map": "humanise",
+   "contact_columns": {
+    "phone": "phone",
+    "website": "website",
+    "opening_hours": "opening_hours"
+   },
+   "note_column": "note",
+   "note_keep_phones": true,
+   "dedupe_against": [
+    "nps-poi"
+   ],
+   "dedupe_m": 400,
+   "dedupe_carry": true,
+   "history": "From the first build that has the key on (the API has no opening dates); a place that leaves the API is closed at its last build.",
+   "contact": "The first voice telephone number, the place's nps.gov page and its hours in OpenStreetMap's syntax, with the dated exceptions that have not ended (placepacks/hours.py, nps_hours: \"Mo-Su 09:00-17:00; 2026 Nov 01-2027 Apr 30 off\"). When the API's words for a day are not plain hours, the hours description is kept in the note instead. The TTY number is kept in the note (\"TTY: ...\"). Fax numbers and e-mail addresses are never read.",
+   "notes": "About 470 park units, their visitor centers and campgrounds, and the places the parks describe (endpoints parks, visitorcenters, campgrounds and places; about 25 requests a month, 2 seconds apart, by the prepare job; placepacks/nps_api.py). The API needs a free key: the owner signs up at nps.gov/subjects/developer (the key arrives by e-mail) and stores it as the repository secret NPS_API_KEY, which only the prepare step reads; it is sent in the X-Api-Key header, never in the address, and never printed. Without the secret this source is skipped and the build goes on. A record with the same name as a point of nps-poi within 400 m is that point: the nps-poi point stays and takes these details (dedupe_carry), so a place is not listed twice. The note holds the TTY number, hours that could not be written in OpenStreetMap's syntax, campground accessibility (wheelchair access, ADA information, access roads, RV and trailer lengths), amenities and the number of reservable sites (data only, never spoken). Photos (often credited to others), long descriptions, e-mail addresses and anything with a credit line are never read."
+  },
+  {
    "id": "wild-scenic-rivers",
    "name": "National Wild and Scenic Rivers",
    "short": "the US Forest Service",
@@ -4326,6 +4406,47 @@
    ],
    "history": "From the first build on (the API has no opening dates); an office that leaves the API is closed at its last build.",
    "notes": "Veterans Benefits Administration regional offices and benefits offices (the HRSA layer above has only health facilities). The API needs a free key: the owner asks for one at developer.va.gov and stores it as the repository secret VA_API_KEY, which the build's fetch step reads; it is sent in a header, never in the address, and never printed. Without the secret this source is skipped and the build goes on. One request a state each month. VetSuccess on Campus counsellors (inside college buildings), intake sites on military bases and out-based staff are left out: they would name a desk inside another place. Only names and positions are kept (no phone numbers)."
+  },
+  {
+   "id": "ssa-field-offices",
+   "name": "Social Security field offices, with their address, telephone number and weekday hours",
+   "short": "the Social Security Administration",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "government-facts",
+   "attribution": "Social Security field offices from the Social Security Administration's office list, as published in an ArcGIS copy (SSA_Field_Offices) by Esri; facts of a United States government agency.",
+   "url": "https://services2.arcgis.com/cPVqgcKAQtE6xCja/arcgis/rest/services/SSA_Field_Offices/FeatureServer/0",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "social security office",
+   "fetch": {
+    "method": "national",
+    "url": "https://services2.arcgis.com/cPVqgcKAQtE6xCja/arcgis/rest/services/SSA_Field_Offices/FeatureServer/0",
+    "convert": "ssa_offices",
+    "pause": 2
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "state",
+    "equals": "{code}"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key"
+   },
+   "contact_columns": {
+    "phone": "phone",
+    "opening_hours": "opening_hours"
+   },
+   "note_column": "note",
+   "history": "From the first build on (the list has no opening dates); an office that leaves the list is closed at its last build.",
+   "contact": "The office's public telephone number and its weekday hours in OpenStreetMap's syntax (\"Mo-Fr 09:00-16:00\"; days with other hours written apart), from the list's MONDAY..FRIDAY_OPEN_TIME and _CLOSE_TIME (placepacks/hours.py, weekday_table). The address is the place's note (\"Address: 68 Sewall St, Ste 209, Augusta, ME 04330\"), which the \"nearest Social Security office\" lookup says.",
+   "notes": "About 1,170 field offices, named \"Social Security office, <city>\", at the list's own points. ssa.gov refuses every program (\"Access Denied\", even for robots.txt), so this ArcGIS copy of SSA's own list, published by Esri's health GIS staff without a licence, is used by the owner's decision of 26 November 2026; no evasion of ssa.gov's block is ever tried. Read once a month by the prepare job (one or two requests, placepacks/ssa_offices.py) and split per state. Only the office code, name, address lines, city, state, ZIP code, telephone number and weekday opening and closing times are asked for: the layer's internal columns (costs, staff numbers, square feet, lease dates, waiting times, utilisation, local demographics, fax numbers) are never requested or stored."
   },
   {
    "id": "hrsa-site-dashboard",
@@ -11558,6 +11679,73 @@
    "notes": "About 1,370 boat ramps, campgrounds, marinas, stream access sites, overlooks, day-use areas and visitor centers on the TVA's lakes in Tennessee, Alabama, Kentucky, Mississippi, Georgia, North Carolina and Virginia. TVA's parking areas and restrooms are left out; the operator, address and editors' names are not read. Licence: the layer says only that TVA Natural Resources makes the data publicly available. The TVA is a corporate agency of the United States and its employees are federal employees, so its work is treated as a US government work (17 U.S.C. 105); TVA's legal notices page could not be read from the build machines (403) to confirm it (26 November 2026)."
   },
   {
+   "id": "ridb-recreation",
+   "name": "Recreation.gov facilities, recreation areas and permit entrances of every federal agency (RIDB full export), with telephone, reservations and ADA access",
+   "short": "Recreation.gov",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "government-facts",
+   "attribution": "Data Source: Recreation.gov (the Recreation Information Database, RIDB, full export); facts about federal recreation places.",
+   "url": "https://ridb.recreation.gov/download",
+   "reader": "tabular",
+   "kind": "points",
+   "fetch": {
+    "method": "national",
+    "convert": "ridb",
+    "pause": 2
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "class_column": "kind"
+   },
+   "class_map": {
+    "campground": "park:campground",
+    "visitor center": "public:visitor center",
+    "recreation site": "park:recreation site",
+    "memorial": "landmark:memorial",
+    "museum": "landmark:museum",
+    "library": "public:library",
+    "archives": "public:archives",
+    "fish hatchery": "public:fish hatchery",
+    "recreation area": "park:recreation area",
+    "permit entry point": "park:permit entry point",
+    "trailhead": "park:trailhead",
+    "*": ""
+   },
+   "type_column": "type",
+   "type_map": "humanise",
+   "skip_names": "^(visitor cent(er|re)|campground|trailhead|day use( area| site)?|picnic (area|site)|boat (ramp|launch)|parking( area| lot)?|restrooms?|unnamed|n/?a|test.*)$",
+   "contact_columns": {
+    "phone": "phone",
+    "website": "website"
+   },
+   "note_column": "note",
+   "dedupe_against": [
+    "usfs-recreation-sites",
+    "nps-poi",
+    "nps-places",
+    "blm-recreation-sites",
+    "blm-accessible-recreation",
+    "reclamation-recreation-sites",
+    "tva-recreation-points"
+   ],
+   "dedupe_m": 100,
+   "dedupe_carry": true,
+   "history": "From the first build on (the export has no opening dates); a place that leaves the export is closed at its last build.",
+   "contact": "The facility's or area's public telephone number (cleaned by placepacks/contact.py: the first number only) and, for a reservable campground, its Recreation.gov booking page. No hours (the export has none in a usable form). E-mail addresses are never read.",
+   "notes": "About 15,000 places: campgrounds, day-use and other recreation sites, visitor centers, memorials, museums, libraries and fish hatchery visitor sites, the recreation areas' points, and the permit entry points and trailheads of wilderness permits, of the Forest Service, the Army Corps of Engineers, the Park Service, BLM, Fish and Wildlife, Reclamation and others. RIDB was rejected before (Recreation.gov's API agreement keeps the vendor's rights in its materials and recreation.gov states no licence); the owner decided on 26 November 2026 to include it regardless of those terms. The export (about 250 MB, stored uncompressed) is read once a month by the prepare job with about ten range requests for the five tables used (about 32 MB; placepacks/ridb.py), then split by position. Tickets, passes, tree permits, timed entries and venue bookings are not places and are left out; so are places without coordinates and names that only say what the thing is (\"Visitor Center\", \"Trailhead\"). The note says who manages the place, whether it is reservable, its ADA access field, its accessibility text and the first sentence of its description (at most 200 characters; a sentence about whom to call or e-mail is dropped); full descriptions, directions, photos, links and e-mail addresses are never kept. A place the Forest Service, Park Service, BLM, Reclamation or TVA layers already have (the same name within 100 m) is not added again: the agency's own point stays and takes these details (dedupe_carry)."
+  },
+  {
    "id": "epa-water-service-areas",
    "name": "EPA community water system service areas (the water utility serving each place, estimated)",
    "short": "the U.S. Environmental Protection Agency",
@@ -12489,6 +12677,65 @@
    "notes": "About 4,500 licensed child care centers of Michigan, with the layer's own points (Michigan is not in the NAD). Family homes (1-6 children) and group homes (7-12) are left out. Centres only: family child care homes, group homes and other home-based care are left out (by the portal query and again by the class map), as they are people's homes. Only the centre's name, position and dates are kept: the director's or contact person's name, telephone numbers and e-mail addresses are never asked for."
   },
   {
+   "id": "ca-child-care-centers",
+   "name": "California licensed child care centers (CDSS Community Care Licensing)",
+   "short": "the California Department of Social Services",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-california"
+   ],
+   "licence": "government-facts",
+   "attribution": "Community Care Licensing child care centers of the California Department of Social Services (data.chhs.ca.gov, dataset ccl-facilities); centre names, located points and first licence dates only.",
+   "url": "https://data.chhs.ca.gov/dataset/ccl-facilities",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "national",
+    "url": "https://data.chhs.ca.gov/datastore/dump/7aed8063-cea7-4367-8651-c81643164ae0?format=csv",
+    "file": "child-care-centers.csv",
+    "pause": 3
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "facility_state",
+    "equals": "{code}"
+   },
+   "exclude": {
+    "column": "facility_status",
+    "values": [
+     "CLOSED",
+     "PENDING",
+     "INACTIVE"
+    ]
+   },
+   "geocode": {
+    "street": "facility_address",
+    "city": "facility_city",
+    "zip": "facility_zip",
+    "from": "nad"
+   },
+   "columns": {
+    "name": "facility_name",
+    "key": "facility_number",
+    "first": "license_first_date",
+    "class_column": "facility_type"
+   },
+   "class_map": {
+    "DAY CARE CENTER": "business:child care center",
+    "SINGLE LICENSED CHILD CARE CENTER": "business:child care center",
+    "DAY CARE CENTER - ILL CENTER": "business:child care center",
+    "INFANT CENTER": "business:infant care center",
+    "SCHOOL AGE DAY CARE CENTER": "business:school-age child care center",
+    "*": ""
+   },
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "history": "Each centre from its first licence date; one that leaves the list or is closed is closed at its last build.",
+   "notes": "About 14,000 licensed child care centers, infant centers and school-age centers of California, located by the offline geocoder. Centres only: the family child care homes (people's homes) are a separate file that is never read. Closed, pending and inactive licences are left out. data.chhs.ca.gov names only its \"Terms of Use\"; used by the owner's decision of 26 November 2026 (licence government-facts). One download a month by the prepare job, split per state. Only the centre's name, address (for locating it), type and first licence date are read: the licensee, the administrator's name and the telephone number are never kept."
+  },
+  {
    "id": "ny-health-facilities",
    "name": "New York State health facilities (hospitals and their clinics, diagnostic and treatment centers, nursing homes, adult homes)",
    "short": "the New York State Department of Health",
@@ -12703,6 +12950,60 @@
    "still_open_months": 36,
    "history": "Each facility under each of its names from the first to the last year it reported (2020 on), so a renamed nursing home keeps its old name with its years; the registry is published about two years after the year, so a facility in the newest year is open.",
    "notes": "About 210 chronic and convalescent nursing homes and rest homes with nursing supervision, located by the offline geocoder. The nursing homes are also in hrsa-site-dashboard; this list adds their former names and years. Residents' statistics, rates and telephone numbers are never read."
+  },
+  {
+   "id": "ca-health-facilities",
+   "name": "California licensed health facilities (hospitals, clinics, nursing homes, dialysis and surgery centers; CDPH)",
+   "short": "the California Department of Public Health",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-california"
+   ],
+   "licence": "government-facts",
+   "attribution": "Healthcare Facility Locations of the California Department of Public Health (data.chhs.ca.gov, dataset healthcare-facility-locations); facility names, kinds, positions and licence dates only.",
+   "url": "https://data.chhs.ca.gov/dataset/healthcare-facility-locations",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "fetch": {
+    "method": "national",
+    "url": "https://data.chhs.ca.gov/datastore/dump/f0ae5731-fef8-417f-839d-54a0ed3a126e?format=csv",
+    "file": "health-facility-locations.csv",
+    "pause": 3
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "LATITUDE",
+    "lon": "LONGITUDE"
+   },
+   "columns": {
+    "lat": "LATITUDE",
+    "lon": "LONGITUDE",
+    "name": "FACNAME",
+    "key": "FACID",
+    "first": "INITIAL_LICENSE_DATE",
+    "class_column": "FAC_FDR"
+   },
+   "class_map": {
+    "GENERAL ACUTE CARE HOSPITAL": "public:hospital",
+    "ACUTE PSYCHIATRIC HOSPITAL": "public:psychiatric hospital",
+    "CHEMICAL DEPENDENCY RECOVERY HOSPITAL": "public:addiction treatment hospital",
+    "SKILLED NURSING FACILITY": "public:nursing home",
+    "PRIMARY CARE CLINIC": "public:clinic",
+    "SURGICAL CLINIC": "public:surgery center",
+    "CHRONIC DIALYSIS CLINIC": "public:dialysis center",
+    "REHABILITATION CLINIC": "public:rehabilitation clinic",
+    "PSYCHOLOGY CLINIC": "public:psychology clinic",
+    "ADULT DAY HEALTH CARE": "public:adult day health center",
+    "PEDIATRIC DAY HEALTH & RESPITE CARE FACILITY": "public:pediatric day health center",
+    "ALTERNATIVE BIRTHING CENTER": "public:birth center",
+    "*": ""
+   },
+   "history": "Each facility from its initial licence date; one that leaves the list is closed at its last build.",
+   "notes": "About 7,000 open facilities licensed by CDPH with their positions. Home health agencies, hospices and hospice facilities, intermediate care homes for people with developmental disabilities and congregate living facilities (small homes in houses), correctional treatment centers and referral agencies are left out. data.chhs.ca.gov names only its \"Terms of Use\" (its terms page refused programs on 26 November 2026); the owner decided on 26 November 2026 to use government data regardless (licence government-facts). One download a month by the prepare job (the portal's datastore dump), split by position. Only names, kinds, positions and licence dates are read: the administrator's name, e-mail addresses, telephone and fax numbers and the licensee are never kept."
   },
   {
    "id": "pa-hunting-licence-agents",
@@ -13272,7 +13573,7 @@
   {
    "name": "National Heritage Areas",
    "licence": "Not found",
-   "reason": "No official open service or download was found (only third-party copies); their lands are in PAD-US. BLM recreation sites and Bureau of Reclamation recreation sites, rejected here before, were found as the agencies' own ArcGIS layers on 26 November 2026 and are now used (blm-recreation-sites, blm-accessible-recreation, reclamation-recreation-sites). The Recreation Information Database (RIDB) export stays rejected (see its own line)."
+   "reason": "No official open service or download was found (only third-party copies); their lands are in PAD-US. BLM recreation sites and Bureau of Reclamation recreation sites, rejected here before, were found as the agencies' own ArcGIS layers on 26 November 2026 and are now used (blm-recreation-sites, blm-accessible-recreation, reclamation-recreation-sites). The Recreation Information Database (RIDB) export is now used too (ridb-recreation, by the owner's decision of 26 November 2026)."
   },
   {
    "name": "Indigenous Services Canada reserve and land layers (data.sac-isc.gc.ca)",
@@ -13408,11 +13709,6 @@
    "name": "NTAD Intercity Bus Atlas stops",
    "licence": "CC-BY-NC-4.0",
    "reason": "The service's own licence text is Creative Commons Attribution-NonCommercial 4.0 (not a public-domain government work, as the research note assumed)."
-  },
-  {
-   "name": "Recreation Information Database (RIDB) full export",
-   "licence": "RIDB API agreement",
-   "reason": "Recreation.gov's own terms are an API agreement under which the API vendor keeps all rights in its materials; no CC BY statement is on recreation.gov itself (the CC BY tag appears only on the data.gov record)."
   },
   {
    "name": "IPUMS NHGIS historical boundaries",
@@ -13572,22 +13868,22 @@
   {
    "name": "Social Security Administration office locator (ssa.gov)",
    "licence": "US government work",
-   "reason": "ssa.gov refuses programs (its server answers \"Access Denied\" even to robots.txt, read 22 November 2026) and SSA publishes no download of its field offices; the services part finds Social Security offices in OpenStreetMap (and GSA's federal buildings in the extra part) instead. Re-checked 26 November 2026: the only ArcGIS copies (SSA Field Offices) are made by Esri staff, with no licence and no SSA source statement, and data.gov has none."
+   "reason": "blocked: ssa.gov refuses programs (its server answers \"Access Denied\" even to robots.txt, read 22 November 2026). The offices now come from the ArcGIS copy of SSA's own list (ssa-field-offices, by the owner's decision of 26 November 2026); ssa.gov itself is never worked around."
   },
   {
    "name": "IRS Taxpayer Assistance Centers",
    "licence": "US government work",
-   "reason": "Published only as web pages by state (irs.gov's contact-your-local-office pages), with no download or service of the offices; about 360 offices, most of them inside federal buildings already in the GSA inventory."
+   "reason": "Retried once on 26 November 2026 (night), after the owner approved government sites regardless of their terms: irs.gov answers, but its state office pages are gone: the offices are now only in the \"IRS Local Office Locator\" (apps.irs.gov/app/office-locator), a JavaScript application with no published download, list or API. Not blocked, but nothing to read without taking apart the application's internal service, which is not done."
   },
   {
    "name": "State Department passport agencies and acceptance facilities (iafdb.travel.state.gov)",
    "licence": "US government work",
-   "reason": "The acceptance facility search answers one ZIP code at a time and no bulk list is published; the 29 passport agencies and centers are a short list inside federal buildings (GSA inventory). Post offices, which hold most acceptance desks, come from other sources."
+   "reason": "Retried once on 26 November 2026 (night), after the owner approved government sites regardless of their terms: blocked: iafdb.travel.state.gov now forwards to passportfacilitylocator.travel.state.gov, which answered with a Cloudflare \"Attention Required\" block page (403). Stopped there. Post offices, which hold most acceptance desks, come from other sources."
   },
   {
    "name": "USCIS field offices",
    "licence": "US government work",
-   "reason": "Only web pages (about 88 offices); no download or service. Skipped as trivial, as the owner suggested for small office lists."
+   "reason": "Retried once on 26 November 2026 (night), after the owner approved government sites regardless of their terms: blocked: uscis.gov answered the field office page with \"Access Denied\" (403, Akamai). Stopped there."
   },
   {
    "name": "HUD field offices (HUD eGIS, HUD_FIELD_OFFICE)",
@@ -13597,12 +13893,12 @@
   {
    "name": "Head Start centers (headstart.gov center locator; HHS ACF's Head_Start_Centers layer)",
    "licence": "US government work",
-   "reason": "headstart.gov answers programs with 403 Forbidden and offers no bulk download; the Administration for Children and Families' ArcGIS layer (21,600 centers) was last edited in February 2021, and many centers are rooms in schools or churches, so a five-year-old copy would mislead."
+   "reason": "Retried once on 26 November 2026 (night), after the owner approved government sites regardless of their terms: blocked: headstart.gov's center locator answered 403 (CloudFront \"The request could not be satisfied\"). Stopped there. The Administration for Children and Families' ArcGIS layer (21,600 centers) was last edited in February 2021, and many centers are rooms in schools or churches, so a five-year-old copy would mislead."
   },
   {
    "name": "American Job Centers (CareerOneStop)",
    "licence": "Terms of use",
-   "reason": "careeronestop.org answers programs with 403 Forbidden and its web API needs a registered key under its own terms; the ArcGIS copies are made by individuals or counties without a licence. Pennsylvania's CareerLink offices come from data.pa.gov (pa-state-offices); OpenStreetMap tags others."
+   "reason": "Retried once on 26 November 2026 (night), after the owner approved government sites regardless of their terms: blocked: careeronestop.org answered with a Cloudflare challenge (\"Just a moment...\", 403), also for its data-downloads page, and its web API's documentation and key sign-up are on that same site. The API's own host answers, but only with a registered user id and key and an address scheme that could not be read; no collector was written to guess at it. Pennsylvania's CareerLink offices (pa-state-offices) and New York's career centers (ny-career-centers) come from open data; OpenStreetMap tags others."
   },
   {
    "name": "WIC clinics (state and city lists)",
@@ -13692,7 +13988,7 @@
   {
    "name": "FDA certified mammography facilities (accessdata.fda.gov public.zip)",
    "licence": "Public domain (US government work)",
-   "reason": "One polite request on 26 November 2026 was redirected to FDA's \"abuse detection\" page: the host blocks programs from data centres, so the build machines cannot download it. It could be put in inputs/ by hand from a home connection later."
+   "reason": "Retried once on 26 November 2026 (night), after the owner approved government sites regardless of their terms: blocked: the download (accessdata.fda.gov public.zip) was redirected again to FDA's \"abuse detection\" page (Akamai). Stopped there. It could be put in inputs/ by hand from a home connection later."
   },
   {
    "name": "CMS Provider Data: nursing homes, dialysis facilities, hospices, surgery centers, IRF and LTCH lists",
@@ -13708,11 +14004,6 @@
    "name": "FAA Recreational Flyer Fixed Sites (model-aircraft fields)",
    "licence": "Public domain (US government work)",
    "reason": "Skipped (26 November 2026): about 2,200 flying sites, many on private farms and named after their owners, with a point of contact (a person) in every row; little use for naming where a photo was taken. FAA stadiums are used (faa-stadiums)."
-  },
-  {
-   "name": "California CHHS licensing files (CDPH healthcare facility locations, CCL child care centers)",
-   "licence": "CHHS Open Data Portal \"Terms of Use\" (not read)",
-   "reason": "data.chhs.ca.gov names only \"Terms of Use\" as the licence, and its terms page answered 403 to the one request made on 26 November 2026, so the terms could not be read and confirmed. Not used until they are."
   },
   {
    "name": "Missouri licensed pharmacies (MO OGI \"MO_Licensed_Pharmcies\")",

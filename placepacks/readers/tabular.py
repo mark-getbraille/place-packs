@@ -40,6 +40,12 @@ Points may also have:
   "geocode": {"street", "city", "zip": columns, "from": "nad"}: an address-only source, located by the offline
                geocoder against the region's address points (placepacks.geocode; a home is put on its street);
                "ranges_from": an address-range source ("nrn-address-ranges") for the addresses with no point
+  "note_column": a column (or a list of columns, joined with "; ") whose text becomes the point's note (data only,
+               never spoken: FORMAT.md, "Notes on places"), such as the accessibility description of a recreation
+               site; "note_prefix" is put before it ("Accessibility: "). E-mail addresses and telephone numbers are
+               taken out of the note (clean_note), and it is cut to NOTE_LIMIT characters
+  "skipinitialspace": true: the spaces after each comma are not part of the value or the column name (a header
+               written "FDID, Fire dept name, HQ addr1")
   "brand_column", "brand_wikidata_column": a chain location's brand and its Wikidata id (data only); "brand_map":
                {the source's value: a plain brand name} ("" for none), see brand_of
   "owner_column": the column of the licensee's or owner's legal name, read only to compare and never written: when
@@ -231,7 +237,8 @@ def dict_rows(text, entry):
     the entry's "blank_values" emptied."""
     blanks = set(entry.get("blank_values", []))
     for row in csv.DictReader(text, fieldnames=entry.get("fieldnames"), delimiter=entry.get("delimiter", ","),
-                              quoting=csv.QUOTE_NONE if entry.get("no_quotes") else csv.QUOTE_MINIMAL):
+                              quoting=csv.QUOTE_NONE if entry.get("no_quotes") else csv.QUOTE_MINIMAL,
+                              skipinitialspace=bool(entry.get("skipinitialspace"))):
         if blanks:
             for k, v in row.items():
                 if isinstance(v, str) and v.strip() in blanks:
@@ -441,6 +448,35 @@ def brand_of(entry, row):
     return raw, _get(row, entry.get("brand_wikidata_column", ""))
 
 
+# The longest note kept on a place (a long accessibility description is cut at a word, with "..." after it).
+NOTE_LIMIT = 1200
+# What is taken out of a note: e-mail addresses and North American telephone numbers ("(555) 555-0100",
+# "555.555.0100", "1-800-555-0100"), so a note never carries a person's contact details.
+_EMAIL = re.compile(r"[\w.+-]+@[\w-]+(\.[\w-]+)+")
+_PHONE = re.compile(r"(\+?1[\s.-]?)?\(?\b\d{3}\)?[\s.-]?\d{3}[\s.-]\d{4}\b")
+
+
+def clean_note(text, prefix=""):
+    """A place's note from source text: e-mail addresses and telephone numbers taken out, spaces tidied, cut to
+    NOTE_LIMIT characters at a word; "" when nothing is left. prefix ("Accessibility: ") is put before it."""
+    text = _PHONE.sub("", _EMAIL.sub("", text or ""))
+    text = " ".join(text.split()).strip(" ;,")
+    if not text:
+        return ""
+    if len(text) > NOTE_LIMIT:
+        text = text[:NOTE_LIMIT].rsplit(" ", 1)[0] + " ..."
+    return prefix + text
+
+
+def note_of(entry, row):
+    """The note of a record from the entry's "note_column" (see the module docstring), or None."""
+    spec = entry.get("note_column")
+    if not spec:
+        return None
+    parts = [row.get(c, "").strip() for c in (spec if isinstance(spec, list) else [spec])]
+    return clean_note("; ".join(p for p in parts if p), entry.get("note_prefix", "")) or None
+
+
 @reader("tabular")
 def read(path, entry, region, writer):
     """Add the source's addresses or named points to writer. Returns the number of records."""
@@ -519,7 +555,9 @@ def read(path, entry, region, writer):
                 g[5] = None if still_open else max(x for x in (g[5], last) if x) if (g[5] or last) else None
                 g[6] = still_open
             continue
-        writer.add_point(key, source, name, cls, tag, lat, lon, first, last, type=kind, brand=brand_of(entry, row))
+        note = note_of(entry, row)
+        writer.add_point(key, source, name, cls, tag, lat, lon, first, last, type=kind, brand=brand_of(entry, row),
+                         **({"note": note} if note else {}))
         count += 1
     for (key, _), (cls, tag, lat, lon, first, last, _, name, kind) in (grouped or {}).items():
         brand = None

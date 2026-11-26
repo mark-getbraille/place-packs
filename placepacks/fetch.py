@@ -42,6 +42,10 @@ Each source's catalogue "fetch" says how:
   national + "convert": "nppes": the CMS NPPES monthly file (about 1 GB), downloaded by --prepare to the larger
                   disk and turned at once into a small CSV of storefront organisations (nppes_to_csv), then split
                   per state like the others
+  national + "convert": "nls_libraries": the Library of Congress's one page of braille and talking-book libraries
+                  (loc.gov/nls/find-your-library/), read once a month into a CSV of library names and street
+                  addresses (nls_to_csv; librarians' names, telephone numbers and e-mail addresses are never read),
+                  then placed by the offline geocoder
   national + "key_header": an API that wants a key (the AFDC fuel stations): the key is read from an environment
                   variable (a GitHub secret) and sent in a header, with the publisher's demonstration key when the
                   variable is empty (key_headers)
@@ -1235,6 +1239,111 @@ def light_list_to_csv(paths, target):
     return len(rows)
 
 
+# ----------------------------------------------- NLS braille and talking-book libraries (one web page, Library of Congress)
+
+
+class _NlsParser:
+    """Reads the Library of Congress page "Find Your Library" (loc.gov/nls/find-your-library/): each library is a
+    list (<ul class="fyl-library">) whose items are marked by their class: fyl-library-type (Regional or
+    Subregional Library, in an <h3>), -name, -address (lines separated by <br>), -city ("Montgomery, AL 36117") and
+    -id (the library code). The librarian's name, telephone numbers, e-mail addresses and the counties served are in
+    other items, which are never read."""
+
+    WANTED = {"fyl-library-type": "kind", "fyl-library-name": "name", "fyl-library-address": "address",
+              "fyl-library-city": "city", "fyl-library-id": "code"}
+
+    def __init__(self):
+        """An empty list of libraries; feed() fills it."""
+        from html.parser import HTMLParser
+        outer = self
+
+        class P(HTMLParser):
+            """The standard library's HTML parser, calling back into the outer object."""
+
+            def handle_starttag(self, tag, attrs):
+                outer._start(tag, dict(attrs))
+
+            def handle_endtag(self, tag):
+                outer._end(tag)
+
+            def handle_data(self, data):
+                outer._data(data)
+
+        self.parser, self.libraries, self.current, self.field, self.text = P(convert_charrefs=True), [], None, None, []
+
+    def feed(self, html):
+        """Read the page's HTML. Returns the libraries: [{"kind", "name", "address" (a list of lines), "city",
+        "code"}]."""
+        self.parser.feed(html)
+        self.parser.close()
+        return self.libraries
+
+    def _start(self, tag, attrs):
+        """A tag opens: a library's list starts, a wanted item starts, or a line break inside an address."""
+        classes = (attrs.get("class") or "").split()
+        if tag == "ul" and "fyl-library" in classes:
+            self.current = {"address": []}
+            self.libraries.append(self.current)
+        elif self.current is not None and tag in ("li", "h3"):
+            self.field = next((self.WANTED[c] for c in classes if c in self.WANTED), None)
+            self.text = []
+        elif tag == "br" and self.field == "address":
+            self.text.append("\n")
+
+    def _end(self, tag):
+        """A tag closes: the wanted item's text is kept (an address as its lines)."""
+        if tag in ("li", "h3") and self.field and self.current is not None:
+            text = "".join(self.text)
+            if self.field == "address":
+                self.current["address"] = [" ".join(x.split()) for x in text.split("\n") if x.strip()]
+            else:
+                text = " ".join(text.split())
+                self.current[self.field] = text.split(":", 1)[1].strip() if self.field == "code" else text
+            self.field = None
+        elif tag == "ul":
+            self.current = None
+
+    def _data(self, data):
+        """Text inside the wanted item."""
+        if self.field:
+            self.text.append(data)
+
+
+_PO_BOX = re.compile(r"^\s*(P\.?\s*O\.?\s*Box|Post Office Box|Box\s+\d)", re.I)
+_CITY_LINE = re.compile(r"^(.*?),?\s+([A-Z]{2})\s+(\d{5})(?:-\d{4})?\s*$")
+
+
+def nls_street(lines):
+    """The street address of a library from its address lines: the first line that starts with a number and is not
+    a post office box (a building's name, such as "Alabama Institute for Deaf and Blind", is skipped); else the
+    first line that is not a post office box; "" when there is none."""
+    for line in lines:
+        if re.match(r"^\d", line) and not _PO_BOX.match(line):
+            return line
+    return next((line for line in lines if not _PO_BOX.match(line)), "")
+
+
+def nls_to_csv(paths, target):
+    """Write the braille and talking-book libraries of the saved NLS page(s) as one CSV (code, name, kind, street,
+    city, state, zip), for the offline geocoder. Returns the number of libraries with a street address."""
+    rows = 0
+    with open(target, "w", newline="", encoding="utf-8") as out:
+        w = csv.writer(out)
+        w.writerow(["code", "name", "kind", "street", "city", "state", "zip"])
+        for path in paths:
+            with open(path, encoding="utf-8", errors="replace") as fh:
+                libraries = _NlsParser().feed(fh.read())
+            for lib in libraries:
+                m = _CITY_LINE.match(lib.get("city", ""))
+                street = nls_street(lib.get("address", []))
+                if not (m and street and lib.get("name")):
+                    continue                    # overseas, or only a post office box: it cannot be placed
+                w.writerow([lib.get("code", ""), lib["name"], lib.get("kind", ""), street, m.group(1).strip(),
+                            m.group(2), m.group(3)])
+                rows += 1
+    return rows
+
+
 def get_page(url, folder, pause, sleep=time.sleep):
     """The text of one page of an API answer (downloaded through download(), so a busy host is tried again)."""
     tmp = os.path.join(folder, ".page")
@@ -2068,6 +2177,18 @@ def prepare_national(entry, national, values):
                 if got:
                     print(f"{entry['id']}: chain history seed: {got[0]:,} stores with earlier months, "
                           f"{got[1]:,} closed stores added")
+    if f.get("convert") == "nls_libraries":
+        # The Library of Congress's one web page of braille and talking-book libraries, turned into a CSV of names
+        # and street addresses (nls_to_csv); the page itself is deleted.
+        paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
+        count = nls_to_csv(paths, os.path.join(folder, entry["id"] + ".csv"))
+        for p in paths:
+            os.remove(p)
+            if os.path.exists(p + ".version"):
+                os.remove(p + ".version")
+        if not count:
+            raise ValueError("no library was found on the page (has its layout changed?)")
+        print(f"{entry['id']}: {count:,} libraries")
     if f.get("convert") == "light_list":
         paths = [os.path.join(folder, n) for n in kept if os.path.exists(os.path.join(folder, n))]
         count = light_list_to_csv(paths, os.path.join(folder, entry["id"] + ".csv"))

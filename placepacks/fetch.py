@@ -1078,6 +1078,12 @@ def _atp_features(data):
     return found
 
 
+def is_brand_name(name, brand):
+    """True when a place's name is its chain's brand (placepacks/contact.py, is_brand_name)."""
+    from placepacks.contact import is_brand_name as same
+    return same(name, brand)
+
+
 def iter_atp(path, boxes):
     """Every chain location of an All The Places run (a .zip or .tar.gz of one GeoJSON FeatureCollection per spider)
     that falls in any of boxes ([(west, south, east, north)]), as a dict of ATP_FIELDS plus "skip": "" for a row
@@ -1109,7 +1115,9 @@ def iter_atp(path, boxes):
                 yield row
                 continue
             name = str(tags.get("name") or tags.get("brand") or "").strip()
-            if not name or _PERSON.match(name):
+            # A name that looks like a person's is left out, except the chain's own brand ("Burger King", "Taco
+            # Bell" look like "Alice Example" but are not anyone's name).
+            if not name or (_PERSON.match(name) and not is_brand_name(name, str(tags.get("brand") or ""))):
                 row["skip"] = "noname"
                 yield row
                 continue

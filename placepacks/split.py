@@ -55,6 +55,10 @@ def needed_columns(entry):
         add(entry["open_when"]["column"])
     for part in ("brand_column", "brand_wikidata_column", "owner_column", "note_column"):
         add(entry.get(part, ""))
+    # A business directory's phone, website and opening hours (contact_columns): without them the slices would lose
+    # the details the reader keeps (placepacks/contact.py).
+    for spec in (entry.get("contact_columns") or {}).values():
+        add(spec)
     # An address-only source keeps its address columns for the geocoder (a national file split per state).
     for part in ("street", "city", "zip"):
         add((entry.get("geocode") or {}).get(part, ""))
@@ -223,7 +227,7 @@ def main(argv=None):
     # workflow's "slice") and keeps what is in it.
     regions = {rid: r for rid, r in regions.items() if not r.get("parent")}
     for entry in cat["accepted"]:
-        if entry["fetch"]["method"] not in ("national", "duckdb_national", "uploaded_national"):
+        if entry["fetch"]["method"] not in ("national", "duckdb_national", "uploaded_national", "release_csv"):
             continue
         folder = os.path.join(a.national, entry["id"])
         if not os.path.isdir(folder):

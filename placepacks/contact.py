@@ -1,7 +1,8 @@
 """Business contact details (phone, website, opening hours) from the business-directory sources, made small and
 safe before they go into the businesses part (FORMAT.md, "Business contact details").
 
-Only three sources may give them (CONTACT_SOURCES): All The Places (the chains' own store locators), Overture's
+Only four sources may give them (CONTACT_SOURCES): All The Places (the chains' own store locators), the chain
+stores this project reads itself from big chains' store locators (chain-locators, placepacks/chains), Overture's
 places and Foursquare's Open Source Places. The licence and inspection lists never do: their phone numbers are often
 an owner's personal number. PackWriter.add_point ignores contact details from any other source.
 
@@ -12,8 +13,9 @@ What is kept, and how it is cleaned:
   - website: the first address only, http or https only, at most 200 characters, without a "#" part; an address
     with a tracking query (utm_..., fbclid, gclid and the like) loses just those parts; a social-media page is dropped (socials are
     not kept) or an address with a user name or password in it.
-  - opening_hours: All The Places only, in OpenStreetMap's syntax ("Mo-Fr 08:00-18:00"), at most 255 characters.
-  - never an e-mail address, and nothing at all for a place whose name looks like a person's ("Alice Example") or
+  - opening_hours: All The Places and chain-locators only, in OpenStreetMap's syntax ("Mo-Fr 08:00-18:00"), at most 255 characters.
+  - never an e-mail address, and nothing at all for a place whose name looks like a person's ("Alice Example";
+    a chain's own brand, such as "Burger King", is not taken for a person's name) or
     whose type is an individual's own office (an insurance or estate agent, a lawyer, a financial adviser, an
     accountant): those are a person's details, not a business's.
 Only the Python standard library is used.
@@ -24,7 +26,9 @@ import urllib.parse
 
 # The sources whose phone, website and hours are kept, best first (the order a lookup prefers when several sources
 # list the same business; OpenStreetMap's own svc_details come before all of them).
-CONTACT_SOURCES = ("alltheplaces", "overture-places", "fsq-places")
+CONTACT_SOURCES = ("alltheplaces", "chain-locators", "overture-places", "fsq-places")
+# The sources whose opening hours are kept (the chains' own store locators, in OpenStreetMap's syntax).
+HOURS_SOURCES = ("alltheplaces", "chain-locators")
 CONTACT_FIELDS = ("phone", "website", "opening_hours")
 
 # A name that is a person's: "Alice Example", "Jane Q. Doe Jr." (as fetch._PERSON, used for All The Places).
@@ -42,12 +46,20 @@ NANP = re.compile(r"^(?:\+?1[\s.-]?)?\(?([2-9]\d\d)\)?[\s.-]?([2-9]\d\d)[\s.-]?(
 MAX_URL, MAX_HOURS = 200, 255
 
 
-def allowed(source, name, kind=None):
+def is_brand_name(name, brand):
+    """True when a place's name is its chain's brand ("Burger King", or "Taco Bell Cantina" for the brand "Taco
+    Bell"): a chain's brand is not a person's name, even when it looks like one (two capitalised words)."""
+    name, brand = " ".join((name or "").split()).lower(), " ".join((brand or "").split()).lower()
+    return bool(brand) and (name == brand or name.startswith(brand + " "))
+
+
+def allowed(source, name, kind=None, brand=None):
     """True when a record may carry contact details: a business-directory source (CONTACT_SOURCES), a name that is
-    not a person's, and a type that is not an individual's own office."""
+    not a person's (a chain's own brand never counts as one: is_brand_name), and a type that is not an individual's
+    own office."""
     if source not in CONTACT_SOURCES:
         return False
-    if PERSON_NAME.match((name or "").strip()):
+    if PERSON_NAME.match((name or "").strip()) and not is_brand_name(name, brand):
         return False
     return not (kind and PERSONAL_TYPES.search(kind))
 
@@ -124,11 +136,12 @@ def hours(value):
     return text
 
 
-def clean(source, name, kind=None, phone_value=None, website_value=None, hours_value=None):
+def clean(source, name, kind=None, phone_value=None, website_value=None, hours_value=None, brand=None):
     """{"phone", "website", "opening_hours"} made plain for a record (only the fields that have a value), or {}
-    when the record may not carry contact details (allowed). Opening hours are kept from All The Places only."""
-    if not allowed(source, name, kind):
+    when the record may not carry contact details (allowed; brand: the chain's brand name, if any). Opening hours
+    are kept from HOURS_SOURCES only."""
+    if not allowed(source, name, kind, brand):
         return {}
     out = {"phone": phone(phone_value), "website": website(website_value),
-           "opening_hours": hours(hours_value) if source == "alltheplaces" else ""}
+           "opening_hours": hours(hours_value) if source in HOURS_SOURCES else ""}
     return {k: v for k, v in out.items() if v}

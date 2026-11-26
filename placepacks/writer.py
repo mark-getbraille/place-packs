@@ -59,7 +59,7 @@ NEAR = 50                       # microdegrees (about 5 m): the second pass for 
 CONTACT_SEP = "\x1f"
 # The sources whose contact details the build keeps, best first (placepacks/contact.py: CONTACT_SOURCES; written
 # here too, so that a copy of this file without contact.py still writes packs).
-CONTACT_ORDER = ("alltheplaces", "overture-places", "fsq-places")
+CONTACT_ORDER = ("alltheplaces", "chain-locators", "overture-places", "fsq-places")
 TYPED = {"points": "point_types", "areas": "area_types"}
 SOURCE_COLUMNS = ("id", "name", "short", "kind", "part", "licence", "licence_url", "attribution", "url", "version",
                   "date", "history_start", "history_note")
@@ -177,7 +177,7 @@ class PackWriter:
         if contact and source in CONTACT_ORDER:
             from placepacks import contact as contacts      # only here: a copy of this file may lack contact.py
             got = contacts.clean(source, name, type, contact.get("phone"), contact.get("website"),
-                                 contact.get("opening_hours"))
+                                 contact.get("opening_hours"), brand=(brand or ("",))[0])
             if got:
                 contact_text = CONTACT_SEP.join(got.get(k, "") for k in contacts.CONTACT_FIELDS)
         self.db.execute("INSERT INTO points (key, source, name, cls, tag, lat, lon, cell, ccell, first, last, type, "

@@ -9,7 +9,8 @@ looked up.
 
 The packs are built from OpenStreetMap and other open data: national address databases, government names and
 facilities, Overture Maps and Foursquare Open Source Places, Wikidata, GeoNames and public transit feeds, and dated
-business records: restaurant inspections, liquor and business licences, bank branches, the UK's food hygiene
+business records: restaurant inspections, liquor and business licences, bank and credit union branches, health
+care organisations (pharmacies, clinics, dentists, opticians), fuel and charging stations, the UK's food hygiene
 ratings and Victoria's Sands & McDougall directories (1896–1974), and US federal layers: historic places, parks
 and protected areas, bridges, dams, airports, stations, schools, libraries and the county boundaries of every date
 since the 1600s. Each source is
@@ -19,7 +20,8 @@ listed with its licence in [SOURCES.md](SOURCES.md). The packs are made for the
 
 A photo on a trail or beside a river with nothing nearer named gets the line: "on the Long Trail", "beside the
 Missisquoi River" (Forest Service and park trails, Wild and Scenic Rivers). Address-only lists (the IRS's exempt
-organizations, the Texas, Florida, Pennsylvania and Connecticut licence lists) are placed by an offline geocoder at
+organizations, credit union offices, health care organisations, the Texas, Florida, Pennsylvania and Connecticut
+licence lists) are placed by an offline geocoder at
 build time, against the state's own address points (or, in Maryland, which the NAD leaves out, along the street's
 address range); an organization at a home address is placed on its street, never at the house.
 
@@ -73,6 +75,9 @@ How far back each layer goes:
 | State licence and tax lists (since November 2026): Texas sales-tax outlets, mixed beverage, tobacco and hotel permits; Florida food service, alcohol and tobacco licences; Pennsylvania sales-tax and tobacco licences; New York food stores, tobacco and cannabis retailers, DMV facilities and salons; Connecticut premises licences and car dealers | Texas outlets from their first sale (back to the 1960s) to their out-of-business date; Florida alcohol licences and Connecticut and New York licences from their issue dates; the others from the first build. Only storefront types, under their trade names; a sole proprietor trading under their own name, or from home, is left out (each source's rule is in SOURCES.md). |
 | City and county lists (since November 2026): Baton Rouge businesses, New Orleans licences and alcohol outlets, San Diego County food facilities, Sacramento County licences, Baltimore liquor licences (from 2002), Wake County restaurants, Cambridge, Washington DC liquor licences, Sioux Falls, Arlington TX | Each place's own opening, licence or inspection dates where the list has them; otherwise from the first build. |
 | FDIC bank branches | Each branch under its bank's name since the bank took it over, or since it opened. |
+| Credit union offices (NCUA), since November 2026 | From the first build (the quarterly branch file has no opening dates; its older quarters, back to the 1990s, could seed earlier years later). Each office under its credit union's name. |
+| Health care organisations (CMS NPPES), since November 2026: pharmacies, clinics and urgent care, dentists, optometrists and opticians, hearing aid shops, physical therapy, chiropractors, laboratories, medical supply stores | Each organisation from the date it got its NPI (2005 at the earliest), closed when its NPI is deactivated. Organisations only, never individual providers; hospitals and federally qualified health centres come from other layers. |
+| Fuel and charging stations (DOE Alternative Fuels Data Center), since November 2026 | Each public station from its open date; the charging network (ChargePoint, Tesla, EVgo, Electrify America ...) as its brand. |
 | UK food hygiene ratings (FSA) | Each business from its latest rating date, then month by month. |
 | Victoria, Australia: Sands & McDougall directories | The directory years 1896–1974 each business was listed in. |
 | US counties (Newberry Library's Atlas of Historical County Boundaries) | Every version of every county since the 1600s with its exact dates: a lookup gives the county as it was on the picture's date (`county` in the result). |
@@ -232,7 +237,9 @@ files up to 2 GB each with no total limit. A user downloads only the regions the
       run artifacts) are published too, this run's own packs first;
     - `publish_only`: build nothing, only publish the packs of the runs in `also_from_run`.
 - **What it does:**
-  - It downloads the national files once and splits them per region.
+  - It downloads the national files once and splits them per region. The CMS NPPES file (about 1 GB) waits on the
+    runner's larger `/mnt` disk, is read once as a stream (organisations of the allowed kinds only) into a small
+    CSV, and is deleted at once.
   - Foursquare Open Source Places is now on Hugging Face behind a free sign-in, which the build machines cannot do.
     The owner's Program Downloader copies each month's files there, unchanged, into this repository's release
     `uploaded-sources` (`fsq-<date>-<file>`, `fsq-<date>-NOTICE.txt` and, last, the manifest `fsq-<date>.json`
@@ -251,7 +258,11 @@ files up to 2 GB each with no total limit. A user downloads only the regions the
        (`manifest.LIMIT`); each part lists only its own sources (core lists all of its region's, for the plan).
   - It then deletes the pack files that neither list names, and a detail release left with no pack. A program never
     sees a list naming a file that is not there.
-- **Keys:** only the repository's own `GITHUB_TOKEN` is used (read-only, except in the jobs that change releases).
+- **Keys:** the repository's own `GITHUB_TOKEN` (read-only, except in the jobs that change releases), and one
+  optional key: the repository secret `NREL_API_KEY` (free from developer.nlr.gov/signup, sent by email), which the
+  prepare step uses for the Alternative Fuels Data Center's stations. Without it the public `DEMO_KEY` is used, which
+  is enough for that one request a month unless the build machine's address has used it up; then the stations are
+  skipped that month and their history stays. The key is sent in a request header and never printed.
 - **Keep-alive:** GitHub turns off scheduled workflows in repositories with no activity for 60 days. Each run
   commits an updated `sources-status.md`, which keeps the schedule alive.
 

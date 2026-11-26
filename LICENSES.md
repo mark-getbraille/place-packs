@@ -11,7 +11,8 @@ A pack mixes OpenStreetMap with other open data. OpenStreetMap is under the Open
 is share-alike: a database *derived* from OpenStreetMap must be offered under the ODbL. The other sources have
 their own licences (public domain, CC0, PDDL, CC BY 4.0, the Open Government Licences of Canada and the UK, Licence
 Ouverte 2.0, CDLA Permissive 2.0, Apache 2.0, CC BY 3.0, the open-use terms of New York City's and New York State's
-open-data portals, the Newberry Library's open terms, and Florida's public records).
+open-data portals, the Newberry Library's open terms, Florida's public records, and the open-use terms of the
+National Laboratory of the Rockies for the Alternative Fuels Data Center's stations).
 
 We chose to make each pack a **collective database** (ODbL 1.0, section 1, "Collective Database"; section 4.5),
 not one database under a single licence:
@@ -101,6 +102,15 @@ licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD
 - **NOAA National Marine Sanctuaries:** U.S. government material, identified as such (17 U.S.C. 403).
 - **IRS exempt organizations:** only names and located points are kept, never the "in care of" (people's) names; an
   organization at a home address is placed on its street.
+- **Alternative Fuels Data Center stations (U.S. Department of Energy, served by the National Laboratory of the
+  Rockies, formerly NREL):** the terms (developer.nlr.gov/terms) say the data "may be used for any purpose
+  whatsoever". Two conditions travel with it: the names DOE, NLR and the Alliance for Energy Innovation may not be
+  used to endorse or promote anything made with the data (the attribution says they do not endorse the packs), and
+  the user indemnifies them against claims arising from the use and distribution of the data (licence
+  `NLR-Data-Terms` in sources.json). The data comes as is, with no warranty.
+- **NCUA credit union offices, CMS NPPES health care organisations:** US government works (public domain). From
+  NPPES only organisations are read, never individual providers, and no official's name or telephone number is
+  kept; organisations' names and located points only.
 - **OpenHistoricalMap:** CC0, except features with their own `license` tag, which the packs leave out.
 - **Personal data:** the business sources keep only a business's trade name, class, position and dates. Records
   that may be someone's home (home-based businesses, contractors, mobile caterers, childminders, short-term rentals,

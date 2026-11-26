@@ -23,6 +23,9 @@ Each source's catalogue "fetch" says how:
   wfs             a WFS layer (GeoServer) as CSV, paged with startIndex/count; the version is its feature count
   ckan_sql        a CKAN portal's datastore SQL (datastore_search_sql): each query grouped to one row per licence
                   and name, paged with LIMIT/OFFSET into one CSV (Boston); the version is the month
+  json_api        a web API answering with pages of JSON records, asked for the region's own state, written as one
+                  CSV (the VA's Facilities API, with its key from an environment variable; the CMS data API works
+                  the same way); the version is the month (placepacks/fetch_api.py)
   arcgis          an ArcGIS REST layer (FeatureServer or MapServer, no token): the ids inside the region's box (and
                   the entry's "where"), then the records in chunks of ids, as CSV with "_lat" and "_lon" (and
                   "_rings" for polygons, read as areas); dates become YYYY-MM-DD; the version is the layer's last edit
@@ -1623,6 +1626,9 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         return fetch_arcgis(entry, region, folder, fingerprint)
     if method == "ckan_sql":
         return fetch_ckan_sql(entry, folder, fingerprint)
+    if method == "json_api":
+        from placepacks.fetch_api import fetch_json_api
+        return fetch_json_api(entry, values, folder, fingerprint)
     # http (a Geofabrik extract: its folder address first, then the older flat one; see geofabrik_candidates)
     candidates = geofabrik_candidates(url)
     if fingerprint:

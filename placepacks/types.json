@@ -1,5 +1,5 @@
 {
- "note": "Fine place types (short, lower-case English phrases) beside the coarse class: what each source's own type field becomes. Read by placepacks/types.py. osm: key -> value -> phrase ('*' for any other value of the key: '{}' is the value with spaces); cuisine: the cuisine word of a restaurant ('pizza' -> 'pizza restaurant'); religion and denomination: places of worship; naics and ntee: code prefixes (the longest wins); gnis, fsa, mudf (IMLS museum disciplines): the source's class values; humanise: phrases kept as they are after '_' becomes a space (Overture, Foursquare, Wikidata); generic: phrases a more specific type replaces when two sources describe the same place.",
+ "note": "Fine place types (short, lower-case English phrases) beside the coarse class: what each source's own type field becomes. Read by placepacks/types.py. osm: key -> value -> phrase ('*' for any other value of the key: '{}' is the value with spaces); cuisine: the cuisine word of a restaurant ('pizza' -> 'pizza restaurant'); religion and denomination: places of worship; naics and ntee: code prefixes (the longest wins); gnis, fsa, mudf (IMLS museum disciplines), afdc_fuel (the AFDC's fuel type codes) and ncua_site (NCUA site types): the source's class values; humanise: phrases kept as they are after '_' becomes a space (Overture, Foursquare, Wikidata); generic: phrases a more specific type replaces when two sources describe the same place.",
  "osm": {
   "amenity": {
    "restaurant": "restaurant",
@@ -730,5 +730,20 @@
   "VK": "village naskapi",
   "VL": "village",
   "VN": "village nordique"
+ },
+ "afdc_fuel": {
+  "ELEC": "charging station",
+  "CNG": "natural gas station",
+  "LNG": "liquefied natural gas station",
+  "LPG": "propane station",
+  "E85": "e85 ethanol station",
+  "BD": "biodiesel station",
+  "RD": "renewable diesel station",
+  "HY": "hydrogen station"
+ },
+ "ncua_site": {
+  "Corporate Office": "credit union",
+  "Branch Office": "credit union",
+  "*": "credit union"
  }
 }

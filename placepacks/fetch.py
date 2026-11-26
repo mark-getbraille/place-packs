@@ -36,6 +36,12 @@ Each source's catalogue "fetch" says how:
   polling         a state's newest polling place list of the elections in the entry's "dates" (the first that exists)
   same_as         nothing is downloaded: the source reads another source's download (its "same_as" id), such as
                   the navigation part's readers of the OpenStreetMap extract and the GTFS feeds
+  national + "convert": "nppes": the CMS NPPES monthly file (about 1 GB), downloaded by --prepare to the larger
+                  disk and turned at once into a small CSV of storefront organisations (nppes_to_csv), then split
+                  per state like the others
+  national + "key_header": an API that wants a key (the AFDC fuel stations): the key is read from an environment
+                  variable (a GitHub secret) and sent in a header, with the publisher's demonstration key when the
+                  variable is empty (key_headers)
 A national source's file may be named by the publisher's metadata instead of a fixed address ("socrata_blob": the
 NAD's file on data.transportation.gov, whose version is its blobId and rowsUpdatedAt), one file per country
 ("per_country": GeoNames) or every file a listing page links to ("listing": the FSA's hygiene ratings, one XML file
@@ -107,9 +113,10 @@ def retryable(error):
     return isinstance(error, (urllib.error.URLError, ConnectionError, TimeoutError))
 
 
-def download(url, target, pause=0, waits=RETRY_WAITS, sleep=time.sleep):
+def download(url, target, pause=0, waits=RETRY_WAITS, sleep=time.sleep, headers=None):
     """Download url to target (through a .partial file), trying a busy host again after each of waits. Returns
-    (version, date)."""
+    (version, date). headers: extra request headers (an API key sent in a header, so it never appears in the address,
+    the version stamp or the build's status lines)."""
     os.makedirs(os.path.dirname(os.path.abspath(target)), exist_ok=True)
     partial = target + ".partial"
     if os.path.exists(partial):
@@ -119,7 +126,7 @@ def download(url, target, pause=0, waits=RETRY_WAITS, sleep=time.sleep):
             # After a dropped connection, ask only for the rest (the NAD is 8.5 GB); a host that answers with the
             # whole file (200) is written from the start.
             done = os.path.getsize(partial) if os.path.exists(partial) else 0
-            with request(url, headers={"Range": f"bytes={done}-"} if done else None) as r, \
+            with request(url, headers={**(headers or {}), **({"Range": f"bytes={done}-"} if done else {})}) as r, \
                     open(partial, "ab" if done and getattr(r, "status", 200) == 206 else "wb") as f:
                 while True:
                     block = r.read(1 << 20)
@@ -306,11 +313,13 @@ def national_files(entry, values, opener=None):
         if f.get("latest") and names:
             def year(n):
                 """The number the "latest" pattern finds in a file name (-1 when none): the newest is kept. With
-                "latest_date": "nws", the group is a National Weather Service date (16ap26: 16 April 2026)."""
+                "latest_date": "nws", the group is a National Weather Service date (16ap26: 16 April 2026). A
+                pattern with several groups (a year and a month: NCUA's call-report-data-2026-06.zip) is read as
+                their digits put together (202606)."""
                 m = re.search(f["latest"], os.path.basename(n))
                 if m and f.get("latest_date") == "nws":
                     return nws_date(m.group(1))
-                return int(m.group(1)) if m else -1
+                return int("".join(g or "" for g in m.groups()) or -1) if m else -1
             names = [max(names, key=year)]
         return [(urllib.parse.urljoin(f["listing"], n), os.path.basename(urllib.parse.urlsplit(n).path), None)
                 for n in names]
@@ -421,6 +430,183 @@ def xml_to_csv(paths, spec, target):
                     count += 1
                     el.clear()
     return count
+
+
+def key_headers(f):
+    """The request headers of a source whose API wants a key: the fetch's "key_header" = {"header": the header's name
+    ("X-Api-Key"), "env": the environment variable holding the key (a GitHub secret given to the prepare step, such
+    as NREL_API_KEY), "default": the publisher's public demonstration key, used when the variable is empty
+    ("DEMO_KEY", which allows a few requests an hour)}. The key goes in a header, never in the address, so it is
+    never written in a version stamp, a log or sources-status.md. {} for a source without a key."""
+    spec = f.get("key_header")
+    if not spec:
+        return {}
+    key = os.environ.get(spec.get("env", ""), "").strip() or spec.get("default", "")
+    return {spec["header"]: key} if key else {}
+
+
+# The CMS NPPES file (convert "nppes"): the columns read, by their names in the file's header line. Everything else
+# (the people's names of individual providers, the authorized officials' names and telephone numbers, the mailing
+# address, telephone and fax numbers, licence numbers, EINs) is skipped without being kept anywhere.
+NPPES_FIELDS = {
+    "npi": "NPI",
+    "entity": "Entity Type Code",
+    "legal": "Provider Organization Name (Legal Business Name)",
+    "other": "Provider Other Organization Name",
+    "other_type": "Provider Other Organization Name Type Code",
+    "street": "Provider First Line Business Practice Location Address",
+    "city": "Provider Business Practice Location Address City Name",
+    "state": "Provider Business Practice Location Address State Name",
+    "zip": "Provider Business Practice Location Address Postal Code",
+    "country": "Provider Business Practice Location Address Country Code (If outside U.S.)",
+    "enumerated": "Provider Enumeration Date",
+    "deactivated": "NPI Deactivation Date",
+    "reactivated": "NPI Reactivation Date",
+}
+NPPES_TAXONOMIES = 15           # Healthcare Provider Taxonomy Code_1 .. _15, each with its Primary Taxonomy Switch
+NPPES_DBA = ("3", "5")          # other-name types used as the place's name: 3 "Doing Business As", 5 "Other Name"
+                                # (4, a former legal business name, is never used)
+NPPES_OUT = ["NPI", "name", "taxonomy", "street", "city", "state", "zip", "enumerated"]
+
+
+def _us_date(text):
+    """(year, month, day) of an NPPES date "MM/DD/YYYY", or None."""
+    m = re.fullmatch(r"(\d{1,2})/(\d{1,2})/(\d{4})", (text or "").strip())
+    return (int(m.group(3)), int(m.group(1)), int(m.group(2))) if m else None
+
+
+def nppes_taxonomy(row, col):
+    """The organisation's primary taxonomy code: the one whose "Primary Taxonomy Switch" is Y, else the first one.
+    Only the primary one decides what the place is, so a hospital that also lists a pharmacy taxonomy is not made a
+    pharmacy."""
+    first = ""
+    for i in range(1, NPPES_TAXONOMIES + 1):
+        code_at = col.get(f"Healthcare Provider Taxonomy Code_{i}")
+        switch_at = col.get(f"Healthcare Provider Primary Taxonomy Switch_{i}")
+        code = row[code_at].strip() if code_at is not None else ""
+        if not code:
+            continue
+        first = first or code
+        if switch_at is not None and row[switch_at].strip().upper() == "Y":
+            return code
+    return first
+
+
+def nppes_to_csv(zip_path, target, entry):
+    """Turn the CMS NPPES monthly file (a zip of about 1 GB holding a CSV of about 10 GB with 330 columns, one row
+    per NPI) into a small CSV of the storefront organisations the entry wants. Returns the number of rows written.
+
+    The big CSV is read once, as a stream, straight out of the zip (it is never unpacked on the disk), and filtered
+    as early as possible:
+      1. Only organisations: a line whose Entity Type Code is not "2" is skipped before it is even split into
+         columns (individual providers, type 1, are people and are never read; deactivated NPIs have no type).
+      2. A deactivated NPI (a deactivation date, with no later reactivation) is left out.
+      3. Only the primary taxonomy (nppes_taxonomy) in the entry's class_map allowlist is kept: pharmacies, clinics,
+         dentists and the other kinds named there.
+      4. Only places in the US (no foreign country code) with a practice location street.
+    The name is the organisation's "Doing Business As" (or other) name when it has one, from the main file or from
+    the Other Name Reference File in the same zip; otherwise its legal business name. The address is the practice
+    location (where patients go), never the mailing address. Written columns: NPPES_OUT."""
+    from placepacks.readers.tabular import class_of
+    kept, order = {}, []
+    with zipfile.ZipFile(zip_path) as z:
+        names = [i.filename for i in z.infolist()]
+        main = next((n for n in names if re.fullmatch(r"npidata_pfile_[\d-]+\.csv", os.path.basename(n), re.I)),
+                    None)
+        others = next((n for n in names if re.fullmatch(r"othername_pfile_[\d-]+\.csv", os.path.basename(n),
+                                                          re.I)), None)
+        if not main:
+            raise ValueError("the NPPES zip has no npidata_pfile_*.csv")
+        with z.open(main) as raw:
+            text = io.TextIOWrapper(raw, encoding="utf-8", errors="replace", newline="")
+            header = next(csv.reader([text.readline()]))
+            col = {name.strip(): i for i, name in enumerate(header)}
+            missing = [v for v in NPPES_FIELDS.values() if v not in col]
+            if missing:
+                raise ValueError(f"the NPPES file has no column {missing[0]!r}")
+            at = {k: col[v] for k, v in NPPES_FIELDS.items()}
+
+            def organisations():
+                """The lines of organisations only. Every line starts with the quoted ten-digit NPI and then the
+                quoted entity type ("1234567890","2",...), so a quick look at those characters skips the people's
+                lines (about four in five) without reading their columns."""
+                for line in text:
+                    if line[12:16] == ',"2"':
+                        yield line
+            for row in csv.reader(organisations()):
+                if len(row) != len(header) or row[at["entity"]].strip() != "2":
+                    continue
+                gone, back = _us_date(row[at["deactivated"]]), _us_date(row[at["reactivated"]])
+                if gone and not (back and back >= gone):
+                    continue
+                taxonomy = nppes_taxonomy(row, col)
+                if not class_of(entry, taxonomy)[0]:
+                    continue
+                street = row[at["street"]].strip()
+                if not street or row[at["country"]].strip().upper() not in ("", "US"):
+                    continue
+                npi = row[at["npi"]].strip()
+                name = row[at["legal"]].strip()
+                other = row[at["other"]].strip()
+                dba = other if other and row[at["other_type"]].strip() in NPPES_DBA else ""
+                kept[npi] = {"NPI": npi, "name": dba or name, "taxonomy": taxonomy, "street": street,
+                             "city": row[at["city"]].strip(), "state": row[at["state"]].strip().upper(),
+                             "zip": re.sub(r"\D", "", row[at["zip"]])[:5],
+                             "enumerated": row[at["enumerated"]].strip(), "_dba": bool(dba)}
+                order.append(npi)
+        if others:
+            # The other names of organisations that have more than one (the main file then says "6"): the first
+            # "Doing Business As" name, else the first "Other Name".
+            best = {}
+            with z.open(others) as raw:
+                for row in csv.DictReader(io.TextIOWrapper(raw, encoding="utf-8", errors="replace", newline="")):
+                    npi = (row.get("NPI") or "").strip()
+                    kind = (row.get("Provider Other Organization Name Type Code") or "").strip()
+                    other = (row.get("Provider Other Organization Name") or "").strip()
+                    if npi in kept and not kept[npi]["_dba"] and other and kind in NPPES_DBA:
+                        if npi not in best or (kind == "3" and best[npi][0] != "3"):
+                            best[npi] = (kind, other)
+            for npi, (_, other) in best.items():
+                kept[npi]["name"] = other
+    with open(target, "w", newline="", encoding="utf-8") as out:
+        w = csv.DictWriter(out, fieldnames=NPPES_OUT, extrasaction="ignore")
+        w.writeheader()
+        for npi in order:
+            if kept[npi]["name"]:
+                w.writerow(kept[npi])
+    return sum(1 for npi in order if kept[npi]["name"])
+
+
+def prepare_nppes(entry, folder, found):
+    """The prepare job's step for the NPPES file (convert "nppes"): download the month's zip (about 1 GB) to the
+    runner's larger disk (PLACEPACKS_SCRATCH, /mnt in the workflow), turn it into national/<id>/<id>.csv
+    (nppes_to_csv), and delete the zip at once, so only the small CSV (tens of MB) goes on to the split step. The
+    file's address names its month, so a CSV already made from the same address is kept."""
+    import shutil
+    import tempfile
+    f = entry["fetch"]
+    url, name, known = found
+    target = os.path.join(folder, entry["id"] + ".csv")
+    stamp = target + ".version"
+    version = known or url
+    if os.path.exists(target) and os.path.exists(stamp) and open(stamp, encoding="utf-8").read() == version:
+        print(f"{entry['id']}: {os.path.getsize(target):,} bytes (the cached copy)")
+        return
+    os.makedirs(folder, exist_ok=True)
+    scratch = tempfile.mkdtemp(prefix=f"{entry['id']}-", dir=os.environ.get("PLACEPACKS_SCRATCH") or None)
+    try:
+        zip_path = os.path.join(scratch, name)
+        download(url, zip_path, f.get("pause", 2), waits=tuple(f.get("retry_waits", RETRY_WAITS)))
+        count = nppes_to_csv(zip_path, target + ".partial", entry)
+    finally:
+        shutil.rmtree(scratch, ignore_errors=True)
+    if not count:
+        os.remove(target + ".partial")
+        raise ValueError("no organisation of the allowed kinds was found in the NPPES file")
+    os.replace(target + ".partial", target)
+    with open(stamp, "w", encoding="utf-8") as fh:
+        fh.write(version)
+    print(f"{entry['id']}: {count:,} organisations of the allowed kinds ({os.path.basename(url)})")
 
 
 def repair_zip(path):
@@ -1781,6 +1967,10 @@ def prepare_national(entry, national, values):
     files = national_files(entry, values)
     if not files:
         raise ValueError("the publisher lists no file")
+    if f.get("convert") == "nppes":
+        prepare_nppes(entry, folder, files[0])
+        return
+    headers = key_headers(f)
     kept, failed = [], 0
     for url, name, known in files:
         target = os.path.join(folder, name)
@@ -1790,7 +1980,7 @@ def prepare_national(entry, national, values):
             now = known
             if now is None:
                 try:
-                    with request(url, "HEAD") as r:
+                    with request(url, "HEAD", headers=headers) as r:
                         now = version_of(r.headers)
                 except Exception:  # noqa: BLE001 - the host is busy: the cached copy is used
                     now = None
@@ -1799,7 +1989,9 @@ def prepare_national(entry, national, values):
                 continue
         try:
             # "retry_waits": a longer back-off for a host that times out from the build machines (the Newberry).
-            version, _ = download(url, target, f.get("pause", 2), waits=tuple(f.get("retry_waits", RETRY_WAITS)))
+            # The key's header only for a source that has one (key_headers).
+            version, _ = download(url, target, f.get("pause", 2), waits=tuple(f.get("retry_waits", RETRY_WAITS)),
+                                  **({"headers": headers} if headers else {}))
         except Exception as e:  # noqa: BLE001 - one file of many missing does not stop the others
             if len(files) == 1:
                 raise

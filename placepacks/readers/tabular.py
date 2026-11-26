@@ -40,7 +40,8 @@ Points may also have:
   "geocode": {"street", "city", "zip": columns, "from": "nad"}: an address-only source, located by the offline
                geocoder against the region's address points (placepacks.geocode; a home is put on its street);
                "ranges_from": an address-range source ("nrn-address-ranges") for the addresses with no point
-  "brand_column", "brand_wikidata_column": a chain location's brand and its Wikidata id (data only)
+  "brand_column", "brand_wikidata_column": a chain location's brand and its Wikidata id (data only); "brand_map":
+               {the source's value: a plain brand name} ("" for none), see brand_of
   "owner_column": the column of the licensee's or owner's legal name, read only to compare and never written: when
                the owner is a person (the name has no company word such as Inc, LLC or Corp: is_company) and the
                record's trade name is the owner's own name (owners_name: the same words, in any order), the record
@@ -425,6 +426,21 @@ def _open_until(entry, row, last, month):
     return last
 
 
+def brand_of(entry, row):
+    """(brand name, Wikidata id) of a record from the entry's "brand_column" (and "brand_wikidata_column"), or None.
+    With "brand_map" ({value as the source writes it: brand name}), the source's codes become plain brand names
+    ("eVgo Network" -> "EVgo", "BP_PULSE" -> "bp pulse"); a value mapped to "" ("Non-Networked") has no brand, and a
+    value not in the map is tidied (underscores made spaces, capitals made ordinary: "CHARGE_UP" -> "Charge Up")."""
+    raw = _get(row, entry.get("brand_column", "")) if entry.get("brand_column") else ""
+    if not raw:
+        return None
+    if "brand_map" in entry:
+        raw = entry["brand_map"].get(raw, smart_case(raw.replace("_", " ")))
+        if not raw:
+            return None
+    return raw, _get(row, entry.get("brand_wikidata_column", ""))
+
+
 @reader("tabular")
 def read(path, entry, region, writer):
     """Add the source's addresses or named points to writer. Returns the number of records."""
@@ -503,10 +519,7 @@ def read(path, entry, region, writer):
                 g[5] = None if still_open else max(x for x in (g[5], last) if x) if (g[5] or last) else None
                 g[6] = still_open
             continue
-        brand = None
-        if entry.get("brand_column") and _get(row, entry["brand_column"]):
-            brand = (_get(row, entry["brand_column"]), _get(row, entry.get("brand_wikidata_column", "")))
-        writer.add_point(key, source, name, cls, tag, lat, lon, first, last, type=kind, brand=brand)
+        writer.add_point(key, source, name, cls, tag, lat, lon, first, last, type=kind, brand=brand_of(entry, row))
         count += 1
     for (key, _), (cls, tag, lat, lon, first, last, _, name, kind) in (grouped or {}).items():
         brand = None

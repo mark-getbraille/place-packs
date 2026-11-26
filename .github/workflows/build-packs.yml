@@ -7,7 +7,8 @@
 #   "seed_chain_history" to seed All The Places' chain stores from its archived runs (below).
 # - plan: the regions to build. prepare: the national files (NAD, ZIP areas, public and private schools, colleges,
 #   libraries, historical counties, Canadian names, GeoNames, the UK's food hygiene ratings, and the Foursquare
-#   places of every covered country, read once from the owner's upload in the release "uploaded-sources"), split into one
+#   places of every covered country, read once from the owner's upload in the release "uploaded-sources", and the
+#   newest set of big US chains' stores from the release "chain-locators", made by chain-locators.yml), split into one
 #   slice per region; the NAD (found from its data.transportation.gov metadata) is kept in the Actions cache between
 #   runs and downloaded again only when its blobId or rowsUpdatedAt changes. The city and state open-data sources
 #   (Socrata portals) and the federal ArcGIS layers (historic places, PAD-US, bridges, dams, airports, stations,

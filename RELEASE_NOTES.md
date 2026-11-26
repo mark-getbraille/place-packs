@@ -6,5 +6,7 @@ of their own, packs-detail-YYYYMMDD.
 
 Each pack is a collective database: its OpenStreetMap layer is (c) OpenStreetMap contributors, available under the
 Open Database License (ODbL) 1.0 (https://www.openstreetmap.org/copyright); every other layer is under its own
-open licence, listed with its attribution in SOURCES.md, LICENSES.md and NOTICE (all attached to this release).
+open licence, listed with its attribution in SOURCES.md, LICENSES.md and NOTICE (all attached to this release),
+except the chain store locators (source chain-locators): facts read from big US chains' own store locators, which
+no licence covers (LICENSES.md).
 Built by .github/workflows/build-packs.yml from this repository's code (MIT).

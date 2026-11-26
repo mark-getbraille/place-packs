@@ -97,6 +97,7 @@ Only the business directories give details (`contact.CONTACT_SOURCES`), and only
 | Source | phone | website | opening_hours |
 |---|---|---|---|
 | All The Places (`alltheplaces`) | `phone` (or `contact:phone`) | `website` (or `contact:website`) | `opening_hours` (OpenStreetMap syntax) |
+| Chain store locators (`chain-locators`, `placepacks/chains`) | `phone` | `website` (the store's own page) | `opening_hours` (OpenStreetMap syntax) |
 | Overture places (`overture-places`) | the first of `phones` | the first of `websites` | none |
 | Foursquare OS Places (`fsq-places`) | `tel` | `website` | none |
 
@@ -104,7 +105,8 @@ Never kept: e-mail addresses (no source's e-mail column is read; a value with "@
 (Overture's `socials`, Foursquare's `facebook_id`, `instagram`, `twitter`, and a website that is a social-media
 page), and any detail of a licence, permit or inspection list (their phone numbers are often an owner's personal
 number: the writer ignores details from any other source). A record the readers leave out (All The Places'
-individuals' offices and person names) has nothing; a record of Overture or Foursquare whose name looks like a
+individuals' offices and person names; a chain's own brand, such as "Burger King", is not taken for a person's name)
+has nothing; a record of Overture or Foursquare whose name looks like a
 person's ("Alice Example") or whose type is an individual's own office (insurance or estate agent, lawyer, financial
 adviser, accountant) is kept as a place but without details.
 
@@ -113,7 +115,8 @@ American number written "802-555-0100" (other numbers keep their own spacing); t
 https, at most 200 characters, without its "#" part or a lone trailing "/", and dropped when its query has a
 tracking key (`utm_...`, `fbclid`, `gclid` and the like) or it holds a user name; opening hours trimmed to 255
 characters. When a lesser source lists the same business (the same name in lower case, within about 100 m in the same
-fine cell) with the same value as a better one (All The Places, then Overture, then Foursquare), its copy is left
+fine cell) with the same value as a better one (All The Places, then the chain store locators, then Overture, then
+Foursquare), its copy is left
 out, since a lookup takes each detail from the best source.
 
 History: details belong to the record listed now. Only this month's records get a row; an older row kept as history
@@ -126,7 +129,8 @@ details). The pack version stays 2, as for the types, brands and notes: a reader
 new version would stop every installed program from reading the new packs.
 
 When several sources list one place, a lookup takes each detail from the best source that has it: OpenStreetMap's
-own (the services part's `svc_details` and office details), then All The Places, Overture and Foursquare
+own (the services part's `svc_details` and office details), then All The Places, the chain store locators, Overture
+and Foursquare
 (`lookup.join_details`). Size: about 50 bytes for each business of the directories on average (measured on a
 made-up pack with 70% phones, 55% web addresses and All The Places' hours; most of it is the web address), so a
 businesses part grows by about a quarter; the licence lists' points add nothing.

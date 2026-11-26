@@ -45,8 +45,9 @@ church" or "lighthouse" (`type` in a lookup's result; `search_names(..., type="b
 - "The nearest pharmacy is Made-up Pharmacy, 300 feet north. Phone 802-555-0180. Hours: Mo-Fr 09:00-19:00." when
   asked for the nearest place of a kind (`placepacks.find`, `placepacks.local`): the phone, website and opening
   hours come from OpenStreetMap where it has them, else (since November 2026) from the business directories in the
-  businesses part: All The Places (phone, website and hours from the chains' own store locators), Overture (phone
-  and website) and Foursquare (phone and website). Never from a licence or inspection list (their numbers are often
+  businesses part: All The Places (phone, website and hours from the chains' own store locators), the chain store
+  locators this project reads itself for big US chains All The Places misses (phone, store page and hours), Overture
+  (phone and website) and Foursquare (phone and website). Never from a licence or inspection list (their numbers are often
   an owner's own), never an e-mail address, and nothing for an individual's office or a place under a person's
   name. `PackReader.details_of(key)` gives one business's details; only the business as listed now has them, not
   its older names (FORMAT.md, "Business contact details").
@@ -105,6 +106,7 @@ How far back each layer goes:
 | Washington DC business licences, Minneapolis food inspections | Licence issue and end dates; first and last inspections. |
 | Overture places | From the first build. Past monthly releases (for example one a quarter) can be merged first while Overture still keeps them. |
 | All The Places (chain stores) | Seeded once from its archived past runs, the largest run of each quarter since April 2018 (the archive's 2017 runs are listed without their files): each store from the first quarter it was listed in to the last, and a store that closed since is kept, closed at its last quarter. Then month by month. Stores are matched by the chain's own store reference; when a reference changes (a spider renamed, a locator renumbered), by the same name or brand within about 100 m. About 16 GB of archives are read once (`seed_chain_history`), and the small result is kept in the "seeds" release for every later build. |
+| Chain store locators (big US chains missing from All The Places), since November 2026 | From the first monthly set (collected on the 28th), month by month, matched by the chain and its own store number. A chain whose collection is blocked or fails one month keeps its previous month's stores (up to three months running), so a failed run never closes stores. |
 | Foursquare Open Source Places | Foursquare's own creation and closing dates. |
 | Wikidata | Its start and end dates, often decades back (a mill from 1923 to 1998). |
 | France (BAN), Netherlands (BAG), New Zealand (LINZ) | From the first build. Their published archives and change sets can seed earlier years. |
@@ -283,6 +285,36 @@ files up to 2 GB each with no total limit. A user downloads only the regions the
   step for the VA's benefits offices (one request a state); without it that source is skipped.
 - **Keep-alive:** GitHub turns off scheduled workflows in repositories with no activity for 60 days. Each run
   commits an updated `sources-status.md`, which keeps the schedule alive.
+
+### Chain store locators
+
+[.github/workflows/chain-locators.yml](.github/workflows/chain-locators.yml) ("Chain store locators") reads big US
+chains that All The Places misses straight from their own store locators (`placepacks/chains`): Burger King, Jack in
+the Box, Avis, Budget, Wyndham's hotels (Days Inn, Super 8, La Quinta, Baymont, Microtel, Travelodge, Ramada, Wingate
+and others), and Buick, GMC, Ford and Lincoln dealers.
+
+- **When it runs:** on the 28th of each month (05:41 UTC), a few days before the packs are built. By hand: Actions,
+  "Chain store locators", Run workflow; the `chains` box takes chain ids separated by spaces (for example
+  `avis budget`); empty means every chain. The ids are in `placepacks/chains/__init__.py`.
+- **How it reads a chain:** one job per chain, four at a time. Each asks the chain's own store-locator API, or reads
+  its sitemap of store pages and the schema.org details on each page, the way All The Places' open-source spiders
+  do. It names this project in every request, waits at least a second between requests to one site (ten for
+  ford.com, as its robots.txt asks), keeps to a set number of requests, and tries a busy site again a few times
+  with growing waits. If a site refuses (403, 429 or an anti-bot check page), that chain stops at once and is marked
+  "blocked": nothing is ever got round, no CAPTCHA is solved and no login is used. No e-mail address is kept, and
+  individuals' offices (insurance agents and the like) are never collected. The owner decided on 26 November 2026
+  to publish these chains' locations, hours and phone numbers even where a chain's terms or robots.txt say no.
+- **What it keeps:** the last job puts the month's set in the release `chain-locators`, one file a chain
+  (`chain-locators-<date>-<chain>.csv.gz`) and the list `chain-locators-<date>.json` last. A chain that was blocked,
+  failed, ran out of time or found less than half its stores of last time keeps its previous file, so its stores
+  stay open in the packs. The newest two sets are kept. The job summary has a table of each chain's result.
+- **How the packs use it:** the pack build's prepare step reads the newest set once, as one national file split per
+  region like All The Places. Until the first set is there the source is skipped ("waiting for the first
+  chain-locators set"); a store that All The Places also lists (the same name within 100 m) is left to All The
+  Places.
+- **Chains that refused even a first check** (26 November 2026): McDonald's, Jersey Mike's, YMCA, Planet Fitness,
+  Health Mart, Citgo, Choice Hotels, H&R Block, Best Western, the Stellantis dealers, Fastenal, Tractor Supply,
+  Goodwill and Bitcoin Depot. They are listed with what each site answered in `placepacks/chains/__init__.py`.
 
 To build one region yourself:
 

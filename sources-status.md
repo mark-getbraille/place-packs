@@ -1,4 +1,4 @@
-# Place packs status, 2026-11-24
+# Place packs status, 2026-11-26
 
 1276 packs published, 139.60 GB in all. Each pack is a collective database; see LICENSES.md for the licences and attributions.
 
@@ -200,7 +200,7 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | us-texas-south-central | 71.2 | 42.9 | 1.6 | 109.8 | 192.5 | 354.1 | 6.3 | 114.1 |
 | us-texas-west | 35.4 | 45.9 | 2.0 | 34.0 | 78.6 | 148.9 | 3.6 | 81.3 |
 | us-utah | 57.4 | 71.0 | 1.1 | 44.5 | 95.3 | 263.8 | 2.8 | 128.5 |
-| us-vermont | 24.0 | 29.0 | 1.0 | 22.3 | 50.2 | 41.2 | 1.1 | 53.0 |
+| us-vermont | 24.0 | 29.0 | 1.0 | 22.4 | 50.2 | 41.2 | 1.1 | 53.0 |
 | us-virginia | 129.0 | 100.3 | 5.1 | 308.5 | 377.2 | 385.8 | 8.5 | 229.3 |
 | us-washington | 122.5 | 76.3 | 2.4 | 121.1 | 223.5 | 473.1 | 7.2 | 198.8 |
 | us-west-virginia | 49.6 | 73.8 | 3.6 | 110.0 | 123.2 | 91.4 | 1.8 | 123.3 |
@@ -1445,10 +1445,10 @@ Sizes in MB. A program downloads core and extra; businesses and addresses only w
 | us-utah-names | 2026-11 | 1.1 | 2026-11 | wikidata-labels |
 | us-utah-navigation | 2026-11 | 263.8 | 2026-11 | osm-navigation |
 | us-utah-services | 2026-11 | 2.8 | 2026-11 | cpi-polling-places, noaa-weather-radio, nws-counties, nws-zones, osm-services |
-| us-vermont | 2026-11 | 24.0 | 2026-11 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, cpi-polling-places, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, noaa-weather-radio, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, nws-counties, nws-zones, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, padus, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
+| us-vermont | 2026-11 | 24.0 | 2026-11 | abpp-battlefields, alltheplaces, bia-land-areas, census-cousub, census-places, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, census-zcta, cpi-polling-places, epa-beaches, faa-airports, faa-special-use-airspace, fdic-branches, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, irs-exempt-organizations, military-installations, msha-mines, nad, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, noaa-weather-radio, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, nws-counties, nws-zones, ohm, osm, osm-navigation, osm-services, ourairports, overture-places, padus, tiger-addrfeat, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wikidata-labels, wild-scenic-rivers |
 | us-vermont-addresses | 2026-11 | 50.2 | 2026-11 | nad, tiger-addrfeat |
-| us-vermont-businesses | 2026-11 | 22.3 | 1831-11 | alltheplaces, fdic-branches, irs-exempt-organizations, overture-places |
-| us-vermont-extra | 2026-11 | 29.0 | 1629-03 | abpp-battlefields, bia-land-areas, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, epa-beaches, faa-airports, faa-special-use-airspace, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, military-installations, msha-mines, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, ourairports, padus, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wild-scenic-rivers |
+| us-vermont-businesses | 2026-11 | 22.4 | 1831-11 | alltheplaces, fdic-branches, irs-exempt-organizations, overture-places |
+| us-vermont-extra | 2026-11 | 29.0 | 1629-03 | abpp-battlefields, bia-land-areas, census-school-districts-elsd, census-school-districts-scsd, census-school-districts-unsd, epa-beaches, faa-airports, faa-special-use-airspace, fhwa-scenic-byways, fuds, fws-fish-hatcheries, geonames-na, gnis, gnis-variant-names, gsa-federal-buildings, hrsa-health-centers, imls-libraries, imls-museums, military-installations, msha-mines, natural-earth-lines, natural-earth-regions, nbi-bridges, nces-closed-schools, nces-postsecondary, nces-private-schools, nces-schools, newberry-counties, nhd-named-flowlines, nhd-named-waterbodies, nid-dams, noaa-marine-sanctuaries, noaa-nerrs, noaa-tide-stations, nps-poi, nps-trails, nrhp, nrhp-districts, ntad-amtrak, ntad-amtrak-routes, ntad-ferry-terminals, ntad-passenger-terminals, ntad-rail-lines, ntad-rail-yards, ntad-rest-areas, ntad-spaceports, ntad-transit-stations, ntad-tunnels, ohm, ourairports, padus, tiger-aiannh, tiger-arealm, tiger-mil, tiger-pointlm, us-post-offices, usace-principal-ports, usfs-offices, usfs-recreation-sites, usfs-trails, usgs-mrds, usgs-structures, uswtdb-wind-farms, whosonfirst-neighbourhoods, wikidata, wikidata-filming, wild-scenic-rivers |
 | us-vermont-names | 2026-11 | 1.0 | 2026-11 | wikidata-labels |
 | us-vermont-navigation | 2026-11 | 41.2 | 2026-11 | osm-navigation |
 | us-vermont-services | 2026-11 | 1.1 | 2026-11 | cpi-polling-places, noaa-weather-radio, nws-counties, nws-zones, osm-services |
@@ -9337,13 +9337,13 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | us-vermont | census-cousub | ok | 256 |
 | us-vermont | census-places | ok | 180 |
 | us-vermont | census-zcta | ok | 449 |
-| us-vermont | osm | ok | 2026-11-21T21:20:51Z |
+| us-vermont | osm | ok | 2026-11-25T21:22:46Z |
 | us-vermont-addresses | nad | ok | 333610 |
 | us-vermont-addresses | openaddresses | skipped | needs a hand-supplied file in inputs/openaddresses/us-vermont |
 | us-vermont-addresses | tiger-addrfeat | ok | 89718 |
-| us-vermont-businesses | alltheplaces | ok | 5271 |
+| us-vermont-businesses | alltheplaces | ok | 5352 |
 | us-vermont-businesses | fdic-branches | ok | 219 |
-| us-vermont-businesses | fsq-places | skipped | Foursquare no longer publishes the files openly (the bucket holds only LICENSE and NOTICE) |
+| us-vermont-businesses | fsq-places | skipped | waiting for the owner's upload from Program Downloader |
 | us-vermont-businesses | irs-exempt-organizations | ok | 3571 |
 | us-vermont-businesses | overture-places | ok | 74133 |
 | us-vermont-extra | abpp-battlefields | ok | 11 |
@@ -9362,7 +9362,7 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | us-vermont-extra | gnis-variant-names | ok | 1809 |
 | us-vermont-extra | gsa-federal-buildings | ok | 94 |
 | us-vermont-extra | gtfs | skipped | no feed of this region in the Mobility Database lists an open licence |
-| us-vermont-extra | hrsa-health-centers | ok | 130 |
+| us-vermont-extra | hrsa-health-centers | ok | 133 |
 | us-vermont-extra | imls-libraries | ok | 186 |
 | us-vermont-extra | imls-museums | ok | 86 |
 | us-vermont-extra | military-installations | ok | 7 |
@@ -9406,19 +9406,19 @@ Each source of the last build of each pack: ok (with its rows), skipped (why) or
 | us-vermont-extra | usace-principal-ports | ok | 0 in this region |
 | us-vermont-extra | uscg-light-list | skipped | could not be downloaded: HTTP Error 403: Forbidden |
 | us-vermont-extra | usfs-offices | ok | 13 |
-| us-vermont-extra | usfs-recreation-sites | failed | ArcGIS error: Layer not found |
+| us-vermont-extra | usfs-recreation-sites | ok | 253 |
 | us-vermont-extra | usfs-trails | ok | 1222 |
 | us-vermont-extra | usgs-mrds | ok | 1153 |
 | us-vermont-extra | usgs-structures | ok | 2773 |
 | us-vermont-extra | uswtdb-wind-farms | ok | 16 |
 | us-vermont-extra | va-national-cemeteries | failed | Remote end closed connection without response |
 | us-vermont-extra | whosonfirst-neighbourhoods | ok | 627 |
-| us-vermont-extra | wikidata | ok | 6853 |
+| us-vermont-extra | wikidata | ok | 6855 |
 | us-vermont-extra | wikidata-filming | ok | 23 |
 | us-vermont-extra | wild-scenic-rivers | ok | 2 |
-| us-vermont-names | wikidata-labels | ok | 4781 |
+| us-vermont-names | wikidata-labels | ok | 4782 |
 | us-vermont-navigation | gtfs-navigation | skipped | no feed of this region in the Mobility Database lists an open licence |
-| us-vermont-navigation | osm-navigation | ok | 114329 |
+| us-vermont-navigation | osm-navigation | ok | 114351 |
 | us-vermont-services | cpi-polling-places | ok | 261 |
 | us-vermont-services | noaa-weather-radio | ok | 31 |
 | us-vermont-services | nws-counties | ok | 14 |

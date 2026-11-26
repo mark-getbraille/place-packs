@@ -1,0 +1,123 @@
+# Reads big US chains' own store locators once a month (the source "chain-locators"; placepacks/chains).
+#
+# - When: the 28th of each month (05:41 UTC), a few days before the packs are built on the 2nd; or by hand (Actions,
+#   "Chain store locators", Run workflow), optionally for some chains only ("chains": ids separated by spaces, such
+#   as "avis budget"; empty: every chain).
+# - plan: the list of chains (python -m placepacks.chains.run --list).
+# - collect: one job per chain, four at a time, each stopped at its own time limit; one chain failing never stops
+#   the others (fail-fast is off). Each job reads its chain politely (an identified User-Agent naming this project,
+#   at least a second between requests to one host, a request budget, retries with back-off) and stops at once if
+#   the site refuses (403, 429 or an anti-bot challenge page): that chain is then "blocked" in the run's summary.
+#   Nothing is ever got round: no CAPTCHA, no browser, no login. Each job uploads its summary and, for a complete
+#   run, its CSV as an artifact.
+# - publish: the only job that can write (contents: write). It puts this month's set together in the release
+#   "chain-locators" (placepacks/chains/release.py): a chain that was blocked, failed, ran out of time or found far
+#   fewer stores than last time keeps its previous file, so a bad month never closes its stores in the packs'
+#   history. The newest two sets are kept. The run's table (each chain: result, stores, requests) is in the job
+#   summary.
+# The pack build (build-packs.yml) reads the newest set in its prepare step. Only the repository's own GITHUB_TOKEN
+# is used.
+
+name: Chain store locators
+
+on:
+  schedule:
+    - cron: "41 5 28 * *"
+  workflow_dispatch:
+    inputs:
+      chains:
+        description: "Chain ids separated by spaces, for example avis budget (empty: every chain; the list is in placepacks/chains/__init__.py)"
+        required: false
+        default: ""
+
+# Read-only by default; only publish may write (the "chain-locators" release).
+permissions:
+  contents: read
+
+concurrency:
+  group: chain-locators
+  cancel-in-progress: false
+
+env:
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      chains: ${{ steps.plan.outputs.chains }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Choose the chains
+        id: plan
+        env:
+          CHAINS: ${{ inputs.chains }}
+        run: |
+          # An unknown chain id stops here, naming the known ones.
+          matrix=$(python -m placepacks.chains.run --list --only "$CHAINS")
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "chains=$(python -c 'import json, sys; print(" ".join(c["chain"] for c in json.loads(sys.argv[1])))' "$matrix")" >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+
+  collect:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ matrix.timeout }}
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Read the chain's store locator
+        env:
+          CHAIN: ${{ matrix.chain }}
+        run: python -m placepacks.chains.run --chain "$CHAIN" --out chain-out
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        if: ${{ always() }}
+        with:
+          name: chain-${{ matrix.chain }}
+          path: chain-out/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  publish:
+    needs: [plan, collect]
+    # Also when some chains' jobs failed or ran out of time: their previous files are kept.
+    if: ${{ always() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write   # this month's set is stored in, and older sets deleted from, the "chain-locators" release
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          pattern: chain-*
+          merge-multiple: true
+          path: results
+      - name: Publish the set in the release "chain-locators"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CHAINS: ${{ needs.plan.outputs.chains }}
+        run: |
+          mkdir -p results
+          python -m placepacks.chains.release publish --dir results --chains "$CHAINS"

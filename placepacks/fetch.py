@@ -14,6 +14,10 @@ Each source's catalogue "fetch" says how:
                   Program Downloader (Foursquare Open Source Places, from Hugging Face): --prepare reads the newest
                   upload once, file by file, into a national slice; skipped, "waiting for the owner's upload from
                   Program Downloader", until the first upload is there (placepacks/uploaded.py)
+  release_csv     the monthly set of chain stores this repository's chain-locators workflow reads from big chains'
+                  own store locators (placepacks/chains) and keeps in the release "chain-locators": --prepare reads
+                  the newest complete set once into one national CSV, split per region like All The Places; skipped,
+                  "waiting for the first chain-locators set", until the first set is there (chains/release.py)
   wikidata        one query to the Wikidata Query Service, by bounding box
   overpass        one query to an Overpass API (OpenHistoricalMap), by bounding box
   gtfs            the region's feeds of the Mobility Database catalogue whose licence allows redistribution
@@ -1558,6 +1562,29 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         fetch_slice({**entry, "remote": local, "query": entry["local_query"]}, region, target)
         out.update(ok=True, path=target, date=datetime.date.today().isoformat())
         return out
+    if method == "release_csv":
+        # The chain stores of the release "chain-locators" (placepacks/chains/release.py): the prepare job read the
+        # newest set once into national/<id>/<id>.csv and split it per region; the region reads its slice folder.
+        from placepacks import uploaded
+        from placepacks.chains import release
+        try:
+            out["version"] = release.version(entry)
+        except uploaded.Waiting as e:
+            raise SourceUnavailable(str(e)) from None
+        if fingerprint:
+            out["ok"] = True
+            return out
+        folder = os.path.join(national or "national", entry["id"])
+        note = os.path.join(folder, FAILED)
+        if os.path.exists(note):
+            why = open(note, encoding="utf-8").read().strip()
+            out.update(status="skipped", reason=f"could not be prepared: {why}")
+            return out
+        if not os.path.isdir(folder):
+            out.update(status="skipped", reason="the national file was not prepared (see the prepare job)")
+            return out
+        out.update(ok=True, path=folder, date=datetime.date.today().isoformat())
+        return out
     if method == "duckdb_national":
         # The source was sliced once for every covered country by --prepare (national/<id>/<id>.parquet); the
         # region's slice is read from that local file.
@@ -2056,6 +2083,9 @@ def prepare(national, cat=None):
         if entry["fetch"]["method"] == "uploaded_national":
             prepare_uploaded(entry, national)
             continue
+        if entry["fetch"]["method"] == "release_csv":
+            prepare_release(entry, national)
+            continue
         if entry["fetch"]["method"] != "national":
             continue
         try:
@@ -2235,6 +2265,27 @@ def prepare_uploaded(entry, national):
     folder = os.path.join(national, entry["id"])
     try:
         uploaded.prepare(entry, national, notice_path=os.path.join(catalogue.ROOT, "NOTICE"))
+        return
+    except uploaded.Waiting as e:
+        print(f"{entry['id']}: skipped ({e})")
+        why = str(e)
+    except Exception as e:  # noqa: BLE001 - that layer is left out this time
+        print(f"{entry['id']}: not prepared ({e})")
+        why = str(e)
+    os.makedirs(folder, exist_ok=True)
+    with open(os.path.join(folder, FAILED), "w", encoding="utf-8") as fh:
+        fh.write(why[:300])
+
+
+def prepare_release(entry, national):
+    """Read the newest chain-locators set from its release once into national/<id>/<id>.csv
+    (placepacks/chains/release.py). No set yet, or a failure, leaves the layer out this time (never the build): the
+    regions then say why, from the FAILED note."""
+    from placepacks import uploaded
+    from placepacks.chains import release
+    folder = os.path.join(national, entry["id"])
+    try:
+        release.prepare(entry, national)
         return
     except uploaded.Waiting as e:
         print(f"{entry['id']}: skipped ({e})")

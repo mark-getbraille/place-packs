@@ -122,6 +122,16 @@ licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD
   licence and is used, like the DBPR files, as a Florida public record (Chapter 119). New York's lottery, career
   center, Commission for the Blind and health facility lists are under the OPEN-NY terms. Child care lists keep
   centres only (never family or group homes) and no director's or contact person's name, telephone or e-mail.
+- **Chain store locators (source `chain-locators`, since November 2026):** store positions, addresses, phone
+  numbers, store web pages and opening hours read by this project from big US chains' own public store locators
+  (`placepacks/chains`). The chains grant no licence; these are facts, which are not protected by copyright in the
+  United States (Feist v. Rural Telephone, 1991). The owner decided (26 November 2026) to collect and publish them,
+  also where a chain's terms or robots.txt say otherwise (licence `store-locator-facts` in sources.json). They are
+  collected politely: an identified User-Agent, at least a second between requests, a request budget per chain, and
+  a clean stop at any refusal or anti-bot challenge (never solved or got round); no e-mail address and no
+  individual's own office (insurance agents and the like) is collected. The collectors' endpoints and logic are
+  adapted from All The Places' spiders (github.com/alltheplaces/alltheplaces), whose code is under the MIT licence,
+  Copyright (c) 2016 Ian Dees; its notice is in `NOTICE`.
 - **OpenHistoricalMap:** CC0, except features with their own `license` tag, which the packs leave out.
 - **Personal data:** the business sources keep only a business's trade name, class, position and dates. Records
   that may be someone's home (home-based businesses, contractors, mobile caterers, childminders, short-term rentals,

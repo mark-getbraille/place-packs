@@ -1,5 +1,5 @@
 {
- "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
+ "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). One exception, by the owner's decision of 26 November 2026: chain-locators, facts read from big chains' own store locators (licence store-locator-facts). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
  "settings": {
   "tiger_year": "2025",
   "tiger_seed_years": [
@@ -158,6 +158,11 @@
   "NLR-Data-Terms": {
    "name": "NLR Developer Network and AFDC data terms: the data \"may be used for any purpose whatsoever\"; the names DOE, NLR (National Laboratory of the Rockies, formerly NREL) and the Alliance for Energy Innovation may not be used to endorse or promote; no warranty, and the user indemnifies them against claims arising from the use and distribution of the data (read 26 November 2026)",
    "url": "https://developer.nlr.gov/terms/",
+   "file": ""
+  },
+  "store-locator-facts": {
+   "name": "Facts read from each chain's own public store locator (store positions, addresses, telephone numbers, web pages and opening hours). The chains grant no licence; facts are not protected by copyright in the United States (Feist Publications v. Rural Telephone Service, 499 U.S. 340, 1991). Collected and published by the owner's decision of 26 November 2026, also where a chain's terms or robots.txt say otherwise; collected politely (identified, rate-limited, never past a refusal or a challenge)",
+   "url": "https://supreme.justia.com/cases/federal/us/499/340/",
    "file": ""
   }
  },
@@ -4888,6 +4893,58 @@
     "group_bytes": 5000000000
    },
    "notes": "About 40 million locations worldwide from 5,800 spiders over chains' own store locators, kept by the covered regions' boxes. Offices of individuals (insurance and estate agents, financial advisers, lawyers) and names that are a person's are left out. The brand and its Wikidata id are kept beside each location (data only). Past runs are archived from April 2018 (the 2017 runs are listed without files): one a quarter, 35 MB in 2018 and 2.7 GB in 2026, about 16 GB in all, read once by the history seed, whose result (about 1 GB) is kept in the \"seeds\" release. Stores are followed by spider and reference; when a reference changes, by the same name or brand within about 100 m."
+  },
+  {
+   "id": "chain-locators",
+   "name": "Chain store locators (big US chains missing from All The Places)",
+   "short": "chain store locators",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "store-locator-facts",
+   "attribution": "Store locations of big US chains read from the chains' own store locators by place-packs (placepacks/chains); collection logic adapted from All The Places' spiders (MIT).",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/chains",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "release_csv",
+    "release": "chain-locators",
+    "prefix": "chain-locators"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "class_column": "main_value",
+    "first": "first",
+    "last": "last"
+   },
+   "class_map": {
+    "*": "business"
+   },
+   "type_column": "type",
+   "type_map": "humanise",
+   "brand_column": "brand",
+   "brand_wikidata_column": "brand_wikidata",
+   "contact_columns": {
+    "phone": "phone",
+    "website": "website",
+    "opening_hours": "opening_hours"
+   },
+   "dedupe_against": [
+    "alltheplaces"
+   ],
+   "dedupe_m": 100,
+   "history": "From the first build that has a set (December 2026 at the earliest), month by month, keyed by the chain and its own store number. A chain whose collection fails or is blocked in a month keeps its stores from the previous set (up to three months in a row), so a failed run never closes stores.",
+   "contact": "The phone number, the store's own web page and the opening hours the chain's locator gives (OpenStreetMap syntax), cleaned by placepacks/contact.py. No e-mail address is ever read.",
+   "notes": "Collected once a month by the chain-locators workflow (the 28th), one job per chain: Burger King, Jack in the Box, Avis, Budget, Wyndham's hotel brands (Days Inn, Super 8, La Quinta, Baymont, Microtel, Travelodge, Ramada, Wingate and others), Buick, GMC, Ford and Lincoln dealers. Each chain's collector (placepacks/chains) reads its own store-locator API or its sitemap of store pages with schema.org data, with an identified User-Agent, at least a second between requests, a request budget, and a clean stop when a site refuses (recorded as blocked). The set is kept in this repository's release \"chain-locators\" (the newest two); the pack build's prepare job reads the newest set once and splits it per region. A store that All The Places also has (the same name within 100 m) is left to All The Places. Chains that refused even a first check (McDonald's, Jersey Mike's, YMCA, Planet Fitness, Health Mart, Citgo, Choice Hotels, H&R Block, Best Western, Stellantis dealers, Fastenal, Tractor Supply, Goodwill) are listed in placepacks/chains/__init__.py; individuals' offices (insurance agents) are never collected. Until the first set is there, the source is skipped (waiting for the first chain-locators set)."
   },
   {
    "id": "ny-thruway-travel-plazas",

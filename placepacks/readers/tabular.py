@@ -43,7 +43,8 @@ Points may also have:
   "note_column": a column (or a list of columns, joined with "; ") whose text becomes the point's note (data only,
                never spoken: FORMAT.md, "Notes on places"), such as the accessibility description of a recreation
                site; "note_prefix" is put before it ("Accessibility: "). E-mail addresses and telephone numbers are
-               taken out of the note (clean_note), and it is cut to NOTE_LIMIT characters
+               taken out of the note (clean_note), and it is cut to NOTE_LIMIT characters; "note_keep_phones":
+               true keeps the telephone numbers of a government source's note (a park's TTY number)
   "skipinitialspace": true: the spaces after each comma are not part of the value or the column name (a header
                written "FDID, Fire dept name, HQ addr1")
   "brand_column", "brand_wikidata_column": a chain location's brand and its Wikidata id (data only); "brand_map":
@@ -469,10 +470,13 @@ _EMAIL = re.compile(r"[\w.+-]+@[\w-]+(\.[\w-]+)+")
 _PHONE = re.compile(r"(\+?1[\s.-]?)?\(?\b\d{3}\)?[\s.-]?\d{3}[\s.-]\d{4}\b")
 
 
-def clean_note(text, prefix=""):
+def clean_note(text, prefix="", keep_phones=False):
     """A place's note from source text: e-mail addresses and telephone numbers taken out, spaces tidied, cut to
-    NOTE_LIMIT characters at a word; "" when nothing is left. prefix ("Accessibility: ") is put before it."""
-    text = _PHONE.sub("", _EMAIL.sub("", text or ""))
+    NOTE_LIMIT characters at a word; "" when nothing is left. prefix ("Accessibility: ") is put before it.
+    keep_phones: the public numbers of a government office stay (the National Park Service's TTY numbers)."""
+    text = _EMAIL.sub("", text or "")
+    if not keep_phones:
+        text = _PHONE.sub("", text)
     text = " ".join(text.split()).strip(" ;,")
     if not text:
         return ""
@@ -487,7 +491,8 @@ def note_of(entry, row):
     if not spec:
         return None
     parts = [row.get(c, "").strip() for c in (spec if isinstance(spec, list) else [spec])]
-    return clean_note("; ".join(p for p in parts if p), entry.get("note_prefix", "")) or None
+    return clean_note("; ".join(p for p in parts if p), entry.get("note_prefix", ""),
+                      keep_phones=bool(entry.get("note_keep_phones"))) or None
 
 
 @reader("tabular")

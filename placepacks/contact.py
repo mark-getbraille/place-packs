@@ -1,9 +1,11 @@
 """Business contact details (phone, website, opening hours) from the business-directory sources, made small and
 safe before they go into the businesses part (FORMAT.md, "Business contact details").
 
-Only four sources may give them (CONTACT_SOURCES): All The Places (the chains' own store locators), the chain
-stores this project reads itself from big chains' store locators (chain-locators, placepacks/chains), Overture's
-places and Foursquare's Open Source Places. The licence and inspection lists never do: their phone numbers are often
+Only these sources may give them (CONTACT_SOURCES): All The Places (the chains' own store locators), the chain
+stores this project reads itself from big chains' store locators (chain-locators, placepacks/chains), the
+government sources of public offices and sites (GOVERNMENT_SOURCES: Social Security offices, the Forest Service's
+and the National Park Service's sites, Recreation.gov's facilities; placepacks/gov_details.py), Overture's places
+and Foursquare's Open Source Places. The licence and inspection lists never do: their phone numbers are often
 an owner's personal number. PackWriter.add_point ignores contact details from any other source.
 
 What is kept, and how it is cleaned:
@@ -13,7 +15,7 @@ What is kept, and how it is cleaned:
   - website: the first address only, http or https only, at most 200 characters, without a "#" part; an address
     with a tracking query (utm_..., fbclid, gclid and the like) loses just those parts; a social-media page is dropped (socials are
     not kept) or an address with a user name or password in it.
-  - opening_hours: All The Places and chain-locators only, in OpenStreetMap's syntax ("Mo-Fr 08:00-18:00"), at most 255 characters.
+  - opening_hours: All The Places, chain-locators and the government sources only, in OpenStreetMap's syntax ("Mo-Fr 08:00-18:00"), at most 255 characters.
   - never an e-mail address, and nothing at all for a place whose name looks like a person's ("Alice Example";
     a chain's own brand, such as "Burger King", is not taken for a person's name) or
     whose type is an individual's own office (an insurance or estate agent, a lawyer, a financial adviser, an
@@ -24,11 +26,17 @@ Only the Python standard library is used.
 import re
 import urllib.parse
 
+# Government sources whose offices' and sites' phone, website and hours are kept (placepacks/gov_details.py): the
+# public numbers and hours of Social Security offices, Forest Service and National Park Service sites and
+# Recreation.gov's facilities. They are public offices, so the person-name and personal-office checks below do not
+# apply to them (a campground called "Lost Lake Campground" looks like a person's name to PERSON_NAME).
+GOVERNMENT_SOURCES = ("ssa-field-offices", "nps-places", "usfs-recreation-sites", "ridb-recreation")
 # The sources whose phone, website and hours are kept, best first (the order a lookup prefers when several sources
 # list the same business; OpenStreetMap's own svc_details come before all of them).
-CONTACT_SOURCES = ("alltheplaces", "chain-locators", "overture-places", "fsq-places")
-# The sources whose opening hours are kept (the chains' own store locators, in OpenStreetMap's syntax).
-HOURS_SOURCES = ("alltheplaces", "chain-locators")
+CONTACT_SOURCES = ("alltheplaces", "chain-locators") + GOVERNMENT_SOURCES + ("overture-places", "fsq-places")
+# The sources whose opening hours are kept (the chains' own store locators and the government sources, in
+# OpenStreetMap's syntax).
+HOURS_SOURCES = ("alltheplaces", "chain-locators") + GOVERNMENT_SOURCES
 CONTACT_FIELDS = ("phone", "website", "opening_hours")
 
 # A name that is a person's: "Alice Example", "Jane Q. Doe Jr." (as fetch._PERSON, used for All The Places).
@@ -59,6 +67,8 @@ def allowed(source, name, kind=None, brand=None):
     own office."""
     if source not in CONTACT_SOURCES:
         return False
+    if source in GOVERNMENT_SOURCES:
+        return True                     # a public office or site, never a person's details
     if PERSON_NAME.match((name or "").strip()) and not is_brand_name(name, brand):
         return False
     return not (kind and PERSONAL_TYPES.search(kind))

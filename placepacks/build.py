@@ -174,7 +174,9 @@ def build(region_id, part, fetched, out, previous=None, month=None, only=None, c
     # feeds): their duplicates are removed once every source has been read.
     for entry in catalogue.sources_for(region, part, cat, only):
         if entry.get("dedupe_against") and status.get(entry["id"], {}).get("status") == "ok":
-            gone = writer.drop_duplicates(entry["id"], entry["dedupe_against"], entry.get("dedupe_m", 100))
+            # "dedupe_carry": the removed duplicate's phone, hours, website and note go to the point that stays.
+            gone = writer.drop_duplicates(entry["id"], entry["dedupe_against"], entry.get("dedupe_m", 100),
+                                          carry=bool(entry.get("dedupe_carry")))
             if gone:
                 print(f"  {entry['id']}: {gone:,} duplicates of {', '.join(entry['dedupe_against'])} removed", flush=True)
     meta = {"region_id": region_id, "region_name": region["name"], "country": region["country"],

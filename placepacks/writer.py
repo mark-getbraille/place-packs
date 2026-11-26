@@ -59,7 +59,8 @@ NEAR = 50                       # microdegrees (about 5 m): the second pass for 
 CONTACT_SEP = "\x1f"
 # The sources whose contact details the build keeps, best first (placepacks/contact.py: CONTACT_SOURCES; written
 # here too, so that a copy of this file without contact.py still writes packs).
-CONTACT_ORDER = ("alltheplaces", "chain-locators", "overture-places", "fsq-places")
+CONTACT_ORDER = ("alltheplaces", "chain-locators", "ssa-field-offices", "nps-places", "usfs-recreation-sites",
+                 "ridb-recreation", "overture-places", "fsq-places")
 TYPED = {"points": "point_types", "areas": "area_types"}
 SOURCE_COLUMNS = ("id", "name", "short", "kind", "part", "licence", "licence_url", "attribution", "url", "version",
                   "date", "history_start", "history_note")
@@ -245,24 +246,52 @@ class PackWriter:
                                   fmt.pack_points(fmt.micro(points)), self.month, self.month))
         self._count(source, "ranges")
 
-    def drop_duplicates(self, source, against, metres=100):
+    def drop_duplicates(self, source, against, metres=100, carry=False):
         """Remove the points of source that another source in against already has: the same normalised name within
-        metres (the national transit stops against each agency's GTFS feed). Returns the number removed."""
+        metres (the national transit stops against each agency's GTFS feed). With carry, the removed point's
+        details go to the point that stays (the nearest match), filling only what it lacks: its phone, website
+        and opening hours (the build-time "contact" column) and its note (added after the kept point's own note).
+        So a government list's details (Recreation.gov's phone, a park's hours) reach the agency's own point
+        without listing the place twice. Returns the number removed."""
         from placepacks.lookup import normal_name
         tol = int(metres / 0.111)                       # microdegrees, about metres at the equator
         others = {}
         marks = ",".join("?" * len(against))
-        for name, lat, lon in self.db.execute(f"SELECT name, lat, lon FROM points WHERE source IN ({marks})",
-                                              list(against)):
-            others.setdefault(normal_name(name), []).append((lat, lon))
+        for pid, name, lat, lon in self.db.execute(f"SELECT id, name, lat, lon FROM points WHERE source IN "
+                                                   f"({marks})", list(against)):
+            others.setdefault(normal_name(name), []).append((lat, lon, pid))
         gone = []
         for pid, name, lat, lon in self.db.execute("SELECT id, name, lat, lon FROM points WHERE source = ?",
                                                     (source,)).fetchall():
-            near = others.get(normal_name(name), [])
-            if any(abs(lat - a) <= tol and abs(lon - b) <= tol for a, b in near):
+            near = [(abs(lat - a) + abs(lon - b), kept) for a, b, kept in others.get(normal_name(name), [])
+                    if abs(lat - a) <= tol and abs(lon - b) <= tol]
+            if near:
                 gone.append((pid,))
+                if carry:
+                    self._carry(pid, min(near)[1])
         self.db.executemany("DELETE FROM points WHERE id = ?", gone)
         return len(gone)
+
+    def _carry(self, removed, kept):
+        """Give the point kept the details of the point removed that it lacks (drop_duplicates, carry): each of
+        phone, website and opening hours that the kept point has no value for, and the removed point's note after
+        the kept point's own (cut to about 1,200 characters, as the readers' notes)."""
+        a = self.db.execute("SELECT contact, note FROM points WHERE id = ?", (removed,)).fetchone()
+        b = self.db.execute("SELECT contact, note FROM points WHERE id = ?", (kept,)).fetchone()
+        if not a or not b:
+            return
+        contact = b[0]
+        if a[0]:
+            mine = (b[0] or "").split(CONTACT_SEP) + ["", "", ""]
+            theirs = a[0].split(CONTACT_SEP) + ["", "", ""]
+            merged = [mine[i] or theirs[i] for i in range(3)]
+            contact = CONTACT_SEP.join(merged) if any(merged) else None
+        note = b[1]
+        if a[1] and a[1] != b[1] and (not b[1] or a[1] not in b[1]):
+            note = f"{b[1]}; {a[1]}" if b[1] else a[1]
+            if len(note) > 1200:
+                note = note[:1200].rsplit(" ", 1)[0] + " ..."
+        self.db.execute("UPDATE points SET contact = ?, note = ? WHERE id = ?", (contact, note, kept))
 
     def add_label(self, key, lang, name):
         """A place's name in another language (the optional "names" part): the key of the place in the main packs

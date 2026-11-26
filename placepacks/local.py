@@ -103,20 +103,28 @@ class LocalServices:
             typed = {"types", "point_types"} <= tables
             # A business's phone, website and hours (the businesses part's biz_details; none in older packs).
             has = "biz_details" in tables
+            # A government office's address is in its note ("Address: 68 Sewall St, Augusta, ME 04330": the Social
+            # Security offices, placepacks/ssa_offices.py); the notes are not there in older packs.
+            noted = {"notes", "point_notes"} <= tables
             sql = ("SELECT p.key, p.source, p.name, p.tag, p.lat, p.lon, p.last" +
                    (", d.phone, d.website, d.opening_hours" if has else "") +
+                   (", n.text AS note" if noted else ", NULL AS note") +
                    (", t.name AS type FROM points p LEFT JOIN point_types l ON l.id = p.id LEFT JOIN types t ON "
                     "t.id = l.type" if typed else ", NULL AS type FROM points p") +
-                   (" LEFT JOIN biz_details d ON d.id = p.id" if has else "") + f" WHERE p.ccell IN ({cells})")
+                   (" LEFT JOIN biz_details d ON d.id = p.id" if has else "") +
+                   (" LEFT JOIN point_notes pn ON pn.id = p.id LEFT JOIN notes n ON n.id = pn.note" if noted else "")
+                   + f" WHERE p.ccell IN ({cells})")
             for r in pack._rows(sql):
                 if r["last"] and pack.latest and r["last"] < pack.latest:
                     continue                    # closed or gone: only places listed at the last build
                 hit = (r["type"] in spec.get("types", ())) or (r["tag"] in spec.get("tags", ())) or \
                     (pattern is not None and pattern.search(r["name"] or ""))
                 if hit:
+                    details = {k: r[k] for k in ("phone", "website", "opening_hours") if r.get(k)}
+                    if (r.get("note") or "").startswith("Address: "):
+                        details["address"] = r["note"][len("Address: "):].split("; ")[0]
                     out.append({"key": r["key"], "source": r["source"], "kind": kind, "name": r["name"],
-                                "lat": r["lat"], "lon": r["lon"],
-                                "details": {k: r[k] for k in ("phone", "website", "opening_hours") if r.get(k)},
+                                "lat": r["lat"], "lon": r["lon"], "details": details,
                                 "attribution": (pack.sources.get(r["source"]) or {}).get("attribution", "")})
         for r in out:
             r["lat"], r["lon"] = r["lat"] / fmt.SCALE, r["lon"] / fmt.SCALE
@@ -157,6 +165,7 @@ class LocalServices:
             address = " ".join(x for x in (d.get("addr:housenumber"), d.get("addr:street")) if x)
             if d.get("addr:city"):
                 address = f"{address}, {d['addr:city']}" if address else d["addr:city"]
+            address = address or d.get("address", "")
             places.append({"name": r["name"], "kind": r["kind"], "distance_m": round(r["d"]),
                            "bearing": bearing_word(lat, lon, r["lat"], r["lon"]), "lat": r["lat"], "lon": r["lon"],
                            "phone": d.get("phone") or d.get("contact:phone") or "",

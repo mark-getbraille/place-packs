@@ -10,7 +10,9 @@ Reading and lookup use the Python standard library only:
   placepacks.manifest  packs.json (parse, publish, plan, release_for)
 Building (needs requirements.txt): placepacks.fetch, placepacks.build, placepacks.split, placepacks.readers,
 placepacks.combine (a parent's pack from its sub-regions'), placepacks.seed (the TIGER history seed),
-placepacks.status (sources-status.md). Developer tools: tools/.
+placepacks.status (sources-status.md), placepacks.gov_details (government places with phone, hours and
+accessibility: ssa_offices, nps_api, ridb, usfs_details; opening hours in OpenStreetMap's syntax: placepacks.hours).
+Developer tools: tools/.
 """
 
 __version__ = "2.0"

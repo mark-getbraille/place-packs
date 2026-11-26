@@ -46,7 +46,8 @@ BUSINESS_SOURCES = {"overture-places", "fsq-places"}
 # The sources whose phone, website and opening hours are in a businesses part's biz_details table, best first: when
 # several sources list one business, a lookup takes each detail from the first that has it (OpenStreetMap's own
 # details, the services part's svc_details, come before all of them). FORMAT.md, "Business contact details".
-DETAIL_ORDER = ("alltheplaces", "chain-locators", "overture-places", "fsq-places")
+DETAIL_ORDER = ("alltheplaces", "chain-locators", "ssa-field-offices", "nps-places", "usfs-recreation-sites",
+                "ridb-recreation", "overture-places", "fsq-places")
 DETAIL_FIELDS = ("phone", "website", "opening_hours")
 
 

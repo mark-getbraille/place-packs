@@ -19,8 +19,9 @@ listed with its licence in [SOURCES.md](SOURCES.md). The packs are made for the
 
 A photo on a trail or beside a river with nothing nearer named gets the line: "on the Long Trail", "beside the
 Missisquoi River" (Forest Service and park trails, Wild and Scenic Rivers). Address-only lists (the IRS's exempt
-organizations) are placed by an offline geocoder at build time, against the state's own address points; an
-organization at a home address is placed on its street, never at the house.
+organizations, the Texas, Florida, Pennsylvania and Connecticut licence lists) are placed by an offline geocoder at
+build time, against the state's own address points (or, in Maryland, which the NAD leaves out, along the street's
+address range); an organization at a home address is placed on its street, never at the house.
 
 Every place can also carry a fine type beside its class, such as "pizza restaurant", "hardware store", "catholic
 church" or "lighthouse" (`type` in a lookup's result; `search_names(..., type="bakery")`). See FORMAT.md.
@@ -69,6 +70,8 @@ How far back each layer goes:
 | US address points (NAD) | From the first build. Earlier NAD releases are added if USDOT keeps them openly downloadable. The NAD is downloaded again only when USDOT publishes a new file (data.transportation.gov). |
 | Restaurant inspections (New York City and State, Austin, Delaware, Montgomery County MD, Boulder County, Cincinnati, Baton Rouge, San Francisco 2016–2019) | Each establishment from its first to its last inspection, one record per permit and name, so a renamed restaurant keeps its old name with its own dates. New York State's go back to 2005. |
 | Liquor licences (New York State, Colorado), New York City storefront licences, San Francisco and Los Angeles business locations | Each licence's issue and expiry dates, or each business location's start and end dates (San Francisco's go back to the 1960s). Only storefront businesses, under their trade names. |
+| State licence and tax lists (since November 2026): Texas sales-tax outlets, mixed beverage, tobacco and hotel permits; Florida food service, alcohol and tobacco licences; Pennsylvania sales-tax and tobacco licences; New York food stores, tobacco and cannabis retailers, DMV facilities and salons; Connecticut premises licences and car dealers | Texas outlets from their first sale (back to the 1960s) to their out-of-business date; Florida alcohol licences and Connecticut and New York licences from their issue dates; the others from the first build. Only storefront types, under their trade names; a sole proprietor trading under their own name, or from home, is left out (each source's rule is in SOURCES.md). |
+| City and county lists (since November 2026): Baton Rouge businesses, New Orleans licences and alcohol outlets, San Diego County food facilities, Sacramento County licences, Baltimore liquor licences (from 2002), Wake County restaurants, Cambridge, Washington DC liquor licences, Sioux Falls, Arlington TX | Each place's own opening, licence or inspection dates where the list has them; otherwise from the first build. |
 | FDIC bank branches | Each branch under its bank's name since the bank took it over, or since it opened. |
 | UK food hygiene ratings (FSA) | Each business from its latest rating date, then month by month. |
 | Victoria, Australia: Sands & McDougall directories | The directory years 1896–1974 each business was listed in. |

@@ -10,8 +10,8 @@ The code of this repository (the `placepacks` package, the tools and the workflo
 A pack mixes OpenStreetMap with other open data. OpenStreetMap is under the Open Database License (ODbL) 1.0, which
 is share-alike: a database *derived* from OpenStreetMap must be offered under the ODbL. The other sources have
 their own licences (public domain, CC0, PDDL, CC BY 4.0, the Open Government Licences of Canada and the UK, Licence
-Ouverte 2.0, CDLA Permissive 2.0, Apache 2.0, the open-use terms of New York City's and New York State's open-data
-portals, and the Newberry Library's open terms).
+Ouverte 2.0, CDLA Permissive 2.0, Apache 2.0, CC BY 3.0, the open-use terms of New York City's and New York State's
+open-data portals, the Newberry Library's open terms, and Florida's public records).
 
 We chose to make each pack a **collective database** (ODbL 1.0, section 1, "Collective Database"; section 4.5),
 not one database under a single licence:
@@ -87,13 +87,26 @@ licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD
 - **Québec (Données Québec), Atlanta Regional Commission, GeoNames, Marine Regions:** CC BY 4.0, credited as in
   `SOURCES.md`.
 - **US Post Offices 1639-2000 (Blevins and Helbock), Columbus Public Health, New Orleans, Connecticut DEEP:** CC0.
+- **Florida DBPR licence files (food service, alcohol, tobacco):** no licence is stated. They are public records
+  under Chapter 119, Florida Statutes, and Florida agencies generally cannot claim copyright in public records without
+  a statute that allows it (Microdecisions, Inc. v. Skinner, Fla. 2d DCA 2004). The owner decided (26 November 2026)
+  to treat them as public domain (licence `FL-public-records` in sources.json); the packs name the Department all
+  the same.
+- **Baltimore City liquor licences:** Creative Commons Attribution 3.0 Unported (`LICENSES/CC-BY-3.0.txt`); credit
+  the Board of Liquor License Commissioners for Baltimore City as in `SOURCES.md`.
+- **Sacramento County business licences, Wake County, Sioux Falls, Arlington TX, Washington DC (ABCA):** CC BY 4.0
+  (Sacramento's layer also says public domain dedication; it is credited under CC BY 4.0 all the same).
+- **Pennsylvania (data.pa.gov):** the portal marks its datasets "Public Domain U.S. Government" although they are
+  state works; read as the portal's public domain mark.
 - **NOAA National Marine Sanctuaries:** U.S. government material, identified as such (17 U.S.C. 403).
 - **IRS exempt organizations:** only names and located points are kept, never the "in care of" (people's) names; an
   organization at a home address is placed on its street.
 - **OpenHistoricalMap:** CC0, except features with their own `license` tag, which the packs leave out.
 - **Personal data:** the business sources keep only a business's trade name, class, position and dates. Records
   that may be someone's home (home-based businesses, contractors, mobile caterers, childminders, short-term rentals,
-  individual licences) and licensee names that look like a person's are left out; see `SOURCES.md`. A takedown
+  individual licences) and licensee names that look like a person's are left out; a sole proprietor whose trade name
+  is their own name is left out (compared with the licensee's name, which is never kept), and an id that may hold a
+  personal number (Texas taxpayer numbers) is kept only as a fingerprint; see `SOURCES.md`. A takedown
   request goes in `removals.json`.
 
 ## Removals

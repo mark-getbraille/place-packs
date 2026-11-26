@@ -58,7 +58,11 @@ licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD
 ## Conditions passed on
 
 - **National Address Database (US):** state laws forbid using it as a mailing list. The packs are for naming places.
-- **Foursquare Open Source Places:** keep `NOTICE` with any copy of the data in files (Apache 2.0, section 4).
+- **Foursquare Open Source Places:** keep `NOTICE` with any copy of the data in files (Apache 2.0, section 4). The
+  build reads Foursquare's own files from the release `uploaded-sources`, where the owner's Program Downloader
+  uploads them unchanged from the Hugging Face dataset `foursquare/fsq-os-places`, each month with Foursquare's
+  `NOTICE.txt` (`fsq-<date>-NOTICE.txt`) and its text in the manifest (`fsq-<date>.json`); the prepare job warns
+  when that text is not all in this repository's `NOTICE`.
 - **CDLA Permissive 2.0 (Overture):** share the licence text with the data.
 - **New York City Open Data:** NYC Administrative Code 23-502(d) makes the data available without licence
   requirements or restrictions on use, but lets the City ask that the source and version be named: the pack's

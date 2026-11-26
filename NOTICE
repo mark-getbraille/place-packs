@@ -3,10 +3,12 @@ Place packs: notices of the data sources
 Foursquare Open Source Places
 Copyright 2024 Foursquare Labs, Inc.
 Licensed under the Apache License, Version 2.0 (LICENSES/Apache-2.0.txt). The
-"extra" packs contain a selection of its places (names, categories, positions,
-and the dates they were created and closed), changed by the place-packs build:
-only the places inside each region, and their categories mapped to a few
-classes.
+"businesses" packs contain a selection of its places (names, categories,
+positions, and the dates they were created and closed), changed by the
+place-packs build: only the places inside each region, and their categories
+mapped to a few classes. Read from Foursquare's own files (the Hugging Face
+dataset foursquare/fsq-os-places), kept unchanged with Foursquare's NOTICE in
+this repository's release "uploaded-sources" for the build.
 
 Overture Maps Foundation places
 Places data from the Overture Maps Foundation (overturemaps.org), under the

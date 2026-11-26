@@ -224,6 +224,14 @@ files up to 2 GB each with no total limit. A user downloads only the regions the
     - `publish_only`: build nothing, only publish the packs of the runs in `also_from_run`.
 - **What it does:**
   - It downloads the national files once and splits them per region.
+  - Foursquare Open Source Places is now on Hugging Face behind a free sign-in, which the build machines cannot do.
+    The owner's Program Downloader copies each month's files there, unchanged, into this repository's release
+    `uploaded-sources` (`fsq-<date>-<file>`, `fsq-<date>-NOTICE.txt` and, last, the manifest `fsq-<date>.json`
+    with each file's SHA-256). The prepare job reads the newest complete date once, one file at a time (checked by
+    its SHA-256, the raw file on the runner's larger `/mnt` disk and deleted at once), keeping only the covered
+    countries and the columns the build uses, into the national slice that is split per region like the others.
+    Until the first upload is there the source is skipped, "waiting for the owner's upload from Program Downloader";
+    it never fails the build (`placepacks/uploaded.py`).
   - It builds each region (ten at a time; inside a region four sources at a time, at most two against one server, each stopped after its time limit), merged with its previous pack. Each part is its own pack (core, extra, businesses, addresses, names).
   - A sub-region reads its parent's slice of the national files and its parent's OpenStreetMap extract, clipped with osmium-tool. Its first build takes its history from its parent's older packs (only its own area). The publish job then puts each parent's sub-regions together again under the parent's keys (`placepacks.combine`).
   - It publishes, in this order:
@@ -234,7 +242,7 @@ files up to 2 GB each with no total limit. A user downloads only the regions the
        (`manifest.LIMIT`); each part lists only its own sources (core lists all of its region's, for the plan).
   - It then deletes the pack files that neither list names, and a detail release left with no pack. A program never
     sees a list naming a file that is not there.
-- **Keys:** only the repository's own `GITHUB_TOKEN` is used.
+- **Keys:** only the repository's own `GITHUB_TOKEN` is used (read-only, except in the jobs that change releases).
 - **Keep-alive:** GitHub turns off scheduled workflows in repositories with no activity for 60 days. Each run
   commits an updated `sources-status.md`, which keeps the schedule alive.
 

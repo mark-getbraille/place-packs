@@ -85,6 +85,7 @@ How far back each layer goes:
 | Museums (IMLS), battlefields (NPS), federal buildings (GSA), beaches (EPA), BC and Ontario provincial parks, trails, Wild and Scenic Rivers, GNIS variant names | From the first build (Ontario parks from their protection date, rivers from their designation); variant names are kept for search only. |
 | Washington DC business licences, Minneapolis food inspections | Licence issue and end dates; first and last inspections. |
 | Overture places | From the first build. Past monthly releases (for example one a quarter) can be merged first while Overture still keeps them. |
+| All The Places (chain stores) | Seeded once from its archived past runs, the largest run of each quarter since April 2018 (the archive's 2017 runs are listed without their files): each store from the first quarter it was listed in to the last, and a store that closed since is kept, closed at its last quarter. Then month by month. Stores are matched by the chain's own store reference; when a reference changes (a spider renamed, a locator renumbered), by the same name or brand within about 100 m. About 16 GB of archives are read once (`seed_chain_history`), and the small result is kept in the "seeds" release for every later build. |
 | Foursquare Open Source Places | Foursquare's own creation and closing dates. |
 | Wikidata | Its start and end dates, often decades back (a mill from 1923 to 1998). |
 | France (BAN), Netherlands (BAG), New Zealand (LINZ) | From the first build. Their published archives and change sets can seed earlier years. |
@@ -222,6 +223,11 @@ files up to 2 GB each with no total limit. A user downloads only the regions the
     - `regions`: for example `us-vermont fr-ile-de-france`; empty means all;
     - `force`: rebuild even when nothing changed;
     - `seed_history`: seed the US address-range history from older TIGER years. The finished seed of each region is kept in the "seeds" release and reused, so it is made again only when the seed years or sources change;
+    - `seed_chain_history`: seed the chain stores' history from All The Places' archived runs, once (about 16 GB
+      of downloads, read a few GB per job, one archive at a time, in about two to four hours). The result
+      (`chain-history.json` and `chain-history-*.csv.gz`, about 1 GB) is kept in the "seeds" release; every later
+      build merges it into the latest run, so the archives are never downloaded again. Run it again only to seed
+      once more (for example after new countries are covered); the older seed's files are then deleted;
     - `also_from_run`: the ids of earlier runs whose publish failed, separated by spaces: their packs (kept 7 days as
       run artifacts) are published too, this run's own packs first;
     - `publish_only`: build nothing, only publish the packs of the runs in `also_from_run`.

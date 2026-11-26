@@ -25,7 +25,7 @@ from placepacks import fmt
 
 TABLES = {
     "points": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, name TEXT, cls TEXT, tag TEXT, lat INTEGER, "
-              "lon INTEGER, cell INTEGER, ccell INTEGER, first INTEGER, last INTEGER, type, brand, note",
+              "lon INTEGER, cell INTEGER, ccell INTEGER, first INTEGER, last INTEGER, type, brand, note, contact",
     "areas": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, name TEXT, cls TEXT, tag TEXT, minlat INTEGER, "
              "minlon INTEGER, maxlat INTEGER, maxlon INTEGER, size REAL, rings BLOB, first INTEGER, last INTEGER, type",
     "lines": "id INTEGER PRIMARY KEY, key TEXT, source TEXT, name TEXT, cls TEXT, tag TEXT, minlat INTEGER, "
@@ -52,6 +52,14 @@ NEAR = 50                       # microdegrees (about 5 m): the second pass for 
 # the "types" table (and the brands to "brands", the notes to "notes") and
 # the links to "point_types" and "area_types" (FORMAT.md), so the tables themselves keep the version 2 columns and
 # readers and merges made before types existed read new packs unchanged.
+# Points of the business-directory sources may also have "contact" (phone, website and opening hours, joined by
+# CONTACT_SEP) while a pack is built; finish() moves it to "biz_details" (FORMAT.md, "Business contact details").
+# Only this month's records get it: an older row kept as history never carries contact details (merge_history
+# copies it without them), so the details always belong to the business as it is listed now.
+CONTACT_SEP = "\x1f"
+# The sources whose contact details the build keeps, best first (placepacks/contact.py: CONTACT_SOURCES; written
+# here too, so that a copy of this file without contact.py still writes packs).
+CONTACT_ORDER = ("alltheplaces", "overture-places", "fsq-places")
 TYPED = {"points": "point_types", "areas": "area_types"}
 SOURCE_COLUMNS = ("id", "name", "short", "kind", "part", "licence", "licence_url", "attribution", "url", "version",
                   "date", "history_start", "history_note")
@@ -153,10 +161,11 @@ class PackWriter:
         self.sources[fields["id"]] = {c: str(fields.get(c, "") or "") for c in SOURCE_COLUMNS}
 
     def add_point(self, key, source, name, cls, tag, lat, lon, first=None, last=None, type=None, brand=None,
-                  note=None):
+                  note=None, contact=None):
         """A named point; type: its fine type phrase ("pizza restaurant"), if known; brand: (brand name, Wikidata id
         or "") of a chain's location (data only, like the type); note: a short note about the place ("filming
-        location of ..."), data only, never spoken."""
+        location of ..."), data only, never spoken; contact: {"phone", "website", "opening_hours"} of a business
+        from a business-directory source (placepacks/contact.py cleans them; any other source's are ignored)."""
         if self.clip is not None and not self._inside(lat, lon):
             return
         first, last = self._span(first, last)
@@ -164,11 +173,18 @@ class PackWriter:
         brand_text = None
         if brand and (brand[0] or "").strip():
             brand_text = f"{brand[0].strip()}|{(brand[1] or '').strip()}"
+        contact_text = None
+        if contact and source in CONTACT_ORDER:
+            from placepacks import contact as contacts      # only here: a copy of this file may lack contact.py
+            got = contacts.clean(source, name, type, contact.get("phone"), contact.get("website"),
+                                 contact.get("opening_hours"))
+            if got:
+                contact_text = CONTACT_SEP.join(got.get(k, "") for k in contacts.CONTACT_FIELDS)
         self.db.execute("INSERT INTO points (key, source, name, cls, tag, lat, lon, cell, ccell, first, last, type, "
-                        "brand, note) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                        "brand, note, contact) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                         (key, source, name, cls, tag, int(round(lat * fmt.SCALE)), int(round(lon * fmt.SCALE)),
                          fmt.fine_cell(lat, lon), fmt.coarse_cell(lat, lon), first, last, type or None, brand_text,
-                         (note or "").strip() or None))
+                         (note or "").strip() or None, contact_text))
         self._count(source, "points")
 
     def add_area(self, key, source, name, cls, tag, rings, first=None, last=None, type=None):
@@ -300,6 +316,7 @@ class PackWriter:
                 db.execute(f"DELETE FROM {table} WHERE key = ?", (r["key"],))
             db.execute("INSERT INTO removals VALUES (?, ?, ?)", (r["key"], r.get("reason", ""), r.get("date", "")))
         self._write_types()
+        self._write_details()
         self._write_addresses()
         self._write_grid()
         # The navigation part's own tables (placepacks/navigation.py): intersections, the grid and the indexes.
@@ -361,6 +378,42 @@ class PackWriter:
         db.execute("CREATE TABLE point_notes (id INTEGER PRIMARY KEY, note INTEGER)")
         db.execute("INSERT INTO point_notes SELECT p.id, n.id FROM points p JOIN notes n ON n.text = p.note")
         db.execute("ALTER TABLE points DROP COLUMN note")
+
+    def _write_details(self):
+        """Move the contact details of this month's business points to "biz_details" (id -> phone, website,
+        opening_hours; FORMAT.md, "Business contact details"), then drop the build-time column. The same value
+        given by a lesser source for the same business (the same name, in lower case, within about 100 m in the
+        same fine cell) is left out: a lookup joins the sources of one business and takes the best source's value
+        first (CONTACT_ORDER), so the copy would never be used. No table is written when no point has details."""
+        import re
+        db = self.db
+        rows = db.execute("SELECT id, source, lower(name), cell, lat, lon, contact FROM points WHERE contact IS NOT "
+                          "NULL").fetchall()
+        if rows:
+            rank = {s: i for i, s in enumerate(CONTACT_ORDER)}
+            same_as = (lambda field, v: re.sub(r"\D", "", v)[-10:] if field == 0 else       # noqa: E731
+                       v.lower().rstrip("/") if field == 1 else v)
+            groups = {}
+            for row in rows:
+                groups.setdefault((row[3], row[2]), []).append(row)
+            out = []
+            for group in groups.values():
+                group.sort(key=lambda r: (rank.get(r[1], 99), r[0]))
+                kept = []                                       # (lat, lon, field, value) already stored
+                for pid, _, _, _, lat, lon, text in group:
+                    values = (text.split(CONTACT_SEP) + ["", "", ""])[:3]
+                    for field, v in enumerate(values):
+                        if v and any(f == field and same_as(field, v) == same_as(field, w) and abs(lat - a) <= 900
+                                     and abs(lon - b) <= 1300 for a, b, f, w in kept):
+                            values[field] = ""
+                        elif v:
+                            kept.append((lat, lon, field, v))
+                    if any(values):
+                        out.append((pid, *(v or None for v in values)))
+            db.execute("CREATE TABLE biz_details (id INTEGER PRIMARY KEY, phone TEXT, website TEXT, opening_hours "
+                       "TEXT)")
+            db.executemany("INSERT INTO biz_details VALUES (?, ?, ?, ?)", sorted(out))
+        db.execute("ALTER TABLE points DROP COLUMN contact")
 
     def _write_addresses(self):
         """Pack the address rows into one compressed record list per fine cell (address_cells). The cell's street list
@@ -472,8 +525,9 @@ def merge_history(db, previous, month, keep=None):
             note = f"(SELECT n.text FROM prev.point_notes l JOIN prev.notes n ON n.id = l.note WHERE l.id = {old}.id)"
         else:
             note = "NULL"
-        picks = ", ".join(phrase if c == "type" else brand if c == "brand" else note if c == "note" else c
-                          for c in columns)
+        # Contact details are never copied from an older pack: they belong to this month's listing only.
+        picks = ", ".join(phrase if c == "type" else brand if c == "brand" else note if c == "note" else
+                          "NULL" if c == "contact" else c for c in columns)
         # Not an old row more than 180° wide that does not continue: a shape across 180° kept in every pack by its
         # world-wide box (the first full build; shapes.py now keeps only the parts in the region), not history.
         wide = (f" AND (maxlon - minlon) <= {180 * fmt.SCALE}" if "minlon" in columns else "")

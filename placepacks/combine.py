@@ -64,6 +64,10 @@ def combine(region_id, part, paths, out):
                 elif c == "note" and {"notes", "point_notes"} <= have:
                     picks.append(f"(SELECT n.text FROM {alias}.point_notes l JOIN {alias}.notes n ON n.id = "
                                  f"l.note WHERE l.id = o.id)")
+                elif c == "contact" and "biz_details" in have:
+                    # A business's contact details (the businesses part), as the writer keeps them while building.
+                    picks.append(f"(SELECT COALESCE(d.phone, '') || char(31) || COALESCE(d.website, '') || char(31) "
+                                 f"|| COALESCE(d.opening_hours, '') FROM {alias}.biz_details d WHERE d.id = o.id)")
                 else:
                     picks.append("NULL")
             db.execute(f"INSERT INTO main.{table} ({', '.join(mine)}) SELECT {', '.join(picks)} FROM "

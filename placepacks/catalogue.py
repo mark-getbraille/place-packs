@@ -17,11 +17,16 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # 23-502(d)) and by their terms, the data is free to use and redistribute without licence, attribution or share-alike
 # requirements (see sources.json "licences"). The Canadian provincial and city licences (Calgary, Edmonton, Nova
 # Scotia, Vancouver, New Brunswick) each grant a worldwide, royalty-free licence to copy, modify and redistribute,
-# commercial use included, with attribution (read November 2026).
+# commercial use included, with attribution (read November 2026). CC-BY-3.0 (Unported) is Baltimore City's licence.
+# FL-public-records: the Florida DBPR's licence files state no licence; they are public records under Chapter 119,
+# Florida Statutes, and Florida agencies generally cannot claim copyright in them without a statute that allows it
+# (Microdecisions, Inc. v. Skinner, Fla. 2d DCA 2004), so the owner decided (26 November 2026) to treat them as public
+# domain (see sources.json "licences").
 ALLOWED = {"ODbL-1.0", "CDLA-Permissive-2.0", "Apache-2.0", "OGL-Canada-2.0", "OGL-UK-3.0", "CC0-1.0", "CC-BY-4.0",
            "US-Government-Work", "etalab-2.0", "per-feed-open", "per-source-open", "PDDL-1.0", "ODC-By-1.0",
            "NYC-Open-Data", "OPEN-NY", "public-domain-marked", "Newberry-open", "OGL-Toronto", "OGL-BC", "OGL-Ontario",
-           "OGL-Calgary", "Edmonton-Open-Data", "OGL-Nova-Scotia", "OGL-Vancouver", "OGL-NB", "CC-BY-3.0-US"}
+           "OGL-Calgary", "Edmonton-Open-Data", "OGL-Nova-Scotia", "OGL-Vancouver", "OGL-NB", "CC-BY-3.0-US",
+           "CC-BY-3.0", "FL-public-records"}
 SHARE_ALIKE = {"ODbL-1.0"}
 # The OpenStreetMap layers (ODbL, share-alike): the core part's places and streets, the navigation part's street
 # network and accessibility details and the services part's offices and services, all made from the same extract.

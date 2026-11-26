@@ -144,6 +144,16 @@
    "name": "Creative Commons Attribution 3.0 United States",
    "url": "https://creativecommons.org/licenses/by/3.0/us/",
    "file": ""
+  },
+  "FL-public-records": {
+   "name": "Florida public records (Chapter 119, Florida Statutes): no licence is stated; Florida agencies generally cannot claim copyright in public records without a statute allowing it (Microdecisions, Inc. v. Skinner, Fla. 2d DCA 2004), so the files are treated as public domain (the owner's decision of 26 November 2026)",
+   "url": "http://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&URL=0100-0199/0119/0119.html",
+   "file": ""
+  },
+  "CC-BY-3.0": {
+   "name": "Creative Commons Attribution 3.0 Unported",
+   "url": "https://creativecommons.org/licenses/by/3.0/",
+   "file": "LICENSES/CC-BY-3.0.txt"
   }
  },
  "accepted": [
@@ -8557,6 +8567,1722 @@
     "pause": 2
    },
    "history": "No history: the newest election the dataset has for the state (its date is kept with every polling place and said with every answer)."
+  },
+  {
+   "id": "tx-sales-tax-outlets",
+   "name": "Texas sales-tax permitted locations (Comptroller, active and closed)",
+   "short": "the Texas Comptroller of Public Accounts",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-texas"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "All Permitted Sales Tax Locations of the Texas Comptroller of Public Accounts (data.texas.gov, dataset 3kx8-uryv), public domain; outlet names, located points and dates only.",
+   "url": "https://data.texas.gov/d/3kx8-uryv",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each outlet from its first sale (or permit) date, back to the 1960s, to its out-of-business date; one still in business is open. Keyed by a fingerprint of the taxpayer and outlet numbers, so a renamed outlet keeps its old name with its dates.",
+   "notes": "About 554,000 storefront outlets of all of Texas (379,000 still in business), read once a month by the prepare job and shared by Texas's sub-regions, then located by the offline geocoder against the National Address Database (an address the NAD marks as a home is put on its street, never at the house). Only storefront types by NAICS code (restaurants, bars, shops, petrol stations, garages, salons, laundries, banks, hotels and motels, cinemas, gyms; online shops, caterers and food trucks left out), and only the outlet's name (loc_name): the taxpayer's name and mailing address are never downloaded (they are used only inside the portal's own query below). Privacy rule: an outlet of an individual sole owner or a partnership of individuals (org_type IS or PI) is left out when its name is the owner's own name, when it is at the owner's mailing address (a home business) or when its address is an apartment; a sole owner's outlet with a trade name of its own at another address is kept. Names that look like 'Surname, Given' are left out. The taxpayer number (for an individual it can be made from a Social Security number) is stored only as a fingerprint (key_hash).",
+   "fetch": {
+    "method": "national",
+    "domain": "data.texas.gov",
+    "page": 50000,
+    "pause": 2,
+    "queries": [
+     {
+      "dataset": "3kx8-uryv",
+      "select": "tp_number || '-' || loc_number AS key, loc_name AS name, naics, address_number || ' ' || address_text AS street, loc_city AS city, loc_zip AS zip, loc_state AS state, coalesce(first_sale_date, permit_date) AS first, out_of_business_date AS last",
+      "where": "loc_state = 'TX' AND loc_name IS NOT NULL AND address_number IS NOT NULL AND (starts_with(naics, '44') OR starts_with(naics, '45') OR starts_with(naics, '722') OR starts_with(naics, '8111') OR starts_with(naics, '8121') OR starts_with(naics, '8123') OR starts_with(naics, '72111') OR starts_with(naics, '72112') OR starts_with(naics, '5221') OR starts_with(naics, '512131') OR starts_with(naics, '71211') OR starts_with(naics, '7131') OR starts_with(naics, '71394') OR starts_with(naics, '71395') OR starts_with(naics, '53113')) AND NOT starts_with(naics, '454') AND NOT (org_type IN ('IS', 'PI') AND (upper(loc_name) = upper(tp_name) OR upper(address_number || ' ' || address_text) = upper(tp_address) OR upper(address_text) LIKE '% APT %' OR upper(address_text) LIKE '% APT'))",
+      "order": ":id"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "state",
+    "equals": "{code}"
+   },
+   "geocode": {
+    "street": "street",
+    "city": "city",
+    "zip": "zip",
+    "from": "nad"
+   },
+   "columns": {
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last",
+    "class_column": "naics"
+   },
+   "class_map": {
+    "722*": "business:restaurant",
+    "7224*": "business:bar",
+    "44*": "business:shop",
+    "45*": "business:shop",
+    "454*": "",
+    "4541*": "",
+    "4542*": "",
+    "4543*": "",
+    "447*": "business:fuel",
+    "457*": "business:fuel",
+    "8111*": "business:garage",
+    "811192*": "business:car wash",
+    "8121*": "business:salon",
+    "8123*": "business:laundry",
+    "5221*": "business:bank",
+    "512131*": "business:cinema",
+    "71211*": "business:museum",
+    "7131*": "business:amusement",
+    "71394*": "business:gym",
+    "71395*": "business:bowling",
+    "53113*": "business:storage",
+    "72111*": "business:hotel",
+    "72112*": "business:hotel",
+    "72232*": "",
+    "72233*": "",
+    "*": ""
+   },
+   "key_hash": true,
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "type_column": "naics",
+   "type_map": "naics"
+  },
+  {
+   "id": "tx-mixed-beverage-permits",
+   "name": "Texas mixed beverage permits (bars and restaurants serving liquor)",
+   "short": "the Texas Comptroller of Public Accounts",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-texas"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Mixed Beverage Tax Permits of the Texas Comptroller of Public Accounts (data.texas.gov, dataset 8f4g-cpk9), public domain; outlet names, located points and dates only.",
+   "url": "https://data.texas.gov/d/8f4g-cpk9",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each permit from its start date (since 1993) to its out-of-business date; keyed by a fingerprint of the taxpayer and outlet numbers.",
+   "notes": "About 35,000 bars, restaurants, hotels and venues that serve liquor (13,000 closed), typed by NAICS code; temporary event permits (TABC 'NT' permits of charities and clubs, often at a home), caterers and mobile bartenders (NAICS 72232, 72233) are left out. read once a month by the prepare job and located by the offline geocoder against the NAD. Only the outlet's name is read (the dataset has no owner names); names that look like 'Surname, Given' are left out; the taxpayer number is stored only as a fingerprint.",
+   "fetch": {
+    "method": "national",
+    "domain": "data.texas.gov",
+    "page": 50000,
+    "pause": 2,
+    "queries": [
+     {
+      "dataset": "8f4g-cpk9",
+      "select": "tp_number || '-' || loc_number AS key, loc_name AS name, naics, address_number || ' ' || address_text AS street, loc_city AS city, loc_zip AS zip, loc_state AS state, resp_begin_date AS first, out_of_business_date AS last",
+      "where": "loc_state = 'TX' AND loc_name IS NOT NULL AND address_number IS NOT NULL AND (tabc_permit_number IS NULL OR NOT starts_with(tabc_permit_number, 'NT'))",
+      "order": ":id"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "state",
+    "equals": "{code}"
+   },
+   "geocode": {
+    "street": "street",
+    "city": "city",
+    "zip": "zip",
+    "from": "nad"
+   },
+   "columns": {
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last",
+    "class_column": "naics"
+   },
+   "class_map": {
+    "722*": "business:restaurant",
+    "7224*": "business:bar",
+    "72232*": "",
+    "72233*": "",
+    "72111*": "business:hotel",
+    "72112*": "business:hotel",
+    "7131*": "business:amusement",
+    "71395*": "business:bowling",
+    "512131*": "business:cinema",
+    "71394*": "business:gym",
+    "44*": "business:shop",
+    "45*": "business:shop",
+    "*": "business:venue"
+   },
+   "key_hash": true,
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "type_column": "naics",
+   "type_map": "naics"
+  },
+  {
+   "id": "tx-tobacco-retailers",
+   "name": "Texas cigarette, tobacco and e-cigarette retailers",
+   "short": "the Texas Comptroller of Public Accounts",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-texas"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Active Cigarette/Tobacco Retailers of the Texas Comptroller of Public Accounts (data.texas.gov, dataset n4rp-ar9b), public domain; outlet names, located points and permit dates only.",
+   "url": "https://data.texas.gov/d/n4rp-ar9b",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each permit from its start date; one that leaves the list is closed at its last build.",
+   "notes": "About 61,000 shops with a retail cigarette, tobacco or e-cigarette permit (convenience stores, petrol stations, smoke shops), read once a month by the prepare job and located by the offline geocoder against the NAD. Only the outlet name (out_name) is read; the permit holder's name is used only inside the portal's query: an outlet named exactly as a holder who is not a company (no Inc, LLC, Corp ... in the name) is left out. Names that look like 'Surname, Given' are left out.",
+   "fetch": {
+    "method": "national",
+    "domain": "data.texas.gov",
+    "page": 50000,
+    "pause": 2,
+    "queries": [
+     {
+      "dataset": "n4rp-ar9b",
+      "select": "permit_number AS key, out_name AS name, address AS street, city, zip, state, permit_begin_date AS first",
+      "where": "state = 'TX' AND out_name IS NOT NULL AND address IS NOT NULL AND NOT (upper(out_name) = upper(name) AND NOT (upper(name) LIKE '% INC%' OR upper(name) LIKE '% LLC%' OR upper(name) LIKE '%L.L.C%' OR upper(name) LIKE '% CORP%' OR upper(name) LIKE '%COMPANY%' OR upper(name) LIKE '% CO.%' OR upper(name) LIKE '% CO' OR upper(name) LIKE '% LTD%' OR upper(name) LIKE '% LP' OR upper(name) LIKE '% L.P.%' OR upper(name) LIKE '% LLP%' OR upper(name) LIKE '%PLLC%' OR upper(name) LIKE '%PARTNERS%' OR upper(name) LIKE '% TRUST%' OR upper(name) LIKE '% GROUP%' OR upper(name) LIKE '%ENTERPRISE%' OR upper(name) LIKE '%HOLDINGS%' OR upper(name) LIKE '%ASSOCIATION%' OR upper(name) LIKE '% CLUB%' OR upper(name) LIKE '%CHURCH%'))",
+      "order": ":id"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "state",
+    "equals": "{code}"
+   },
+   "geocode": {
+    "street": "street",
+    "city": "city",
+    "zip": "zip",
+    "from": "nad"
+   },
+   "cls": "business",
+   "tag": "shop",
+   "columns": {
+    "name": "name",
+    "key": "key",
+    "first": "first"
+   },
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "tx-hotel-tax-permits",
+   "name": "Texas hotel occupancy tax permits (hotels and motels)",
+   "short": "the Texas Comptroller of Public Accounts",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-texas"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Hotel Tax Permits of the Texas Comptroller of Public Accounts (data.texas.gov, dataset hdzd-884n), public domain; outlet names, located points and dates only.",
+   "url": "https://data.texas.gov/d/hdzd-884n",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each hotel from its start date to its out-of-business date; keyed by a fingerprint of the taxpayer and outlet numbers.",
+   "notes": "Only hotels and motels (NAICS 72111 and 72112): short-term rentals, bed and breakfasts and the booking platforms' county accounts (NAICS 531110, 721191, 721199), which are homes or offices, are left out. Read once a month by the prepare job and located by the offline geocoder against the NAD. Only the outlet's name is read; names that look like 'Surname, Given' are left out.",
+   "fetch": {
+    "method": "national",
+    "domain": "data.texas.gov",
+    "page": 50000,
+    "pause": 2,
+    "queries": [
+     {
+      "dataset": "hdzd-884n",
+      "select": "tp_number || '-' || loc_number AS key, loc_name AS name, naics, address_number || ' ' || address_text AS street, loc_city AS city, loc_zip AS zip, loc_state AS state, resp_begin_date AS first, out_of_business_date AS last",
+      "where": "loc_state = 'TX' AND loc_name IS NOT NULL AND address_number IS NOT NULL AND (starts_with(naics, '72111') OR starts_with(naics, '72112'))",
+      "order": ":id"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "state",
+    "equals": "{code}"
+   },
+   "geocode": {
+    "street": "street",
+    "city": "city",
+    "zip": "zip",
+    "from": "nad"
+   },
+   "cls": "business",
+   "tag": "hotel",
+   "columns": {
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last"
+   },
+   "key_hash": true,
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "type_column": "naics",
+   "type_map": "naics"
+  },
+  {
+   "id": "pa-sales-tax-licences",
+   "name": "Pennsylvania retail sales tax licences (companies, located by address)",
+   "short": "the Pennsylvania Department of Revenue",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-pennsylvania"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Sales, Use and Hotel Occupancy Tax Licenses and Certificates of the Pennsylvania Department of Revenue (data.pa.gov, dataset ugeq-ckxd), public domain; trade names and located points only.",
+   "url": "https://data.pa.gov/d/ugeq-ckxd",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "From the first build on (the dataset has only the licences' future expiry dates); a licence that leaves the list is closed at its last build.",
+   "notes": "About 150,000 retail sales licences in Pennsylvania. The dataset has no business type and no entity type, so the privacy rule keeps only licences whose legal name is clearly a company's (ending in Inc, LLC, Corp, Co, Company, Ltd or LP), under their trade names; individuals' licences (often a person at home) are left out, and wholesale, promoter, transient vendor and exemption certificates too. Although the portal gives a point, the street address is located by the offline geocoder against the NAD instead, so a company registered at a home is put on its street, never at the house (an address without a house number is not located).",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.pa.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "ugeq-ckxd",
+      "select": "account || ' ' || street_address AS key, trade_name AS name, street_address AS street, city, postal_code AS zip",
+      "where": "license_type = 'Sales License/Retail' AND state = 'PA' AND trade_name IS NOT NULL AND street_address IS NOT NULL AND (upper(legal_name) LIKE '% INC' OR upper(legal_name) LIKE '% INC.' OR upper(legal_name) LIKE '% LLC' OR upper(legal_name) LIKE '% L.L.C.' OR upper(legal_name) LIKE '% CORP%' OR upper(legal_name) LIKE '% CO' OR upper(legal_name) LIKE '% COMPANY' OR upper(legal_name) LIKE '% LTD%' OR upper(legal_name) LIKE '% LP' OR upper(legal_name) LIKE '% L.P.')",
+      "order": ":id"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "cls": "business",
+   "geocode": {
+    "street": "street",
+    "city": "city",
+    "zip": "zip",
+    "from": "nad"
+   },
+   "columns": {
+    "name": "name",
+    "key": "key"
+   },
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "pa-tobacco-licences",
+   "name": "Pennsylvania cigarette and tobacco retail licences",
+   "short": "the Pennsylvania Department of Revenue",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-pennsylvania"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Tobacco Products Tax Licenses of the Pennsylvania Department of Revenue (data.pa.gov, dataset ut72-sft8), public domain; trade names and positions only.",
+   "url": "https://data.pa.gov/d/ut72-sft8",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "From the first build on; a licence that leaves the list is closed at its last build.",
+   "notes": "Retail cigarette and tobacco licences (convenience stores, petrol stations, smoke shops) with the portal's points. Only the trade name is kept; the privacy rule keeps a licence when the legal name is a company's or the trade name differs from it (an individual trading under their own name is left out).",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.pa.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "ut72-sft8",
+      "select": "account || ' ' || street_address AS key, trade_name AS name, georeferenced_latitude_longitude AS point",
+      "where": "license_type = 'Cigarette/OTP Retail' AND state = 'PA' AND trade_name IS NOT NULL AND georeferenced_latitude_longitude IS NOT NULL AND ((upper(legal_name) LIKE '% INC%' OR upper(legal_name) LIKE '% LLC%' OR upper(legal_name) LIKE '%L.L.C%' OR upper(legal_name) LIKE '% CORP%' OR upper(legal_name) LIKE '%COMPANY%' OR upper(legal_name) LIKE '% CO.%' OR upper(legal_name) LIKE '% CO' OR upper(legal_name) LIKE '% LTD%' OR upper(legal_name) LIKE '% LP' OR upper(legal_name) LIKE '% L.P.%' OR upper(legal_name) LIKE '% LLP%' OR upper(legal_name) LIKE '%PLLC%' OR upper(legal_name) LIKE '%PARTNERS%' OR upper(legal_name) LIKE '% TRUST%' OR upper(legal_name) LIKE '% GROUP%' OR upper(legal_name) LIKE '%ENTERPRISE%' OR upper(legal_name) LIKE '%HOLDINGS%' OR upper(legal_name) LIKE '%ASSOCIATION%' OR upper(legal_name) LIKE '% CLUB%' OR upper(legal_name) LIKE '%CHURCH%') OR upper(trade_name) != upper(legal_name))",
+      "order": ":id"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "cls": "business",
+   "tag": "shop",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key"
+   },
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "fl-food-service",
+   "name": "Florida food service licences (restaurants and take-aways)",
+   "short": "the Florida Department of Business and Professional Regulation",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-florida"
+   ],
+   "licence": "FL-public-records",
+   "attribution": "Food service licensee files (hrfood1.csv to hrfood7.csv) of the Florida Department of Business and Professional Regulation, Division of Hotels and Restaurants, public records under Chapter 119, Florida Statutes; business names and located points only.",
+   "url": "https://www2.myfloridalicense.com/hotels-restaurants/public-records/",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "From the first build on (the files have no opening dates); a licence that leaves the files is closed at its last build. Keyed by the licence number.",
+   "notes": "About 70,000 licensed food service places of the seven districts' weekly files, read once by the prepare job and located by the offline geocoder against the NAD by their location address (never the mailing address). Only seated restaurants (SEAT) and places without seats (NOST, take-aways); mobile food vehicles, caterers, hot dog carts, vending and temporary licences, which are often run from a home, are left out. Only the business name is kept. Privacy rule (owner_column): the licensee's name is read only to compare; a place whose business name is a person-licensee's own name is left out. Phones, mailing names and addresses are never read. No licence is stated: the owner treats the files as public domain public records (see the licence FL-public-records).",
+   "fetch": {
+    "method": "national",
+    "urls": [
+     "https://www2.myfloridalicense.com/sto/file_download/extracts/hrfood1.csv",
+     "https://www2.myfloridalicense.com/sto/file_download/extracts/hrfood2.csv",
+     "https://www2.myfloridalicense.com/sto/file_download/extracts/hrfood3.csv",
+     "https://www2.myfloridalicense.com/sto/file_download/extracts/hrfood4.csv",
+     "https://www2.myfloridalicense.com/sto/file_download/extracts/hrfood5.csv",
+     "https://www2.myfloridalicense.com/sto/file_download/extracts/hrfood6.csv",
+     "https://www2.myfloridalicense.com/sto/file_download/extracts/hrfood7.csv"
+    ],
+    "pause": 3
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "Location State Code",
+    "equals": "{code}"
+   },
+   "geocode": {
+    "street": "Location Street Address",
+    "city": "Location City",
+    "zip": "Location Zip Code",
+    "from": "nad"
+   },
+   "columns": {
+    "name": "Business Name",
+    "key": "License Number",
+    "class_column": "Rank Code"
+   },
+   "class_map": {
+    "SEAT": "business:restaurant",
+    "NOST": "business:takeaway",
+    "*": ""
+   },
+   "owner_column": "Licensee Name",
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "fl-alcohol-licences",
+   "name": "Florida retail alcoholic beverage licences",
+   "short": "the Florida Department of Business and Professional Regulation",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-florida"
+   ],
+   "licence": "FL-public-records",
+   "attribution": "Retail alcoholic beverage licences (bd4006lic.csv) of the Florida Department of Business and Professional Regulation, Division of Alcoholic Beverages and Tobacco, public records under Chapter 119, Florida Statutes; business names, located points and licence dates only.",
+   "url": "https://www2.myfloridalicense.com/alcoholic-beverages-and-tobacco/public-records/",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each licence from its original licensure date (the placeholder 1901-01-01 is read as unknown); one that leaves the file is closed at its last build. Keyed by the licence number.",
+   "notes": "About 53,000 bars, restaurants, package stores, clubs and hotels, typed by the licence series (2COP beer and wine on premises, 4COP quota liquor, SFS special restaurant licences, APS and PS package sales ...); caterers and wholesalers are left out. Read once by the prepare job and located by the offline geocoder against the NAD by the location address. Only the DBA name is kept; the owner's name is read only to compare (owner_column), and a licence whose DBA is a person-owner's own name is left out. Mailing addresses are never read. Public records treated as public domain (FL-public-records).",
+   "fetch": {
+    "method": "national",
+    "url": "https://www2.myfloridalicense.com/sto/file_download/extracts/bd4006lic.csv",
+    "pause": 3
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "Location State",
+    "equals": "{code}"
+   },
+   "geocode": {
+    "street": "Location Address 1",
+    "city": "Location City",
+    "zip": "Location ZIP",
+    "from": "nad"
+   },
+   "columns": {
+    "name": "DBA",
+    "key": "License Number",
+    "first": "Original Licensure Date",
+    "class_column": [
+     "Series",
+     "Modifier"
+    ]
+   },
+   "class_map": {
+    "1APS*": "business:shop",
+    "2APS*": "business:shop",
+    "3PS*": "business:shop",
+    "3APS*": "business:shop",
+    "3BPS*": "business:shop",
+    "3CPS*": "business:shop",
+    "3DPS*": "business:shop",
+    "1COP*": "business:restaurant",
+    "2COP*": "business:restaurant",
+    "4COP*": "business:bar",
+    "4COP SFS": "business:restaurant",
+    "4COP SR": "business:restaurant",
+    "4COP SH": "business:hotel",
+    "4COP SBX": "business:bowling",
+    "5COP*": "business:bar",
+    "5COP SFS": "business:restaurant",
+    "5COP SR": "business:restaurant",
+    "5COP SH": "business:hotel",
+    "5COP SBX": "business:bowling",
+    "6COP*": "business:bar",
+    "6COP SFS": "business:restaurant",
+    "6COP SR": "business:restaurant",
+    "6COP SH": "business:hotel",
+    "6COP SBX": "business:bowling",
+    "7COP*": "business:bar",
+    "7COP SFS": "business:restaurant",
+    "7COP SR": "business:restaurant",
+    "7COP SH": "business:hotel",
+    "7COP SBX": "business:bowling",
+    "8COP*": "business:bar",
+    "8COP SFS": "business:restaurant",
+    "8COP SR": "business:restaurant",
+    "8COP SH": "business:hotel",
+    "8COP SBX": "business:bowling",
+    "11C": "business:bar",
+    "11AL": "business:bar",
+    "11CS": "business:bar",
+    "11CG": "business:venue",
+    "11PA": "business:venue",
+    "12RT": "business:venue",
+    "*": ""
+   },
+   "blank_values": [
+    "01/01/1901"
+   ],
+   "owner_column": "Owner Name",
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "fl-tobacco-dealers",
+   "name": "Florida retail tobacco and nicotine product dealers",
+   "short": "the Florida Department of Business and Professional Regulation",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-florida"
+   ],
+   "licence": "FL-public-records",
+   "attribution": "Retail tobacco products dealer permits (bdTOBlic.csv) of the Florida Department of Business and Professional Regulation, Division of Alcoholic Beverages and Tobacco, public records under Chapter 119, Florida Statutes; business names, located points and permit dates only.",
+   "url": "https://www2.myfloridalicense.com/alcoholic-beverages-and-tobacco/public-records/",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each permit from its original licensure date; one that leaves the file is closed at its last build.",
+   "notes": "About 8,000 tobacco-only and nicotine dealers (RTPD, RNPD); the file's alcohol licensees that also sell tobacco are already in fl-alcohol-licences and are left out here. Located by the offline geocoder against the NAD. Only the DBA name is kept; the owner's name is read only to compare (owner_column). Public records treated as public domain (FL-public-records).",
+   "fetch": {
+    "method": "national",
+    "url": "https://www2.myfloridalicense.com/sto/file_download/extracts/bdTOBlic.csv",
+    "pause": 3
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "Location State",
+    "equals": "{code}"
+   },
+   "geocode": {
+    "street": "Location Address 1",
+    "city": "Location City",
+    "zip": "Location ZIP",
+    "from": "nad"
+   },
+   "exclude": {
+    "column": "Profession",
+    "values": [
+     "4006"
+    ]
+   },
+   "columns": {
+    "name": "DBA",
+    "key": "License Number",
+    "first": "Original Licensure Date",
+    "class_column": "Series"
+   },
+   "class_map": {
+    "RTPD": "business:shop",
+    "RNPD": "business:shop",
+    "*": ""
+   },
+   "blank_values": [
+    "01/01/1901"
+   ],
+   "owner_column": "Owner Name",
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "ny-retail-food-stores",
+   "name": "New York State retail food stores (Agriculture and Markets)",
+   "short": "the New York State Department of Agriculture and Markets",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "Retail Food Stores licensed by the New York State Department of Agriculture and Markets (data.ny.gov, dataset 9a8c-vfzj); store names and positions only.",
+   "url": "https://data.ny.gov/d/9a8c-vfzj",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "From the first build on (the dataset has no dates); a store that leaves the list is closed at its last build. Keyed by the licence number.",
+   "notes": "About 23,600 supermarkets, groceries, delis, convenience stores and bakeries with the portal's points. Only the store's DBA name is kept, never the licensed entity's name.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ny.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "9a8c-vfzj",
+      "select": "license_number AS key, dba_name AS name, georeference AS point",
+      "where": "dba_name IS NOT NULL AND georeference IS NOT NULL",
+      "order": "license_number"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "cls": "business",
+   "tag": "shop",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key"
+   },
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "ny-tobacco-retailers",
+   "name": "New York State registered retail dealers of cigarettes, tobacco and vapor products",
+   "short": "the New York State Department of Taxation and Finance",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "Registered Retail Dealers of Cigarettes, Tobacco and Vapor Products of the New York State Department of Taxation and Finance (data.ny.gov, dataset 55xf-9jat); trade names and positions only.",
+   "url": "https://data.ny.gov/d/55xf-9jat",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "From the first build on; a dealer that leaves the list is closed at its last build.",
+   "notes": "About 22,700 registered retailers (convenience stores, petrol stations, smoke and vape shops), New York City included, with the portal's points. The privacy rule keeps the DBA name, else the legal name only when it is a company's (Inc, LLC, Corp ...): a retailer listed under a person's name (the column is 'last name or business name') is left out.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ny.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "55xf-9jat",
+      "select": "cor_id || '-' || cor_seq_nmbr AS key, case(dba_name IS NOT NULL, dba_name, true, last_or_bus_name) AS name, georeference AS point",
+      "where": "georeference IS NOT NULL AND (dba_name IS NOT NULL OR (upper(last_or_bus_name) LIKE '% INC%' OR upper(last_or_bus_name) LIKE '% LLC%' OR upper(last_or_bus_name) LIKE '%L.L.C%' OR upper(last_or_bus_name) LIKE '% CORP%' OR upper(last_or_bus_name) LIKE '%COMPANY%' OR upper(last_or_bus_name) LIKE '% CO.%' OR upper(last_or_bus_name) LIKE '% CO' OR upper(last_or_bus_name) LIKE '% LTD%' OR upper(last_or_bus_name) LIKE '% LP' OR upper(last_or_bus_name) LIKE '% L.P.%' OR upper(last_or_bus_name) LIKE '% LLP%' OR upper(last_or_bus_name) LIKE '%PLLC%' OR upper(last_or_bus_name) LIKE '%PARTNERS%' OR upper(last_or_bus_name) LIKE '% TRUST%' OR upper(last_or_bus_name) LIKE '% GROUP%' OR upper(last_or_bus_name) LIKE '%ENTERPRISE%' OR upper(last_or_bus_name) LIKE '%HOLDINGS%' OR upper(last_or_bus_name) LIKE '%ASSOCIATION%' OR upper(last_or_bus_name) LIKE '% CLUB%' OR upper(last_or_bus_name) LIKE '%CHURCH%'))",
+      "order": "cor_id"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "cls": "business",
+   "tag": "shop",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key"
+   },
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "ny-dmv-facilities",
+   "name": "New York State DMV-licensed repair shops, inspection stations and dealers",
+   "short": "the New York State Department of Motor Vehicles",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "Facilities Licensed by the New York State Department of Motor Vehicles (data.ny.gov, dataset nhjr-rpi2); facility names, positions and licence dates only.",
+   "url": "https://data.ny.gov/d/nhjr-rpi2",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each facility from its first licence (original issuance, often decades back) to its expiry; keyed by the facility number, so a renamed facility keeps its old name with its dates.",
+   "notes": "Repair shops, inspection stations and new and used car dealers (business types RS, RSB, ISP, DLN, DLU); wholesalers, dismantlers, scrap processors and the like are left out. Only the facility name is kept; the owner's name is never downloaded, and a facility named exactly as its owner is left out inside the portal's query.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ny.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "nhjr-rpi2",
+      "select": "facility AS key, facility_name, facility_name_overflow, business_type AS kind, georeference AS point, origional_issuance_date AS first, expiration_date AS last",
+      "where": "georeference IS NOT NULL AND facility_name IS NOT NULL AND business_type IN ('RS', 'RSB', 'ISP', 'DLN', 'DLU') AND (owner_name IS NULL OR upper(facility_name) != upper(owner_name))",
+      "order": "facility"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": [
+     "facility_name",
+     "facility_name_overflow"
+    ],
+    "key": "key",
+    "first": "first",
+    "last": "last",
+    "class_column": "kind"
+   },
+   "class_map": {
+    "RS": "business:garage",
+    "RSB": "business:garage",
+    "ISP": "business:garage",
+    "DLN": "business:car dealer",
+    "DLU": "business:car dealer",
+    "*": ""
+   },
+   "aggregate": true,
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "ny-appearance-enhancement",
+   "name": "New York State salons, nail salons and barber shops (licensed businesses)",
+   "short": "the New York State Department of State",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "Appearance Enhancement and Barber Business Licensees of the New York State Department of State (data.ny.gov, dataset y3u4-jbgh); business names, positions and licence dates only.",
+   "url": "https://data.ny.gov/d/y3u4-jbgh",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each business licence from its issue date to its expiry; keyed by the licence number.",
+   "notes": "About 27,600 appearance enhancement businesses (hair, nail, skin and waxing salons) and barber shops with the portal's points; area renters (individuals renting a chair) and post office box addresses are left out. Privacy rule (owner_column): the licence holder's name is read only to compare, and a business whose name is the holder's own name ('Oscar E Garcia Torres' of 'Garcia Oscar Enriques') is left out.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ny.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "y3u4-jbgh",
+      "select": "license_number AS key, business_name AS name, license_holder_name AS holder, georeference AS point, license_issue_date AS first, license_expiration_date AS last",
+      "where": "license_type IN ('DOSAEBUSINESS', 'DOSBARSHOPOWNER') AND georeference IS NOT NULL AND business_name IS NOT NULL AND NOT upper(coalesce(business_address_1, '') || ' ' || coalesce(business_address_2, '')) LIKE '%BOX %'",
+      "order": "license_number"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "cls": "business",
+   "tag": "salon",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last"
+   },
+   "owner_column": "holder",
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "ny-cannabis-retailers",
+   "name": "New York State licensed adult-use cannabis shops",
+   "short": "the New York State Department of Taxation and Finance",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "Registered Retail Dealers of Adult-use Cannabis of the New York State Department of Taxation and Finance (data.ny.gov, dataset gttd-5u6y); company names and positions only.",
+   "url": "https://data.ny.gov/d/gttd-5u6y",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "From the first build on; a shop that leaves the list is closed at its last build.",
+   "notes": "About 700 licensed cannabis shops with the portal's points. The dataset has only the licensee's legal name, so only names that are clearly a company's (Inc, LLC, Corp, Ltd ...) are kept.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ny.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "gttd-5u6y",
+      "select": "ocm_license_number AS key, legal_name AS name, georeference AS point",
+      "where": "georeference IS NOT NULL AND (upper(legal_name) LIKE '% INC%' OR upper(legal_name) LIKE '% LLC%' OR upper(legal_name) LIKE '%L.L.C%' OR upper(legal_name) LIKE '% CORP%' OR upper(legal_name) LIKE '%COMPANY%' OR upper(legal_name) LIKE '% CO.%' OR upper(legal_name) LIKE '% CO' OR upper(legal_name) LIKE '% LTD%' OR upper(legal_name) LIKE '% LP' OR upper(legal_name) LIKE '% L.P.%' OR upper(legal_name) LIKE '% LLP%' OR upper(legal_name) LIKE '%PLLC%' OR upper(legal_name) LIKE '%PARTNERS%' OR upper(legal_name) LIKE '% TRUST%' OR upper(legal_name) LIKE '% GROUP%' OR upper(legal_name) LIKE '%ENTERPRISE%' OR upper(legal_name) LIKE '%HOLDINGS%' OR upper(legal_name) LIKE '%ASSOCIATION%' OR upper(legal_name) LIKE '% CLUB%' OR upper(legal_name) LIKE '%CHURCH%')",
+      "order": "ocm_license_number"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "cls": "business",
+   "tag": "shop",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key"
+   }
+  },
+  {
+   "id": "ny-wic-vendors",
+   "name": "New York State WIC grocers and pharmacies (located by address)",
+   "short": "the New York State Department of Health",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-new-york"
+   ],
+   "licence": "OPEN-NY",
+   "attribution": "WIC Vendor Information of the New York State Department of Health (health.data.ny.gov, dataset 4az8-5hx6); store names and located points only.",
+   "url": "https://health.data.ny.gov/d/4az8-5hx6",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "From the first build on; a store that leaves the list is closed at its last build.",
+   "notes": "About 2,900 grocers and pharmacies that accept WIC, located by the offline geocoder against the NAD (the dataset has addresses only). Store names only; the dataset has no owner names.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "health.data.ny.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "4az8-5hx6",
+      "select": "facility_name AS name, type AS kind, street_address AS street, city, zip",
+      "where": "facility_name IS NOT NULL AND street_address IS NOT NULL",
+      "order": "facility_name"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "geocode": {
+    "street": "street",
+    "city": "city",
+    "zip": "zip",
+    "from": "nad"
+   },
+   "columns": {
+    "name": "name",
+    "class_column": "kind"
+   },
+   "class_map": {
+    "Grocer": "business:shop",
+    "Grocery w/ Pharmacy inside": "business:shop",
+    "Pharmacy Only": "business:pharmacy",
+    "*": ""
+   }
+  },
+  {
+   "id": "ct-state-licences",
+   "name": "Connecticut state licences of premises (liquor permits, bakeries, pharmacies, petrol stations ...)",
+   "short": "the Connecticut Department of Consumer Protection",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-connecticut"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "State Licenses and Credentials of the Connecticut Department of Consumer Protection and Department of Administrative Services (data.ct.gov, dataset ngch-56tr), public domain; business names, located points and licence dates only.",
+   "url": "https://data.ct.gov/d/ngch-56tr",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each credential from its issue date to its expiry; an inactive one (lapsed, cancelled) ends at its expiry. Keyed by the credential id.",
+   "notes": "About 45,000 premises credentials since the 1990s (about 15,000 active): restaurant, café, tavern, club, hotel, package store and grocery liquor permits, brew pubs and farm wineries, bakeries, dairy stores, frozen dessert shops, pharmacies, petrol stations, vape shops, health clubs, opticians and funeral homes, located by the offline geocoder against the NAD. Cottage food operations (home kitchens), brand labels, temporary and out-of-state permits and every individual credential (nurses, electricians ...) are left out. Privacy rule: the DBA name, else the business name; a credential held by an individual or sole proprietor is kept only under a DBA different from the holder's name (that comparison is made inside the portal's query, so the holder's name is never downloaded).",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ct.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "ngch-56tr",
+      "select": "credentialid AS key, case(dba IS NOT NULL, dba, true, businessname) AS name, credential AS kind, address AS street, city, zip, issuedate AS first, expirationdate AS last, case(active = '1', '', true, 'yes') AS closed",
+      "where": "credential IN ('RESTAURANT LIQUOR', 'RESTAURANT WINE & BEER', 'RESTAURANT BEER', 'CAFE LIQUOR', 'CONNECTICUT CRAFT CAFE LIQUOR', 'CAFE WINE-BEER-CIDER', 'TAVERN LIQUOR', 'CLUB LIQUOR', 'NON PROFIT CLUB LIQUOR', 'PACKAGE STORE LIQUOR', 'GROCERY BEER', 'DRUGGIST LIQUOR', 'BREW PUB LIQUOR', 'MANUFACTURER FOR BEER AND BREW PUB', 'MANUFACTURER BEER', 'FARM BREWERY LIQUOR', 'FARM WINERY LIQUOR', 'FARM DISTILLERY LIQUOR', 'BOWLING ESTABLISHMENT LIQUOR', 'BOWLING ESTABLISHMENT BEER AND WINE', 'NON PROFIT THEATER LIQUOR', 'COLISEUM LIQUOR', 'GOLF COUNTRY CLUB LIQUOR', 'BAKERY', 'RETAIL DAIRY STORE', 'FROZEN DESSERT RETAILER', 'PHARMACY', 'RETAIL GASOLINE DEALER', 'DEALER OF ELECTRONIC NICOTINE DELIVERY SYSTEM OR VAPOR PRODUCT', 'HEALTH CLUB', 'Funeral Home', 'Optical Selling Permit', 'HOTEL LIQUOR', 'HOTEL LIQUOR (50000 or less population)', 'HOTEL LIQUOR (50000 or more population)', 'HOTEL LIQUOR (10000 or less population)') AND issuedate IS NOT NULL AND address IS NOT NULL AND state = 'CT' AND (dba IS NOT NULL OR businessname IS NOT NULL) AND (type NOT IN ('INDIVIDUAL', 'SOLE PROPRIETOR', 'EMPLOYEE ONLY') OR (dba IS NOT NULL AND upper(dba) != upper(name)))",
+      "order": "credentialid"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "geocode": {
+    "street": "street",
+    "city": "city",
+    "zip": "zip",
+    "from": "nad"
+   },
+   "columns": {
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last",
+    "class_column": "kind",
+    "closed_column": "closed"
+   },
+   "class_map": {
+    "RESTAURANT LIQUOR": "business:restaurant",
+    "RESTAURANT WINE & BEER": "business:restaurant",
+    "RESTAURANT BEER": "business:restaurant",
+    "CAFE LIQUOR": "business:bar",
+    "CONNECTICUT CRAFT CAFE LIQUOR": "business:bar",
+    "CAFE WINE-BEER-CIDER": "business:bar",
+    "TAVERN LIQUOR": "business:bar",
+    "CLUB LIQUOR": "business:bar",
+    "NON PROFIT CLUB LIQUOR": "business:bar",
+    "HOTEL LIQUOR*": "business:hotel",
+    "PACKAGE STORE LIQUOR": "business:shop",
+    "GROCERY BEER": "business:shop",
+    "DRUGGIST LIQUOR": "business:pharmacy",
+    "BREW PUB LIQUOR": "business:brewery",
+    "MANUFACTURER FOR BEER AND BREW PUB": "business:brewery",
+    "MANUFACTURER BEER": "business:brewery",
+    "FARM BREWERY LIQUOR": "business:brewery",
+    "FARM WINERY LIQUOR": "business:winery",
+    "FARM DISTILLERY LIQUOR": "business:distillery",
+    "BOWLING ESTABLISHMENT LIQUOR": "business:bowling",
+    "BOWLING ESTABLISHMENT BEER AND WINE": "business:bowling",
+    "NON PROFIT THEATER LIQUOR": "business:theatre",
+    "COLISEUM LIQUOR": "business:venue",
+    "GOLF COUNTRY CLUB LIQUOR": "business:venue",
+    "BAKERY": "business:shop",
+    "RETAIL DAIRY STORE": "business:shop",
+    "FROZEN DESSERT RETAILER": "business:shop",
+    "PHARMACY": "business:pharmacy",
+    "RETAIL GASOLINE DEALER": "business:fuel",
+    "DEALER OF ELECTRONIC NICOTINE DELIVERY SYSTEM OR VAPOR PRODUCT": "business:shop",
+    "HEALTH CLUB": "business:gym",
+    "Funeral Home": "business:funeral home",
+    "Optical Selling Permit": "business:shop",
+    "*": ""
+   },
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "type_column": "kind",
+   "type_map": "humanise"
+  },
+  {
+   "id": "ct-auto-dealers-repairers",
+   "name": "Connecticut licensed car dealers and repairers",
+   "short": "the Connecticut Department of Motor Vehicles",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-connecticut"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Licensed Automobile Dealers, Repairers, Leasing Companies of the Connecticut Department of Motor Vehicles (data.ct.gov, dataset apne-w8c6), public domain; business names and positions only.",
+   "url": "https://data.ct.gov/d/apne-w8c6",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "From the first build on (the dataset has only expiry dates); a licence that leaves the list is closed at its last build.",
+   "notes": "About 4,600 new and used car dealers and general repairers in Connecticut with the portal's points; leasing companies, recyclers and out-of-state licensees are left out. Only the business name is read (the dataset has no owner names); names that look like 'Surname, Given' are left out.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.ct.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "apne-w8c6",
+      "select": "license_num AS key, business_name AS name, license_type AS kind, geocoded_column AS point",
+      "where": "state = 'CT' AND geocoded_column IS NOT NULL AND business_name IS NOT NULL AND license_type IN ('NEW DEALER', 'USED DEALER', 'GENERAL REPAIRER')",
+      "order": "license_num"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "class_column": "kind"
+   },
+   "class_map": {
+    "NEW DEALER": "business:car dealer",
+    "USED DEALER": "business:car dealer",
+    "GENERAL REPAIRER": "business:garage",
+    "*": ""
+   },
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "baton-rouge-businesses",
+   "name": "Baton Rouge and East Baton Rouge Parish registered businesses",
+   "short": "the City of Baton Rouge and Parish of East Baton Rouge",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-louisiana"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Businesses Registered with EBR Parish, City of Baton Rouge and Parish of East Baton Rouge Finance Department (data.brla.gov, dataset xw6s-bcqm), public domain; trade names, positions and dates only.",
+   "url": "https://data.brla.gov/d/xw6s-bcqm",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each business location from its opening date to its closing date (a closed account ends there); keyed by the account and location numbers.",
+   "notes": "Storefront businesses inside East Baton Rouge Parish by NAICS code, as for San Francisco (restaurants, bars, shops, petrol stations, garages, salons, hotels ...); accounts outside the parish or outside Louisiana are left out. Only the trade name (tname) is kept; the contact person, mailing address and legal name are never downloaded. Privacy rule: a sole proprietor (or an account without an ownership type) is kept only under a trade name different from its legal name (compared inside the portal's query).",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.brla.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "xw6s-bcqm",
+      "select": "taccount || '-' || tacctlocation AS key, tname AS name, tnaic AS naics, geolocation AS point, topendate AS first, tclosedate AS last, case(tstatus = 'C', 'yes', true, '') AS closed",
+      "where": "location NOT IN ('Outside Louisiana', 'Outside EBR Parish') AND tname IS NOT NULL AND tnaic IS NOT NULL AND geolocation IS NOT NULL AND ((townership IS NOT NULL AND townership != 'Sole Proprietor') OR upper(tname) != upper(tlegalname))",
+      "order": "taccount"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last",
+    "class_column": "naics",
+    "closed_column": "closed"
+   },
+   "class_map": {
+    "722*": "business:restaurant",
+    "7224*": "business:bar",
+    "44*": "business:shop",
+    "45*": "business:shop",
+    "454*": "",
+    "4541*": "",
+    "4542*": "",
+    "4543*": "",
+    "447*": "business:fuel",
+    "457*": "business:fuel",
+    "8111*": "business:garage",
+    "811192*": "business:car wash",
+    "8121*": "business:salon",
+    "8123*": "business:laundry",
+    "5221*": "business:bank",
+    "512131*": "business:cinema",
+    "71211*": "business:museum",
+    "7131*": "business:amusement",
+    "71394*": "business:gym",
+    "71395*": "business:bowling",
+    "53113*": "business:storage",
+    "72111*": "business:hotel",
+    "72112*": "business:hotel",
+    "72232*": "",
+    "72233*": "",
+    "*": ""
+   },
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "type_column": "naics",
+   "type_map": "naics"
+  },
+  {
+   "id": "san-diego-county-food-facilities",
+   "name": "San Diego County food facility permits (located by address)",
+   "short": "the County of San Diego Department of Environmental Health and Quality",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-california"
+   ],
+   "licence": "public-domain-marked",
+   "attribution": "Food Facility Permits of the County of San Diego Department of Environmental Health and Quality (data.sandiegocounty.gov, dataset c5ez-ufrd), public domain; facility names and located points only.",
+   "url": "https://data.sandiegocounty.gov/d/c5ez-ufrd",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "From the first build on (the dataset has no opening dates); a permit that leaves the list is closed at its last build. Keyed by the record id.",
+   "notes": "About 12,000 active restaurants, markets and food shops of San Diego County, located by the offline geocoder against the NAD (the portal's latitude and longitude are empty). Mobile food units, carts, home kitchens (microenterprise home kitchens), caterers, school and health care kitchens and vending machines are left out. Only the facility name; the permit owner's name, phone and e-mail are never downloaded.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.sandiegocounty.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "c5ez-ufrd",
+      "select": "record_id AS key, record_name AS name, business_type AS kind, address AS street, city, zip",
+      "where": "active_permit = 'A' AND record_name IS NOT NULL AND address IS NOT NULL AND business_type IN ('Restaurant Food Facility', 'Pre-Packaged Retail Market', 'Retail Market with Deli', 'Retail Food Processing')",
+      "order": "record_id"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "geocode": {
+    "street": "street",
+    "city": "city",
+    "zip": "zip",
+    "from": "nad"
+   },
+   "columns": {
+    "name": "name",
+    "key": "key",
+    "class_column": "kind"
+   },
+   "class_map": {
+    "Restaurant Food Facility": "business:restaurant",
+    "Pre-Packaged Retail Market": "business:shop",
+    "Retail Market with Deli": "business:shop",
+    "Retail Food Processing": "business:shop",
+    "*": ""
+   }
+  },
+  {
+   "id": "nola-occupational-licences",
+   "name": "New Orleans active occupational (business) licences",
+   "short": "the City of New Orleans",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-louisiana"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Active Occupational Licenses of the City of New Orleans (data.nola.gov, dataset iqay-p646), CC0; business names, positions and start dates only.",
+   "url": "https://data.nola.gov/d/iqay-p646",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each business from its start date; one that leaves the list of active licences is closed at its last build.",
+   "notes": "Storefront business types only (restaurants, bars, hotels, shops, salons, petrol stations, garages, laundries, gyms, museums ...): home-based offices, street artists and event vendors, taxis, contractors, bed and breakfasts and short-term rentals are left out by type. Only the business name; the phone is never downloaded, and the owner's name is read only to compare (owner_column): a business named as a person-owner's own name is left out. This dataset states CC0; the older occupational licence dataset (hjcd-grvu) states no licence and is still not used.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.nola.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "iqay-p646",
+      "select": "businesslicensenumber AS key, businessname AS name, ownername AS owner, businesstype AS kind, the_geom AS point, businessstartdate AS first",
+      "where": "the_geom IS NOT NULL AND businessname IS NOT NULL",
+      "order": "businesslicensenumber"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "class_column": "kind"
+   },
+   "class_map": {
+    "Full Service Restaurants(table service available)": "business:restaurant",
+    "Limited Service Restaurants(no table service available)": "business:restaurant",
+    "Cafeterias": "business:restaurant",
+    "Snack & Nonalcoholic Beverage Bars": "business:restaurant",
+    "Drinking Places(Alcoholic Beverages)": "business:bar",
+    "Hotels(except Casino Hotels) & Motels": "business:hotel",
+    "Beauty Salons": "business:salon",
+    "Nail Salons": "business:salon",
+    "Barber Shops": "business:salon",
+    "Gasoline Stations with Convenience Stores": "business:fuel",
+    "Gasoline Stations, Other": "business:fuel",
+    "Parking Lots & Garages": "business:parking",
+    "Car Washes": "business:car wash",
+    "Coin-Operated Laundries & Drycleaners": "business:laundry",
+    "Drycleaning & Laundry Services(except Coin-Operated)": "business:laundry",
+    "General Automotive Repair": "business:garage",
+    "Automotive Repair & Maintenance, All Other": "business:garage",
+    "Automotive Body, Paint & Interior Repair & Maintenance": "business:garage",
+    "Automotive Mechanical & Electrical Repair & Maintenance, Other": "business:garage",
+    "Automotive Oil Change & Lubrication Shops": "business:garage",
+    "Automotive Transmission Repair": "business:garage",
+    "Automotive Glass Replacement Shops": "business:garage",
+    "Fitness & Recreational Sports Centers": "business:gym",
+    "Museums": "business:museum",
+    "Motion Picture Theaters(except Drive-Ins)": "business:cinema",
+    "Used Car Dealers": "business:car dealer",
+    "New Car Dealers": "business:car dealer",
+    "Motorcycle Dealers": "business:car dealer",
+    "Lessors of Miniwarehouses & Self Storage Units": "business:storage",
+    "Pharmacies & Drug Stores": "business:pharmacy",
+    "*": "",
+    "Miscellaneous Store Retailers(except Tobacco), All Other": "business:shop",
+    "Convenience Stores": "business:shop",
+    "Clothing Stores, Other": "business:shop",
+    "General Merchandise Stores, All Other": "business:shop",
+    "Supermarket & Other Grocery(except Convenience) Stores": "business:shop",
+    "Gift, Novelty & Souvenir Stores": "business:shop",
+    "Cosmetics, Beauty Supplies & Perfume Stores": "business:shop",
+    "Women's Clothing Stores": "business:shop",
+    "Jewelry Stores": "business:shop",
+    "Baked Goods Stores": "business:shop",
+    "Home Furnishing Stores, All Other": "business:shop",
+    "Clothing Accessories Stores": "business:shop",
+    "Family Clothing Stores": "business:shop",
+    "Furniture Stores": "business:shop",
+    "Tobacco Stores": "business:shop",
+    "Book Stores": "business:shop",
+    "Florists": "business:shop",
+    "Automotive Parts & Accessories Stores": "business:shop",
+    "Used Merchandise Stores": "business:shop",
+    "Specialty Food Stores, All Other": "business:shop",
+    "Confectionery & Nut Stores": "business:shop",
+    "Radio, TV & Other Electronics Stores": "business:shop",
+    "Beer, Wine & Liquor Stores": "business:shop",
+    "Shoe Stores": "business:shop",
+    "Tire Dealers": "business:shop",
+    "Health & Personal Care Stores, All Other": "business:shop",
+    "Pet & Pet Supplies Stores": "business:shop",
+    "Men's Clothing Stores": "business:shop",
+    "Sporting Goods Stores": "business:shop",
+    "Sewing, Needlework & Piece Goods Stores": "business:shop",
+    "Nursery & Garden Centers": "business:shop",
+    "Optical Goods Stores": "business:shop",
+    "Computer & Software Stores": "business:shop",
+    "Hobby, Toy & Game Stores": "business:shop",
+    "Fish & Seafood Markets": "business:shop",
+    "Fruit & Vegetable Markets": "business:shop",
+    "Hardware Stores": "business:shop",
+    "Children's & Infants' Clothing Stores": "business:shop",
+    "Meat Markets": "business:shop",
+    "Office Supplies & Stationery Stores": "business:shop",
+    "Food(Health) Supplement Stores": "business:shop",
+    "Paint & Wallpaper Stores": "business:shop",
+    "Musical Instrument & Supplies Stores": "business:shop",
+    "Prerecorded Tape, CD & Record Stores": "business:shop",
+    "Camera & Photographic Supplies Stores": "business:shop",
+    "Household Appliance Stores": "business:shop",
+    "Department Stores": "business:shop",
+    "Floor Covering Stores": "business:shop",
+    "Luggage & Leather Goods Stores": "business:shop",
+    "Pawnshops": "business:shop",
+    "Art Dealers": "business:shop",
+    "Building Material Dealers, Other": "business:shop",
+    "Boat Dealers & Marine Supplies": "business:shop"
+   },
+   "owner_column": "owner",
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "type_column": "kind",
+   "type_map": "humanise"
+  },
+  {
+   "id": "nola-alcohol-outlets",
+   "name": "New Orleans alcohol beverage outlets",
+   "short": "the City of New Orleans",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-louisiana"
+   ],
+   "licence": "CC0-1.0",
+   "attribution": "Alcohol Beverage Outlets of the City of New Orleans (data.nola.gov, dataset qfg2-kjjz), CC0; business names and positions only.",
+   "url": "https://data.nola.gov/d/qfg2-kjjz",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "From the first build on (the dataset has no dates); an outlet that leaves the list is closed at its last build.",
+   "notes": "About 1,500 restaurants, bars, hotels, stores and venues licensed to sell alcohol; caterers, wholesalers and food service contractors are left out. Only the business name (the part after 'dba' when the name holds both); the owner's name is read only to compare (owner_column).",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.nola.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "qfg2-kjjz",
+      "select": "objectid AS key, businessname AS name, ownername AS owner, businesstype AS kind, the_geom AS point",
+      "where": "the_geom IS NOT NULL AND businessname IS NOT NULL",
+      "order": "objectid"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "class_column": "kind"
+   },
+   "class_map": {
+    "1105*": "business:restaurant",
+    "2062*": "business:restaurant",
+    "1126*": "business:bar",
+    "1101*": "business:shop",
+    "1106*": "business:shop",
+    "1110*": "business:shop",
+    "1103*": "business:shop",
+    "1104*": "business:shop",
+    "1108*": "business:shop",
+    "1119*": "business:shop",
+    "1154*": "business:shop",
+    "1169*": "business:shop",
+    "1173*": "business:shop",
+    "1120*": "business:pharmacy",
+    "1131*": "business:fuel",
+    "4701*": "business:hotel",
+    "2056*": "business:casino",
+    "3349*": "business:amusement",
+    "2802*": "business:brewery",
+    "3364*": "business:venue",
+    "2302*": "business:theatre",
+    "2501*": "business:museum",
+    "2301*": "business:cinema",
+    "3334*": "business:gym",
+    "*": ""
+   },
+   "name_replace": [
+    [
+     "(?i)^.*\\bd/?b/?a\\b\\.?\\s*",
+     ""
+    ]
+   ],
+   "owner_column": "owner",
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "baltimore-liquor-licences",
+   "name": "Baltimore City liquor licences (2002 to now, located by address range)",
+   "short": "the Board of Liquor License Commissioners for Baltimore City",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-maryland"
+   ],
+   "licence": "CC-BY-3.0",
+   "attribution": "Liquor licences of the Board of Liquor License Commissioners for Baltimore City (Baltimore City CityView licences table), Creative Commons Attribution 3.0 Unported; trade names, located points and licence dates only.",
+   "url": "https://baltegis.baltimorecity.gov/mapping/rest/services/CityView/Licenses/FeatureServer/0",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each licence from its first licence year to its last (yearly records since 2002), one record per licence and trade name; a licence renewed within the last year is open.",
+   "notes": "About 30,000 licence-years of taverns, restaurants, package goods stores, hotels, clubs, breweries and venues. Maryland is left out of the National Address Database, so the addresses are placed along the street's TIGER/Line address range (matched by street name, number and ZIP code): about where the house number falls, not an exact point. Only the trade name; the licensees' first and last names are never downloaded. The City's points layers of current licensees state no licence and are not used.",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://baltegis.baltimorecity.gov/mapping/rest/services/CityView/Licenses/FeatureServer/0",
+    "where": "TradeName IS NOT NULL AND AddrStreet IS NOT NULL",
+    "fields": "LicenseNumber,LicenseClass,TradeName,EstablishmentDesc,AddrStreet,AddrZip,LicenseDate,LicenseEndDate",
+    "box": false,
+    "page": 500,
+    "pause": 1
+   },
+   "member": "*.csv",
+   "geocode": {
+    "street": "AddrStreet",
+    "zip": "AddrZip",
+    "from": "nad",
+    "ranges_from": "tiger-addrfeat"
+   },
+   "columns": {
+    "name": "TradeName",
+    "key": [
+     "LicenseClass",
+     "LicenseNumber"
+    ],
+    "first": "LicenseDate",
+    "last": "LicenseEndDate",
+    "class_column": "EstablishmentDesc"
+   },
+   "class_map": {
+    "Restaurant*": "business:restaurant",
+    "Tavern*": "business:bar",
+    "Hotel/Motel": "business:hotel",
+    "Package Goods Only": "business:shop",
+    "Brewery": "business:brewery",
+    "Distillery": "business:distillery",
+    "Arena": "business:venue",
+    "Racetrack": "business:venue",
+    "Zoo License": "business:venue",
+    "Municipal Golf Course": "business:venue",
+    "Non-Profits only": "business:bar",
+    "*": ""
+   },
+   "aggregate": true,
+   "still_open_months": 13,
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "sacramento-county-business-licences",
+   "name": "Sacramento County business licences (commercial premises, located by address)",
+   "short": "Sacramento County",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-california"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Business Licenses of the County of Sacramento (Sacramento County GIS open data), under the Creative Commons Attribution 4.0 licence; business names, located points and licence dates only.",
+   "url": "https://services1.arcgis.com/5NARefyPVtAeuJPU/arcgis/rest/services/Business_Licenses/FeatureServer/0",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each licence from its filing date to its expiry; keyed by the record number.",
+   "notes": "Licences of the unincorporated county at commercial premises only (the county's own 'Commercial' location flag): home-based businesses are left out, and only storefront activities (restaurants, shops, salons, garages, car dealers, petrol stations, gyms, laundries, storage) are kept. Located by the offline geocoder against the NAD (the layer's own points are not usable). Only the business name; the phone is never downloaded. The layer's text says public domain dedication and its tag says CC BY 4.0: it is credited under CC BY 4.0, the owner's choice.",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://services1.arcgis.com/5NARefyPVtAeuJPU/arcgis/rest/services/Business_Licenses/FeatureServer/0",
+    "where": "Location = 'Commercial' AND Business_Name IS NOT NULL",
+    "fields": "Record_number,Business_Name,stNumber,StName,Zip,LicenseActivity,DateFiled,ExpirationDate",
+    "box": false,
+    "page": 500,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "geocode": {
+    "street": [
+     "stNumber",
+     "StName"
+    ],
+    "zip": "Zip",
+    "from": "nad"
+   },
+   "columns": {
+    "name": "Business_Name",
+    "key": "Record_number",
+    "first": "DateFiled",
+    "last": "ExpirationDate",
+    "class_column": "LicenseActivity"
+   },
+   "class_map": {
+    "Restaurant-Limited Service": "business:restaurant",
+    "Restaurant -Full Service": "business:restaurant",
+    "Auto Repair Services": "business:garage",
+    "TOBACCO PRODUCT & PARAPHERNALIA SALES": "business:shop",
+    "Smoke Shop": "business:shop",
+    "Hair Salon": "business:salon",
+    "Nail Salon": "business:salon",
+    "Hair Salon, Nail Salon": "business:salon",
+    "BARBER SHOP": "business:salon",
+    "Beauty Salon": "business:salon",
+    "Used Auto Sales": "business:car dealer",
+    "Auto Sales": "business:car dealer",
+    "Storage": "business:storage",
+    "Self Storage": "business:storage",
+    "Self-Storage": "business:storage",
+    "Grocery Store": "business:shop",
+    "Convenience Store": "business:shop",
+    "Convenience Store w/ Gas": "business:fuel",
+    "Clothing and Accessories Store": "business:shop",
+    "Secondhand Merchandise Sales": "business:shop",
+    "Auto Parts Sales": "business:shop",
+    "Liquor Store": "business:shop",
+    "Clothing Sales": "business:shop",
+    "Furniture Store": "business:shop",
+    "Used Tire Sales": "business:shop",
+    "Electronic Sales": "business:shop",
+    "Bakery": "business:shop",
+    "Thrift Store": "business:shop",
+    "Tire Shop": "business:garage",
+    "Health & Fitness Center": "business:gym",
+    "Laundromat": "business:laundry",
+    "Event Center": "business:venue",
+    "*": ""
+   },
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "type_column": "LicenseActivity",
+   "type_map": "humanise"
+  },
+  {
+   "id": "wake-county-restaurants",
+   "name": "Wake County, North Carolina restaurants and food places",
+   "short": "Wake County",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-north-carolina"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Restaurants in Wake County, Wake County Department of Environmental Services (Wake County GIS open data), CC BY 4.0; names, positions and opening dates only.",
+   "url": "https://maps.wake.gov/arcgis/rest/services/Inspections/RestaurantInspectionsOpenData/MapServer/0",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each restaurant from its opening date (back to the 1980s); one that leaves the layer is closed at its last build. Keyed by the state facility id (HSISID).",
+   "notes": "About 3,000 restaurants, food stands, limited food services and meat markets of Raleigh and Wake County; mobile food units, push carts, school, institutional and elderly nutrition kitchens are left out. Names only; phones are never downloaded.",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://maps.wake.gov/arcgis/rest/services/Inspections/RestaurantInspectionsOpenData/MapServer/0",
+    "where": "FACILITYTYPE IN ('1 - Restaurant', '2 - Food Stands', '14 - Limited Food', '30 - Meat Market')",
+    "fields": "HSISID,NAME,FACILITYTYPE,RESTAURANTOPENDATE",
+    "page": 500,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "NAME",
+    "key": "HSISID",
+    "first": "RESTAURANTOPENDATE",
+    "class_column": "FACILITYTYPE"
+   },
+   "class_map": {
+    "1 - Restaurant": "business:restaurant",
+    "2 - Food Stands": "business:takeaway",
+    "14 - Limited Food": "business:takeaway",
+    "30 - Meat Market": "business:shop",
+    "*": ""
+   }
+  },
+  {
+   "id": "cambridge-food-and-tobacco-permits",
+   "name": "Cambridge, Massachusetts food establishment and tobacco permits",
+   "short": "the City of Cambridge",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-massachusetts"
+   ],
+   "licence": "PDDL-1.0",
+   "attribution": "Food Establishment Permits (data.cambridgema.gov, dataset iect-ma2e) and Tobacco Licenses (dataset ryaf-48sr) of the City of Cambridge, Open Data Commons PDDL; business names, positions and permit dates only.",
+   "url": "https://data.cambridgema.gov/d/iect-ma2e",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each place from its first permit (2016 on) to its latest, one record per address and name; a permit issued within the last 13 months is open.",
+   "notes": "Restaurants, cafés, bars, food shops, bakeries and tobacco shops (yearly permits). Only the DBA name, else the business name when it is a company's; the applicant's name is never downloaded. Daycare, institution and wholesale kitchens are left out.",
+   "fetch": {
+    "method": "socrata",
+    "domain": "data.cambridgema.gov",
+    "page": 50000,
+    "pause": 1,
+    "queries": [
+     {
+      "dataset": "iect-ma2e",
+      "select": "full_address AS key, case(dba IS NOT NULL, dba, true, business_name) AS name, food_est_permit_type AS kind, coordinates AS point, issue_date AS first, issue_date AS last",
+      "where": "permit_type = 'Food Establishment' AND coordinates IS NOT NULL AND issue_date IS NOT NULL AND (dba IS NOT NULL OR (upper(business_name) LIKE '% INC%' OR upper(business_name) LIKE '% LLC%' OR upper(business_name) LIKE '%L.L.C%' OR upper(business_name) LIKE '% CORP%' OR upper(business_name) LIKE '%COMPANY%' OR upper(business_name) LIKE '% CO.%' OR upper(business_name) LIKE '% CO' OR upper(business_name) LIKE '% LTD%' OR upper(business_name) LIKE '% LP' OR upper(business_name) LIKE '% L.P.%' OR upper(business_name) LIKE '% LLP%' OR upper(business_name) LIKE '%PLLC%' OR upper(business_name) LIKE '%PARTNERS%' OR upper(business_name) LIKE '% TRUST%' OR upper(business_name) LIKE '% GROUP%' OR upper(business_name) LIKE '%ENTERPRISE%' OR upper(business_name) LIKE '%HOLDINGS%' OR upper(business_name) LIKE '%ASSOCIATION%' OR upper(business_name) LIKE '% CLUB%' OR upper(business_name) LIKE '%CHURCH%'))",
+      "order": "id"
+     },
+     {
+      "dataset": "ryaf-48sr",
+      "select": "full_address AS key, case(dba IS NOT NULL, dba, true, business_name) AS name, 'Tobacco' AS kind, coordinates AS point, issue_date AS first, issue_date AS last",
+      "where": "coordinates IS NOT NULL AND issue_date IS NOT NULL AND (dba IS NOT NULL OR (upper(business_name) LIKE '% INC%' OR upper(business_name) LIKE '% LLC%' OR upper(business_name) LIKE '%L.L.C%' OR upper(business_name) LIKE '% CORP%' OR upper(business_name) LIKE '%COMPANY%' OR upper(business_name) LIKE '% CO.%' OR upper(business_name) LIKE '% CO' OR upper(business_name) LIKE '% LTD%' OR upper(business_name) LIKE '% LP' OR upper(business_name) LIKE '% L.P.%' OR upper(business_name) LIKE '% LLP%' OR upper(business_name) LIKE '%PLLC%' OR upper(business_name) LIKE '%PARTNERS%' OR upper(business_name) LIKE '% TRUST%' OR upper(business_name) LIKE '% GROUP%' OR upper(business_name) LIKE '%ENTERPRISE%' OR upper(business_name) LIKE '%HOLDINGS%' OR upper(business_name) LIKE '%ASSOCIATION%' OR upper(business_name) LIKE '% CLUB%' OR upper(business_name) LIKE '%CHURCH%'))",
+      "order": "id"
+     }
+    ]
+   },
+   "member": "*.csv",
+   "columns": {
+    "point": "point",
+    "name": "name",
+    "key": "key",
+    "first": "first",
+    "last": "last",
+    "class_column": "kind"
+   },
+   "class_map": {
+    "Non Alcohol": "business:restaurant",
+    "Alcohol": "business:restaurant",
+    "Retail": "business:shop",
+    "Package": "business:shop",
+    "Bakery": "business:shop",
+    "Tobacco": "business:shop",
+    "*": ""
+   },
+   "aggregate": true,
+   "still_open_months": 13,
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "dc-abca-liquor-licences",
+   "name": "Washington, DC liquor licences (ABCA)",
+   "short": "the District of Columbia Alcoholic Beverage and Cannabis Administration",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-district-of-columbia"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "ABCA Liquor License Locations of the District of Columbia Alcoholic Beverage and Cannabis Administration (opendata.dc.gov), CC BY 4.0; trade names, positions and expiry dates only.",
+   "url": "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Business_Licensing_and_Grants_WebMercator/FeatureServer/5",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "From the first build on (the layer has expiry dates only); a retired licence ends at its expiry. Keyed by the licence number.",
+   "notes": "Restaurants, taverns, nightclubs, hotels, clubs, liquor stores, groceries and venues licensed to sell alcohol, under their trade names; delivery services, caterers, wholesalers, manufacturers, railroads, vessels, internet sellers and bed and breakfasts are left out. The applicant (owner) is never downloaded.",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://maps2.dcgis.dc.gov/dcgis/rest/services/DCGIS_DATA/Business_Licensing_and_Grants_WebMercator/FeatureServer/5",
+    "where": "TRADE_NAME IS NOT NULL",
+    "fields": "LICENSE,TRADE_NAME,TYPE,STATUS,EXPIRATION_DATE",
+    "page": 500,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "TRADE_NAME",
+    "key": "LICENSE",
+    "last": "EXPIRATION_DATE",
+    "class_column": "TYPE"
+   },
+   "class_map": {
+    "Restaurant": "business:restaurant",
+    "Tavern": "business:bar",
+    "Nightclub": "business:nightclub",
+    "Hotel": "business:hotel",
+    "Club": "business:bar",
+    "Multipurpose": "business:venue",
+    "Arena": "business:venue",
+    "Retail - Liquor Store": "business:shop",
+    "Retail-Liquor Store": "business:shop",
+    "Retail - Full Service Grocery": "business:shop",
+    "Retail-Full Service Grocery": "business:shop",
+    "Retail - Grocery": "business:shop",
+    "Retail - Class B": "business:shop",
+    "*": ""
+   },
+   "open_when": {
+    "column": "STATUS",
+    "values": [
+     "ACTIVE",
+     "Issued"
+    ]
+   },
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "sioux-falls-liquor-licences",
+   "name": "Sioux Falls, South Dakota alcohol licences",
+   "short": "the City of Sioux Falls",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-south-dakota"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Alcohol and Video Lottery Licensing of the City of Sioux Falls (Sioux Falls GIS open data), CC BY 4.0; business names and positions only.",
+   "url": "https://gis.siouxfalls.gov/arcgis/rest/services/Data/Community/MapServer/20",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "From the first build on (the layer has no dates); a licence that leaves the layer is closed at its last build.",
+   "notes": "About 1,000 active on-sale and off-sale alcohol licences (bars, restaurants, liquor and convenience stores) with the city's points; South Dakota is not in the NAD, but this layer has its own points. Only the business name; the owner's name is read only to compare (owner_column).",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://gis.siouxfalls.gov/arcgis/rest/services/Data/Community/MapServer/20",
+    "where": "Status = 'Active' AND BusinessName IS NOT NULL",
+    "fields": "LicenseType,On_OFF,BusinessName,OwnerName",
+    "page": 500,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "BusinessName",
+    "class_column": [
+     "LicenseType",
+     "On_OFF"
+    ]
+   },
+   "class_map": {
+    "RR*": "business:restaurant",
+    "RL*": "business:bar",
+    "A-RL*": "business:bar",
+    "CL*": "business:bar",
+    "PL*": "business:shop",
+    "PD*": "business:shop",
+    "RB On*": "business:restaurant",
+    "RW On*": "business:restaurant",
+    "RB*": "business:shop",
+    "RW*": "business:shop",
+    "*": ""
+   },
+   "owner_column": "OwnerName",
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+"
+  },
+  {
+   "id": "arlington-tx-food-establishments",
+   "name": "Arlington (Texas) food establishments (inspections)",
+   "short": "the City of Arlington",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "regions": [
+    "us-texas"
+   ],
+   "licence": "CC-BY-4.0",
+   "attribution": "Food establishment inspections of the City of Arlington, Texas (Arlington open data), CC BY 4.0; names, positions and inspection dates only.",
+   "url": "https://gis2.arlingtontx.gov/agsext2/rest/services/OpenData/OD_Community/MapServer",
+   "reader": "tabular",
+   "kind": "businesses",
+   "history": "Each establishment from its first to its last inspection in the layer, one record per name and address; one inspected within the last two years is taken as still open.",
+   "notes": "Restaurants, fast food, bars, delis, bakeries, groceries and convenience stores; schools, hospital and retirement kitchens, caterers, warehouses and seasonal stands are left out. No scores are kept.",
+   "fetch": {
+    "method": "arcgis",
+    "url": "https://gis2.arlingtontx.gov/agsext2/rest/services/OpenData/OD_Community/MapServer/7",
+    "where": "1=1",
+    "fields": "FacilityName,EstablishmentType,PropertyAddress,InspectionDateText",
+    "page": 500,
+    "pause": 0.5
+   },
+   "member": "*.csv",
+   "columns": {
+    "lat": "_lat",
+    "lon": "_lon",
+    "name": "FacilityName",
+    "key": [
+     "FacilityName",
+     "PropertyAddress"
+    ],
+    "first": "InspectionDateText",
+    "last": "InspectionDateText",
+    "class_column": "EstablishmentType"
+   },
+   "class_map": {
+    "Full Service Restaurant": "business:restaurant",
+    "Fast Food": "business:restaurant",
+    "Moderate Food Service": "business:restaurant",
+    "Light Food Service": "business:restaurant",
+    "Sandwich Shop": "business:restaurant",
+    "Delicatessen": "business:restaurant",
+    "Ice Cream Shop": "business:restaurant",
+    "Kiosk": "business:takeaway",
+    "Bar / Lounge": "business:bar",
+    "Retail Bakery": "business:shop",
+    "Grocery": "business:shop",
+    "Limited Package Grocery": "business:shop",
+    "Convenience Store": "business:shop",
+    "Meat Market": "business:shop",
+    "Seafood Market": "business:shop",
+    "Produce": "business:shop",
+    "*": ""
+   },
+   "aggregate": true,
+   "still_open_months": 24,
+   "type_column": "EstablishmentType",
+   "type_map": "humanise"
   }
  ],
  "rejected": [
@@ -8646,14 +10372,14 @@
    "reason": "The terms let the City require anyone to stop all display and distribution of the data at any time, ask for an indemnity, and require a disclaimer on every site that redistributes it: not an open licence."
   },
   {
-   "name": "Texas Alcoholic Beverage Commission licences (data.texas.gov 7hf9-qc9f) and Mixed Beverage receipts",
+   "name": "Texas Alcoholic Beverage Commission licences (data.texas.gov 7hf9-qc9f, kguh-7q9z)",
    "licence": "No licence stated (data.texas.gov)",
-   "reason": "No coordinates (addresses only) and no licence stated on the dataset."
+   "reason": "No licence stated on TABC's own datasets. The Comptroller's mixed beverage permits (8f4g-cpk9, public domain) cover the same bars and are used (tx-mixed-beverage-permits)."
   },
   {
-   "name": "Iowa, Connecticut and Washington State liquor licences",
+   "name": "Iowa and Washington State liquor licences",
    "licence": "Public domain (portals)",
-   "reason": "No dataset of licensed premises with coordinates was found on data.iowa.gov or data.ct.gov (Connecticut publishes brand registrations and suspensions only); Washington's LCB datasets are renewal and local authority notices, not a premises list."
+   "reason": "No dataset of licensed premises with coordinates was found on data.iowa.gov (no longer on Socrata in November 2026); Washington's LCB datasets are renewal and local authority notices, not a premises list. Connecticut's premises permits are used (ct-state-licences: data.ct.gov ngch-56tr holds the restaurant, café, package store and other premises permits, not only brand registrations as an earlier pass thought)."
   },
   {
    "name": "Montgomery County, Maryland food inspections before July 2024 (5pue-gfbe), Prince George's County food inspections, Dallas restaurant inspections",
@@ -8783,12 +10509,12 @@
   {
    "name": "New Orleans occupational business licences",
    "licence": "No licence stated",
-   "reason": "The dataset (data.nola.gov hjcd-grvu) states no licence."
+   "reason": "The dataset (data.nola.gov hjcd-grvu) states no licence. The active licences dataset iqay-p646 states CC0 and is used (nola-occupational-licences)."
   },
   {
-   "name": "Honolulu, Las Vegas (Southern Nevada Health District), Wake County/Raleigh, Tampa/Hillsborough, Portland and Kansas City business licences or restaurant inspections",
+   "name": "Honolulu, Las Vegas (Southern Nevada Health District), Tampa/Hillsborough, Portland and Kansas City business licences or restaurant inspections",
    "licence": "Not found",
-   "reason": "No downloadable dataset with coordinates and an open licence was found on their portals (Kansas City's has no dates)."
+   "reason": "No downloadable dataset with coordinates and an open licence was found on their portals (Kansas City's has no dates). Wake County's restaurants were found later on its own ArcGIS server with CC BY 4.0 and are used (wake-county-restaurants)."
   },
   {
    "name": "NPS Maritime Heritage Inventory of Historic Light Stations",
@@ -9189,6 +10915,26 @@
    "name": "Google Civic Information API and the Voting Information Project",
    "licence": "Terms of service",
    "reason": "Current polling places are served one address at a time under terms that do not allow storing them; the Center for Public Integrity's open lists (past elections, with their dates) are used instead."
+  },
+  {
+   "name": "Baltimore City liquor licensee points (ArcGIS Online layers of the Liquor Board)",
+   "licence": "No licence stated",
+   "reason": "The point layers 'Baltimore City Liquor Licensed Establishments' and 'Liquor_License' state no licence (and carry owners' names and phones). The City's CityView licences table (CC BY 3.0) is used instead, placed by address range (baltimore-liquor-licences)."
+  },
+  {
+   "name": "Colorado tobacco licences (data.colorado.gov ejz2-rwds)",
+   "licence": "Public domain (portal)",
+   "reason": "Addresses only, and Colorado is left out of the National Address Database, so they cannot be located; the dataset was last updated in January 2025 and its licences have expired."
+  },
+  {
+   "name": "Hartford, CT food establishment licences (HartfordOpenDataTables, layer 2)",
+   "licence": "CC0",
+   "reason": "A table of street addresses with neither city nor ZIP code (the geocoder needs one of them), not updated since September 2024."
+  },
+  {
+   "name": "US business lists left out as duplicates (November 2026 pass)",
+   "licence": "Public domain / OPEN-NY (portals)",
+   "reason": "Each repeats a list that is used: Texas active sales tax permit holders (jrea-zgmq, inside 3kx8-uryv, which also has the closed outlets and their dates); New York retail food store inspections (d6dy-3h7r, one row per deficiency without a store id, the stores of 9a8c-vfzj); New York Department of Health tobacco vendors (9ma3-vsuk, inside 55xf-9jat); Connecticut grocery stores and pharmacies (fv3p-tf5m, 2rnd-twzt, inside ngch-56tr); Baton Rouge ABC licences, groceries and pharmacies (xhjf-mdnv and others, inside xw6s-bcqm)."
   }
  ],
  "candidates": [
@@ -9268,9 +11014,9 @@
    "note": "Etalab's geocoded \"GeoSIRENE\" files were decommissioned in April 2026; INSEE now publishes a separate geolocation file (data.gouv.fr dataset 61d5e2d372a52d9f9411ff88, about 1.2 GB) that has to be joined with the 2 GB stock of establishments for names, NAF codes and dates. To add as a prepared DuckDB join (like Foursquare), keeping only storefront NAF codes, statutDiffusionEtablissement = O, and legal persons (no entrepreneurs individuels)."
   },
   {
-   "name": "Other US city health inspections on Socrata (Cambridge MA PDDL, Kansas City food permits, San Mateo, Fulton County GA CC BY)",
+   "name": "Other US city health inspections on Socrata (Kansas City food permits, San Mateo, Fulton County GA CC BY)",
    "licence": "PDDL, public domain or CC BY 4.0",
-   "note": "Open; can be added as \"socrata\" entries like the ones used, after checking each one's columns."
+   "note": "Open; can be added as \"socrata\" entries like the ones used, after checking each one's columns. Cambridge MA's food and tobacco permits are used (cambridge-food-and-tobacco-permits)."
   },
   {
    "name": "Louisville Metro restaurant inspection scores",
@@ -9501,6 +11247,16 @@
    "name": "State and county election offices' polling place lists",
    "licence": "Varies (to check per state)",
    "note": "Many states and counties publish the current election's polling places as open data; each must be checked for its licence and added with its election date."
+  },
+  {
+   "name": "California ABC alcoholic beverage licences (statewide)",
+   "licence": "ABC Conditions of Use: 'considered in the public domain'",
+   "note": "About 90,000 licences, but there is no bulk file: only web reports by county and type. Usable once a downloadable file is published (addresses only; the NAD covers California)."
+  },
+  {
+   "name": "Small city alcohol, grocery and business licence lists (Grand Junction CO, Aspen CO, Corona CA)",
+   "licence": "CC0, CC BY 4.0, public domain",
+   "note": "Open but under 2,000 places each; Grand Junction and Aspen are in Colorado, which the NAD leaves out, so only layers with their own points can be used. Add one by one after checking each layer's fields."
   }
  ]
 }

@@ -165,6 +165,14 @@ def test_old_and_new_archives_read_alike(tmp_path):
                    + json.dumps(feature("x", "1", 0, name="Made-up Mart")) + ",\n{\"type\": \"Feat")
         z.writestr("output/empty.geojson", "")
     assert [r["key"] for r in fetch.iter_atp(str(broken), BOX)] == ["x:1"]
+    # A damaged feature (a 2025 run had a geometry written as text) is skipped, the rest is read.
+    damaged = tmp_path / "d.zip"
+    with zipfile.ZipFile(damaged, "w") as z:
+        z.writestr("output/y.geojson", json.dumps({"type": "FeatureCollection", "features": [
+            {"type": "Feature", "geometry": "POINT (0 0)", "properties": {"@spider": "y", "ref": "9"}},
+            {"type": "Feature", "geometry": {"type": "Point", "coordinates": [0, 0]}, "properties": "broken"},
+            feature("y", "2", 0, name="Made-up Mart")]}))
+    assert [r["key"] for r in fetch.iter_atp(str(damaged), BOX)] == ["y:2"]
 
 
 def test_first_and_last_months_across_quarters(tmp_path):

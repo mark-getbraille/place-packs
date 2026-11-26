@@ -1089,7 +1089,8 @@ def iter_atp(path, boxes):
             if not isinstance(feat, dict):
                 continue
             geom, tags = feat.get("geometry") or {}, feat.get("properties") or {}
-            if geom.get("type") != "Point":
+            # A damaged feature (seen in a 2025 run: a geometry written as text) is skipped, never a crash.
+            if not isinstance(geom, dict) or not isinstance(tags, dict) or geom.get("type") != "Point":
                 continue
             try:
                 lon, lat = float(geom["coordinates"][0]), float(geom["coordinates"][1])

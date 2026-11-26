@@ -164,7 +164,7 @@ def notice_ok(notice_text, notice_path):
 def prepare(entry, national, notice_path=None, sleep=time.sleep):
     """Make national/<id>/<id>.parquet from the newest upload (see the module notes). Returns the number of rows.
     Raises Waiting (no upload yet) or RuntimeError (a file could not be downloaded or read)."""
-    from placepacks.readers.parquet import connect
+    from placepacks.readers.parquet import connect, picked
     s = spec(entry)
     tag = s["release"]
     dt, manifest_name = newest(entry)
@@ -194,7 +194,9 @@ def prepare(entry, national, notice_path=None, sleep=time.sleep):
             raw = download(tag, name, scratch, item.get("sha256"), sleep)
             piece = os.path.join(pieces, f"{i:05d}.parquet")
             src = raw.replace("'", "''")
-            con.execute(f"COPY ({entry['prepare_query'].format(src=src, countries=countries)}) TO '{piece}' "
+            # The entry's "pick" columns (Foursquare's tel and website) where the file has them, else NULL.
+            extra = picked(entry, con, src, f"read_parquet('{src}')")
+            con.execute(f"COPY ({entry['prepare_query'].format(src=src, countries=countries, **extra)}) TO '{piece}' "
                         "(FORMAT PARQUET, COMPRESSION ZSTD)")
             os.remove(raw)
             if (i + 1) % 10 == 0 or i + 1 == len(files):

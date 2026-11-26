@@ -396,11 +396,12 @@ def combine(states, out_dir, scratch=None, cat=None):
 def apply(csv_path, seed_dir, scratch=None):
     """Merge the seed in seed_dir (chain-history.json and its files) into the latest run's CSV at csv_path (written
     by fetch.atp_to_csv), in place. Returns (stores given an earlier first month, closed stores added), or None
-    when there is no seed. Rows are matched by key and name in lower case, like the seed's own records."""
+    when there is no seed. Rows are matched by key and name in lower case, like the seed's own records. The stores
+    listed now keep their contact details (fetch.ATP_CONTACT_FIELDS); the closed stores of the seed have none."""
     manifest_path = os.path.join(seed_dir or "", MANIFEST)
     if not seed_dir or not os.path.exists(manifest_path):
         return None
-    from placepacks.fetch import ATP_FIELDS
+    from placepacks.fetch import ATP_CONTACT_FIELDS, ATP_FIELDS
     with open(manifest_path, encoding="utf-8") as fh:
         manifest = json.load(fh)
     files = [os.path.join(seed_dir, os.path.basename(n)) for n in manifest.get("files", [])]
@@ -414,33 +415,35 @@ def apply(csv_path, seed_dir, scratch=None):
         cols = ", ".join(ATP_FIELDS)
         marks = ", ".join("?" * (len(ATP_FIELDS) + 1))
         con.execute(f"CREATE TABLE s ({cols}, nh INTEGER)")
-        con.execute(f"CREATE TABLE c ({cols}, nh INTEGER)")
+        current = ATP_FIELDS + ATP_CONTACT_FIELDS
+        con.execute(f"CREATE TABLE c ({', '.join(current)}, nh INTEGER)")
         for path in files:
             with gzip.open(path, "rt", newline="", encoding="utf-8") as fh:
                 con.executemany(f"INSERT INTO s VALUES ({marks})",
                                 ([*(r.get(c, "") for c in ATP_FIELDS), name_hash(r["name"])]
                                  for r in csv.DictReader(fh)))
         with open(csv_path, newline="", encoding="utf-8") as fh:
-            con.executemany(f"INSERT INTO c VALUES ({marks})",
-                            ([*(r.get(c, "") for c in ATP_FIELDS), name_hash(r["name"])] for r in csv.DictReader(fh)))
+            con.executemany(f"INSERT INTO c VALUES ({', '.join('?' * (len(current) + 1))})",
+                            ([*(r.get(c) or "" for c in current), name_hash(r["name"])] for r in csv.DictReader(fh)))
         con.execute("CREATE INDEX s_key ON s (key, nh)")
         con.execute("CREATE INDEX c_key ON c (key, nh)")
         out = csv_path + ".seeded"
         earlier = closed = 0
         with open(out, "w", newline="", encoding="utf-8") as fh:
             w = csv.writer(fh)
-            w.writerow(ATP_FIELDS)
+            w.writerow(current)
             # The stores listed now: the seed's first month (the last stays empty: still open).
             picks = ", ".join(f"c.{c}" for c in ATP_FIELDS if c not in ("first", "last"))
+            contact = ", ".join(f"c.{c}" for c in ATP_CONTACT_FIELDS)
             for row in con.execute(f"SELECT {picks}, (SELECT MIN(s.first) FROM s WHERE s.key = c.key AND "
-                                   "s.nh = c.nh), c.last FROM c ORDER BY c.rowid"):
-                earlier += bool(row[-2])
+                                   f"s.nh = c.nh), c.last, {contact} FROM c ORDER BY c.rowid"):
+                earlier += bool(row[-2 - len(ATP_CONTACT_FIELDS)])
                 w.writerow(["" if v is None else v for v in row])
             # The stores no longer listed (or listed under another name now): closed at their last quarter.
             for row in con.execute(f"SELECT {cols} FROM s WHERE NOT EXISTS (SELECT 1 FROM c WHERE c.key = s.key "
                                    "AND c.nh = s.nh) ORDER BY s.rowid"):
                 closed += 1
-                w.writerow(row)
+                w.writerow([*row, *("" for _ in ATP_CONTACT_FIELDS)])
         con.close()
         os.replace(out, csv_path)
         return earlier, closed

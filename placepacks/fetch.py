@@ -1029,6 +1029,9 @@ _PERSON = re.compile(r"^[A-Z][a-z]+(?: [A-Z]\.?)?(?: [A-Z][a-z'-]+){1,2}(?:,? (?
 
 ATP_FIELDS = ["key", "spider", "name", "branch", "brand", "brand_wikidata", "main_key", "main_value", "type", "lat",
               "lon", "first", "last"]
+# The store's contact details, after ATP_FIELDS in the monthly CSV (not in the history seed: a closed store's old
+# phone is not kept). Opening hours are in OpenStreetMap's syntax. E-mail addresses are never read.
+ATP_CONTACT_FIELDS = ["phone", "website", "opening_hours"]
 
 
 def _atp_members(path):
@@ -1115,6 +1118,11 @@ def iter_atp(path, boxes):
             row.update(name=name, branch=text.get("branch", ""), brand=text.get("brand", ""),
                        brand_wikidata=text.get("brand:wikidata", ""), main_key=found[0] if found else "",
                        main_value=found[1] if found else "", type=place_types.osm(text))
+            # The store's phone, website and hours (the "contact:" forms too); cleaned by the writer
+            # (placepacks/contact.py). Never the e-mail.
+            for field in ATP_CONTACT_FIELDS:
+                value = text.get(field) or text.get(f"contact:{field}") or ""
+                row[field] = " ".join(value.split())[:400]
             yield row
 
 
@@ -1122,11 +1130,12 @@ def atp_to_csv(zip_path, target, boxes):
     """Write the chain locations of an All The Places run (a .zip of one GeoJSON FeatureCollection per spider) that
     fall in any of boxes ([(west, south, east, north)]) as one CSV: key, spider, name, branch, brand, brand_wikidata,
     the OSM-style tags that give the class and type, lat, lon, and first and last (empty here: the seeded history,
-    placepacks.atp_history.apply, fills them). Offices of individuals and names that are a person's are left out.
-    Returns the number of rows."""
+    placepacks.atp_history.apply, fills them), then the store's phone, website and opening hours
+    (ATP_CONTACT_FIELDS). Offices of individuals and names that are a person's are left out. Returns the number of
+    rows."""
     count = 0
     with open(target, "w", newline="", encoding="utf-8") as out:
-        w = csv.DictWriter(out, fieldnames=ATP_FIELDS, extrasaction="ignore")
+        w = csv.DictWriter(out, fieldnames=ATP_FIELDS + ATP_CONTACT_FIELDS, extrasaction="ignore")
         w.writeheader()
         for row in iter_atp(zip_path, boxes):
             if not row["skip"]:

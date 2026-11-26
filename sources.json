@@ -813,7 +813,7 @@
     "method": "duckdb",
     "file": "overture.slice.parquet"
    },
-   "query": "SELECT id AS key, names.primary AS name, {cls} AS cls, bbox.ymin AS lat, bbox.xmin AS lon, {brand} AS brand, {brand_qid} AS brand_qid FROM read_parquet('{src}', hive_partitioning = 1) WHERE bbox.xmin BETWEEN {west} AND {east} AND bbox.ymin BETWEEN {south} AND {north} AND confidence >= 0.6 AND COALESCE(CAST({status} AS VARCHAR), '') <> 'permanently_closed'",
+   "query": "SELECT id AS key, names.primary AS name, {cls} AS cls, bbox.ymin AS lat, bbox.xmin AS lon, {brand} AS brand, {brand_qid} AS brand_qid, {phones} AS phones, {websites} AS websites FROM read_parquet('{src}', hive_partitioning = 1) WHERE bbox.xmin BETWEEN {west} AND {east} AND bbox.ymin BETWEEN {south} AND {north} AND confidence >= 0.6 AND COALESCE(CAST({status} AS VARCHAR), '') <> 'permanently_closed'",
    "class_map": {
     "parking": "business",
     "park": "park",
@@ -861,8 +861,15 @@
     ],
     "brand_qid": [
      "brand.wikidata"
+    ],
+    "phones": [
+     "phones"
+    ],
+    "websites": [
+     "websites"
     ]
    },
+   "contact": "The phone numbers and web sites Overture gives (phones, websites: the first of each, cleaned by placepacks/contact.py) are kept as each business's contact details. Its e-mail addresses and social-media accounts are never read.",
    "notes": "Overture renamed its category columns in 2026 (\"categories\" became \"taxonomy\" and \"basic_category\"): the build reads the release's columns first and uses taxonomy.primary, else basic_category, else the old categories.primary. Places whose operating_status is \"permanently_closed\" are left out of the month's data, so their earlier record stays, closed at the last build that listed them open.",
    "time_limit_min": 40
   },
@@ -908,7 +915,7 @@
      "PR"
     ]
    },
-   "query": "SELECT fsq_place_id AS key, name, COALESCE(fsq_category_labels[1], '') AS cls, latitude AS lat, longitude AS lon, CAST(date_created AS VARCHAR) AS first, CAST(date_closed AS VARCHAR) AS last FROM read_parquet('{src}') WHERE longitude BETWEEN {west} AND {east} AND latitude BETWEEN {south} AND {north}",
+   "query": "SELECT fsq_place_id AS key, name, COALESCE(fsq_category_labels[1], '') AS cls, latitude AS lat, longitude AS lon, CAST(date_created AS VARCHAR) AS first, CAST(date_closed AS VARCHAR) AS last, {tel} AS phone, {website} AS website FROM read_parquet('{src}') WHERE longitude BETWEEN {west} AND {east} AND latitude BETWEEN {south} AND {north}",
    "class_map": {
     "landmarks and outdoors > park": "park",
     "education": "campus",
@@ -919,8 +926,17 @@
     "*": "business"
    },
    "history": "The dates Foursquare records: when a place was created and when it closed (date_closed), so closed businesses are kept closed. Keyed by fsq_place_id.",
-   "prepare_query": "SELECT fsq_place_id, name, fsq_category_labels, latitude, longitude, date_created, date_closed FROM read_parquet('{src}') WHERE country IN ({countries})",
-   "local_query": "SELECT fsq_place_id AS key, name, COALESCE(fsq_category_labels[1], '') AS cls, latitude AS lat, longitude AS lon, CAST(date_created AS VARCHAR) AS first, CAST(date_closed AS VARCHAR) AS last FROM read_parquet('{src}') WHERE longitude BETWEEN {west} AND {east} AND latitude BETWEEN {south} AND {north}",
+   "prepare_query": "SELECT fsq_place_id, name, fsq_category_labels, latitude, longitude, date_created, date_closed, CAST({tel} AS VARCHAR) AS tel, CAST({website} AS VARCHAR) AS website FROM read_parquet('{src}') WHERE country IN ({countries})",
+   "pick": {
+    "tel": [
+     "tel"
+    ],
+    "website": [
+     "website"
+    ]
+   },
+   "contact": "The phone number (tel) and web site (website) Foursquare gives are kept as each business's contact details, cleaned by placepacks/contact.py. Its email, facebook_id, instagram and twitter columns are never read.",
+   "local_query": "SELECT fsq_place_id AS key, name, COALESCE(fsq_category_labels[1], '') AS cls, latitude AS lat, longitude AS lon, CAST(date_created AS VARCHAR) AS first, CAST(date_closed AS VARCHAR) AS last, {tel} AS phone, {website} AS website FROM read_parquet('{src}') WHERE longitude BETWEEN {west} AND {east} AND latitude BETWEEN {south} AND {north}",
    "notes": "Foursquare's official copy is the Hugging Face dataset foursquare/fsq-os-places (https://huggingface.co/datasets/foursquare/fsq-os-places), behind a free sign-in. The owner's Program Downloader copies each month's files, unchanged, into this repository's release \"uploaded-sources\" (fsq-<date>-<file>, fsq-<date>-NOTICE.txt and the manifest fsq-<date>.json). The prepare job reads the newest upload once, file by file, keeping only the covered countries (and PR, Puerto Rico, which Foursquare files as its own country) and the columns the build uses, and each region takes its box from that local copy. Until the first upload is there, the source is skipped (waiting for the owner's upload from Program Downloader)."
   },
   {
@@ -4860,6 +4876,11 @@
    "type_map": "humanise",
    "brand_column": "brand",
    "brand_wikidata_column": "brand_wikidata",
+   "contact_columns": {
+    "phone": "phone",
+    "website": "website",
+    "opening_hours": "opening_hours"
+   },
    "history": "Seeded once from the archived past runs (placepacks.atp_history, the workflow's seed_chain_history): the largest run of each quarter since April 2018, when the archive's files start, so a store has its first and last quarter back to 2018 and a store that closed since is kept, closed at its last quarter. Then the latest weekly run, month by month (a store that leaves the chains' locators is closed at its last build).",
    "history_seed": {
     "history": "https://data.alltheplaces.xyz/runs/history.json",

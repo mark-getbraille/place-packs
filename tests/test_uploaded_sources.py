@@ -37,14 +37,17 @@ def entry():
 
 
 def write_places(path, rows):
-    """A made-up Foursquare Parquet file with the columns of the real one the build uses (and a few more)."""
+    """A made-up Foursquare Parquet file with the columns of the real one the build uses (and a few more: the
+    address, and the e-mail and social accounts that are never read)."""
     con = duckdb.connect()
     values = ", ".join(
         f"('{i}', '{n}', {c}::VARCHAR[], {la}, {lo}, '{cc}', DATE '{cr}', "
-        f"{'DATE ' + repr(cl) if cl else 'NULL'}::DATE, 'Somewhere St', '05602')"
-        for i, n, c, la, lo, cc, cr, cl in rows)
+        f"{'DATE ' + repr(cl) if cl else 'NULL'}::DATE, 'Somewhere St', '05602', '(802) 555-01{k:02d}', "
+        f"'https://shop{k}.example/', 'owner{k}@example.com', 'madeup{k}')"
+        for k, (i, n, c, la, lo, cc, cr, cl) in enumerate(rows))
     con.execute(f"COPY (SELECT * FROM (VALUES {values}) t(fsq_place_id, name, fsq_category_labels, latitude, "
-                f"longitude, country, date_created, date_closed, address, postcode)) TO '{path}' (FORMAT PARQUET)")
+                f"longitude, country, date_created, date_closed, address, postcode, tel, website, email, "
+                f"instagram)) TO '{path}' (FORMAT PARQUET)")
 
 
 class FakeRelease:
@@ -149,7 +152,7 @@ def test_the_upload_is_read_once_into_the_national_slice_and_split(release, tmp_
     rows = con.execute(f"SELECT * FROM read_parquet('{target}') ORDER BY fsq_place_id").fetchall()
     columns = [d[0] for d in con.description]
     assert columns == ["fsq_place_id", "name", "fsq_category_labels", "latitude", "longitude", "date_created",
-                       "date_closed"]                        # only what the build uses
+                       "date_closed", "tel", "website"]      # only what the build uses: never email or socials
     assert [r[0] for r in rows] == ["a1", "a2", "b1", "c1"]    # US, Puerto Rico (PR) and France; not Brazil
     assert (national / "fsq-places" / "fsq-places.parquet.version").read_text() == f"uploaded-sources/fsq-{DT}"
     downloads = [c for c in release.calls if c[:2] == ["release", "download"]]
@@ -167,9 +170,11 @@ def test_the_upload_is_read_once_into_the_national_slice_and_split(release, tmp_
     got = fetch.fetch_source(entry(), catalogue.regions()["us-vermont"], {}, str(tmp_path / "work"),
                              str(region_national))
     assert got["ok"] and got["version"] == f"uploaded-sources/fsq-{DT}"
-    sliced = con.execute(f"SELECT key, name, first, last FROM read_parquet('{got['path']}') ORDER BY key").fetchall()
-    assert sliced == [("a1", "Made-up Cafe", "2015-03-01", None),
-                      ("a2", "Made-up Closed Diner", "2010-01-01", "2020-06-01")]
+    sliced = con.execute(f"SELECT key, name, first, last, phone, website FROM read_parquet('{got['path']}') ORDER BY "
+                         "key").fetchall()
+    assert sliced == [("a1", "Made-up Cafe", "2015-03-01", None, "(802) 555-0100", "https://shop0.example/"),
+                      ("a2", "Made-up Closed Diner", "2010-01-01", "2020-06-01", "(802) 555-0101",
+                       "https://shop1.example/")]
 
 
 def test_a_damaged_file_is_never_read(release, tmp_path):

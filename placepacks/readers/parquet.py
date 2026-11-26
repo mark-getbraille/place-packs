@@ -4,7 +4,9 @@ spatial extension the files in other projections (PAD-US, the National Register 
 The catalogue entry's "query" is one SQL SELECT with the placeholders {src} (the input: a local file or folder, or
 for fetch.py the source's remote address) and {west} {south} {east} {north} (the region's bounding box); it returns
 the columns key, name, cls, lat, lon and, when the source has them, first and last (dates as text), or for areas
-key, name, cls and geojson (the shape in longitude/latitude). Only rows with a name are kept. fetch.py runs the same
+key, name, cls and geojson (the shape in longitude/latitude). A business-directory source may also return phone and
+website (text, Foursquare) or phones and websites (lists, Overture): the writer keeps them, cleaned, as the
+business's contact details (placepacks/contact.py); e-mail addresses and social-media accounts are never selected. Only rows with a name are kept. fetch.py runs the same
 query on the remote files (range reads by bounding box), so only the region's slice is ever downloaded.
 
 A publisher may rename columns between releases (Overture replaced "categories" by "taxonomy" and
@@ -75,6 +77,18 @@ def classify_category(entry, category):
     return cmap.get("*", "business")
 
 
+def contact_of(row):
+    """{"phone", "website"} of a query row (phone and website, or the lists phones and websites), or None."""
+    def one(value):
+        """The first non-empty item of a list, or the text itself (placepacks/contact.py cleans it)."""
+        if isinstance(value, (list, tuple)):
+            return next((str(v) for v in value if v and str(v).strip()), "")
+        return str(value or "").strip()
+    got = {"phone": one(row.get("phone") or row.get("phones")), "website": one(row.get("website") or
+                                                                              row.get("websites"))}
+    return {k: v for k, v in got.items() if v} or None
+
+
 @reader("duckdb")
 def read(path, entry, region, writer):
     """Add the query's points or areas to writer. Returns the number of records."""
@@ -105,7 +119,7 @@ def read(path, entry, region, writer):
         else:
             brand = (row.get("brand"), row.get("brand_qid")) if row.get("brand") else None
             writer.add_point(key, source, name, cls, entry.get("tag", source), float(row["lat"]), float(row["lon"]),
-                             first, last, type=kind, brand=brand)
+                             first, last, type=kind, brand=brand, contact=contact_of(row))
         count += 1
     con.close()
     return count

@@ -48,6 +48,10 @@ Points may also have:
                written "FDID, Fire dept name, HQ addr1")
   "brand_column", "brand_wikidata_column": a chain location's brand and its Wikidata id (data only); "brand_map":
                {the source's value: a plain brand name} ("" for none), see brand_of
+  "contact_columns": {"phone": column, "website": column, "opening_hours": column}: a business's contact
+               details, kept only for the business-directory sources (placepacks/contact.py: All The Places; a
+               licence or inspection list never gives them, as its phone numbers are often an owner's own); see
+               contact_of
   "owner_column": the column of the licensee's or owner's legal name, read only to compare and never written: when
                the owner is a person (the name has no company word such as Inc, LLC or Corp: is_company) and the
                record's trade name is the owner's own name (owners_name: the same words, in any order), the record
@@ -433,6 +437,15 @@ def _open_until(entry, row, last, month):
     return last
 
 
+def contact_of(entry, row):
+    """{"phone", "website", "opening_hours"} of a record from the entry's "contact_columns", or None. The writer
+    cleans them and keeps them only for the business-directory sources (placepacks/contact.py)."""
+    columns = entry.get("contact_columns") or {}
+    got = {field: _get(row, column) for field, column in columns.items()
+           if field in ("phone", "website", "opening_hours") and column}
+    return {k: v for k, v in got.items() if v} or None
+
+
 def brand_of(entry, row):
     """(brand name, Wikidata id) of a record from the entry's "brand_column" (and "brand_wikidata_column"), or None.
     With "brand_map" ({value as the source writes it: brand name}), the source's codes become plain brand names
@@ -555,9 +568,9 @@ def read(path, entry, region, writer):
                 g[5] = None if still_open else max(x for x in (g[5], last) if x) if (g[5] or last) else None
                 g[6] = still_open
             continue
-        note = note_of(entry, row)
+        note, contact = note_of(entry, row), contact_of(entry, row)
         writer.add_point(key, source, name, cls, tag, lat, lon, first, last, type=kind, brand=brand_of(entry, row),
-                         **({"note": note} if note else {}))
+                         **({"note": note} if note else {}), **({"contact": contact} if contact else {}))
         count += 1
     for (key, _), (cls, tag, lat, lon, first, last, _, name, kind) in (grouped or {}).items():
         brand = None

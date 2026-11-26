@@ -41,6 +41,15 @@ Points may also have:
                geocoder against the region's address points (placepacks.geocode; a home is put on its street);
                "ranges_from": an address-range source ("nrn-address-ranges") for the addresses with no point
   "brand_column", "brand_wikidata_column": a chain location's brand and its Wikidata id (data only)
+  "owner_column": the column of the licensee's or owner's legal name, read only to compare and never written: when
+               the owner is a person (the name has no company word such as Inc, LLC or Corp: is_company) and the
+               record's trade name is the owner's own name (owners_name: the same words, in any order), the record
+               is left out, as it would show where a person lives or works under their own name (a sole proprietor);
+               a trade name of its own ("Juventud Take-Out" of "Alvarez Jose") is kept
+  "key_hash": true: the source's key is stored as a short fingerprint (the first 16 hexadecimal digits of its
+               SHA-1), not as written: an id that may hold a personal number (Texas taxpayer numbers of sole owners
+               can be made from a Social Security number) never goes into a pack, and the record still keeps the
+               same key from month to month
   "kind": "lines" with columns "paths": a column of JSON paths [[[lat, lon], ...], ...] (the arcgis fetch's
                "_paths"): written as named lines (trails, rivers), each path a line of the record
   "kind": "areas" with columns "rings": a column of JSON rings [[[lat, lon], ...], ...] (the arcgis fetch's
@@ -56,6 +65,7 @@ region's bounding box, are left out. Text that is all capitals is written in ord
 
 import csv
 import fnmatch
+import hashlib
 import io
 import json
 import os
@@ -320,6 +330,59 @@ def class_of(entry, value):
     return cls, tag
 
 
+# Words that show a name belongs to a company, a club or a public body rather than to a person (dots removed first,
+# so "L.L.C." and "Inc." count). Used by the "owner_column" rule.
+COMPANY_WORDS = re.compile(
+    r"\b(INC|INCORPORATED|LLC|L ?L ?C|CORP|CORPORATION|CO|COMPANY|LTD|LIMITED|LP|LLP|PLLC|PC|PA|ASSOCIATION|ASSN|"
+    r"ASSOCIATES|PARTNERS|PARTNERSHIP|TRUST|GROUP|ENTERPRISES?|HOLDINGS|FOUNDATION|CHURCH|CLUB|SOCIETY|LODGE|POST|"
+    r"LEGION|UNIVERSITY|COLLEGE|SCHOOL|HOSPITAL|CITY|COUNTY|STATE|TOWN|VILLAGE|DEPARTMENT|AUTHORITY|DISTRICT|BOARD|"
+    r"MANAGEMENT|INVESTMENTS?|VENTURES?|SERVICES|RESTAURANTS?|STORES?|MARKETS?|OIL|PETROLEUM|FOODS?)\b", re.I)
+# Little words that say nothing about whose name it is.
+_FILLER = {"AND", "THE", "OF", "DBA", "AKA", "MR", "MRS", "MS", "DR", "JR", "SR", "II", "III"}
+
+
+def is_company(name):
+    """True when a legal name is clearly a company's, a club's or a public body's ("Made-Up Diner LLC", "Invented
+    Oil Co."), False for what may be a person's name ("Doe Jane M", "Jane Doe")."""
+    return bool(COMPANY_WORDS.search((name or "").replace(".", "")))
+
+
+def _name_words(text, company=False):
+    """The words of a name: capitals, two letters or more, without "'s" and little words; company words too unless
+    company is True ("Lisa's Nails LLC" -> {"LISA", "NAILS"})."""
+    words = re.findall(r"[A-Z]+", re.sub(r"['’]S\b", "", (text or "").upper()))
+    return {w for w in words if len(w) >= 2 and w not in _FILLER and (company or not COMPANY_WORDS.fullmatch(w))}
+
+
+def owners_name(name, owner):
+    """True when a trade name is the owner's own name: it is made only of the owner's words ("Jane Doe" of "Doe Jane
+    M"), or two or more of the owner's words are in it ("Oscar E Garcia Torres" of "Garcia Oscar Enriques"). One
+    shared word, such as a first name in "Lisa's Nails" of "Thomas Lisa J" or a surname in "Smith Market", leaves a
+    trade name of its own."""
+    theirs = _name_words(owner)
+    if not theirs:
+        return False
+    every = _name_words(name, company=True)
+    return bool(every) and every <= theirs or len(_name_words(name) & theirs) >= 2
+
+
+def personal_record(entry, row, name):
+    """True when the entry's "owner_column" rule leaves the record out: the owner is a person (not is_company) and
+    the record's name is the owner's own name (owners_name). The owner's name itself is never kept."""
+    column = entry.get("owner_column")
+    if not column:
+        return False
+    owner = _get(row, column)
+    return bool(owner) and not is_company(owner) and owners_name(name, owner)
+
+
+def stored_key(entry, key):
+    """The key as stored in the pack: as written, or (entry "key_hash") its short SHA-1 fingerprint."""
+    if key and entry.get("key_hash"):
+        return hashlib.sha1(key.encode("utf-8")).hexdigest()[:16]
+    return key
+
+
 class _Blank(dict):
     """format_map values: a missing column is empty."""
 
@@ -386,6 +449,8 @@ def read(path, entry, region, writer):
             name = strip.sub("", name)
         if skip_name and skip_name.search(name.strip()):
             continue
+        if personal_record(entry, row, name):
+            continue                    # a person's own name as the trade name (see "owner_column")
         name = types.rename(entry, name.strip() if entry.get("keep_case") else smart_case(name))
         if not name:
             continue
@@ -400,7 +465,7 @@ def read(path, entry, region, writer):
             kind = types.of(entry.get("type_map"), _get(row, entry["type_column"])) or None
         if not kind:
             kind = (tag if tag and tag != source else None) or entry.get("type")
-        key = _get(row, cols.get("key", ""))
+        key = stored_key(entry, _get(row, cols.get("key", "")))
         key = f"{source}:{key}" if key else None
         if key is None:
             from placepacks.writer import location_key

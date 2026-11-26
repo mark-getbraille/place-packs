@@ -53,8 +53,11 @@ def needed_columns(entry):
         add(rule["column"])
     if entry.get("open_when"):
         add(entry["open_when"]["column"])
-    for part in ("brand_column", "brand_wikidata_column"):
+    for part in ("brand_column", "brand_wikidata_column", "owner_column"):
         add(entry.get(part, ""))
+    # An address-only source keeps its address columns for the geocoder (a national file split per state).
+    for part in ("street", "city", "zip"):
+        add((entry.get("geocode") or {}).get(part, ""))
     if entry.get("name_template"):
         import re
         names.update(re.findall(r"{([^}]+)}", entry["name_template"]))

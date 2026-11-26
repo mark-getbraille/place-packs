@@ -27,6 +27,11 @@ Each source's catalogue "fetch" says how:
                   the entry's "where"), then the records in chunks of ids, as CSV with "_lat" and "_lon" (and
                   "_rings" for polygons, read as areas); dates become YYYY-MM-DD; the version is the layer's last edit
                   date and the number of records; polylines come with "_paths" (read as named lines)
+  national + "queries": a large Socrata dataset of a whole state that is split into sub-regions (Texas's
+                  sales-tax outlets): fetched once by --prepare through the SODA API like "socrata" (paged, the
+                  entry's $select and $where), split per region by its "filter", and read by every sub-region from
+                  its parent's slice, so the portal is asked once a month and not once per sub-region; the version
+                  is each dataset's rowsUpdatedAt
   manual          a folder someone filled (inputs/...): used when it exists
   polling         a state's newest polling place list of the elections in the entry's "dates" (the first that exists)
   same_as         nothing is downloaded: the source reads another source's download (its "same_as" id), such as
@@ -1288,6 +1293,11 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
             # The publisher's own version (blobId and rowsUpdatedAt), the same in the plan and in the build.
             url, name, version = national_files(entry, values)[0]
             path = os.path.join(folder, name)
+        elif f.get("queries"):
+            # A state's Socrata dataset fetched once by the prepare job (see prepare_national): its version is the
+            # portal's own (rowsUpdatedAt), the same in the plan and in the build.
+            path, version = folder, socrata_version(f["domain"], list(dict.fromkeys(q["dataset"] for q in
+                                                                                    f["queries"])))
         elif f.get("per_country") or f.get("listing") or f.get("urls") or f.get("json_url"):
             path, version = folder, ""
         else:
@@ -1676,12 +1686,34 @@ def prepare(national, cat=None):
                 fh.write(str(e)[:300])
 
 
+def prepare_socrata(entry, folder, opener=None, sleep=time.sleep):
+    """A national entry with Socrata "queries" (see the module docstring): the dataset is fetched once into
+    folder/<id>.csv with fetch_socrata (paged, politely), unless the copy kept from an earlier run (the Actions
+    cache) has the portal's current version (its rowsUpdatedAt, kept in <id>.csv.version)."""
+    f = entry["fetch"]
+    target = os.path.join(folder, entry["id"] + ".csv")
+    stamp = target + ".version"
+    now = socrata_version(f["domain"], list(dict.fromkeys(q["dataset"] for q in f["queries"])), opener)
+    if os.path.exists(target) and os.path.exists(stamp) and open(stamp, encoding="utf-8").read() == now:
+        print(f"{entry['id']}: {os.path.getsize(target):,} bytes (the cached copy)")
+        return
+    got = fetch_socrata(entry, folder, False, opener, sleep)
+    if not got.get("ok"):
+        raise ValueError(got.get("reason") or "the portal returned no rows")
+    with open(stamp, "w", encoding="utf-8") as fh:
+        fh.write(now)
+    print(f"{entry['id']}: {os.path.getsize(target):,} bytes")
+
+
 def prepare_national(entry, national, values):
     """Download a national source's files into national/<id>/ (see national_files). A file restored from the
     Actions cache is kept unless the publisher's version changed (or cannot be asked); files of an older release
     are deleted once the new one is in; "xml_records" turns the downloaded XML files into one CSV."""
     f = entry["fetch"]
     folder = os.path.join(national, entry["id"])
+    if f.get("queries"):
+        prepare_socrata(entry, folder)
+        return
     files = national_files(entry, values)
     if not files:
         raise ValueError("the publisher lists no file")

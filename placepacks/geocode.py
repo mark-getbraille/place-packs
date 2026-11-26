@@ -12,7 +12,9 @@ Database slice the build already has), so nothing is sent anywhere.
   stats(found, total) gives the line the build prints: "located 3,412 of 4,108 addresses (83%): 2,901 at the
   address, 511 on the street (homes)".
 Matching normalises the street: upper case, no punctuation, the usual words shortened (STREET -> ST, NORTH -> N),
-and unit suffixes (APT, STE, UNIT, #) dropped. Address ranges (TIGER) are not interpolated yet.
+and unit suffixes (APT, STE, UNIT, #) dropped. Addresses with no point can be placed along an address range
+(locate_ranges: NRCan's road network in Canada, TIGER/Line's ranges in the US states the NAD leaves out, such as
+Maryland).
 """
 
 import re
@@ -21,7 +23,9 @@ WORDS = {"STREET": "ST", "AVENUE": "AVE", "AV": "AVE", "ROAD": "RD", "DRIVE": "D
          "COURT": "CT", "PLACE": "PL", "TERRACE": "TER", "HIGHWAY": "HWY", "PARKWAY": "PKWY", "CIRCLE": "CIR",
          "SQUARE": "SQ", "ROUTE": "RTE", "TURNPIKE": "TPKE", "EXPRESSWAY": "EXPY", "TRAIL": "TRL", "WAY": "WAY",
          "NORTH": "N", "SOUTH": "S", "EAST": "E", "WEST": "W", "NORTHEAST": "NE", "NORTHWEST": "NW",
-         "SOUTHEAST": "SE", "SOUTHWEST": "SW", "MOUNT": "MT", "FORT": "FT", "SAINT": "ST", "CENTER": "CTR"}
+         "SOUTHEAST": "SE", "SOUTHWEST": "SW", "MOUNT": "MT", "FORT": "FT", "SAINT": "ST", "CENTER": "CTR",
+         # Short forms some counties write (Sacramento County's "FAIR OAKS BL", "GARDEN HWY", "RIVER PLAZA WY").
+         "BL": "BLVD", "WY": "WAY"}
 UNIT = re.compile(r"\s+(APT|APARTMENT|STE|SUITE|UNIT|FL|FLOOR|RM|ROOM|BLDG|DEPT|#)\b.*$")
 NO_HOUSE = re.compile(r"^(P\s*O\s*BOX|POST OFFICE BOX|BOX|PO DRAWER|RR|RURAL ROUTE|HC|GENERAL DELIVERY)\b")
 
@@ -42,7 +46,9 @@ def split_address(line):
     m = re.match(r"^(\d+)[A-Z]?(?:-\d+)?\s+(.+)$", text)
     if not m:
         return None
-    street = norm_street(m.group(2))
+    # The number written twice ("3939 3939 HWY 35 SOUTH", as some state lists join their number and street columns).
+    rest = re.sub(rf"^{m.group(1)}\s+(?=\S)", "", m.group(2))
+    street = norm_street(rest)
     return (m.group(1), street) if street else None
 
 
@@ -109,8 +115,9 @@ def locate(requests, nad_path, nad_entry):
 
 def locate_ranges(requests, path, entry, skip=()):
     """Locate the requests (as for locate) against an address-range source (a shapes entry of kind "ranges": the
-    street name, the house numbers on each side and the town (fields "city") of each segment, NRCan's road network
-    in Canada; a request's town must match the segment's when both are known): the number is
+    street name, the house numbers on each side and the town (fields "city") or ZIP codes (fields "zip", "zip2") of
+    each segment: NRCan's road network in Canada, TIGER/Line's address ranges in the US states the NAD leaves out; a
+    request's town and ZIP must match the segment's when both are known): the number is
     placed along its segment between the side's first and last numbers (odd and even sides kept apart), how
     "range". skip: request indexes already located. Returns {request index: (lat, lon, "range")}."""
     import shapefile
@@ -121,7 +128,7 @@ def locate_ranges(requests, path, entry, skip=()):
             continue
         parts = split_address(line)
         if parts and parts[0].isdigit():
-            wanted.setdefault(parts[1], []).append((i, int(parts[0]), norm_city(city)))
+            wanted.setdefault(parts[1], []).append((i, int(parts[0]), norm_city(city), zip5(zipc)))
     if not wanted or not path:
         return {}
     fields, out = entry["fields"], {}
@@ -135,16 +142,20 @@ def locate_ranges(requests, path, entry, skip=()):
                     continue
                 line_pts = [p for part in _parts(sr.shape) for p in part]
                 places = {norm_city(str(rec.get(c) or "")) for c in fields.get("city", [])} - {"", "NONE"}
+                # The segment's ZIP codes (TIGER's ZIPL and ZIPR), when the range source has them.
+                zips = {zip5(str(rec.get(fields[k]) or "")) for k in ("zip", "zip2") if fields.get(k)} - {""}
                 for side in (("lfrom", "lto"), ("rfrom", "rto")):
                     a, b = (_number(rec.get(fields[k])) for k in side)
                     if not a or not b:
                         continue
                     lo, hi = min(a, b), max(a, b)
-                    for i, n, town in wanted[street]:
+                    for i, n, town, z in wanted[street]:
                         if i in out or not lo <= n <= hi or (n - a) % 2:
                             continue
                         if town and places and town not in places:
                             continue            # the same street name in another town
+                        if z and zips and z not in zips:
+                            continue            # the same street name in another ZIP code
                         t = 0.5 if a == b else (n - a) / (b - a)
                         out[i] = _along(line_pts, t) + ("range",)
     return out

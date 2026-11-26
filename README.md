@@ -42,6 +42,14 @@ church" or "lighthouse" (`type` in a lookup's result; `search_names(..., type="b
 - "on Vineyard Sound, about 3 miles south of Edgartown", "on Lake Champlain"
 - "in the air, about 35,000 feet (10,700 m) over the Pacific Ocean, about 400 miles northeast of Hilo"
 - "near Boston Logan International Airport", in the air shortly after take-off
+- "The nearest pharmacy is Made-up Pharmacy, 300 feet north. Phone 802-555-0180. Hours: Mo-Fr 09:00-19:00." when
+  asked for the nearest place of a kind (`placepacks.find`, `placepacks.local`): the phone, website and opening
+  hours come from OpenStreetMap where it has them, else (since November 2026) from the business directories in the
+  businesses part: All The Places (phone, website and hours from the chains' own store locators), Overture (phone
+  and website) and Foursquare (phone and website). Never from a licence or inspection list (their numbers are often
+  an owner's own), never an e-mail address, and nothing for an individual's office or a place under a person's
+  name. `PackReader.details_of(key)` gives one business's details; only the business as listed now has them, not
+  its older names (FORMAT.md, "Business contact details").
 
 Water, coastlines and the air work without any pack, from the small global layer in `placepacks/data/`
 (Natural Earth and OurAirports, both public domain; Marine Regions' bays and gulfs, CC BY 4.0).
@@ -163,7 +171,8 @@ Each region has these parts:
   sentence. Download it with `ensure_pack(region, part="navigation")`. FORMAT.md, "The navigation part".
 - **Finding places and directions** (`placepacks.find.find_nearest("hardware store", start=(lat, lon))`): the
   nearest place of any kind (every shop, craft and amenity type, with plain words and synonyms; places of worship by
-  religion and denomination; offices; past polling places with their election date) with its phone and hours, and
+  religion and denomination; offices; past polling places with their election date) with its phone, website and
+  hours (OpenStreetMap's, else the business directories' of the businesses part), and
   offline turn-by-turn walking directions that name the cross streets and each crossing's signal, push button and
   tactile paving (driving and a direct transit ride too). The routing is this repository's own A* search over the
   navigation part's network. FORMAT.md, "Finding places and directions".

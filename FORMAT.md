@@ -19,6 +19,7 @@ A pack is one SQLite file. Coordinates are whole microdegrees. Months are YYYYMM
 | area_types | id, type | an area's fine type: areas.id -> types.id |
 | brands | id, name, wikidata | the chain brands of the pack, each once ("Made-up Burgers", "Q9999901"; wikidata may be ""); since November 2026, absent in older packs |
 | point_brands | id, brand | a chain location's brand: points.id -> brands.id |
+| biz_details | id, phone, website, opening_hours | only in the businesses part, since November 2026 (absent in older packs): a business's contact details, points.id -> its phone, web address and opening hours ("Business contact details") |
 | notes | id, text | short notes about places, each once ("filming location of ..."); data only, never spoken |
 | point_notes | id, note | a point's note: points.id -> notes.id |
 | labels | key, lang, name | only in the optional "names" part: a place's name in another language, by the key of the place in the main packs ("wikidata:Q42", "fr", "Lac Champlain") |
@@ -81,6 +82,54 @@ never spoken. Some sources put a note on their own points (the tabular reader's 
 descriptions of BLM's accessible recreation sites ("Accessibility: accessible vault toilet; firm gravel path ...")
 and the access descriptions of New York's career centers. E-mail addresses and telephone numbers are taken out of
 every such note, and it is cut to about 1,200 characters.
+
+## Business contact details (added November 2026, still version 2)
+
+The businesses part may have a table `biz_details (id INTEGER PRIMARY KEY, phone TEXT, website TEXT,
+opening_hours TEXT)`: the contact details of a business point, by its `points.id` (like `point_types`). A column a
+source does not give is NULL; a point without any details has no row; a pack in which no point has any has no
+table. Written by `placepacks/writer.py` (`PackWriter.add_point(..., contact=...)`, cleaned by
+`placepacks/contact.py`), read by `PackReader.details_of(key)` and by the "nearest" lookups (`placepacks.find`,
+`placepacks.local`), which join it to the points.
+
+Only the business directories give details (`contact.CONTACT_SOURCES`), and only these fields:
+
+| Source | phone | website | opening_hours |
+|---|---|---|---|
+| All The Places (`alltheplaces`) | `phone` (or `contact:phone`) | `website` (or `contact:website`) | `opening_hours` (OpenStreetMap syntax) |
+| Overture places (`overture-places`) | the first of `phones` | the first of `websites` | none |
+| Foursquare OS Places (`fsq-places`) | `tel` | `website` | none |
+
+Never kept: e-mail addresses (no source's e-mail column is read; a value with "@" is dropped), social-media accounts
+(Overture's `socials`, Foursquare's `facebook_id`, `instagram`, `twitter`, and a website that is a social-media
+page), and any detail of a licence, permit or inspection list (their phone numbers are often an owner's personal
+number: the writer ignores details from any other source). A record the readers leave out (All The Places'
+individuals' offices and person names) has nothing; a record of Overture or Foursquare whose name looks like a
+person's ("Alice Example") or whose type is an individual's own office (insurance or estate agent, lawyer, financial
+adviser, accountant) is kept as a place but without details.
+
+How values are made small: the first phone number only, without "tel:" or an extension, 7 to 15 digits, a North
+American number written "802-555-0100" (other numbers keep their own spacing); the first web address only, http or
+https, at most 200 characters, without its "#" part or a lone trailing "/", and dropped when its query has a
+tracking key (`utm_...`, `fbclid`, `gclid` and the like) or it holds a user name; opening hours trimmed to 255
+characters. When a lesser source lists the same business (the same name in lower case, within about 100 m in the same
+fine cell) with the same value as a better one (All The Places, then Overture, then Foursquare), its copy is left
+out, since a lookup takes each detail from the best source.
+
+History: details belong to the record listed now. Only this month's records get a row; an older row kept as history
+(a business renamed, moved or closed) is copied without its details, so "Tony's Pizza (now Sally's Ice Cream)" has
+Sally's phone only, and a business no longer listed has none. `details_of(key)` reads the newest row of the key.
+
+Older readers and packs: the points table keeps its version 2 columns, so readers and merges made before
+`biz_details` read new packs unchanged (they do not see the table), and new readers read older packs (no table: no
+details). The pack version stays 2, as for the types, brands and notes: a reader refuses any other version, so a
+new version would stop every installed program from reading the new packs.
+
+When several sources list one place, a lookup takes each detail from the best source that has it: OpenStreetMap's
+own (the services part's `svc_details` and office details), then All The Places, Overture and Foursquare
+(`lookup.join_details`). Size: about 50 bytes for each business of the directories on average (measured on a
+made-up pack with 70% phones, 55% web addresses and All The Places' hours; most of it is the web address), so a
+businesses part grows by about a quarter; the licence lists' points add nothing.
 
 ## Utility service areas (November 2026, no pack change)
 
@@ -212,7 +261,8 @@ extra and businesses parts (plain words and synonyms: "hardware store" also find
 "drugstore" pharmacies, "grocery" supermarkets; "Catholic church", "Baptist church", "mosque", "synagogue" by the
 religion and denomination types), the services part's offices ("Social Security", "DMV") and its polling places
 (said with their election date and a warning that polling places change). The phone, opening hours, website and
-wheelchair access come from svc_details where OpenStreetMap has them. It then asks `placepacks.route.directions`
+wheelchair access come from svc_details where OpenStreetMap has them, else from the businesses part's biz_details
+("Business contact details"). It then asks `placepacks.route.directions`
 for the way there: our own A* search over nav_nodes and nav_edges (no routing library; a small cost for each turn,
 so the directions have fewer turns), described in plain speech: the street and direction, the distance in blocks
 and feet, the cross street reached, each street crossed with its crossing's signal, push button, accessible signal,

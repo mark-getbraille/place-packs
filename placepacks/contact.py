@@ -10,7 +10,7 @@ What is kept, and how it is cleaned:
     is written "802-555-0100" (Overture's "+18025550100" would be read aloud as one huge number); other numbers
     keep their own spacing. Anything with "@" in it is not a phone number and is dropped.
   - website: the first address only, http or https only, at most 200 characters, without a "#" part; an address
-    with a tracking query (utm_..., fbclid, gclid and the like) is dropped, as is a social-media page (socials are
+    with a tracking query (utm_..., fbclid, gclid and the like) loses just those parts; a social-media page is dropped (socials are
     not kept) or an address with a user name or password in it.
   - opening_hours: All The Places only, in OpenStreetMap's syntax ("Mo-Fr 08:00-18:00"), at most 255 characters.
   - never an e-mail address, and nothing at all for a place whose name looks like a person's ("Alice Example") or
@@ -102,12 +102,12 @@ def website(value):
     host = parts.hostname.lower()
     if SOCIAL.search(host) or "." not in host:
         return ""
-    query = urllib.parse.parse_qsl(parts.query, keep_blank_values=True)
-    if any(TRACKING.match(k) for k, _ in query):
-        return ""
+    # Tracking parts of the address (utm_..., fbclid ...) are taken out; the rest of the address is kept.
+    query = urllib.parse.urlencode([(k, v) for k, v in urllib.parse.parse_qsl(parts.query, keep_blank_values=True)
+                                    if not TRACKING.match(k)])
     netloc = host + (f":{parts.port}" if parts.port else "")
     path = parts.path if parts.path not in ("", "/") else ""
-    url = urllib.parse.urlunsplit((parts.scheme.lower(), netloc, path, parts.query, ""))
+    url = urllib.parse.urlunsplit((parts.scheme.lower(), netloc, path, query, ""))
     if "@" in url or len(url) > MAX_URL or any(c.isspace() for c in url):
         return ""
     return url

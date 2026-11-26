@@ -73,8 +73,9 @@ def test_web_addresses_are_http_only_without_tracking_or_socials():
         "https://made-up-burgers.example/store/12"
     assert contact.website("https://made-up-burgers.example/store?id=12") == \
         "https://made-up-burgers.example/store?id=12"
-    assert contact.website("https://made-up-burgers.example/?utm_source=maps") == ""
-    assert contact.website("https://made-up-burgers.example/?fbclid=abc") == ""
+    assert contact.website("https://made-up-burgers.example/?utm_source=maps") == "https://made-up-burgers.example"
+    assert contact.website("https://made-up-burgers.example/store?id=7&fbclid=x") == "https://made-up-burgers.example/store?id=7"
+    assert contact.website("https://made-up-burgers.example/?fbclid=abc") == "https://made-up-burgers.example"
     assert contact.website("mailto:owner@example.com") == ""
     assert contact.website("owner@example.com") == ""
     assert contact.website("ftp://made-up.example/") == ""
@@ -190,7 +191,8 @@ def test_overture_carries_its_first_phone_and_website_never_emails_or_socials(tm
     w = PackWriter(out, 202611)
     read_parquet(str(src), entry_of("overture-places"), dict(catalogue.regions()[VT]), w)
     w.finish(META)
-    assert biz(out) == {"overture-places:g1": ("802-555-0120", "https://made-up-cafe.example", None)}
+    assert biz(out) == {"overture-places:g1": ("802-555-0120", "https://made-up-cafe.example", None),
+                        "overture-places:g3": (None, "https://made-up-diner.example", None)}   # tracking part gone
     text = everything_in(out)
     assert "@" not in text and "facebook" not in text and "555-0122" not in text
 

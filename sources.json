@@ -154,6 +154,11 @@
    "name": "Creative Commons Attribution 3.0 Unported",
    "url": "https://creativecommons.org/licenses/by/3.0/",
    "file": "LICENSES/CC-BY-3.0.txt"
+  },
+  "NLR-Data-Terms": {
+   "name": "NLR Developer Network and AFDC data terms: the data \"may be used for any purpose whatsoever\"; the names DOE, NLR (National Laboratory of the Rockies, formerly NREL) and the Alliance for Energy Innovation may not be used to endorse or promote; no warranty, and the user indemnifies them against claims arising from the use and distribution of the data (read 26 November 2026)",
+   "url": "https://developer.nlr.gov/terms/",
+   "file": ""
   }
  },
  "accepted": [
@@ -2451,6 +2456,312 @@
    },
    "history": "Every open branch under its bank's name since the bank took it over (ACQDATE), or since the branch opened (ESTYMD), often decades back. Keyed by the branch's FDIC number, so a branch taken over by another bank keeps its earlier bank's name with its dates from the first build on.",
    "notes": "The API needs no key (\"users are currently not required to register\"); it does not answer HEAD requests, so its version is the build month."
+  },
+  {
+   "id": "ncua-credit-union-branches",
+   "name": "NCUA credit union offices (main offices and branches)",
+   "short": "the National Credit Union Administration",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Credit union offices from the National Credit Union Administration's quarterly Call Report data (ncua.gov, file \"Credit Union Branch Information\"), public domain; located by their addresses.",
+   "url": "https://ncua.gov/analysis/credit-union-corporate-call-report-data/quarterly-data",
+   "reader": "tabular",
+   "kind": "businesses",
+   "cls": "business",
+   "tag": "bank",
+   "fetch": {
+    "method": "national",
+    "listing": "https://ncua.gov/analysis/credit-union-corporate-call-report-data/quarterly-data",
+    "pattern": "[^\"'\\s>]*call-report-data-\\d{4}-\\d{2}\\.zip",
+    "latest": "call-report-data-(\\d{4})-(\\d{2})",
+    "pause": 2
+   },
+   "member": "*Branch*Information*.txt",
+   "split_file": "Branch_Information_split.txt",
+   "filter": {
+    "column": "PhysicalAddressStateCode",
+    "equals": "{code}"
+   },
+   "geocode": {
+    "street": "PhysicalAddressLine1",
+    "city": "PhysicalAddressCity",
+    "zip": "PhysicalAddressPostalCode",
+    "from": "nad"
+   },
+   "columns": {
+    "name": "CU_NAME",
+    "key": [
+     "CU_NUMBER",
+     "SiteId"
+    ]
+   },
+   "name_replace": [
+    [
+     "(?i)^.*\\bd\\.?b\\.?a\\.?\\s+",
+     ""
+    ],
+    [
+     " *\\(\\d+\\)$",
+     ""
+    ],
+    [
+     "(?i),? +inc\\.?$",
+     ""
+    ],
+    [
+     "(?i), *an?$",
+     ""
+    ],
+    [
+     "(?i)\\bfcu$",
+     "Federal Credit Union"
+    ],
+    [
+     "(?i)\\bcu\\b",
+     "Credit Union"
+    ],
+    [
+     "(?i)^(?!.*\\bcredit union\\b)(?!.*\\b[a-z]*fcu\\b)(.+)$",
+     "\\1 Credit Union"
+    ]
+   ],
+   "type_column": "SiteTypeName",
+   "type_map": "ncua_site",
+   "history": "From the first build on: the branch file has no opening dates. A branch that leaves the file (closed, or merged into another credit union under a new office number) is closed at the last build that listed it. Keyed by the credit union's charter number and the office's site number. The quarterly files go back to the 1990s, so earlier quarters could seed the history later, as the chain store seed does.",
+   "notes": "About 22,800 offices of every federally insured credit union (main offices, branches, operations centres), from the newest quarterly Call Report zip (about 8 MB, read once by the prepare job and split per state), located by the offline geocoder against the NAD by the office's physical address (never the mailing address; an address the NAD marks as a home is put on its street). The name is the credit union's own name (\"Navy Federal Credit Union\"; NCUA's short form \"Wings\" becomes \"Wings Credit Union\"), as the FDIC layer uses the bank's name; the office's own name, telephone number and hours are not kept. Offices abroad (military bases) are in no region and are left out. Class business, tag bank, type credit union."
+  },
+  {
+   "id": "cms-nppes-organisations",
+   "name": "CMS NPPES health care organisations (pharmacies, clinics, dentists, opticians, hearing aid shops ...)",
+   "short": "the Centers for Medicare & Medicaid Services",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "Health care organisations from the National Plan and Provider Enumeration System (NPPES) downloadable file of the Centers for Medicare & Medicaid Services (download.cms.gov/nppes), public domain; organisation names, types and located points only.",
+   "url": "https://download.cms.gov/nppes/NPI_Files.html",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "national",
+    "listing": "https://download.cms.gov/nppes/NPI_Files.html",
+    "pattern": "NPPES_Data_Dissemination_[A-Za-z]+_\\d{4}_V2\\.zip",
+    "convert": "nppes",
+    "pause": 2
+   },
+   "member": "*.csv",
+   "split_file": "nppes-organisations.csv",
+   "filter": {
+    "column": "state",
+    "equals": "{code}"
+   },
+   "geocode": {
+    "street": "street",
+    "city": "city",
+    "zip": "zip",
+    "from": "nad"
+   },
+   "columns": {
+    "name": "name",
+    "key": "NPI",
+    "first": "enumerated",
+    "class_column": "taxonomy"
+   },
+   "class_map": {
+    "333600000X": "business:pharmacy",
+    "3336C0002X": "business:pharmacy",
+    "3336C0003X": "business:pharmacy",
+    "3336C0004X": "business:pharmacy",
+    "3336S0011X": "business:pharmacy",
+    "332800000X": "business:pharmacy",
+    "261Q00000X": "business:clinic",
+    "261QP2300X": "business:clinic",
+    "261QM1300X": "business:clinic",
+    "261QM2500X": "business:clinic",
+    "261QR1300X": "business:clinic",
+    "261QC1500X": "business:clinic",
+    "261QP3300X": "business:clinic",
+    "261QR0400X": "business:clinic",
+    "261QX0203X": "business:clinic",
+    "261QU0200X": "business:urgent care",
+    "261QE0002X": "business:emergency clinic",
+    "261QE0700X": "business:dialysis center",
+    "261QA1903X": "business:surgery center",
+    "261QR0200X": "business:imaging center",
+    "261QR0206X": "business:imaging center",
+    "261QD0000X": "business:dentist",
+    "261QH0700X": "business:hearing clinic",
+    "261QP2000X": "business:physical therapy",
+    "1223*": "business:dentist",
+    "152W*": "business:optometrist",
+    "156FX1800X": "business:optician",
+    "332H00000X": "business:optician",
+    "332S00000X": "business:hearing aid shop",
+    "237600000X": "business:hearing aid shop",
+    "237700000X": "business:hearing aid shop",
+    "231H*": "business:hearing clinic",
+    "2251*": "business:physical therapy",
+    "111N*": "business:chiropractor",
+    "291U00000X": "business:medical laboratory",
+    "332B00000X": "business:medical supply store",
+    "332BX2000X": "business:medical supply store",
+    "335E00000X": "business:orthotics and prosthetics",
+    "*": ""
+   },
+   "allowlist_names": {
+    "333600000X": "Pharmacy",
+    "3336C0002X": "Clinic pharmacy",
+    "3336C0003X": "Community/retail pharmacy",
+    "3336C0004X": "Compounding pharmacy",
+    "3336S0011X": "Specialty pharmacy",
+    "332800000X": "Indian Health Service/tribal/urban Indian health pharmacy",
+    "261Q00000X": "Clinic/center",
+    "261QP2300X": "Clinic: primary care",
+    "261QM1300X": "Clinic: multi-specialty",
+    "261QM2500X": "Clinic: medical specialty",
+    "261QR1300X": "Clinic: rural health",
+    "261QC1500X": "Clinic: community health",
+    "261QP3300X": "Clinic: pain",
+    "261QR0400X": "Clinic: rehabilitation",
+    "261QX0203X": "Clinic: oncology, radiation",
+    "261QU0200X": "Clinic: urgent care",
+    "261QE0002X": "Clinic: emergency care",
+    "261QE0700X": "Clinic: end-stage renal disease (ESRD) treatment",
+    "261QA1903X": "Clinic: ambulatory surgical",
+    "261QR0200X": "Clinic: radiology",
+    "261QR0206X": "Clinic: radiology, mammography",
+    "261QD0000X": "Clinic: dental",
+    "261QH0700X": "Clinic: hearing and speech",
+    "261QP2000X": "Clinic: physical therapy",
+    "1223*": "Dentist (general practice and every dental specialty, 1223...)",
+    "152W*": "Optometrist (and its specialties, 152W...)",
+    "156FX1800X": "Optician",
+    "332H00000X": "Eyewear supplier",
+    "332S00000X": "Hearing aid equipment supplier",
+    "237600000X": "Audiologist-hearing aid fitter",
+    "237700000X": "Hearing instrument specialist",
+    "231H*": "Audiologist (231H...)",
+    "2251*": "Physical therapist (and its specialties, 2251...)",
+    "111N*": "Chiropractor (and its specialties, 111N...)",
+    "291U00000X": "Clinical medical laboratory",
+    "332B00000X": "Durable medical equipment and medical supplies",
+    "332BX2000X": "Oxygen equipment and supplies",
+    "335E00000X": "Prosthetic/orthotic supplier"
+   },
+   "name_replace": [
+    [
+     "(?i)(,?\\s+(llc|l\\.l\\.c|inc|corp|corporation|pllc|p\\.l\\.l\\.c|pc|p\\.c|pa|p\\.a|ltd|lp|llp)\\.?)+$",
+     ""
+    ]
+   ],
+   "skip_names": "^[A-Z][a-z]+,\\s+[A-Z][a-z]+",
+   "history": "Each organisation from its NPI enumeration date (when CMS gave it its number; NPIs began in 2005, so older places start then). An organisation whose NPI is deactivated loses its name and address in the file (CMS keeps only the number and the date), so it is closed at the last build that listed it. Keyed by the NPI.",
+   "notes": "Organisations only (entity type 2): individual providers (type 1), who are people, are never read, and the authorized officials' names and telephone numbers, mailing addresses, telephone and fax numbers, licence numbers and EINs are never kept. The monthly file (about 1 GB zipped, 10 GB of CSV, about 9 million NPIs) is downloaded by the prepare job to the runner's larger disk, read once as a stream out of the zip, filtered at once to the storefront kinds of the taxonomy allowlist in sources.json (class_map, with each code's plain name in allowlist_names), written as a small CSV and the zip deleted; the CSV is split per state. Only each organisation's primary taxonomy counts. Kept: pharmacies (not mail-order, institutional, long-term care or nuclear ones), clinics and urgent care, dialysis, surgery and imaging centres, dentists, optometrists and opticians, hearing aid shops and audiologists, physical therapy, chiropractors, clinical laboratories, medical supply and orthotics stores. Hospitals are left out (the USGS structures, OpenStreetMap, Overture and Foursquare have them), and so are federally qualified health centres (the HRSA layer has them), home health and hospice agencies, nursing homes and other residential care, and transport. Name: the organisation's \"Doing Business As\" (or other) name when it has one (so a legal \"Made-Up Drug Corp\" is listed under its shop name), else its legal business name, with LLC, Inc, PC, PA and the like removed. Address: the practice location, never the mailing address (a practice location in an apartment, often a home, is left out); located by the offline geocoder against the NAD, and an address the NAD marks as a home is put on its street, never at the house.",
+   "exclude_pattern": [
+    {
+     "column": "street",
+     "pattern": "\\b(APT|APARTMENT)\\b"
+    }
+   ]
+  },
+  {
+   "id": "afdc-fuel-stations",
+   "name": "DOE Alternative Fuels Data Center stations (electric charging, natural gas, propane, E85, hydrogen, biodiesel)",
+   "short": "the U.S. Department of Energy's Alternative Fuels Data Center",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "NLR-Data-Terms",
+   "attribution": "Alternative fuel and charging stations from the U.S. Department of Energy's Alternative Fuels Data Center (afdc.energy.gov), provided by the National Laboratory of the Rockies (developer.nlr.gov) and usable for any purpose; DOE, NLR and the Alliance for Energy Innovation do not endorse this product.",
+   "url": "https://afdc.energy.gov/stations",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "national",
+    "url": "https://developer.nlr.gov/api/alt-fuel-stations/v1.csv?limit=all&status=E&access=public&country=US",
+    "file": "afdc-stations.csv",
+    "key_header": {
+     "header": "X-Api-Key",
+     "env": "NREL_API_KEY",
+     "default": "DEMO_KEY"
+    },
+    "pause": 2
+   },
+   "member": "*.csv",
+   "split_file": "afdc-stations.csv",
+   "filter": {
+    "column": "State",
+    "equals": "{code}"
+   },
+   "columns": {
+    "lat": "Latitude",
+    "lon": "Longitude",
+    "name": "Station Name",
+    "key": "ID",
+    "first": "Open Date",
+    "class_column": "Fuel Type Code"
+   },
+   "class_map": {
+    "ELEC": "business:charging station",
+    "CNG": "business:fuel",
+    "LNG": "business:fuel",
+    "LPG": "business:fuel",
+    "E85": "business:fuel",
+    "BD": "business:fuel",
+    "RD": "business:fuel",
+    "HY": "business:fuel",
+    "*": ""
+   },
+   "type_column": "Fuel Type Code",
+   "type_map": "afdc_fuel",
+   "brand_column": "EV Network",
+   "brand_map": {
+    "Non-Networked": "",
+    "ChargePoint Network": "ChargePoint",
+    "Blink Network": "Blink",
+    "Tesla": "Tesla",
+    "Tesla Destination": "Tesla",
+    "eVgo Network": "EVgo",
+    "EVGO": "EVgo",
+    "Electrify America": "Electrify America",
+    "EV Connect": "EV Connect",
+    "LOOP": "Loop",
+    "FLO": "FLO",
+    "RED_E": "Red E",
+    "AMPUP": "AmpUp",
+    "VIALYNK": "Vialynk",
+    "SWTCH": "SWTCH",
+    "OpConnect": "OpConnect",
+    "EVGATEWAY": "EVgateway",
+    "NOODOE": "Noodoe",
+    "EVOKE": "Evoke",
+    "CHARGELAB": "ChargeLab",
+    "FORD_CHARGE": "Ford Charge",
+    "IONNA": "IONNA",
+    "RIVIAN_WAYPOINTS": "Rivian",
+    "RIVIAN_ADVENTURE": "Rivian",
+    "WALMART": "Walmart",
+    "BP_PULSE": "bp pulse",
+    "MERCEDES_BENZ": "Mercedes-Benz",
+    "SHELL_RECHARGE": "Shell Recharge",
+    "APPLEGREEN": "Applegreen",
+    "CIRCLE_K": "Circle K",
+    "7CHARGE": "7Charge",
+    "FPLEV": "FPL EVolution",
+    "EVCS": "EVCS",
+    "ZEFNET": "ZEF Network",
+    "CHARGESMART_EV": "ChargeSmart EV",
+    "POWERFLEX": "PowerFlex",
+    "GRAVITI_ENERGY": "Graviti Energy",
+    "AUTEL": "Autel"
+   },
+   "history": "Each station from its open date (the day it began offering the fuel; most propane stations have none and start at the first build). A station that leaves the list (closed, or no longer public) is closed at the last build that listed it. Keyed by the AFDC's station id.",
+   "notes": "About 96,000 public, open stations in the US (85,000 electric charging locations, and E85, propane, biodiesel, renewable diesel, natural gas and hydrogen stations), with the AFDC's own positions, read in one request a month by the prepare job and split per state. Planned and private stations are not asked for. Electric stations are class business, tag charging station; the others class business, tag fuel, like petrol stations; the type says which fuel (types.json afdc_fuel). The charging network is the brand (ChargePoint, Tesla, EVgo, Electrify America ...; brand_map turns the AFDC's codes into plain names, and non-networked chargers have none). Station telephone numbers, hours and directions are not kept. The API wants a key: the GitHub secret NREL_API_KEY (free from developer.nlr.gov/signup, emailed), else the public DEMO_KEY, which allows a few requests an hour per address and is enough for this one request a month unless the runner's address is busy. The key is sent in a header, so it never appears in a log or status file. Terms (developer.nlr.gov/terms): the data may be used for any purpose whatsoever; the names DOE, NLR and the Alliance may not be used to endorse or promote, and the user indemnifies them. Canadian stations (also in the AFDC, from Natural Resources Canada) are not asked for."
   },
   {
    "id": "fsa-hygiene",

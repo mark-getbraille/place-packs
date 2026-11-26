@@ -21,12 +21,14 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # FL-public-records: the Florida DBPR's licence files state no licence; they are public records under Chapter 119,
 # Florida Statutes, and Florida agencies generally cannot claim copyright in them without a statute that allows it
 # (Microdecisions, Inc. v. Skinner, Fla. 2d DCA 2004), so the owner decided (26 November 2026) to treat them as public
-# domain (see sources.json "licences").
+# domain (see sources.json "licences"). NLR-Data-Terms: the terms of the National Laboratory of the Rockies (formerly
+# NREL) for the Alternative Fuels Data Center's stations: "may be used for any purpose whatsoever", with no endorsement
+# by DOE/NLR and an indemnity (read 26 November 2026; see sources.json "licences").
 ALLOWED = {"ODbL-1.0", "CDLA-Permissive-2.0", "Apache-2.0", "OGL-Canada-2.0", "OGL-UK-3.0", "CC0-1.0", "CC-BY-4.0",
            "US-Government-Work", "etalab-2.0", "per-feed-open", "per-source-open", "PDDL-1.0", "ODC-By-1.0",
            "NYC-Open-Data", "OPEN-NY", "public-domain-marked", "Newberry-open", "OGL-Toronto", "OGL-BC", "OGL-Ontario",
            "OGL-Calgary", "Edmonton-Open-Data", "OGL-Nova-Scotia", "OGL-Vancouver", "OGL-NB", "CC-BY-3.0-US",
-           "CC-BY-3.0", "FL-public-records"}
+           "CC-BY-3.0", "FL-public-records", "NLR-Data-Terms"}
 SHARE_ALIKE = {"ODbL-1.0"}
 # The OpenStreetMap layers (ODbL, share-alike): the core part's places and streets, the navigation part's street
 # network and accessibility details and the services part's offices and services, all made from the same extract.

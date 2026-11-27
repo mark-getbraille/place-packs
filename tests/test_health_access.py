@@ -164,3 +164,43 @@ def test_run_catalogue_and_workflow(tmp_path):
     assert cat["health-access"]["keep_unmatched_sites"] is False and cat["health-access-businesses"]["features"] is \
         False and cat["health-access-businesses"]["part"] == "businesses"
     workflow_shape(os.path.join(ROOT, ".github", "workflows", "health-access.yml"), "10")
+
+
+def test_odd_hospital_links_never_fail_the_shard():
+    """"&amp;" in a link is unescaped and its space encoded when asked for; a broken IPv6 link is skipped without a
+    request; one hospital's unexpected error is counted and the next hospital is read."""
+    home = "https://www.oddlinks.example"
+    page = ('<a href="http://[broken/accessibility">Accessibility</a>'
+            '<a href="/armc/getpage.php?name=Admissions&amp;sub=For Patients">For Patients</a>'
+            '<a href="mailto:x@oddlinks.example">Accessibility office</a>')
+    links = hospital_pages.access_links(page, home, home)
+    assert links == [home + "/armc/getpage.php?name=Admissions&sub=For Patients"]
+    web = Web({home + "/robots.txt": (404, ""), home + "/": (200, page),
+               home + "/armc/getpage.php?name=Admissions&sub=For%20Patients": (200, FACT_PAGE),
+               "https://www.madeuphospital.example/robots.txt": (200, "User-agent: *\nAllow: /\n"),
+               "https://www.madeuphospital.example/": (200, '<a href="/patients-visitors/accessibility">'
+                                                            'Accessibility</a>'),
+               "https://www.madeuphospital.example/patients-visitors/accessibility": (200, FACT_PAGE)})
+    orgs = [{"org": "Madeup Broken Host", "homepage": "http://[::1", "place_key": "wikidata:Q999900",
+             "lat": "44.0", "lon": "-72.0"},
+            {"org": "Madeup Odd Links Hospital", "homepage": home, "place_key": "wikidata:Q999902",
+             "lat": "44.02", "lon": "-72.02"},
+            {"org": "Madeup Error Hospital", "homepage": None, "place_key": None, "lat": "x", "lon": "y"},
+            {"org": "Madeup General Hospital", "homepage": "https://www.madeuphospital.example",
+             "place_key": "wikidata:Q999901", "lat": "44.01", "lon": "-72.01"}]
+    stats = {}
+    rows = list(hospital_pages.collect(client(web), "hospital-pages-1", stats, orgs=orgs))
+    assert [r["key"] for r in rows] == ["hospital-pages:Q999902", "hospital-pages:Q999901"]
+    assert stats["ok"] == 2 and stats["failed"] + stats["error"] == 2
+    assert not any("[" in u for u in web.asked)
+
+
+def test_a_shard_out_of_time_ends_with_the_hospitals_read():
+    """The budget running out ends the shard with the rows found (stats["stopped"]), not an exception."""
+    web = hospital_web()
+    org = {"org": "Madeup General Hospital", "homepage": "https://www.madeuphospital.example",
+           "place_key": "wikidata:Q999901", "lat": "44.01", "lon": "-72.01"}
+    orgs = [org, {**org, "place_key": "wikidata:Q999903"}]
+    stats = {}
+    rows = list(hospital_pages.collect(client(web, budget=4), "hospital-pages-1", stats, orgs=orgs))
+    assert len(rows) == 1 and "budget" in stats["stopped"]

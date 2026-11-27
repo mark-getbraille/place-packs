@@ -17,13 +17,23 @@ phone 802-555-0100; page https://...". Each hospital becomes one "site" row (fea
 pack build ties to the hospital already in the pack (its Wikidata key, else the same name nearby).
 Never: an e-mail address, a person's name, a review; a site that refuses (403, a challenge page) is recorded as
 blocked and left; no login, no CAPTCHA, no headless browser.
+
+Odd links: a page's links are read with the shared safe handling (placepacks/mapvendors/registry.py join and the
+polite client's clean_url, commit ac0c650): HTML entities in an address are unescaped ("&amp;" -> "&"), spaces and
+other characters are percent-encoded when the page is asked for, and a broken link (an "Invalid IPv6 URL", a script
+template) is skipped without a request. Each hospital is read on its own: an unexpected error is counted as "error"
+(named in stats["errors"]) and the next hospital is read; when the request budget or the time runs out the shard
+ends with the hospitals read so far (stats["stopped"]; the run publishes them as partial). The first GitHub run
+(27 November 2026) lost hospital-pages-1 to one link with a broken IPv6 host and hospital-pages-3 to
+"/armc/getpage.php?name=Admissions&amp;sub=For Patients".
 """
 
+import html
 import re
 import urllib.parse
 
 from placepacks import contact, features
-from placepacks.chains.polite import Blocked, NotFound, RequestFailed
+from placepacks.chains.polite import Blocked, BudgetSpent, NotFound, RequestFailed
 
 SHARDS = 4
 MAX_LINKS = 3
@@ -90,15 +100,25 @@ def facts_of(texts):
 
 
 def access_links(page, base, home):
-    """The hospital's own pages worth reading, best first (at most MAX_LINKS)."""
+    """The hospital's own pages worth reading, best first (at most MAX_LINKS). Each link's address is unescaped
+    ("&amp;" -> "&") and joined safely (registry.join: "" for a broken link such as "http://[x", which is
+    skipped); mail, phone, script and data links are skipped."""
+    from placepacks.mapvendors import registry
     from placepacks.mapvendors.discover import same_site
     scored = {}
     for m in _A.finditer(page or ""):
-        href = urllib.parse.urljoin(base, m.group(1).strip())
-        if not href.startswith("http") or not same_site(href, home) or re.search(r"\.(pdf|jpe?g|png|docx?)$", href,
-                                                                                  re.I):
+        raw = html.unescape(m.group(1)).strip()
+        if raw.lower().startswith(("data:", "mailto:", "tel:", "javascript:")) or "${" in raw or "{{" in raw:
             continue
-        words = " ".join(re.sub(r"<[^>]+>", " ", m.group(2)).split()) + " " + urllib.parse.urlsplit(href).path
+        href = registry.join(base, raw)
+        try:
+            if not href.startswith("http") or not same_site(href, home) or re.search(
+                    r"\.(pdf|jpe?g|png|docx?)$", href, re.I):
+                continue
+            path = urllib.parse.urlsplit(href).path
+        except ValueError:                      # an address urllib cannot take apart: skipped
+            continue
+        words = " ".join(re.sub(r"<[^>]+>", " ", m.group(2)).split()) + " " + path
         score = max((s for rx, s in LINK if rx.search(words)), default=0)
         if score:
             scored[href] = max(score, scored.get(href, 0))
@@ -109,8 +129,12 @@ def scan_hospital(client, org):
     """The "site" row of one hospital, or None (nothing found, robots.txt disallows, the site refused or failed:
     status in the second value)."""
     from placepacks.directories.common import Robots
-    home = org["homepage"]
-    parts = urllib.parse.urlsplit(home)
+    home = str(org.get("homepage") or "").strip()
+    try:
+        parts = urllib.parse.urlsplit(home)
+        parts.port                              # noqa: B018 - raises ValueError for a broken host or port
+    except ValueError:
+        return None, "failed"                   # a homepage address that cannot be read: nothing is asked
     try:
         robots = Robots(client, f"{parts.scheme}://{parts.netloc}", agent="place-packs-health-access")
         if not robots.allowed(home + "/"):
@@ -122,7 +146,7 @@ def scan_hospital(client, org):
                 try:
                     texts.append(page_text(client.fetch(url)))
                     pages.append(url)
-                except NotFound:
+                except (NotFound, RequestFailed):   # a page gone, a broken address or a server error: the next
                     continue
     except Blocked:
         return None, "blocked"
@@ -139,15 +163,27 @@ def scan_hospital(client, org):
             "notes": features.clean_note(note, 500), "org": org["org"], "vendor": "hospital-pages"}, "ok"
 
 
-def collect(client, unit, stats):
-    """The hospitals of one shard ("hospital-pages-2": every SHARDS-th from the second)."""
+def collect(client, unit, stats, orgs=None):
+    """The hospitals of one shard ("hospital-pages-2": every SHARDS-th from the second; orgs: the hospitals, for
+    tests). Each hospital on its own: an unexpected error is counted as "error" and named in stats["errors"] (at
+    most 20), and the next one is read; the request budget or the time running out ends the shard with the rows
+    found so far (stats["stopped"]: placepacks/directories/run.py then publishes them as partial)."""
     from placepacks.mapvendors.discover import wikidata_orgs
     index = int(unit.rsplit("-", 1)[1]) - 1
-    orgs = [o for i, o in enumerate(wikidata_orgs(client, ("hospital",))) if i % SHARDS == index]
-    stats.update(hospitals=len(orgs), ok=0, blocked=0, robots=0, failed=0, nothing=0)
+    if orgs is None:
+        orgs = [o for i, o in enumerate(wikidata_orgs(client, ("hospital",))) if i % SHARDS == index]
+    stats.update(hospitals=len(orgs), ok=0, blocked=0, robots=0, failed=0, nothing=0, error=0)
     stats["may_be_empty"] = True
     for org in orgs:
-        row, status = scan_hospital(client, org)
+        try:
+            row, status = scan_hospital(client, org)
+        except BudgetSpent as e:
+            stats["stopped"] = f"{e} after {stats['ok']} of {len(orgs)} hospitals with facts"
+            break
+        except Exception as e:  # noqa: BLE001 - counted and named in the summary; the next hospital is read
+            row, status = None, "error"
+            stats.setdefault("errors", []).append(f"{org.get('homepage', '')}: {type(e).__name__}: {str(e)[:150]}")
+            del stats["errors"][20:]
         stats[status] = stats.get(status, 0) + 1
         if row:
             yield row

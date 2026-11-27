@@ -50,7 +50,8 @@ import re
 import urllib.parse
 
 from placepacks.chains import jsonld
-from placepacks.chains.polite import Blocked, NotFound, RequestFailed
+from placepacks.chains.polite import Blocked, BudgetSpent, NotFound, RequestFailed
+from placepacks.directories.tempest import STATE_CODES
 from placepacks.indoor import common, seeds
 from placepacks.mapvendors import registry
 
@@ -216,8 +217,14 @@ def tanger_mall(client, robots, slug, mall_seeds, stats):
     address = (centre.get("fullAddressCS") or [{}])[0]
     if address.get("country") and address["country"] != "United States":
         return []
-    name = f"Tanger {centre.get('name') or slug}".replace("Tanger Tanger", "Tanger")
-    where = _place(name, f"{TANGER}/{slug}", mall_seeds)
+    # "Tanger Outlets Riverhead", as Wikidata and OpenStreetMap name the centres (the first GitHub run named them
+    # "Tanger Riverhead", which matched no seed: 33 of 36 centres had no position); the state (the address's
+    # "county" field holds the state's name) keeps a same-named centre in another state out.
+    own = str(centre.get("name") or slug).strip()
+    name = own if own.lower().startswith("tanger") else f"Tanger Outlets {own}"
+    state = str(address.get("county") or address.get("state") or "").strip()
+    state = state.upper() if len(state) == 2 else STATE_CODES.get(state.lower(), "")
+    where = _place(name, f"{TANGER}/{slug}", mall_seeds, state)
     if not where:
         stats["no_position"] = stats.get("no_position", 0) + 1
         return []
@@ -570,8 +577,8 @@ def store_links(page, base):
     out, seen = [], set()
     for href, text in _STORE_LINK.findall(page or ""):
         name = common.plain(text)
-        url = urllib.parse.urljoin(base, href)
-        if not 2 <= len(name) <= 60 or url in seen or re.fullmatch(
+        url = registry.join(base, href)
+        if not url or "${" in url or not 2 <= len(name) <= 60 or url in seen or re.fullmatch(
                 r"(?i)(view|see|more|all|details?|learn more|read more|map|directions|shop now|visit|website|"
                 r"view (all|store|details|more)|more info)\.?", name):
             continue
@@ -652,7 +659,9 @@ def independent_only(found):
 
 
 def collect_independent(client, unit, stats, mall_seeds=None):
-    """The independent malls of one unit ("independent-2": every INDEPENDENT_SHARDS-th from the second)."""
+    """The independent malls of one unit ("independent-2": every INDEPENDENT_SHARDS-th from the second). A mall
+    that fails unexpectedly is counted as "error" and the next is read; when the request budget or the time runs
+    out, the unit ends with the malls read so far (stats["stopped"])."""
     index = int(unit.rsplit("-", 1)[1]) - 1
     if mall_seeds is None:
         saved = seeds.read_file("MALL_SEEDS")
@@ -662,7 +671,19 @@ def collect_independent(client, unit, stats, mall_seeds=None):
     stats.update(malls=len(mine), may_be_empty=True)
     vendors = []
     for s in mine:
-        yield from independent_mall(client, s, stats, vendors)
+        # One mall's broken page must not cost the others (the first GitHub run lost all three units to one bad
+        # link); the run's request budget or time running out ends the unit with what was found so far.
+        try:
+            rows = independent_mall(client, s, stats, vendors)
+        except BudgetSpent as e:
+            stats["stopped"] = f"{e} after {stats.get('ok', 0)} malls with rows"
+            break
+        except Exception as e:  # noqa: BLE001 - counted and named in the summary; the next mall is read
+            stats["error"] = stats.get("error", 0) + 1
+            stats.setdefault("errors", []).append(f"{s.get('homepage', '')}: {type(e).__name__}: {str(e)[:150]}")
+            del stats["errors"][20:]
+            continue
+        yield from rows
     stats["vendors"] = sorted({f"{v['vendor']}: {v.get('host') or v.get('map_id') or ''} ({v['org']})"
                                for v in vendors})[:200]
 

@@ -107,7 +107,7 @@ def test_tanger_json_directory():
     assert site["opening_hours"] == "Mo-Sa 10:00-21:00; Su 10:00-18:00"
     shoes = by["mall:tanger:testville:store:11"]
     assert shoes["kind"] == "store" and shoes["unit"] == "SUITE 100" and shoes["business"] == ""
-    assert shoes["notes"] == "In Tanger Testville, SUITE 100" and float(shoes["lat"]) == 44.01
+    assert shoes["notes"] == "In Tanger Outlets Testville, SUITE 100" and float(shoes["lat"]) == 44.01
     pretzels = by["mall:tanger:testville:store:12"]
     assert pretzels["kind"] == "dining" and pretzels["opening_hours"] == "Mo 09:00-17:00"
     assert pretzels["business"] == "1" and pretzels["main_value"] == "restaurant"
@@ -121,6 +121,79 @@ def brookfield_page(stores, hours):
     cache = {"brookfield-mall-info": {"x": {"data": {"content": {"name": "Madeup Mall", "regMallHours": hours}}}},
              "brookfield-store": {"y": {"data": [{"content": s} for s in stores]}}}
     return f"<html><script>Fusion.deployment='1';Fusion.contentCache={json.dumps(cache)};</script></html>"
+
+
+def test_tanger_centre_found_by_its_outlets_name_and_state():
+    """A Tanger centre whose seed has no website (an OpenStreetMap mall) is found by the name "Tanger Outlets
+    <centre>" in its own state; a same-named centre in another state is not used (first GitHub run: 33 of 36
+    centres had no position)."""
+    web = tanger_web()
+    page = web.pages["https://www.tanger.com/testville/stores"][1].replace(
+        '"fullAddressCS": [{"country": "United States"}]',
+        '"fullAddressCS": [{"country": "United States", "county": "Vermont"}]')
+    web.pages["https://www.tanger.com/testville/stores"] = (200, page)
+    elsewhere = {"org": "Tanger Outlets Testville", "homepage": "", "place_key": "n1", "lat": "30.1",
+                 "lon": "-90.1", "state": "LA"}
+    here = {"org": "Tanger Outlets Testville", "homepage": "", "place_key": "w2", "lat": "44.3", "lon": "-72.3",
+            "state": "VT"}
+    stats = {}
+    rows = list(malls.collect(client(web), "tanger", stats, mall_seeds=[elsewhere, here]))
+    site = next(r for r in rows if r["kind"] == "site")
+    assert site["name"] == "Tanger Outlets Testville" and site["place_key"] == "w2" and "no_position" not in stats
+
+
+def test_independent_malls_go_on_after_a_broken_link_and_keep_rows_when_time_runs_out(monkeypatch):
+    """A script template ("/${getRetailerUrl(...)}") or a broken IPv6 address in a mall's links is skipped without
+    a request; one mall's unexpected error is counted and the next mall is read; when the request budget runs out
+    the unit ends with the rows found so far (first GitHub run: all three independent units were lost to one
+    template link each)."""
+    def mall_site(host, extra=""):
+        return {f"{host}/robots.txt": ROBOTS_OK,
+                host: (200, '<a href="/directory/">Store Directory</a>' + extra),
+                f"{host}/directory/": (200, '<a href="/directory/madeup-hats/">Madeup Hats</a>'
+                                            '<a href="/directory/sample-toys/">Sample Toys</a>')}
+    monkeypatch.setattr(malls, "INDEPENDENT_SHARDS", 1)       # both malls in the one unit
+    one, two = "https://www.madeupmall.example", "https://www.sampletowncenter.example"
+    pages = {**mall_site(one, '<a href="/${getRetailerUrl(retailer)}">Shops</a>'
+                              '<a href="http://[broken/stores">Stores</a>'), **mall_site(two)}
+    web = Web(pages)
+    stats = {}
+    rows = list(malls.collect_independent(client(web), "independent-1", stats,
+                                          mall_seeds=[SEEDS[1], {**SEEDS[2], "org": "Sample Town Center"}]))
+    assert {r["name"] for r in rows} >= {"Madeup Mall", "Madeup Hats", "Sample Town Center", "Sample Toys"}
+    assert not any("${" in u or "[broken" in u for u in web.asked) and stats["ok"] == 2
+    stats = {}
+    rows = list(malls.collect_independent(client(Web(pages), budget=4), "independent-1", stats,
+                                          mall_seeds=[SEEDS[1], SEEDS[2]]))
+    assert rows and "budget" in stats["stopped"]
+
+
+def test_an_airport_with_a_bad_link_does_not_stop_the_others(monkeypatch):
+    """A link with a space ("/dining at MFE.html") is read percent-encoded; an airport whose reading raises an
+    unexpected error is counted as "error" and the next airport is still read (first GitHub run: airports-1 and
+    airports-4, with Minneapolis-Saint Paul's Atrius map, were lost to one such link each)."""
+    home = "https://www.madeup-airport.example"
+    web = Web({f"{home}/robots.txt": ROBOTS_OK,
+               home: (200, '<a href="/dining at MFE.html">Dining</a>'),
+               f"{home}/dining%20at%20MFE.html": (200, '<script type="application/ld+json">{"@type": "Restaurant", '
+                                                       '"name": "Sample Diner", "description": "Terminal A"}'
+                                                       '</script>')})
+    good = {"org": "Madeup Regional Airport", "faa": "MDX", "place_key": "faa-airports:MDX", "lat": "44.05",
+            "lon": "-72.05", "homepage": home}
+    bad = dict(good, faa="BAD")
+    real = airports.read_airport
+
+    def read(client_, airport, stats_, vendors=None):
+        """read_airport, failing unexpectedly for the airport BAD."""
+        if airport["faa"] == "BAD":
+            raise KeyError("made-up failure")
+        return real(client_, airport, stats_, vendors)
+    monkeypatch.setattr(airports, "read_airport", read)
+    monkeypatch.setattr(airports, "SHARDS", 1)               # both airports in the one unit
+    stats = {}
+    rows = list(airports.collect(client(web), "airports-1", stats, airports=[bad, good]))
+    assert any(r["name"] == "Sample Diner" for r in rows) and stats["ok"] == 1 and stats["error"] == 1
+    assert f"{home}/dining%20at%20MFE.html" in web.asked and "BAD: KeyError" in stats["errors"][0]
 
 
 def test_brookfield_json_directory():

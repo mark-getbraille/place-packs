@@ -140,7 +140,9 @@ def atrius_link(page, base):
     ("maps.<site>/?vid=<venue>"); the venue parameter is kept, other parameters dropped."""
     from placepacks.mapvendors.discover import same_site
     for href in re.findall(r"href\s*=\s*[\"']([^\"']+)[\"']", page or "", re.I):
-        url = urllib.parse.urljoin(base, href.replace("&amp;", "&"))
+        url = registry.join(base, href.replace("&amp;", "&"))
+        if not url:
+            continue                    # a broken link ("http://[x")
         parts = urllib.parse.urlsplit(url)
         if not (parts.hostname or "").startswith("map") or not (same_site(url, base) or _label(url) == _label(base)):
             continue
@@ -218,7 +220,9 @@ def read_airport(client, airport, stats, found_vendors=None):
 
 def collect(client, unit, stats, airports=None):
     """The airports of one unit ("airports-2": every SHARDS-th airport from the second). The rows of every
-    airport read; each airport's status is counted in stats, and the blocked ones are listed by name."""
+    airport read; each airport's status is counted in stats, and the blocked ones are listed by name. An airport
+    that fails unexpectedly is counted as "error" (named in stats["errors"]) and the next one is read; when the
+    request budget or the time runs out, the unit ends with the airports read so far (stats["stopped"])."""
     from placepacks.indoor import seeds
     index = int(unit.rsplit("-", 1)[1]) - 1
     if airports is None:
@@ -230,10 +234,18 @@ def collect(client, unit, stats, airports=None):
     stats["blocked_sites"] = []
     vendors = []
     for a in mine:
+        # One airport's broken page must not cost the others (the first GitHub run lost airports-1 and airports-4,
+        # with Minneapolis-Saint Paul's Atrius map, to one bad link each); the request budget or time running out
+        # ends the unit with the airports read so far.
         try:
             rows, status = read_airport(client, a, stats, vendors)
-        except BudgetSpent:
-            raise
+        except BudgetSpent as e:
+            stats["stopped"] = f"{e} after {stats.get('ok', 0)} airports with rows"
+            break
+        except Exception as e:  # noqa: BLE001 - counted and named in the summary; the next airport is read
+            rows, status = [], "error"
+            stats.setdefault("errors", []).append(f"{a['faa']}: {type(e).__name__}: {str(e)[:150]}")
+            del stats["errors"][20:]
         stats[status] = stats.get(status, 0) + 1
         if status == "blocked":
             stats["blocked_sites"].append(f"{a['faa']} {a.get('homepage', '')}")

@@ -25,6 +25,9 @@ OURAIRPORTS = "https://davidmegginson.github.io/ourairports-data/airports.csv"
 OVERPASS = "https://overpass-api.de/api/interpreter"
 OVERPASS_QUERY = ('[out:json][timeout:240];area["ISO3166-1"="US"][admin_level=2]->.us;'
                   'nwr["shop"="mall"]["name"](area.us);out center tags;')
+# The query may run 240 seconds on Overpass' side (its [timeout:240]); the client's usual 60-second read limit cut
+# it off on the first GitHub run (27 November 2026: "The read operation timed out", so no OpenStreetMap malls).
+OVERPASS_SECONDS = 300
 AIRPORT_TYPES = ("large_airport", "medium_airport", "small_airport", "seaplane_base", "heliport")
 
 
@@ -61,7 +64,8 @@ def overpass_malls(client):
     "lon"}]; [] when Overpass does not answer (it is a shared service: one query, never repeated)."""
     try:
         text = client.fetch(OVERPASS, data=urllib.parse.urlencode({"data": OVERPASS_QUERY}).encode(),
-                            headers={"Content-Type": "application/x-www-form-urlencoded"})
+                            headers={"Content-Type": "application/x-www-form-urlencoded"},
+                            timeout=OVERPASS_SECONDS)
         import json
         answer = json.loads(text)
     except (Blocked, NotFound, RequestFailed, ValueError) as e:

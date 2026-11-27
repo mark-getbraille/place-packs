@@ -36,12 +36,13 @@ VENDORS = {
         "ids": [r"map\.concept3d\.com/?\??[^\"'\s<>]*?[?&#]id=(\d+)", r"concept3d\.com/map/[^\"'\s<>]*?[?&#]id=(\d+)",
                 r"api\.concept3d\.com/[^\"'\s<>]*?[?&]map=(\d+)"],
         "collector": "concept3d",
-        "data": "robots-disallowed",
+        "data": "public",
         "data_note": "The web maps read https://api.concept3d.com/ (locations, categories) with a public key built "
-                     "into Concept3D's own web map, but that host's robots.txt says \"User-agent: * Disallow: /\" "
-                     "(checked 27 November 2026). By the standing rule (robots.txt obeyed for what is published, "
-                     "except chain store locators and government websites) nothing is read from it until the owner "
-                     "decides; the collector is ready and records the organisations as blocked by robots.txt.",
+                     "into Concept3D's own web map. That host's robots.txt says \"User-agent: * Disallow: /\" "
+                     "(checked 27 November 2026); the owner decided on 27 November 2026 to collect and publish it "
+                     "anyway (as for chain store locators and government websites). Still polite and identified, and "
+                     "a real refusal (403, 429, CAPTCHA, anti-bot page, login) stops the collector.",
+        "robots_override": True,
         "showcase": ["https://concept3d.com/sitemap_index.xml"],
         "verified": True,
     },

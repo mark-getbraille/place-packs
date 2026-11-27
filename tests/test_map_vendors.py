@@ -70,8 +70,9 @@ def test_fingerprints_and_unknown_embeds():
     assert [u["host"] for u in unknown] == ["maps.newvendor.example"]
     assert registry.fingerprints("<p>vid=12 is a video</p>") == []
     assert registry.collectors() == {"concept3d": "concept3d", "mazemap": "mazemap", "locuslabs": "atrius"}
-    assert registry.VENDORS["concept3d"]["data"] == "robots-disallowed"
-    assert not registry.VENDORS["concept3d"].get("robots_override")
+    # The owner decided on 27 November 2026 to collect Concept3D despite its robots.txt.
+    assert registry.VENDORS["concept3d"]["data"] == "public"
+    assert registry.VENDORS["concept3d"].get("robots_override") is True
 
 
 def hd_zip():
@@ -203,6 +204,8 @@ def test_concept3d_stops_at_robots_and_reads_when_allowed(monkeypatch):
     locations get their descriptions as notes."""
     listing = {"maps": [{"vendor": "concept3d", "map_id": "1130", "org": "Madeup State College",
                          "place_key": "nces-postsecondary:999001", "lat": "44.002", "lon": "-72.002"}]}
+    # Without the owner's override (as before 27 November 2026), a disallowing robots.txt blocks it.
+    monkeypatch.setitem(registry.VENDORS["concept3d"], "robots_override", False)
     web = Web({concept3d.API + "robots.txt": (200, "User-agent: *\nDisallow: /\n")})
     try:
         list(concept3d.collect(client(web), "concept3d", {}, listing))
@@ -210,6 +213,7 @@ def test_concept3d_stops_at_robots_and_reads_when_allowed(monkeypatch):
     except Blocked as e:
         assert "robots.txt" in str(e)
     assert web.asked == [concept3d.API + "robots.txt"]
+    monkeypatch.setitem(registry.VENDORS["concept3d"], "robots_override", True)   # the owner's decision
     key = "0" * 32
     cats = [{"catId": 1, "name": "Accessibility", "children": [{"catId": 2, "name": "Accessible Entrances"},
                                                                {"catId": 3, "name": "Elevators"}]},
@@ -276,6 +280,7 @@ def test_run_and_catalogue_and_workflow(tmp_path, monkeypatch):
     out = tmp_path / "out"
     summary = dirrun.run("mapvendors", "mazemap", str(out), opener=maze_web(), sleep=lambda s: None, today=TODAY)
     assert summary["status"] == "ok" and summary["rows"] == 5 and (out / "mazemap.csv.gz").exists()
+    monkeypatch.setitem(registry.VENDORS["concept3d"], "robots_override", False)   # as before the owner's override
     web = Web({concept3d.API + "robots.txt": (200, "User-agent: *\nDisallow: /\n")})
     summary = dirrun.run("mapvendors", "concept3d", str(out), opener=web, sleep=lambda s: None, today=TODAY)
     assert summary["status"] == "blocked" and not (out / "concept3d.csv.gz").exists()

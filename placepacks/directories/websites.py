@@ -260,12 +260,18 @@ def shard_regions(shard, of, regions=None):
     return [rid for i, (rid, _) in enumerate(region_order(regions)) if i % of == shard - 1]
 
 
-def previous_rows(gh, folder):
-    """(release, its newest web-details asset or None, {key: row} of that file)."""
-    rel = gh.ensure_release(RELEASE, "Business websites' details",
-                            "Phone numbers and opening hours read from businesses' own homepages "
-                            "(placepacks/directories/websites.py), read by the pack build (source business-websites). "
-                            "Not for download.")
+def previous_rows(gh, folder, create=True):
+    """(release, its newest web-details asset or None, {key: row} of that file). create=False (the read-only
+    collecting jobs): a missing release just means no earlier file; only the publish job may make it."""
+    if not create:
+        rel = gh.release(RELEASE)
+        if rel is None:
+            return None, [], {}
+    else:
+        rel = gh.ensure_release(RELEASE, "Business websites' details",
+                                "Phone numbers and opening hours read from businesses' own homepages "
+                                "(placepacks/directories/websites.py), read by the pack build (source "
+                                "business-websites). Not for download.")
     pattern = details.file_pattern(PREFIX)
     files = sorted((a for a in gh.assets(rel) if pattern.match(a["name"])), key=lambda a: a["name"], reverse=True)
     if not files:
@@ -292,7 +298,7 @@ def collect(shard, of, out, budget=None, gh=None, opener=None, sleep=time.sleep,
     work = tempfile.mkdtemp(prefix=f"web-details-{shard}-", dir=os.environ.get("PLACEPACKS_SCRATCH") or None)
     rows, stats, status, reason = {}, {}, "ok", ""
     try:
-        _, _, previous = previous_rows(gh, work)
+        _, _, previous = previous_rows(gh, work, create=False)
         checked = {k: r.get("checked", "") for k, r in previous.items()}
         manifest = gh.packs_of(work)
         mine = [rid for rid in shard_regions(shard, of, regions) if (rid, "businesses") in manifest]

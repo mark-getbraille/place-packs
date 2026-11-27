@@ -9,6 +9,10 @@ release.py), for the collections:
   hotfrog        units: the states; each searches Hotfrog town by town (placepacks/directories/hotfrog.py)
   cityfacilities units: the states; each reads the layers the month's discovery found in it
                  (placepacks/directories/city_facilities.py)
+  mapvendors     units: the campus-map collectors (placepacks/mapvendors UNITS: mazemap, concept3d, campus-gis),
+                 reading the month's map list of the discovery (MAP_VENDORS_LIST)
+  healthaccess   units: the insurers' FHIR provider directories and the shards of hospitals' own pages
+                 (placepacks/health_access UNITS)
 
     python -m placepacks.directories.run simpleview --list [--only "visitdenver iloveny"]   the matrix
     python -m placepacks.directories.run simpleview --unit visitdenver --out out/           one unit's CSV + summary
@@ -49,8 +53,30 @@ SECONDS_PER_ITEM = 3   # the expected seconds per listing, for packing units int
 def collections():
     """{name: its settings}: units {id: {"title", "expected", "budget", "timeout"}}, collect(client, unit, stats),
     fields (the CSV's columns), agent, pause, and the release's tag, prefix, title and notes."""
+    from placepacks import health_access, mapvendors
     from placepacks.directories import chambermaster, city_facilities, hotfrog, simpleview, tempest
+    from placepacks.mapvendors import discover
     return {
+        # Campus and indoor maps (placepacks/mapvendors): the units read the month's map list (MAP_VENDORS_LIST).
+        "mapvendors": {"units": mapvendors.UNITS, "collect": mapvendors.collect, "fields": mapvendors.FIELDS,
+                       "agent": mapvendors.USER_AGENT, "pause": mapvendors.PAUSE, "tag": mapvendors.TAG,
+                       "prefix": "map-vendors", "title": "Campus and indoor maps: buildings and accessibility",
+                       "extra_files": {discover.LIST_FILE: discover.LIST_FILE,
+                                       discover.NEW_VENDORS_FILE: discover.NEW_VENDORS_FILE},
+                       "notes": "Monthly buildings, accessible entrances, elevators, parking and other site features "
+                                "of colleges, hospitals, zoos and other sites from their map platforms and campus "
+                                "GIS layers (placepacks/mapvendors), read by the pack build (source map-vendors). "
+                                f"The month's map list is {discover.LIST_FILE}; map vendors not yet in the "
+                                f"registry are in {discover.NEW_VENDORS_FILE}. Not for download."},
+        # Hospital and clinic accessibility (placepacks/health_access).
+        "healthaccess": {"units": health_access.UNITS, "collect": health_access.collect,
+                         "fields": health_access.FIELDS, "agent": health_access.USER_AGENT,
+                         "pause": health_access.PAUSE, "tag": health_access.TAG, "prefix": "health-access",
+                         "title": "Hospital and clinic accessibility",
+                         "notes": "Monthly accessibility facts, hours and phone numbers of hospitals and clinics "
+                                  "from health insurers' public FHIR provider directories and hospitals' own pages "
+                                  "(placepacks/health_access), read by the pack build (source health-access). Not "
+                                  "for download."},
         "hotfrog": {"units": hotfrog.STATES, "collect": hotfrog.collect, "fields": hotfrog.FIELDS,
                     "agent": hotfrog.USER_AGENT, "pause": hotfrog.PAUSE, "tag": "hotfrog-listings",
                     "prefix": "hotfrog-listings", "title": "Hotfrog business listings",
@@ -230,7 +256,8 @@ def publish(collection, folder, date, ran, sleep=time.sleep):
 def main(argv=None):
     """The command line (see the module docstring)."""
     p = argparse.ArgumentParser()
-    p.add_argument("collection", choices=["simpleview", "tempest", "chambermaster", "cityfacilities", "hotfrog"])
+    p.add_argument("collection", choices=["simpleview", "tempest", "chambermaster", "cityfacilities", "hotfrog",
+                                          "mapvendors", "healthaccess"])
     p.add_argument("--list", action="store_true")
     p.add_argument("--only", default="")
     p.add_argument("--unit", default="", help="a unit's id, or several separated by spaces (a matrix group)")

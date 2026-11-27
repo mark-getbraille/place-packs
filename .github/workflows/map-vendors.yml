@@ -1,0 +1,206 @@
+# Campus and indoor maps, once a month (the source "map-vendors"; placepacks/mapvendors): which colleges,
+# hospitals, zoos, museums, convention centres, stadiums, malls and airports use which campus-map or indoor-map
+# platform, and the buildings, accessible entrances, elevators, accessible parking and restrooms, routes, desks and
+# dining of their maps.
+#
+# - When: the 8th of each month (03:29 UTC), well before the packs are built on the 2nd of the next month; or by
+#   hand (Actions, "Campus and indoor maps", Run workflow), optionally for some collector units only.
+# - discover: one job per shard (placepacks/mapvendors/discover.py: IPEDS colleges in 8 shards, Wikidata hospitals
+#   in 3, venues in 3, the vendors' own showcases), four at a time. Each reads robots.txt first and obeys it, scans
+#   each organisation's homepage and up to three of its own map, visitor, parking and accessibility pages for the
+#   vendors' fingerprints (placepacks/mapvendors/registry.py), and stops a site at once if it refuses (403, 429 or
+#   an anti-bot page): that site is "blocked", the others go on. Nothing is ever got round.
+# - plan: merges the shards' finds with last month's list (from the release) into the month's map list
+#   (map-vendors-orgs.json) and the map vendors not yet in the registry (new-map-vendors.txt), and lists the
+#   collector units.
+# - collect: one job per collector unit (mazemap, concept3d, campus-gis), each reading the map list; a unit that is
+#   blocked (Concept3D: its API's robots.txt disallows programs) or fails keeps last month's file.
+# - publish: the only job that can write (contents: write). It puts this month's set together in the release
+#   "map-vendors" (placepacks/chains/release.py; a unit that failed keeps its previous file, up to three months)
+#   with the map list and new-map-vendors.txt.
+# The pack build (build-packs.yml) reads the newest set in its prepare step. Only the repository's own GITHUB_TOKEN
+# is used. New vendors are copied into the owner's notes by hand: python -m placepacks.mapvendors.discover notes.
+
+name: Campus and indoor maps
+
+on:
+  schedule:
+    - cron: "29 3 8 * *"
+  workflow_dispatch:
+    inputs:
+      units:
+        description: "Collector units separated by spaces, for example mazemap campus-gis (empty: every unit)"
+        required: false
+        default: ""
+
+# Read-only by default; only publish may write (the "map-vendors" release).
+permissions:
+  contents: read
+
+concurrency:
+  group: map-vendors
+  cancel-in-progress: false
+
+env:
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  shards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      matrix: ${{ steps.list.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: List the discovery shards
+        id: list
+        run: echo "matrix=$(python -m placepacks.mapvendors.discover shards)" >> "$GITHUB_OUTPUT"
+
+  discover:
+    needs: shards
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    strategy:
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        include: ${{ fromJSON(needs.shards.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Scan the shard's organisations
+        env:
+          SHARD: ${{ matrix.shard }}
+        run: python -m placepacks.mapvendors.discover scan --shard "$SHARD" --out found
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        if: ${{ always() }}
+        with:
+          name: found-${{ matrix.shard }}
+          path: found/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  plan:
+    needs: discover
+    # Also when some shards failed or ran out of time: last month's maps stay in the list.
+    if: ${{ always() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      units: ${{ steps.plan.outputs.units }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          pattern: found-*
+          merge-multiple: true
+          path: found
+      - name: Merge the finds with last month's list
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          mkdir -p found previous
+          gh release download map-vendors --repo "$REPO" --pattern map-vendors-orgs.json --dir previous || true
+          prev=""
+          if [ -f previous/map-vendors-orgs.json ]; then prev="previous/map-vendors-orgs.json"; fi
+          python -m placepacks.mapvendors.discover merge --dir found --previous "$prev" \
+            --out map-vendors-orgs.json --new-vendors new-map-vendors.txt
+      - name: Choose the collector units
+        id: plan
+        env:
+          UNITS: ${{ inputs.units }}
+        run: |
+          # An unknown unit stops here, naming the known ones.
+          matrix=$(python -m placepacks.directories.run mapvendors --list --only "$UNITS")
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "units=$(python -c 'import json, sys; print(" ".join(u["unit"] for u in json.loads(sys.argv[1])))' "$matrix")" >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: map-vendors-list
+          path: |
+            map-vendors-orgs.json
+            new-map-vendors.txt
+          retention-days: 7
+
+  collect:
+    needs: plan
+    if: ${{ always() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ matrix.timeout }}
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          name: map-vendors-list
+          path: list
+      - name: Read the unit's maps
+        env:
+          UNIT: ${{ matrix.unit }}
+          MAP_VENDORS_LIST: list/map-vendors-orgs.json
+        run: python -m placepacks.directories.run mapvendors --unit "$UNIT" --out directory-out
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        if: ${{ always() }}
+        with:
+          name: mapvendors-${{ matrix.unit }}
+          path: directory-out/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  publish:
+    needs: [plan, collect]
+    # Also when some jobs failed or ran out of time: their previous files are kept.
+    if: ${{ always() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write   # this month's set and map list are stored in, and older sets deleted from, the release
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          pattern: mapvendors-*
+          merge-multiple: true
+          path: results
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          name: map-vendors-list
+          path: results
+      - name: Publish the set in the release "map-vendors"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UNITS: ${{ needs.plan.outputs.units }}
+        run: |
+          mkdir -p results
+          python -m placepacks.directories.run mapvendors --publish --dir results --units "$UNITS"

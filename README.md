@@ -200,7 +200,13 @@ Each region has these parts:
   is this entrance on". Schools and colleges have their phone, website, grades and type, and colleges their
   disability services office's page (NCES); hospitals and clinics their accessibility facts (wheelchair access, sign
   language, TTY, braille and large print, hours) from health insurers' public provider directories and their own
-  pages. FORMAT.md, "Site features" and "School and college details".
+  pages. Malls have their stores (name, category, level, unit, hours, phone, website) and amenities (guest services,
+  wheelchair and scooter loans, family and accessible restrooms, accessible parking), and airports their terminals,
+  gates, shops, restaurants, restrooms, family restrooms, service-animal relief areas, information desks,
+  accessibility services (wheelchair assistance, TSA Cares) and ground transport (`placepacks/indoor`, monthly
+  workflows `malls.yml` and `airports.yml`, releases `malls` and `airports`): "where is Target in the mall", "is
+  there a family restroom near gate B4". A store or restaurant with its own phone or hours is also a business in
+  the businesses part. FORMAT.md, "Site features" and "School and college details".
 
 Core and extra are files of the release `packs`. The names, businesses and addresses of each publish are in a
 release of their own, `packs-detail-YYYYMMDD` (GitHub allows 1000 files in one release); each entry of `packs.json`
@@ -361,6 +367,20 @@ address or connection tried.
   Addresses are placed by the offline NAD geocoder; home addresses, people and individuals' offices are left out.
   Release `hotfrog-listings`. Of the other directories tested (Superpages, Manta, MerchantCircle, Local.com, Cylex,
   Brownbook, EZlocal), none could be used (`sources.json`, "rejected").
+- **Mall directories** (sources `mall-directories`, `mall-directories-businesses`,
+  [.github/workflows/malls.yml](.github/workflows/malls.yml), "Mall directories"): on the 5th, one job per operator
+  (Tanger, Macerich, Brookfield Properties, Westfield, CBL Properties) and three shares of the other malls with a
+  website in Wikidata or OpenStreetMap: each mall's store directory (name, category, level, unit, own hours, phone,
+  website), its hours and phone, and its amenities (guest services, wheelchairs, family restrooms, accessible
+  parking). Simon (403, and its robots.txt forbids automated collection), PREIT (403), Washington Prime (TLS
+  certificate that does not verify), Federal Realty and Kimco (script-only lists) are checked once a month and
+  recorded as not read. Release `malls`.
+- **Airport terminal directories** (sources `airport-directories`, `airport-directories-businesses`,
+  [.github/workflows/airports.yml](.github/workflows/airports.yml), "Airport terminal directories"): on the 22nd,
+  six shares of the about 700 US airports with scheduled service: each airport's public Atrius map when it has one
+  (every gate, shop, restaurant, restroom, relief area and desk with its terminal, level and position), else its
+  own shops-and-dining and accessibility pages; airports that refuse (Atlanta, Denver, Los Angeles, Austin,
+  Nashville and Seattle-Tacoma did on 27 November 2026) are recorded as blocked. Release `airports`.
 - **Business websites** (source `business-websites`, [.github/workflows/web-details.yml](.github/workflows/web-details.yml),
   "Business websites"): on the 20th of each month, ten jobs read up to 30,000 homepages of businesses that have a
   website but no phone or hours; robots.txt is always obeyed (the owner's override is for chains and government

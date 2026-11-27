@@ -202,8 +202,8 @@ What is inside or around a site: a college campus, a hospital, a zoo, a mall, an
 |---|---|
 | id | the row's number |
 | key | the feature's own stable key: "n123" or "w123" (OpenStreetMap), "mazemap:212:poi:17", "campusgis:...:5" |
-| source | the source id: `osm-site-features` (core part), `map-vendors` (extra part) |
-| kind | accessible entrance, entrance, elevator, escalator, accessible parking, parking, accessible restroom, restroom, accessible route, service desk, information desk, emergency phone, dining, store, gate, terminal, building, site (`features.KINDS`) |
+| source | the source id: `osm-site-features` (core part), `map-vendors`, `health-access`, `mall-directories`, `airport-directories` (extra part) |
+| kind | accessible entrance, entrance, elevator, escalator, accessible parking, parking, accessible restroom, restroom, accessible route, service desk, information desk, emergency phone, dining, store, gate, terminal, building, site; since queue item Q3 (malls and airports): family restroom, pet relief area (service-animal and pet relief areas), accessibility service (wheelchair and scooter loans, wheelchair assistance, TSA Cares, sensory rooms), ground transport (taxi, rideshare, shuttle and bus pick-up), concourse (`features.KINDS`) |
 | name | the feature's name as the source gives it ("North Entrance", "Smith Hall"), or NULL |
 | site | the key of the site's place in the packs (an OpenStreetMap campus area "w900", a college "nces-postsecondary:166027", a hospital "hrsa-site-dashboard:..."), or the source's own site key when no place matched (then the site itself is a row of kind "site") |
 | building | the key of the building feature (a row of kind "building") the feature is in or on, or NULL |
@@ -242,6 +242,28 @@ of kind "site" describes the organisation; the reader `site_features` ties it to
 organisation "cms-nppes-organisations:<NPI>", else the same name within 400 m, else the campus area holding it) and
 gives that place the phone, website, hours and note it lacks (`PackWriter.fill_details`). A feature row without a
 site takes the campus area holding it.
+
+Malls and airports (`placepacks/indoor`, queue item Q3), from the monthly releases "malls" and "airports":
+
+- extra part, `mall-directories`: a mall's site row (tied to its Wikidata or OpenStreetMap place: its phone, website
+  and weekly hours), its stores and restaurants (kind store or dining, at the mall's position: the directories
+  give no store positions; level as the directory says it, "L2" or "Level 1"; the note "In Christiana Mall, level
+  2, suite 1455, near Macy's"), and its amenities and services (accessibility service "Wheelchairs", family
+  restroom, accessible parking, service desk "Guest services", with the sentence of the mall's page that says
+  where). Keys "mall:<operator>:<mall>", "...:store:<the directory's id>", "...:service:<name>",
+  "...:amenity:<name>".
+- extra part, `airport-directories`: an airport's site row (tied to `faa-airports:<FAA id>`), its terminals (kind
+  terminal, the building of the features in them), and from its public Atrius map every gate, shop, restaurant,
+  restroom, family restroom, relief area, information desk, elevator, escalator, entrance, parking and ground
+  transport point at its own position, with its level ("Level 2 (Ticketing/All Gates)") and a note ("after
+  security; near Gate H6"); from its own pages, shops and restaurants of schema.org data and cards that say where,
+  and amenities (TSA Cares, wheelchair assistance, relief areas) at the airport's position. Keys "airport:<FAA
+  id>", "...:b:<terminal>", "...:poi:<the map's id>".
+- businesses part, `mall-directories-businesses` and `airport-directories-businesses`: the stores and restaurants
+  that have their own phone or opening hours (the CSV's column `business` = 1), as businesses with their phone,
+  website, hours and the same note; one another source already lists is not added again.
+The collectors' CSV (`placepacks/indoor/common.py` FIELDS) is the features CSV plus business, main_value, type,
+category and unit.
 
 Hospital and clinic accessibility (`health-access` in the extra part and `health-access-businesses` in the
 businesses part, `placepacks/health_access`) use the same CSV with "site" rows only: insurers' public FHIR provider

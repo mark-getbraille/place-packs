@@ -13,7 +13,8 @@ a site's own terms (licence government-facts: Social Security offices, Recreatio
 counties' public places;
 LICENSES.md), and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview
 and Tempest listings, chambers' ChamberMaster directories, Hotfrog's business listings, businesses' own homepages, Yellow Pages lookups of businesses already
-in the packs, campus and indoor maps' buildings and accessibility features, and hospitals' and clinics'
-accessibility facts from health insurers' public provider directories and hospitals' own pages; facts only, never
-reviews, descriptions, photos, e-mails or people's names).
+in the packs, campus and indoor maps' buildings and accessibility features, hospitals' and clinics'
+accessibility facts from health insurers' public provider directories and hospitals' own pages, malls' store
+directories and amenities, and airports' terminal directories from their own websites and public Atrius maps;
+facts only, never reviews, descriptions, photos, e-mails or people's names).
 Built by .github/workflows/build-packs.yml from this repository's code (MIT).

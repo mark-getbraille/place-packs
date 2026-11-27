@@ -168,7 +168,14 @@ licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD
   clinics' accessibility facts (`health-access`, `health-access-businesses`: health insurers' public FHIR provider
   directories, published openly under the CMS Interoperability and Patient Access rule, Location records only; and
   a fixed list of facts from hospitals' own accessibility pages). No person's name is kept (rooms, offices and
-  practitioners are never read).
+  practitioners are never read). Also (queue item Q3, the owner's approval of scraping mall and airport websites,
+  stopping at any block): malls' store directories and amenities (`mall-directories`,
+  `mall-directories-businesses`: Tanger, Macerich, Brookfield Properties, Westfield, CBL Properties and independent
+  malls' own websites; robots.txt obeyed; Simon, whose robots.txt forbids automated collection and which answers
+  403, PREIT and Washington Prime are not read) and airports' terminal directories (`airport-directories`,
+  `airport-directories-businesses`: airports' own websites and their public Atrius maps' venue files; airports
+  from OurAirports, public domain). Facts only: store names, category, level, unit, hours, phone, website, gates,
+  desks, restrooms and accessibility features; never people's names or e-mail addresses.
 - **OpenHistoricalMap:** CC0, except features with their own `license` tag, which the packs leave out.
 - **Personal data:** the business sources keep only a business's trade name, class, position and dates. Records
   that may be someone's home (home-based businesses, contractors, mobile caterers, childminders, short-term rentals,

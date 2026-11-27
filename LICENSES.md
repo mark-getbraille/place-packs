@@ -132,7 +132,12 @@ licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD
   agreement keeps the vendor's rights and which states no licence) and California's health and human services files
   (`ca-health-facilities`, `ca-child-care-centers`; the portal names only its "Terms of Use"), and US cities' and
   counties' open-data layers of public places (`city-facilities`, found each month in the Socrata and ArcGIS Hub
-  catalogues; many carry an open licence, the others none). The owner decided (26 November 2026) to use government data regardless of a copy's missing licence or a site's own terms or robots.txt.
+  catalogues; many carry an open licence, the others none). Since queue item Q4 (27 November 2026) also US cities',
+  counties' and state transportation departments' open-data layers of accessible pedestrian signals and curb ramps
+  (`street-access`, `street-access-navigation`, found the same way), MTA New York City Transit's and the MBTA's
+  station elevator and escalator lists, and Amtrak's station information from Great American Stations (Amtrak is a
+  federally chartered corporation owned by the United States; amtrak.com itself refuses programs and is not read).
+  The owner decided (26 November 2026) to use government data regardless of a copy's missing licence or a site's own terms or robots.txt.
   Federal works are public domain (17 U.S.C. 105), facts are not protected by copyright in the United States (Feist
   v. Rural Telephone, 1991), and state facility lists are public records. Only facts are kept, collected politely
   (identified, slow, never past a refusal or a challenge); staff names, personal telephone numbers, e-mail addresses
@@ -175,7 +180,11 @@ licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD
   403, PREIT and Washington Prime are not read) and airports' terminal directories (`airport-directories`,
   `airport-directories-businesses`: airports' own websites and their public Atrius maps' venue files; airports
   from OurAirports, public domain). Facts only: store names, category, level, unit, hours, phone, website, gates,
-  desks, restrooms and accessibility features; never people's names or e-mail addresses.
+  desks, restrooms and accessibility features; never people's names or e-mail addresses. Also (queue item Q4):
+  museums' accessibility facts (`museum-access`: a fixed list of facts from the accessibility pages of the IMLS and
+  Wikidata museums' own websites, robots.txt obeyed, a museum whose site refuses left; for the accessible entrance
+  the one sentence that says where it is). The transit stations' entrances, elevators, escalators and stairs
+  (`gtfs-station-features`) come from the same open GTFS feeds as the transit stops, each under its own licence.
 - **OpenHistoricalMap:** CC0, except features with their own `license` tag, which the packs leave out.
 - **Personal data:** the business sources keep only a business's trade name, class, position and dates. Records
   that may be someone's home (home-based businesses, contractors, mobile caterers, childminders, short-term rentals,

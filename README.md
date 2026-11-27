@@ -171,10 +171,15 @@ Each region has these parts:
   network with its intersections (named cross streets) and segments, and the pedestrian details: crossings and
   their type, traffic signals and accessible pedestrian signals, tactile paving, kerbs and curb cuts, sidewalks,
   steps, ramps, elevators, entrances with wheelchair access, and bus stops with their shelter, bench and tactile
-  paving (OpenStreetMap); and the open transit feeds' stops, routes and timetables with wheelchair boarding.
+  paving (OpenStreetMap); the open transit feeds' stops, routes and timetables with wheelchair boarding, and their
+  stations' entrances, elevators, escalators and stairs (GTFS pathways); and, from US cities' and transportation
+  departments' own open data, accessible pedestrian signals (with their install date, locator tone and vibrating
+  arrow) and curb ramps (with their condition, ADA compliance and detectable warning surface).
   `placepacks.navigate.Navigator` answers "what is the nearest intersection" (`nearest_intersection`), "how do I
-  cross here" (`crossing_here`) and "the next bus from the nearest stop" (`next_buses`), each with a plain
-  sentence. Download it with `ensure_pack(region, part="navigation")`. FORMAT.md, "The navigation part".
+  cross here" (`crossing_here`, which also says "the city lists an accessible pedestrian signal here, installed
+  2023-12-16" and the listed curb ramps: `listed_signal`, `curb_ramps`) and "the next bus from the nearest stop"
+  (`next_buses`), each with a plain sentence. Download it with `ensure_pack(region, part="navigation")`.
+  FORMAT.md, "The navigation part".
 - **Finding places and directions** (`placepacks.find.find_nearest("hardware store", start=(lat, lon))`): the
   nearest place of any kind (every shop, craft and amenity type, with plain words and synonyms; places of worship by
   religion and denomination; offices; past polling places with their election date) with its phone, website and
@@ -206,7 +211,16 @@ Each region has these parts:
   accessibility services (wheelchair assistance, TSA Cares) and ground transport (`placepacks/indoor`, monthly
   workflows `malls.yml` and `airports.yml`, releases `malls` and `airports`): "where is Target in the mall", "is
   there a family restroom near gate B4". A store or restaurant with its own phone or hours is also a business in
-  the businesses part. FORMAT.md, "Site features" and "School and college details".
+  the businesses part. Since queue item Q4 (`placepacks/street_access`, `placepacks/museum_access.py`, monthly
+  workflows `street-access.yml` and `museum-access.yml`, releases `street-access` and `museum-access`): cities'
+  accessible pedestrian signals (kind "accessible pedestrian signal": "is there an audible signal near me");
+  transit stations' entrances, elevators, escalators and stairs (GTFS pathways; New York City Transit's and the
+  MBTA's elevator lists: "does this station have an elevator, and to which platform") and every stop's wheelchair
+  boarding as a note; Amtrak stations' accessibility (accessible platform, high or low platform, wheelchair, lift,
+  accessible restrooms) and the hours of the waiting room, ticket office and passenger assistance; and museums'
+  accessibility (audio description, touch tours, braille and large print, sign language, assistive listening,
+  wheelchairs, accessible entrance, service animals, sensory-friendly programs) as notes and features of the museum.
+  FORMAT.md, "Site features" and "School and college details".
 
 Core and extra are files of the release `packs`. The names, businesses and addresses of each publish are in a
 release of their own, `packs-detail-YYYYMMDD` (GitHub allows 1000 files in one release); each entry of `packs.json`
@@ -412,6 +426,35 @@ already lists them (the same phone number within 500 m, else the same name withi
 that place. The two details-only sources only fill what a place still lacks, after every other source. Each
 workflow keeps a source's previous set when a month's run fails or is blocked, and the pack build skips a source
 until its first set or file is there.
+
+### Street, transit and museum accessibility
+
+Queue item Q4 of the owner's list of 27 November 2026. The same rules as the directories above: facts only, no
+people's names (a name added to an intersection's description is taken out), no e-mail addresses, every request
+names this project, robots.txt obeyed where a website is read, a refusal recorded as "blocked" and never got round.
+
+- **Street and transit accessibility** (sources `street-access`, `street-access-navigation`,
+  [.github/workflows/street-access.yml](.github/workflows/street-access.yml), "Street and transit accessibility"):
+  on the 12th. The plan job sweeps the Socrata catalogue and ArcGIS Hub for accessible pedestrian signal and curb
+  ramp layers of US governments (cities, counties, state and city transportation departments; never a company's,
+  a consultant's or a person's own account; positions checked to lie in a US state) and maps their fields
+  automatically (`placepacks/street_access/open_data.py`); the month's list is stored as `layers-street-access.json`.
+  Units: `signals`, `curb-ramps-1` to `-4`, `mta-elevators`, `mbta-elevators` and `amtrak-stations` (Great
+  American Stations, 10 seconds apart as its robots.txt asks; amtrak.com refuses programs). The signals go to the
+  extra part (site features) and the navigation part; the curb ramps only to the navigation part (a big city lists
+  100,000 or more). Cities' sidewalk layers are not added: OpenStreetMap's sidewalks are already in the navigation
+  part, and every sidewalk of a city as lines would about double its size. WMATA (needs a key) and SEPTA (outages
+  only) are not read. Release `street-access`.
+- **Transit stations from the GTFS feeds** (source `gtfs-station-features`, no workflow: the build reads the feeds
+  it already downloads): station entrances (step-free when wheelchair boarding says so), elevators, escalators and
+  stairs of pathways.txt with their levels, and every stop's wheelchair boarding as a note.
+- **Museum accessibility** (source `museum-access`,
+  [.github/workflows/museum-access.yml](.github/workflows/museum-access.yml), "Museum accessibility"): on the 20th,
+  eight shares of the about 9,000 museums of the IMLS Museum Universe Data File and Wikidata that have a website:
+  robots.txt, the homepage and up to two of its own accessibility pages; only a fixed list of facts is kept, and the
+  sentence that says where the accessible entrance is. Museums whose sites refuse (the Metropolitan Museum of Art,
+  the Art Institute of Chicago and the Smithsonian's National Museum of Natural History did on 27 November 2026)
+  are counted as blocked. Release `museum-access`.
 
 ### Government places with details
 

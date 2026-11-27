@@ -10,11 +10,13 @@ open licence, listed with its attribution in SOURCES.md, LICENSES.md and NOTICE 
 except the chain store locators (source chain-locators): facts read from big US chains' own store locators, which
 no licence covers, a few government lists used by the owner's decision regardless of a copy's missing licence or
 a site's own terms (licence government-facts: Social Security offices, Recreation.gov, California's licensing files, cities' and
-counties' public places;
+counties' public places, cities' and transportation departments' accessible pedestrian signals and curb ramps,
+transit agencies' station elevator lists and Amtrak's station information;
 LICENSES.md), and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview
 and Tempest listings, chambers' ChamberMaster directories, Hotfrog's business listings, businesses' own homepages, Yellow Pages lookups of businesses already
 in the packs, campus and indoor maps' buildings and accessibility features, hospitals' and clinics'
 accessibility facts from health insurers' public provider directories and hospitals' own pages, malls' store
-directories and amenities, and airports' terminal directories from their own websites and public Atrius maps;
+directories and amenities, airports' terminal directories from their own websites and public Atrius maps, and
+museums' accessibility facts from their own websites;
 facts only, never reviews, descriptions, photos, e-mails or people's names).
 Built by .github/workflows/build-packs.yml from this repository's code (MIT).

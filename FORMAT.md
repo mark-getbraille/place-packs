@@ -202,10 +202,10 @@ What is inside or around a site: a college campus, a hospital, a zoo, a mall, an
 |---|---|
 | id | the row's number |
 | key | the feature's own stable key: "n123" or "w123" (OpenStreetMap), "mazemap:212:poi:17", "campusgis:...:5" |
-| source | the source id: `osm-site-features` (core part), `map-vendors`, `health-access`, `mall-directories`, `airport-directories` (extra part) |
-| kind | accessible entrance, entrance, elevator, escalator, accessible parking, parking, accessible restroom, restroom, accessible route, service desk, information desk, emergency phone, dining, store, gate, terminal, building, site; since queue item Q3 (malls and airports): family restroom, pet relief area (service-animal and pet relief areas), accessibility service (wheelchair and scooter loans, wheelchair assistance, TSA Cares, sensory rooms), ground transport (taxi, rideshare, shuttle and bus pick-up), concourse (`features.KINDS`) |
+| source | the source id: `osm-site-features` (core part), `map-vendors`, `health-access`, `mall-directories`, `airport-directories`, `street-access`, `gtfs-station-features`, `museum-access` (extra part) |
+| kind | accessible entrance, entrance, elevator, escalator, accessible parking, parking, accessible restroom, restroom, accessible route, service desk, information desk, emergency phone, dining, store, gate, terminal, building, site; since queue item Q3 (malls and airports): family restroom, pet relief area (service-animal and pet relief areas), accessibility service (wheelchair and scooter loans, wheelchair assistance, TSA Cares, sensory rooms), ground transport (taxi, rideshare, shuttle and bus pick-up), concourse; since queue item Q4: accessible pedestrian signal (an audible or vibrating crosswalk signal from a city's list), curb ramp (navigation part only), stairs (a station's, from GTFS pathways) (`features.KINDS`) |
 | name | the feature's name as the source gives it ("North Entrance", "Smith Hall"), or NULL |
-| site | the key of the site's place in the packs (an OpenStreetMap campus area "w900", a college "nces-postsecondary:166027", a hospital "hrsa-site-dashboard:..."), or the source's own site key when no place matched (then the site itself is a row of kind "site") |
+| site | the key of the site's place in the packs (an OpenStreetMap campus area "w900", a college "nces-postsecondary:166027", a hospital "hrsa-site-dashboard:...", a transit station "gtfs:mdb-mdb-373:ST1", an Amtrak station "ntad-amtrak:PVD", a museum "imls-museums:8400100026"), or the source's own site key when no place matched (then the site itself is a row of kind "site"); NULL for an accessible pedestrian signal (it belongs to a street corner, not a site) |
 | building | the key of the building feature (a row of kind "building") the feature is in or on, or NULL |
 | level | the floor or level as the source labels it ("1", "Ground", "B1"), or NULL |
 | lat, lon | whole microdegrees (a route: its middle point) |
@@ -264,6 +264,39 @@ Malls and airports (`placepacks/indoor`, queue item Q3), from the monthly releas
   website, hours and the same note; one another source already lists is not added again.
 The collectors' CSV (`placepacks/indoor/common.py` FIELDS) is the features CSV plus business, main_value, type,
 category and unit.
+
+Street, transit and museum accessibility (queue item Q4):
+
+- extra part, `street-access` (`placepacks/street_access`, monthly release "street-access"; entry `kinds` keeps
+  only the kinds listed, `sites`: false gives a feature without a site none): accessible pedestrian signals from
+  cities' and transportation departments' open data (kind "accessible pedestrian signal", named by the intersection,
+  no site; the note "Accessible pedestrian signal (City of Charlotte); installed 2023-12-16; locator tone;
+  vibrating arrow button"; keys "<layer id>:<record id>"); New York City Transit's and the MBTA's station elevators
+  and escalators (kinds elevator and escalator, with their station: the station's site row tied to the transit
+  stop of the same name within 400 m; the note "Elevator EL293; serves: Street to Brooklyn-bound platform; lines: L;
+  ADA accessible"; keys "mta-nyct:EL293", "mbta:facility:50"); Amtrak stations (a site row tied to
+  "ntad-amtrak:<code>": its waiting room's hours as opening hours and the note "Accessibility (Amtrak station
+  information): accessible platform; high platform; wheelchair available; no wheelchair lift; elevator; ticket
+  office Mo-Su 05:00-23:30; passenger assistance ..."; features elevator, accessible restroom and accessibility
+  service "Wheelchair available" or "Wheelchair lift" at the station). Curb ramps are NOT in this part (too many
+  for the default download): see the navigation part. The collectors' CSV is the features CSV plus installed, tags
+  (the facts as JSON), layer and publisher (`street_access.FIELDS`).
+- extra part, `gtfs-station-features` (`placepacks/readers/gtfs_stations.py`, reader `gtfs_station_features`, the
+  same GTFS files as the source gtfs): each station's entrances (location_type 2: kind "accessible entrance" when
+  wheelchair_boarding is 1, its station's value when it says 0, else "entrance"), and its elevators, escalators and
+  stairs of pathways.txt (one per pair of points; the note "Stairs from Street to Platform; 24 steps"; level from
+  levels.txt), site "gtfs:<feed file>:<station id>"; keys "gtfs:<feed file>:<stop id>" and
+  "gtfs:<feed file>:pathway:<id>". Every stop and station whose wheelchair_boarding (or its station's) is 1 or 2
+  gets the note "Wheelchair boarding: yes (the agency's timetable data)" (or "no").
+- extra part, `museum-access` (`placepacks/museum_access.py`, monthly release "museum-access",
+  keep_unmatched_sites false: a museum the packs do not have adds nothing, nor do its features): a site row per
+  museum tied to "imls-museums:<MID>" or "wikidata:Q..." with the note "Accessibility (museum's website): audio
+  description; touch tours; braille; large print; sign language; wheelchairs available; service animals welcome;
+  sensory-friendly programs; page https://..."; features at the museum's position: accessibility service ("Audio
+  description", "Touch tours", "Braille materials", "Large print materials", "Sign language tours or interpreters",
+  "Assistive listening devices", "Wheelchairs available", "Sensory-friendly programs"), accessible entrance (its
+  note is the sentence of the museum's page that says where), elevator, accessible restroom. Keys
+  "museum-access:<id>" and "museum-access:<id>:<feature>".
 
 Hospital and clinic accessibility (`health-access` in the extra part and `health-access-businesses` in the
 businesses part, `placepacks/health_access`) use the same CSV with "site" rows only: insurers' public FHIR provider
@@ -364,7 +397,7 @@ the core part's OpenStreetMap layer):
 | nav_nodes | node (OSM node id), lat, lon, cell | the routing graph's nodes: where segments meet, and their ends |
 | nav_edges | id, a, b (nav_nodes), way (nav_ways id), length (metres), b1, b2 (bearings in degrees: leaving a, arriving at b) | the routing graph: each segment split where it meets another (placepacks/route.py searches it) |
 | nav_intersections | id, key ("n123"), lat, lon, cell, streets (JSON list, sorted), signals (1 when the node has traffic signals) | where streets with different names meet (footpaths and steps do not count as cross streets) |
-| nav_features | id, key, kind, name, lat, lon, cell, tags (JSON), streets (JSON list of the ways the node lies on) | crossing, traffic signals, kerb (curb cuts: kerb=lowered or flush), tactile paving, steps, ramp, elevator, entrance (wheelchair, door, automatic_door), bus stop and tram stop (shelter, bench, bin, lit, tactile_paving, departures_board), platform, accessible place (a named place with wheelchair=*); the tags keep crossing, crossing:markings, crossing:signals, crossing:island, button_operated and the accessible pedestrian signal tags (traffic_signals:sound, :vibration, :arrow, :minimap) |
+| nav_features | id, key, kind, name, lat, lon, cell, tags (JSON), streets (JSON list of the ways the node lies on) | crossing, traffic signals, kerb (curb cuts: kerb=lowered or flush), tactile paving, steps, ramp, elevator, entrance (wheelchair, door, automatic_door), bus stop and tram stop (shelter, bench, bin, lit, tactile_paving, departures_board), platform, accessible place (a named place with wheelchair=*); the tags keep crossing, crossing:markings, crossing:signals, crossing:island, button_operated, tactile_paving, kerb and the accessible pedestrian signal tags (traffic_signals:sound, :vibration, :arrow, :minimap, :countdown) |
 
 From the region's open GTFS feeds (source `gtfs-navigation`, the same feeds as the extra part's transit stops, each
 under its own open licence, recorded in nav_feeds):
@@ -379,9 +412,24 @@ under its own open licence, recorded in nav_feeds):
 | nav_trips | id, route, service, headsign, direction, wheelchair (GTFS wheelchair_accessible), bikes | trips |
 | nav_times | stop, time (seconds after the timetable day's midnight; over 86400 after midnight), trip | every departure (WITHOUT ROWID, by stop and time) |
 
+Also in nav_features (queue item Q4):
+
+- from the GTFS feeds' stations (source `gtfs-navigation`, `placepacks/readers/gtfs_stations.py`): kinds
+  "entrance" (tags name, wheelchair yes/no, level, station, source "gtfs", description), "elevator", "escalator"
+  and "steps" (stairs), keys "gtfs:<feed>:<stop id>" and "gtfs:<feed>:pathway:<id>";
+- from cities' and transportation departments' open data (source `street-access-navigation`, reader
+  `nav_street_access`, `placepacks/readers/street_access.py`, the release "street-access"): kind "accessible
+  pedestrian signal" (tags name, source (the publisher), installed, locator_tone, vibration, button, speech, type,
+  status, description) and kind "curb ramp" (tags compliant, detectable_warning, condition, installed, type,
+  source, description).
+
 The lookups (`placepacks.navigate.Navigator`): `nearest_intersection(lat, lon)`, `crossing_here(lat, lon)` (the
 crossing's type, the street it crosses, signals, push button, accessible pedestrian signal, tactile paving, kerb,
-island), `street_here(lat, lon)` (sidewalks, surface, lighting, steps), `features_near(lat, lon, metres, kinds)`,
+island; and `listed_signal`, a city's listed accessible pedestrian signal within 35 m of the crossing, and
+`curb_ramps`, the city's listed curb ramps within 20 m, said after the map's facts: "The city lists an accessible
+pedestrian signal here (installed 2023-12-16; locator tone)."; where no crossing is mapped but a city lists a
+signal within reach, that signal alone is said; `listed_signal(lat, lon)` and `listed_curb_ramps(lat, lon)` ask
+directly), `street_here(lat, lon)` (sidewalks, surface, lighting, steps), `features_near(lat, lon, metres, kinds)`,
 `nearest_stops(lat, lon)`, `stop_amenities(lat, lon)` and `next_buses(lat, lon, when)` (the next departures from the
 nearest stop with service, wheelchair boarding and each trip's wheelchair access). Each returns the facts and a
 plain sentence ("phrase"); where the map does not say, the fact is None and nothing is said.

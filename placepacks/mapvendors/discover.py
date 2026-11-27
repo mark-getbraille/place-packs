@@ -318,7 +318,13 @@ def scan_shard(shard, out_dir, client=None, today=None, get_bytes=None, log=prin
             result["found"] = showcase(client, today)
         else:
             for org in orgs_for(shard, client, get_bytes):
-                got = scan_org(client, org, today)
+                try:
+                    got = scan_org(client, org, today)
+                except BudgetSpent:
+                    raise
+                except Exception as e:  # noqa: BLE001 - one odd website (a bad address, a broken answer) never
+                    # loses the shard: it counts as failed and the scan goes on
+                    got = {"found": [], "unknown": [], "status": "failed", "reason": f"{type(e).__name__}: {e}"}
                 result["scanned"] += 1
                 result["found"] += got["found"]
                 result["unknown"] += got["unknown"]

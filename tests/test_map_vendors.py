@@ -288,3 +288,21 @@ def test_run_and_catalogue_and_workflow(tmp_path, monkeypatch):
     assert entry["reader"] == "site_features" and entry["fetch"] == {"method": "release_csv", "release":
                                                                        "map-vendors", "prefix": "map-vendors"}
     workflow_shape(os.path.join(ROOT, ".github", "workflows", "map-vendors.yml"), "8")
+
+
+def test_one_odd_website_never_loses_the_shard(tmp_path, monkeypatch):
+    """A website whose address or answer breaks the scan (seen on GitHub: an invalid URL) counts as failed; the
+    other organisations of the shard are still scanned."""
+    monkeypatch.setattr(discover, "COLLEGE_SHARDS", 1)
+    real = discover.scan_org
+    calls = []
+
+    def flaky(client_, org, today):
+        calls.append(org["org"])
+        if len(calls) == 1:
+            raise ValueError("Invalid IPv6 URL")
+        return real(client_, org, today)
+    monkeypatch.setattr(discover, "scan_org", flaky)
+    result = discover.scan_shard("colleges-1", str(tmp_path / "found"), client=client(site_web()), today=TODAY,
+                                 get_bytes=lambda c: hd_zip(), log=lambda *a: None)
+    assert len(calls) == 2 and result["failed"] >= 1 and result["scanned"] == 2 and result["status"] == "ok"

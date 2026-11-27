@@ -87,13 +87,14 @@ def same_phone(a, b):
 
 class Robots:
     """A site's robots.txt, read once through a polite client and kept: allowed(url) for our User-Agent;
-    crawl_delay(); sitemaps(); text (as read, for the record). A robots.txt that cannot be read (404) allows
-    everything, as the standard says; a refusal (403, a challenge page) is raised (the site is blocked)."""
+    crawl_delay(); sitemaps(); text (as read, for the record); base (the site's address). A robots.txt that
+    cannot be read (404) allows everything, as the standard says; a refusal (403, a challenge page) is raised (the
+    site is blocked)."""
 
     def __init__(self, client, base, agent="place-packs"):
         """Read base + "/robots.txt" with client (placepacks.chains.polite.Polite)."""
         from placepacks.chains.polite import NotFound, RequestFailed
-        self.agent, self.text = agent, ""
+        self.agent, self.text, self.base = agent, "", base.rstrip("/")
         try:
             self.text = client.fetch(base.rstrip("/") + "/robots.txt")
         except (NotFound, RequestFailed):

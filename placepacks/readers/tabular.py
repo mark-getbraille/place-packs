@@ -38,7 +38,8 @@ Points may also have:
                types.json ("naics", "gnis", "fsa"), "humanise", or a template ("{} restaurant"); without them the
                record's tag (from class_map or the entry, when it is not the source id) is its type
   "geocode": {"street", "city", "zip": columns, "from": "nad"}: an address-only source, located by the offline
-               geocoder against the region's address points (placepacks.geocode; a home is put on its street);
+               geocoder against the region's address points (placepacks.geocode; a home is put on its street, or
+               left out with "skip_homes": true, for a business list where a home address is a home business);
                "ranges_from": an address-range source ("nrn-address-ranges") for the addresses with no point
   "note_column": a column (or a list of columns, joined with "; ") whose text becomes the point's note (data only,
                never spoken: FORMAT.md, "Notes on places"), such as the accessibility description of a recreation
@@ -280,6 +281,8 @@ def geocoded_rows(path, entry, region):
     print(f"  {entry['id']}: {geocode.stats(found, len(rows))}" + ("" if nad_path else " (no address points for "
                                                                     "this region)"), flush=True)
     for i, (lat, lon, how) in sorted(found.items()):
+        if how == "street" and spec.get("skip_homes"):
+            continue                    # a home address: a home business, left out (the chambers' members)
         row = rows[i]
         row["_lat"], row["_lon"], row["_how"] = lat, lon, how
         yield row

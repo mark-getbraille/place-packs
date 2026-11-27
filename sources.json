@@ -5073,6 +5073,124 @@
    "notes": "Collected once a month by the chain-locators workflow (the 28th), one job per chain: Burger King, Jack in the Box, Avis, Budget, Wyndham's hotel brands (Days Inn, Super 8, La Quinta, Baymont, Microtel, Travelodge, Ramada, Wingate and others), Buick, GMC, Ford and Lincoln dealers. Each chain's collector (placepacks/chains) reads its own store-locator API or its sitemap of store pages with schema.org data, with an identified User-Agent, at least a second between requests, a request budget, and a clean stop when a site refuses (recorded as blocked). The set is kept in this repository's release \"chain-locators\" (the newest two); the pack build's prepare job reads the newest set once and splits it per region. A store that All The Places also has (the same name within 100 m) is left to All The Places. Chains that refused even a first check (McDonald's, Jersey Mike's, YMCA, Planet Fitness, Health Mart, Citgo, Choice Hotels, H&R Block, Best Western, Stellantis dealers, Fastenal, Tractor Supply, Goodwill) are listed in placepacks/chains/__init__.py; individuals' offices (insurance agents) are never collected. Until the first set is there, the source is skipped (waiting for the first chain-locators set)."
   },
   {
+   "id": "simpleview-listings",
+   "name": "Tourism boards' visitor listings (Simpleview): restaurants, shops, attractions, hotels and venues",
+   "short": "tourism boards' Simpleview listings",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "attribution": "Visitor listings of state and city tourism boards' Simpleview sites (Visit Delaware, Visit Florida, Visit Indiana, Travel Kansas, New Mexico True, I LOVE NY, Visit Pennsylvania, Visit Rhode Island, Travel Texas, Virginia Is For Lovers, Travel Wyoming, Visit Denver), read by place-packs (placepacks/directories/simpleview.py); facts only.",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/directories",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "release_csv",
+    "release": "simpleview-listings",
+    "prefix": "simpleview-listings"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "class_column": "main_value",
+    "first": "first",
+    "last": "last"
+   },
+   "class_map": {
+    "museum": "landmark",
+    "attraction": "landmark",
+    "zoo": "landmark",
+    "gallery": "landmark",
+    "park": "park",
+    "*": "business"
+   },
+   "type_column": "type",
+   "type_map": "humanise",
+   "contact_columns": {
+    "phone": "phone",
+    "website": "website",
+    "opening_hours": "opening_hours"
+   },
+   "note_column": "note",
+   "dedupe_against": [
+    "alltheplaces",
+    "chain-locators",
+    "overture-places",
+    "fsq-places"
+   ],
+   "dedupe_m": 75,
+   "dedupe_phone": true,
+   "dedupe_carry": true,
+   "history": "From the first build that has a set, month by month, keyed by the site and the listing's own number. A site whose collection fails or is blocked in a month keeps its listings from the previous set (up to three months in a row), so a failed run never closes places.",
+   "contact": "The listing's phone number, the business's own website and, where the listing's hours read as OpenStreetMap syntax, its opening hours, cleaned by placepacks/contact.py; other hours text and the accessibility fields (ADA rooms, wheelchair access and the like) become the place's note. The e-mail, the description, photos, social links, booking links and reviews are never read.",
+   "notes": "Collected once a month by the simpleview-listings workflow (the 25th), one job per site: robots.txt (obeyed; its Crawl-delay kept, 2 to 5 seconds between requests), the sitemap, then each /listing/ page's schema.org JSON-LD and embedded listing data. Sites: the 11 state tourism sites found on Simpleview on 26 November 2026 (DE, FL, IN, KS, NM, NY, PA, RI, TX, VA, WY) and Visit Denver; more city boards can be added to placepacks/directories/simpleview.py SITES after one check each. The 20 state sites that answered with an anti-bot challenge or a plain 403 (AK, AZ, CO, GA, HI, ID, LA, ME, MD, MA, MI, MN, MS, NE, NV, NH, NJ, ND, SD, OH) are recorded as blocked, not collected and never tried another way (the owner declined headless browsers on 27 November 2026; permission letters were sent). Listings without a street address (tour operators, home businesses) or with a person's name are left out. A listing that another business source already has (the same phone number within 500 m, else the same name within 75 m) is not added again: its phone, website, hours and note go to that place. Owner's decision of 26 November 2026: listing facts of tourism boards may be collected and published. Until the first set is there, the source is skipped."
+  },
+  {
+   "id": "chambermaster-listings",
+   "name": "Chambers of commerce's member directories (older ChamberMaster platform): storefront businesses",
+   "short": "chambers of commerce's ChamberMaster directories",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "attribution": "Member listings of chambers of commerce's public directories on the classic ChamberMaster platform (GrowthZone), chambers found through the US Chamber of Commerce's chamber directory, read by place-packs (placepacks/directories/chambermaster.py); facts only.",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/directories",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "release_csv",
+    "release": "chambermaster-listings",
+    "prefix": "chambermaster-listings"
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "state",
+    "equals": "{code}"
+   },
+   "geocode": {
+    "street": "street",
+    "city": "city",
+    "zip": "postcode",
+    "from": "nad",
+    "skip_homes": true
+   },
+   "columns": {
+    "name": "name",
+    "key": "key",
+    "class_column": "main_value"
+   },
+   "class_map": {
+    "*": "business"
+   },
+   "type_column": "type",
+   "type_map": "humanise",
+   "contact_columns": {
+    "phone": "phone",
+    "website": "website"
+   },
+   "dedupe_against": [
+    "alltheplaces",
+    "chain-locators",
+    "overture-places",
+    "fsq-places"
+   ],
+   "dedupe_m": 75,
+   "dedupe_phone": true,
+   "dedupe_carry": true,
+   "history": "From the first build that has a set, month by month, keyed by the chamber's directory and the member's own number. A state whose collection fails or is blocked in a month keeps its members from the previous set (up to three months in a row).",
+   "contact": "The member's phone number and website from its directory card, cleaned by placepacks/contact.py. Representatives' names, e-mail forms, descriptions and logos are never read.",
+   "notes": "Collected once a month by the chambermaster-listings workflow (the 15th), one job per state: the US Chamber of Commerce's directory page of the state gives the chambers and their websites (discovery only); each chamber's homepage gives its directory host; that host's robots.txt tells the classic ChamberMaster directory (collected) from GrowthZone v2 (exactly 51 bytes, no sitemap: left without asking for any directory page, as its pages answer with a Cloudflare challenge) and from hosts closed to programs; then the classic directory's SiteMap.xml and its public-facing quick-link pages (restaurants, shopping, lodging, health care, automotive, personal services, arts and entertainment, sports and recreation, home and garden, pets), 6 seconds apart. Left out: members without a street address or with a post office box, names that are a person's, individuals' offices (insurance and estate agents, lawyers, accountants), the Individuals and Government-education-individuals groups, the chamber's own entry, and addresses the NAD marks residential (home businesses; geocode skip_homes). Placed by the offline NAD geocoder. A member that another business source already has (the same phone number within 500 m, else the same name within 75 m) is not added again: its phone and website go to that place. A chamber's site that refuses is recorded as blocked and left. Owner's decision of 26 November 2026: chamber directory facts may be collected and published; headless browsers to pass the newer chambers' challenges were declined (27 November 2026). Until the first set is there, the source is skipped."
+  },
+  {
    "id": "business-websites",
    "name": "Businesses' own websites (phone numbers and opening hours from the schema.org data on their homepages)",
    "short": "the businesses' own websites",

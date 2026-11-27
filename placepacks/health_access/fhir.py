@@ -20,12 +20,22 @@ hospital already in the pack (the NPI's organisation, else the same name within 
 details it lacks; a row that matches no place adds nothing (entry "keep_unmatched_sites": false).
 Politeness: robots.txt first (obeyed), an identified User-Agent, a pause between pages, a request budget; a refusal
 stops the directory ("blocked").
+
+Resuming: the big directories (Humana about 1.25 million Locations, Molina about 560,000 on 27 November 2026) cannot
+be read in one job. collect() writes the address of the next page it has not read into stats["resume"] before every
+request, so when the budget or the job's time runs out the run (placepacks/directories/run.py, units "resumable")
+publishes the rows read so far and the release's list keeps that address; next month's run starts there
+(stats["resume_from"]) and its rows are merged with the earlier ones, so the whole directory is covered over a few
+months. The payers' next links are stateless cursors (Humana's _continuationToken, Molina's cursorMark), so they
+still work a month later; should one have expired (the server answers an error or "not found"), the run starts again
+from the first page.
 """
 
 import re
 import urllib.parse
 
 from placepacks import features
+from placepacks.chains.polite import NotFound, RequestFailed
 from placepacks.directories.common import person_name
 
 USER_AGENT = "place-packs-health-access/1 (+https://github.com/mark-getbraille/place-packs)"
@@ -183,23 +193,50 @@ def row_of(res, unit, payer):
             "notes": features.clean_note(note, 400), "org": payer, "vendor": "fhir"}
 
 
+def own_page(url, spec):
+    """True when url is a page of the payer's own directory hosts (spec["hosts"])."""
+    try:
+        return (urllib.parse.urlsplit(str(url or "")).hostname or "") in spec["hosts"]
+    except ValueError:
+        return False
+
+
 def collect(client, unit, stats):
     """Every Location page of one payer's directory (PAYERS[unit]), following the bundles' "next" links on the
-    payer's own hosts until the budget or the time runs out (then the run is "incomplete" and last month's file is
-    kept). Yields the kept rows, each place once (the same name at the same position)."""
+    payer's own hosts, from the first page or from stats["resume_from"] (where last month's run stopped), until the
+    end or until the budget or the time runs out; stats["resume"] always holds the next page not yet read ("" at
+    the end), see the module docstring. Yields the kept rows, each place once (the same name at the same
+    position)."""
     from placepacks.directories.common import Robots
     spec = PAYERS[unit]
     parts = urllib.parse.urlsplit(spec["base"])
     robots = Robots(client, f"{parts.scheme}://{parts.netloc}", agent="place-packs-health-access")
-    url = f"{spec['base']}/Location?_count={PAGE_SIZE}"
-    if not robots.allowed(url):
+    first = f"{spec['base']}/Location?_count={PAGE_SIZE}"
+    if not robots.allowed(first):
         stats["robots"] = "disallowed"
         stats["may_be_empty"] = True
         return
+    url = first
+    start = stats.get("resume_from", "")
+    if start and own_page(start, spec) and robots.allowed(start):
+        url = start
+    elif start:
+        stats.pop("resume_from", None)          # not the payer's own page: read from the beginning
+        stats["resume_ignored"] = str(start)[:300]
     seen = set()
     stats.update(pages=0, locations=0, kept=0)
     while url:
-        bundle = client.json(url, headers={"Accept": "application/fhir+json"})
+        stats["resume"] = url                   # where the next run starts if this one stops before this page
+        try:
+            bundle = client.json(url, headers={"Accept": "application/fhir+json"})
+        except (NotFound, RequestFailed) as e:
+            if url != first and stats["pages"] == 0 and stats.get("resume_from"):
+                # Last month's cursor no longer answers: start again from the first page.
+                stats.pop("resume_from", None)
+                stats["resume_expired"] = f"{str(url)[:200]}: {type(e).__name__}"
+                url = first
+                continue
+            raise
         stats["pages"] += 1
         for e in bundle.get("entry") or []:
             res = e.get("resource") or {}
@@ -214,4 +251,5 @@ def collect(client, unit, stats):
             stats["kept"] += 1
             yield row
         nxt = next((link.get("url") for link in bundle.get("link") or [] if link.get("relation") == "next"), "")
-        url = nxt if nxt and (urllib.parse.urlsplit(nxt).hostname or "") in spec["hosts"] else ""
+        url = nxt if nxt and own_page(nxt, spec) else ""
+    stats["resume"] = ""                        # the end of the directory: next time from the first page

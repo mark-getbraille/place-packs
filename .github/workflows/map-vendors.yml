@@ -14,7 +14,8 @@
 #   (map-vendors-orgs.json) and the map vendors not yet in the registry (new-map-vendors.txt), and lists the
 #   collector units.
 # - collect: one job per collector unit (mazemap, concept3d, campus-gis), each reading the map list; a unit that is
-#   blocked (Concept3D: its API's robots.txt disallows programs) or fails keeps last month's file.
+#   blocked keeps last month's file; one that fails or runs out of time after finding rows publishes them
+#   ("partial", merged with last month's file: placepacks/directories/run.py).
 # - publish: the only job that can write (contents: write). It puts this month's set together in the release
 #   "map-vendors" (placepacks/chains/release.py; a unit that failed keeps its previous file, up to three months)
 #   with the map list and new-map-vendors.txt.

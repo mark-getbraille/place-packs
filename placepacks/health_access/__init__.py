@@ -25,8 +25,13 @@ USER_AGENT = fhir.USER_AGENT
 PAUSE = 1.5
 FIELDS = features.FEATURE_FIELDS
 TAG = "health-access"
-UNITS = {unit: {"title": f"{spec['payer']} provider directory (FHIR)", "expected": 50000, "budget": 4000,
-                "timeout": 340, "module": "placepacks.health_access.fhir"} for unit, spec in fhir.PAYERS.items()}
+# The FHIR directories: up to FHIR_BUDGET pages a month (polite paged reads, PAUSE apart); in practice the job's
+# time (timeout, less run.py's margin) ends a big directory first: the first run (27 November 2026) read 4,000
+# pages in 2 hours (Humana) and 5 hours (Molina). They are "resumable": the next run starts where this one stopped.
+FHIR_BUDGET = 20000
+UNITS = {unit: {"title": f"{spec['payer']} provider directory (FHIR)", "expected": 50000, "budget": FHIR_BUDGET,
+                "timeout": 340, "resumable": True, "module": "placepacks.health_access.fhir"}
+         for unit, spec in fhir.PAYERS.items()}
 UNITS.update({f"hospital-pages-{i}": {"title": f"Hospitals' own accessibility pages ({i} of {hospital_pages.SHARDS})",
                                       "expected": 300, "budget": 6000, "timeout": 340,
                                       "module": "placepacks.health_access.hospital_pages"}

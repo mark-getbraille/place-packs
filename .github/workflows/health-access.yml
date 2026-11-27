@@ -8,8 +8,10 @@
 #   workflow), optionally for some units only ("fhir-humana hospital-pages-1").
 # - collect: one job per unit, three at a time. Each reads robots.txt first and obeys it, names the project in its
 #   User-Agent, waits between requests and stops at once if a site refuses (403, 429 or an anti-bot page): that
-#   unit or hospital is "blocked", nothing is ever got round. A directory that cannot be read to its end within the
-#   job's time keeps last month's file.
+#   unit or hospital is "blocked", nothing is ever got round. A unit that runs out of its request budget or the
+#   job's time publishes the rows it found ("partial", merged with last month's file). A FHIR directory too big for
+#   one job resumes next month at the page where it stopped (the release's list keeps that address; the job reads
+#   it with its read-only token), so the whole directory is covered over a few months.
 # - publish: the only job that can write (contents: write); the month's set goes to the release "health-access"
 #   (placepacks/chains/release.py; a unit that failed keeps its previous file, up to three months).
 # The pack build (build-packs.yml) reads the newest set in its prepare step and gives the matching hospitals and
@@ -83,6 +85,7 @@ jobs:
       - name: Read the unit
         env:
           UNIT: ${{ matrix.unit }}
+          GH_TOKEN: ${{ github.token }}   # read-only here: only to read where a FHIR directory stopped last month
         run: python -m placepacks.directories.run healthaccess --unit "$UNIT" --out directory-out
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
         if: ${{ always() }}

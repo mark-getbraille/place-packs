@@ -166,6 +166,145 @@ def test_run_catalogue_and_workflow(tmp_path):
     workflow_shape(os.path.join(ROOT, ".github", "workflows", "health-access.yml"), "10")
 
 
+# ------------------------------------------------------------------ partial runs, resuming, odd links (27 Nov fix)
+
+def paged_web(pages=4):
+    """A made-up insurer directory of `pages` pages (one kept Location each), linked by stateless cursors."""
+    base = fhir.PAYERS["fhir-humana"]["base"]
+    routes = {"https://fhir.humana.com/robots.txt": (404, "")}
+    for i in range(1, pages + 1):
+        url = base + "/Location?_count=500" if i == 1 else f"{base}/Location?_count=500&_continuationToken=c{i}"
+        link = [{"relation": "next", "url": f"{base}/Location?_count=500&_continuationToken=c{i + 1}"}] \
+            if i < pages else []
+        routes[url] = (200, {"resourceType": "Bundle", "link": link,
+                             "entry": [{"resource": location(f"P{i}", f"Madeup Clinic {i}", lat=44.0 + i / 100)}]})
+    return Web(routes)
+
+
+def published_keys(gh_folder, name):
+    """The keys of a published set file."""
+    import csv
+    import gzip
+    with gzip.open(os.path.join(gh_folder, name), "rt", encoding="utf-8") as f:
+        return [r["key"] for r in csv.DictReader(f)]
+
+
+def test_a_spent_budget_publishes_the_rows_found_and_the_next_run_resumes(tmp_path, monkeypatch):
+    """The first GitHub run (27 November 2026) collected 470,000 rows and published nothing. Now: a FHIR unit whose
+    budget runs out writes its rows (partial) and where it stopped; the publish keeps them and the cursor; the next
+    run starts at that cursor, reaches the end and its rows are merged with the earlier ones; then the cursor is
+    cleared and the run after starts from the first page again."""
+    import test_chain_locators as chains_test
+    from placepacks import uploaded
+    from placepacks.chains import release
+    fake = chains_test.FakeRelease(str(tmp_path / "release"))
+    monkeypatch.setattr(uploaded, "run_gh", fake)
+    monkeypatch.setattr(uploaded.tempfile, "gettempdir", lambda: str(tmp_path))
+    monkeypatch.setenv("GITHUB_REPOSITORY", "owner/place-packs")
+    monkeypatch.setenv("PLACEPACKS_SCRATCH", str(tmp_path))
+    spec = dirrun.collections()["healthaccess"]
+    assert spec["units"]["fhir-humana"]["resumable"] and spec["units"]["fhir-humana"]["budget"] >= 20000
+    assert dirrun.resume_point("healthaccess", "fhir-humana") == ""          # no set yet: the beginning
+    # Month 1: robots.txt + 2 pages, then the budget (3 requests) is spent.
+    monkeypatch.setitem(spec["units"]["fhir-humana"], "budget", 3)
+    out1 = tmp_path / "m1"
+    s1 = dirrun.run("healthaccess", "fhir-humana", str(out1), opener=paged_web(), sleep=lambda s: None,
+                    today=TODAY)
+    assert s1["status"] == "incomplete" and s1["partial"] and s1["rows"] == 2
+    assert s1["resume"].endswith("_continuationToken=c3") and (out1 / "fhir-humana.csv.gz").exists()
+    listing = dirrun.publish("healthaccess", str(out1), "2026-12-10", {"fhir-humana"}, sleep=lambda s: None)
+    entry = listing["files"][0]
+    assert entry["status"] == "partial" and entry["rows"] == 2 and entry["resume"] == s1["resume"]
+    assert "partial" in release.table(listing)
+    # Month 2: starts at the cursor, reads pages 3 and 4 to the end; merged with month 1's rows.
+    resume = dirrun.resume_point("healthaccess", "fhir-humana")
+    assert resume == s1["resume"]
+    monkeypatch.setitem(spec["units"]["fhir-humana"], "budget", 20000)
+    web = paged_web()
+    out2 = tmp_path / "m2"
+    s2 = dirrun.run("healthaccess", "fhir-humana", str(out2), opener=web, sleep=lambda s: None, today=TODAY,
+                    resume=resume)
+    assert s2["status"] == "ok" and s2["partial"] and s2["rows"] == 2 and s2["resume"] == ""
+    assert not any(u.endswith("/Location?_count=500") for u in web.asked)  # page 1 not read again
+    listing = dirrun.publish("healthaccess", str(out2), "2027-01-10", {"fhir-humana"}, sleep=lambda s: None)
+    entry = listing["files"][0]
+    assert entry["rows"] == 4 and "resume" not in entry and listing["runs"]["fhir-humana"]["kept_from_previous"] == 2
+    assert published_keys(fake.folder, entry["name"]) == [f"fhir-humana:P{i}" for i in range(1, 5)]
+    assert dirrun.resume_point("healthaccess", "fhir-humana") == ""
+
+
+def test_an_expired_cursor_starts_again_and_a_block_keeps_the_cursor(tmp_path):
+    """A cursor that answers "gone" starts the directory again from the first page; a refusal publishes nothing
+    and keeps the starting cursor, so no page is skipped next month."""
+    base = fhir.PAYERS["fhir-humana"]["base"]
+    stale = f"{base}/Location?_count=500&_continuationToken=c3"
+    stats = {"resume_from": stale}
+    gone = paged_web(pages=1)
+    gone.pages[stale] = (410, "gone")
+    rows = list(fhir.collect(client(gone), "fhir-humana", stats))
+    assert [r["key"] for r in rows] == ["fhir-humana:P1"] and "resume_from" not in stats
+    assert stats["resume_expired"].startswith(stale) and stats["resume"] == ""
+    blocked = paged_web()
+    blocked.pages[stale] = (403, "<title>Access Denied</title>")
+    s = dirrun.run("healthaccess", "fhir-humana", str(tmp_path), opener=blocked, sleep=lambda s: None, today=TODAY,
+                   resume=stale)
+    assert s["status"] == "blocked" and not s["partial"] and s["resume"] == stale
+    assert not (tmp_path / "fhir-humana.csv.gz").exists()
+    # another host's address is never followed as a cursor
+    stats = {"resume_from": "https://elsewhere.example/Location?x=1"}
+    list(fhir.collect(client(paged_web(pages=1)), "fhir-humana", stats))
+    assert "resume_from" not in stats and stats["resume_ignored"].startswith("https://elsewhere")
+
+
+def test_a_failed_or_time_limited_unit_keeps_its_rows_generically(tmp_path, monkeypatch):
+    """For every collection (run.py), a unit stopped by an error or by its collector's own stop (stats["stopped"],
+    the malls' and airports' shares) after finding rows writes them as partial; with no rows, nothing."""
+    def broken(client, unit, stats):
+        """Two rows, then an unexpected error."""
+        yield {"key": "a", "kind": "site", "name": "Madeup A"}
+        yield {"key": "b", "kind": "site", "name": "Madeup B"}
+        raise ValueError("Invalid IPv6 URL")
+
+    def stopped(client, unit, stats):
+        """One row, then the collector's own stop."""
+        yield {"key": "c", "kind": "site", "name": "Madeup C"}
+        stats["stopped"] = "the time limit of the run is reached after 1 malls with rows"
+
+    def nothing(client, unit, stats):
+        """An error before any row."""
+        raise ValueError("Invalid IPv6 URL")
+        yield  # noqa: unreachable - a generator
+
+    spec = dirrun.collections()["malls"]
+    unit = next(iter(spec["units"]))
+    for collect, status, rows in ((broken, "failed", 2), (stopped, "incomplete", 1), (nothing, "failed", 0)):
+        fake = dict(spec, collect=collect)
+        monkeypatch.setattr(dirrun, "collections", lambda fake=fake: {"malls": fake})
+        s = dirrun.run("malls", unit, str(tmp_path), opener=Web({}), sleep=lambda s: None, today=TODAY)
+        assert (s["status"], s["rows"], s["partial"]) == (status, rows, rows > 0)
+        assert (tmp_path / f"{unit}.csv.gz").exists() == (rows > 0) and "resume" not in s
+
+
+def test_merge_rows_replaces_the_same_keys_and_keeps_the_rest(tmp_path):
+    """release.merge_rows: this run's rows win, the previous rows not reached are kept, sorted by key."""
+    import csv
+    import gzip
+    from placepacks.chains import release
+
+    def write(path, rows):
+        """A small .csv.gz."""
+        with gzip.open(path, "wt", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=["key", "name"])
+            w.writeheader()
+            w.writerows(rows)
+    write(tmp_path / "new.csv.gz", [{"key": "b", "name": "B new"}, {"key": "c", "name": "C"}])
+    write(tmp_path / "old.csv.gz", [{"key": "a", "name": "A"}, {"key": "b", "name": "B old"}])
+    assert release.merge_rows(str(tmp_path / "new.csv.gz"), str(tmp_path / "old.csv.gz"),
+                              str(tmp_path / "out.csv.gz")) == (3, 1)
+    with gzip.open(tmp_path / "out.csv.gz", "rt", encoding="utf-8") as f:
+        assert [(r["key"], r["name"]) for r in csv.DictReader(f)] == [("a", "A"), ("b", "B new"), ("c", "C")]
+
+
 def test_odd_hospital_links_never_fail_the_shard():
     """"&amp;" in a link is unescaped and its space encoded when asked for; a broken IPv6 link is skipped without a
     request; one hospital's unexpected error is counted and the next hospital is read."""

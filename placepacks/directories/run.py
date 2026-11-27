@@ -32,9 +32,20 @@ unit with its own summary and CSV, so the release still keeps or carries over ea
 
 The summary (out/<unit>.json) says how it went: "ok" (everything was read: the CSV is the unit's whole set),
 "blocked" (a site refused us: stopped at once, never got round), "incomplete" (the request budget or the time ran
-out) or "failed". Only an "ok" run writes a CSV; for every other result the publish job keeps the unit's rows of
-the previous set (placepacks/chains/release.py: up to three months), so a bad month never closes places in the
-packs' history. The run itself always ends with exit code 0.
+out; also a collector that stopped early on its own and said so in stats["stopped"]) or "failed". An "ok" run
+writes the unit's whole set as its CSV. An "incomplete" or "failed" run that had already found rows writes them too
+and is marked "partial": true in its summary (the first GitHub run of the hospital and clinic accessibility
+collection, 27 November 2026, found 470,000 rows and published none because every unit ran out of budget or time or
+met one bad link); the publish job merges a partial file into the unit's previous one (placepacks/chains/
+release.py: this run's rows replace the same keys, the previous rows not reached this time are kept). A "blocked"
+run, or one with no rows, writes no CSV and the previous set's rows are kept (up to three months), so a bad month
+never closes places in the packs' history. The run itself always ends with exit code 0.
+
+Resuming: a unit whose settings say "resumable": true (the insurers' FHIR directories, too big to read in one
+job) reports where it stopped as stats["resume"] (the next page's address); the summary carries it as "resume",
+the release's list keeps it for the unit, and the next run starts there (resume_point(); the collector finds it in
+stats["resume_from"]). A run that started part way is "partial" even when it reached the end, and the merge keeps
+the earlier pages' rows, so over a few months the whole directory is covered.
 Only the Python standard library is used.
 """
 
@@ -46,6 +57,7 @@ import json
 import os
 import shutil
 import sys
+import tempfile
 import time
 
 from placepacks.chains.polite import Blocked, BudgetSpent, Polite
@@ -158,9 +170,42 @@ def collections():
     }
 
 
-def run(collection, unit, out, opener=None, sleep=time.sleep, clock=time.monotonic, today=None, minutes=None):
+def resume_point(collection, unit, sleep=time.sleep):
+    """Where a "resumable" unit's last run stopped: the "resume" address its entry has in the newest published list
+    of the collection's release, or "" (start from the beginning) when the unit is not resumable, there is no set
+    yet, the list cannot be read (no token, no gh) or the last run reached the end. Read-only (gh release
+    download with the job's read-only token)."""
+    from placepacks import uploaded
+    from placepacks.chains import release
+    spec = collections()[collection]
+    if not spec["units"][unit].get("resumable"):
+        return ""
+    scratch = None
+    try:
+        os.remove(uploaded._cache_path(spec["tag"]))      # a fresh file list
+    except OSError:
+        pass
+    try:
+        _, list_name = release.newest(names=uploaded.assets(spec["tag"]), prefix=spec["prefix"])
+        scratch = tempfile.mkdtemp(prefix=f"{spec['prefix']}-resume-")
+        with open(uploaded.download(spec["tag"], list_name, scratch, sleep=sleep), encoding="utf-8") as f:
+            listing = json.load(f)
+    except Exception as e:  # noqa: BLE001 - no set yet, no token or a damaged list: start from the beginning
+        print(f"{collection} {unit}: no place to resume from ({type(e).__name__}: {str(e)[:150]}); starting at the "
+              "beginning", flush=True)
+        return ""
+    finally:
+        if scratch:
+            shutil.rmtree(scratch, ignore_errors=True)
+    entry = next((f for f in listing.get("files") or [] if f.get("chain") == unit), {})
+    return str(entry.get("resume") or (listing.get("runs") or {}).get(unit, {}).get("resume") or "")
+
+
+def run(collection, unit, out, opener=None, sleep=time.sleep, clock=time.monotonic, today=None, minutes=None,
+        resume=""):
     """Collect one unit into out/ (see the module docstring). minutes: the time this unit may take (default its
-    own "timeout"; a group gives each unit what is left of the job's time). Returns its summary dict."""
+    own "timeout"; a group gives each unit what is left of the job's time). resume: where a resumable unit starts
+    (resume_point(); "" from the beginning). Returns its summary dict."""
     spec = collections()[collection]
     unit_spec = spec["units"][unit]
     os.makedirs(out, exist_ok=True)
@@ -169,6 +214,8 @@ def run(collection, unit, out, opener=None, sleep=time.sleep, clock=time.monoton
     client = Polite(unit_spec["budget"], spec["pause"], opener=opener, sleep=sleep, clock=clock,
                     deadline=started + 60 * max(1, limit - MARGIN_MIN), agent=spec["agent"])
     stats, rows, status, reason = {}, [], "ok", ""
+    if resume and unit_spec.get("resumable"):
+        stats["resume_from"] = resume
     try:
         for row in spec["collect"](client, unit, stats):
             rows.append(row)
@@ -178,14 +225,27 @@ def run(collection, unit, out, opener=None, sleep=time.sleep, clock=time.monoton
         status, reason = "incomplete", str(e)
     except Exception as e:  # noqa: BLE001 - recorded in the summary; the previous set is kept
         status, reason = "failed", f"{type(e).__name__}: {str(e)[:300]}"
+    if status == "ok" and stats.get("stopped"):
+        # A collector that caught the budget or the time running out itself (the malls' and airports' shares)
+        # ended early: its rows are not the whole set.
+        status, reason = "incomplete", str(stats["stopped"])
     if status == "ok" and not rows and not stats.get("may_be_empty"):
         status, reason = "failed", "nothing was found (has the site changed?)"
+    resume_next = str(stats.pop("resume", "") or "") if unit_spec.get("resumable") else ""
+    # Partial: rows found, but not the unit's whole set (stopped early, or started part way through a directory).
+    partial = bool(rows) and (status in ("incomplete", "failed") or
+                              (status == "ok" and bool(stats.get("resume_from"))))
     summary = {"chain": unit, "title": unit_spec["title"], "status": status, "reason": reason, "rows": len(rows),
                "expected": unit_spec["expected"], "endpoint": collection, "requests": client.used,
                "hosts": len(client.hosts), "seconds": round(clock() - started, 1),
-               "date": (today or datetime.date.today()).isoformat(), "stats": stats}
+               "date": (today or datetime.date.today()).isoformat(), "partial": partial, "stats": stats}
     target = os.path.join(out, f"{unit}.csv.gz")
-    if status == "ok" and rows:
+    written = bool(rows) and (status == "ok" or partial)
+    if unit_spec.get("resumable"):
+        # Where the next run starts: where this one stopped when its rows are published; else (blocked, nothing
+        # found) where this one started, so no page is skipped.
+        summary["resume"] = resume_next if written else (resume or "")
+    if written:
         rows.sort(key=lambda r: r["key"])
         with gzip.open(target + ".partial", "wt", newline="", encoding="utf-8") as f:
             w = csv.DictWriter(f, fieldnames=spec["fields"], extrasaction="ignore")
@@ -196,8 +256,9 @@ def run(collection, unit, out, opener=None, sleep=time.sleep, clock=time.monoton
         os.remove(target)
     with open(os.path.join(out, f"{unit}.json"), "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=1)
-    print(f"{collection} {unit}: {status} ({len(rows):,} rows, {client.used} requests"
-          f"{', ' + reason if reason else ''})", flush=True)
+    print(f"{collection} {unit}: {status}{' (partial: the rows found are kept)' if partial else ''} "
+          f"({len(rows):,} rows, {client.used} requests{', ' + reason if reason else ''}"
+          f"{', resumes next time at ' + summary['resume'][:120] if summary.get('resume') else ''})", flush=True)
     return summary
 
 
@@ -330,7 +391,7 @@ def main(argv=None):
     if not ids or unknown:
         raise SystemExit(f"unknown unit {' '.join(unknown) or a.unit!r}")
     if len(ids) == 1:
-        run(a.collection, ids[0], a.out)
+        run(a.collection, ids[0], a.out, resume=resume_point(a.collection, ids[0]))
     else:
         run_units(a.collection, ids, a.out, total_minutes=a.minutes)
     return 0

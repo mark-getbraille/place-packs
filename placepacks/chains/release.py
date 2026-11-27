@@ -11,7 +11,11 @@ complete run, <chain>.csv.gz. For every chain the set gets one file, "chain-loca
     (fewer looks like a broken site, not half the chain closing);
   - otherwise the previous set's file, carried over unchanged (at most MAX_CARRY sets running), so a chain that
     fails or is blocked one month keeps its stores open in the packs' history instead of closing them all;
-  - a chain that was not run this time (a hand-started run of some chains) is kept from the previous set too.
+  - a chain that was not run this time (a hand-started run of some chains) is kept from the previous set too;
+  - a "partial" run (the local directories' collectors, placepacks/directories/run.py: the budget or the time ran
+    out, or an error stopped it, after rows were found) is MERGED with the previous set's file (merge_rows: this
+    run's rows replace the same keys, the previous rows not reached this time are kept), or used alone when there is
+    no previous file. Its "resume" address (where a resumable unit's next run starts) is kept in the list's entry.
 The files go up first and the list, "chain-locators-<date>.json", last: a set counts only once its list is there.
 Sets older than the newest KEEP are deleted. A table of the run goes to the job summary.
 
@@ -143,7 +147,7 @@ def prepare(entry, national, sleep=time.sleep):
         os.replace(target + ".partial", target)
         with open(target + ".version", "w", encoding="utf-8") as f:
             f.write(f"{tag}/{prefix}-{dt}")
-        carried = [i["chain"] for i in files if i.get("status") != "new"]
+        carried = [i["chain"] for i in files if i.get("status") not in ("new", "partial")]
         print(f"{entry['id']}: {count:,} rows of {len(files)} files from {tag}/{list_name}"
               + (f" (kept from an earlier month: {', '.join(carried)})" if carried else ""))
         return count
@@ -161,6 +165,30 @@ def _gh(args, what):
     return out
 
 
+def merge_rows(new_path, old_path, target):
+    """Write target (.csv.gz) from this run's partial file and the previous set's file of the same unit: every row
+    of new_path, then the rows of old_path whose "key" is not among them (places this run did not reach), sorted by
+    key, with new_path's columns. Returns (rows written, rows kept from old_path)."""
+    with gzip.open(new_path, "rt", newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        fields = reader.fieldnames or []
+        rows = {r.get("key", ""): r for r in reader}
+    kept = 0
+    if old_path and "key" in fields:
+        with gzip.open(old_path, "rt", newline="", encoding="utf-8") as f:
+            for r in csv.DictReader(f):
+                if r.get("key") and r["key"] not in rows:
+                    rows[r["key"]] = r
+                    kept += 1
+    with gzip.open(target + ".merging", "wt", newline="", encoding="utf-8") as f:
+        w = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore", restval="")
+        w.writeheader()
+        for k in sorted(rows):
+            w.writerow(rows[k])
+    os.replace(target + ".merging", target)
+    return len(rows), kept
+
+
 def decide(chain, ran, summary, new_file, previous, prev_date):
     """What the set gets for one chain: (file entry or None, why). summary: this run's summary or None; new_file:
     this run's CSV path or None; previous: the previous list's file entry for the chain, or None."""
@@ -169,13 +197,22 @@ def decide(chain, ran, summary, new_file, previous, prev_date):
         why = "not run this time"
     elif summary is None:
         why = "the job left no summary (stopped at its time limit?)"
+    elif summary.get("partial") and new_file:
+        # Rows found before the budget, the time or an error stopped the run: merged into the previous file.
+        got = {"chain": chain, "path": new_file, "status": "partial", "collected": summary.get("date"),
+               "carried": 0, "resume": summary.get("resume", "")}
+        if previous:
+            got.update({"from": previous["name"], "sha256": previous.get("sha256")})
+        why = f"partial ({summary.get('status')}: {summary.get('reason', '')})".replace(": )", ")")
+        return got, why + ("; merged with the set of " + str(previous.get("collected") or prev_date)
+                           if previous else "")
     elif summary.get("status") != "ok" or not new_file:
         why = f"{summary.get('status', 'failed')}: {summary.get('reason', '')}".strip(": ")
     elif prev_rows and summary.get("rows", 0) < TOO_FEW * prev_rows:
         why = f"only {summary.get('rows', 0):,} stores against {prev_rows:,} last time (has the site changed?)"
     else:
         return {"chain": chain, "path": new_file, "status": "new", "collected": summary.get("date"),
-                "carried": 0}, ""
+                "carried": 0, "resume": summary.get("resume", "")}, ""
     if not previous:
         return None, why
     carried = int(previous.get("carried") or 0) + (1 if ran else 0)
@@ -183,7 +220,7 @@ def decide(chain, ran, summary, new_file, previous, prev_date):
         return None, why + f"; its last good set ({previous.get('collected')}) is too old to keep"
     return {"chain": chain, "from": previous["name"], "status": "carried" if ran else "kept",
             "collected": previous.get("collected") or prev_date, "carried": carried, "rows": prev_rows,
-            "sha256": previous.get("sha256")}, why
+            "sha256": previous.get("sha256"), "resume": previous.get("resume", "")}, why
 
 
 CHAIN_NOTES = ("Monthly store lists of big US chains read from their own store locators (placepacks/chains), read "
@@ -233,7 +270,7 @@ def publish(folder, date, ran, sleep=time.sleep, units=None, tag=TAG, prefix=PRE
             new_file = new_file if os.path.exists(new_file) else None
             got, why = decide(chain, chain in ran, summary, new_file, previous.get(chain), prev_date)
             runs[chain] = {k: (summary or {}).get(k) for k in ("status", "reason", "rows", "expected", "requests",
-                                                               "endpoint", "date")}
+                                                               "endpoint", "date", "partial", "resume")}
             runs[chain]["ran"] = chain in ran
             runs[chain]["used"] = (got or {}).get("status", "missing")
             runs[chain]["why"] = why
@@ -243,6 +280,15 @@ def publish(folder, date, ran, sleep=time.sleep, units=None, tag=TAG, prefix=PRE
             target = os.path.join(scratch, name)
             if got["status"] == "new":
                 shutil.copy(got["path"], target)
+            elif got["status"] == "partial":
+                old = None
+                if got.get("from"):
+                    old = uploaded.download(tag, got["from"], scratch, got.get("sha256"), sleep)
+                    if old == target:               # the same name (a second run on one day): read a copy
+                        os.replace(old, old + ".previous")
+                        old += ".previous"
+                _, kept = merge_rows(got["path"], old, target)
+                runs[chain]["kept_from_previous"] = kept
             else:
                 old = uploaded.download(tag, got["from"], scratch, got.get("sha256"), sleep)
                 if old != target:
@@ -250,6 +296,8 @@ def publish(folder, date, ran, sleep=time.sleep, units=None, tag=TAG, prefix=PRE
             files.append({"name": name, "chain": chain, "rows": rows_in(target), "sha256": sha256_of(target),
                           "size": os.path.getsize(target), "status": got["status"], "collected": got["collected"],
                           "carried": got["carried"]})
+            if got.get("resume"):
+                files[-1]["resume"] = got["resume"]
             uploads.append(target)
         if not files:
             raise RuntimeError("no unit has any rows to publish yet")
@@ -281,7 +329,8 @@ def table(listing):
     for chain, r in sorted(listing.get("runs", {}).items()):
         f = used.get(chain)
         kept = (f"{f['rows']:,} (this run)" if f["status"] == "new" else
-                f"{f['rows']:,} (from {f['collected']})") if f else "none"
+                f"{f['rows']:,} (this run, partial, {r.get('kept_from_previous') or 0:,} kept from before)"
+                if f["status"] == "partial" else f"{f['rows']:,} (from {f['collected']})") if f else "none"
         lines.append(f"| {chain} | {r.get('status') or ('not run' if not r.get('ran') else 'no summary')} | "
                      f"{r.get('rows') if r.get('rows') is not None else ''} | {r.get('expected') or ''} | "
                      f"{r.get('requests') or ''} | {kept} | {(r.get('why') or '').replace('|', '/')[:160]} |")

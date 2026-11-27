@@ -110,7 +110,7 @@ How far back each layer goes:
 | Overture places | From the first build. Past monthly releases (for example one a quarter) can be merged first while Overture still keeps them. |
 | All The Places (chain stores) | Seeded once from its archived past runs, the largest run of each quarter since April 2018 (the archive's 2017 runs are listed without their files): each store from the first quarter it was listed in to the last, and a store that closed since is kept, closed at its last quarter. Then month by month. Stores are matched by the chain's own store reference; when a reference changes (a spider renamed, a locator renumbered), by the same name or brand within about 100 m. About 16 GB of archives are read once (`seed_chain_history`), and the small result is kept in the "seeds" release for every later build. |
 | Chain store locators (big US chains missing from All The Places), since November 2026 | From the first monthly set (collected on the 28th), month by month, matched by the chain and its own store number. A chain whose collection is blocked or fails one month keeps its previous month's stores (up to three months running), so a failed run never closes stores. |
-| Tourism boards' Simpleview listings and chambers' ChamberMaster directories, since November 2026 | From the first monthly set, month by month, keyed by the site (or the chamber's directory) and the listing's own number. A site or state whose collection is blocked or fails one month keeps its previous month's listings (up to three months running). |
+| Tourism boards' Simpleview and Tempest listings and chambers' ChamberMaster directories, since November 2026 | From the first monthly set, month by month, keyed by the site (or the chamber's directory) and the listing's own number. A site or state whose collection is blocked or fails one month keeps its previous month's listings (up to three months running). |
 | Foursquare Open Source Places | Foursquare's own creation and closing dates. |
 | Wikidata | Its start and end dates, often decades back (a mill from 1923 to 1998). |
 | France (BAN), Netherlands (BAG), New Zealand (LINZ) | From the first build. Their published archives and change sets can seed earlier years. |
@@ -347,10 +347,17 @@ address or connection tried.
   sites only); only the schema.org data of one local business (phone and hours) is kept. Release `web-details`.
 - **Tourism boards' listings** (source `simpleview-listings`,
   [.github/workflows/simpleview-listings.yml](.github/workflows/simpleview-listings.yml), "Tourism boards' listings"):
-  on the 25th, one job per Simpleview site (the 11 state tourism sites on Simpleview and Visit Denver; the `units`
-  box takes site ids such as `visitdenver iloveny`): robots.txt and its Crawl-delay obeyed (2 to 5 seconds), the
-  sitemap, then each listing's name, address, position, phone, website, category, hours and accessibility fields.
-  Release `simpleview-listings`.
+  on the 25th, the Simpleview sites (the 11 state tourism sites on Simpleview, Visit Denver and 76 city and county
+  tourism boards found in November 2026) in matrix groups of about five hours each, so the run stays within
+  GitHub's limits (the `units` box takes site ids such as `visitdenver iloveny`): robots.txt and its Crawl-delay
+  obeyed (2 to 5 seconds), the sitemap, then each listing's name, address, position, phone, website, category,
+  hours and accessibility fields. Release `simpleview-listings`. City boards that refused the one check request
+  are listed in `placepacks/directories/simpleview.py` (`CITY_BLOCKED`) and never tried another way.
+- **Tourism boards' Tempest listings** (source `tempest-listings`,
+  [.github/workflows/tempest-listings.yml](.github/workflows/tempest-listings.yml), "Tourism boards' Tempest
+  listings"): on the 26th, the 26 city and county tourism boards on the Tempest platform, in matrix groups the same
+  way: robots.txt obeyed, the partner-directory sitemaps, then each listing's schema.org name, address, position,
+  phone and website, its category and its accessibility amenities. Release `tempest-listings`.
 - **Chambers' directories** (source `chambermaster-listings`,
   [.github/workflows/chambermaster-listings.yml](.github/workflows/chambermaster-listings.yml), "Chambers'
   directories"): on the 15th, one job per state (the `units` box takes codes such as `vt oh`). The US Chamber of
@@ -360,7 +367,7 @@ address or connection tried.
   personal services, recreation), 6 seconds apart. Members are placed by the offline NAD geocoder; home addresses
   are left out. Release `chambermaster-listings`.
 
-In the packs (businesses part): Simpleview and ChamberMaster listings are new places unless another business source
+In the packs (businesses part): Simpleview, Tempest and ChamberMaster listings are new places unless another business source
 already lists them (the same phone number within 500 m, else the same name within 75 m); then their details go to
 that place. The two details-only sources only fill what a place still lacks, after every other source. Each
 workflow keeps a source's previous set when a month's run fails or is blocked, and the pack build skips a source

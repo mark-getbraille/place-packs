@@ -149,7 +149,7 @@ licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD
   adapted from All The Places' spiders (github.com/alltheplaces/alltheplaces), whose code is under the MIT licence,
   Copyright (c) 2016 Ian Dees; its notice is in `NOTICE`.
 - **Local directories and lookups (licence `directory-facts`, since November 2026):** tourism boards' Simpleview
-  listings (`simpleview-listings`), chambers of commerce's ChamberMaster member directories
+  and Tempest listings (`simpleview-listings`, `tempest-listings`), chambers of commerce's ChamberMaster member directories
   (`chambermaster-listings`), the schema.org data on businesses' own homepages (`business-websites`) and Yellow Pages
   lookups of businesses already in the packs (`yp-lookups`). The sites grant no licence; only facts are kept (names,
   street addresses, positions, telephone numbers, websites, opening hours, categories, accessibility notes), which

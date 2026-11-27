@@ -127,7 +127,7 @@ CATEGORY_TAGS = [
     (r"brew(ery|eries|pub)|craft beer", {"craft": "brewery"}),
     (r"winer(y|ies)|vineyard", {"craft": "winery"}),
     (r"distiller", {"craft": "distillery"}),
-    (r"\bbars?\b|pubs?\b|tavern|nightlife|night club|lounge", {"amenity": "bar"}),
+    (r"\bbars?\b|pubs?\b|tavern|nightlife|night club|lounge|cocktail", {"amenity": "bar"}),
     (r"bakery|bakeries", {"shop": "bakery"}),
     (r"ice cream|frozen yogurt|dessert", {"amenity": "ice_cream"}),
     (r"pizza", {"amenity": "restaurant", "cuisine": "pizza"}),

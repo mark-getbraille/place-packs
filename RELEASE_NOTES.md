@@ -11,6 +11,6 @@ except the chain store locators (source chain-locators): facts read from big US 
 no licence covers, a few government lists used by the owner's decision regardless of a copy's missing licence or
 a site's own terms (licence government-facts: Social Security offices, Recreation.gov, California's licensing files;
 LICENSES.md), and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview
-listings, chambers' ChamberMaster directories, businesses' own homepages, Yellow Pages lookups of businesses already
+and Tempest listings, chambers' ChamberMaster directories, businesses' own homepages, Yellow Pages lookups of businesses already
 in the packs; facts only, never reviews, descriptions, photos, e-mails or people's names).
 Built by .github/workflows/build-packs.yml from this repository's code (MIT).

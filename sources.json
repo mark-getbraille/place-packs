@@ -1,5 +1,5 @@
 {
- "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). Three exceptions, by the owner's decisions of 26 November 2026: chain-locators, facts read from big chains' own store locators (licence store-locator-facts); government facts used regardless of a copy's missing licence or a site's own terms (licence government-facts: the Social Security offices' ArcGIS copy, Recreation.gov's RIDB export, California's health and human services files); and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview listings, chambers' ChamberMaster directories, businesses' own homepages, Yellow Pages lookups of businesses already in the packs). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
+ "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). Three exceptions, by the owner's decisions of 26 November 2026: chain-locators, facts read from big chains' own store locators (licence store-locator-facts); government facts used regardless of a copy's missing licence or a site's own terms (licence government-facts: the Social Security offices' ArcGIS copy, Recreation.gov's RIDB export, California's health and human services files); and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview and Tempest listings, chambers' ChamberMaster directories, businesses' own homepages, Yellow Pages lookups of businesses already in the packs). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
  "settings": {
   "tiger_year": "2025",
   "tiger_seed_years": [
@@ -5081,7 +5081,7 @@
     "US"
    ],
    "licence": "directory-facts",
-   "attribution": "Visitor listings of state and city tourism boards' Simpleview sites (Visit Delaware, Visit Florida, Visit Indiana, Travel Kansas, New Mexico True, I LOVE NY, Visit Pennsylvania, Visit Rhode Island, Travel Texas, Virginia Is For Lovers, Travel Wyoming, Visit Denver), read by place-packs (placepacks/directories/simpleview.py); facts only.",
+   "attribution": "Visitor listings of state and city tourism boards' Simpleview sites (11 state tourism offices, Visit Denver and 76 city and county boards; the list is in placepacks/directories/simpleview.py SITES), read by place-packs (placepacks/directories/simpleview.py); facts only.",
    "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/directories",
    "reader": "tabular",
    "kind": "businesses",
@@ -5131,7 +5131,69 @@
    "dedupe_carry": true,
    "history": "From the first build that has a set, month by month, keyed by the site and the listing's own number. A site whose collection fails or is blocked in a month keeps its listings from the previous set (up to three months in a row), so a failed run never closes places.",
    "contact": "The listing's phone number, the business's own website and, where the listing's hours read as OpenStreetMap syntax, its opening hours, cleaned by placepacks/contact.py; other hours text and the accessibility fields (ADA rooms, wheelchair access and the like) become the place's note. The e-mail, the description, photos, social links, booking links and reviews are never read.",
-   "notes": "Collected once a month by the simpleview-listings workflow (the 25th), one job per site: robots.txt (obeyed; its Crawl-delay kept, 2 to 5 seconds between requests), the sitemap, then each /listing/ page's schema.org JSON-LD and embedded listing data. Sites: the 11 state tourism sites found on Simpleview on 26 November 2026 (DE, FL, IN, KS, NM, NY, PA, RI, TX, VA, WY) and Visit Denver; more city boards can be added to placepacks/directories/simpleview.py SITES after one check each. The 20 state sites that answered with an anti-bot challenge or a plain 403 (AK, AZ, CO, GA, HI, ID, LA, ME, MD, MA, MI, MN, MS, NE, NV, NH, NJ, ND, SD, OH) are recorded as blocked, not collected and never tried another way (the owner declined headless browsers on 27 November 2026; permission letters were sent). Listings without a street address (tour operators, home businesses) or with a person's name are left out. A listing that another business source already has (the same phone number within 500 m, else the same name within 75 m) is not added again: its phone, website, hours and note go to that place. Owner's decision of 26 November 2026: listing facts of tourism boards may be collected and published. Until the first set is there, the source is skipped."
+   "notes": "Collected once a month by the simpleview-listings workflow (the 25th), in matrix groups of sites (about five hours of expected work a job, so the run stays within GitHub's limits), each site: robots.txt (obeyed; its Crawl-delay kept, 2 to 5 seconds between requests), the sitemap, then each /listing/ page's schema.org JSON-LD and embedded listing data. Sites: the 11 state tourism sites found on Simpleview on 26 November 2026 (DE, FL, IN, KS, NM, NY, PA, RI, TX, VA, WY), Visit Denver, and 76 city and county boards found on 27 November 2026 with one robots.txt request each (169 boards checked: 76 Simpleview, 26 Tempest, 47 with no common platform, 13 refused with a 403 or an anti-bot page and 7 that did not answer or had moved; Destinations International's member list answered with a Cloudflare challenge and Wikipedia/Wikidata with \"too many requests\", so the candidates came from Simpleview's customer pages and the boards of the largest US cities and main tourist towns). More boards can be added to placepacks/directories/simpleview.py CITY_SITES after one check each. The 20 state sites that answered with an anti-bot challenge or a plain 403 (AK, AZ, CO, GA, HI, ID, LA, ME, MD, MA, MI, MN, MS, NE, NV, NH, NJ, ND, SD, OH) and the refusing city boards (simpleview.CITY_BLOCKED) are recorded as blocked, not collected and never tried another way (the owner declined headless browsers on 27 November 2026; permission letters were sent). Listings without a street address (tour operators, home businesses) or with a person's name are left out. A listing that another business source already has (the same phone number within 500 m, else the same name within 75 m) is not added again: its phone, website, hours and note go to that place. Owner's decision of 26 November 2026: listing facts of tourism boards may be collected and published. Until the first set is there, the source is skipped."
+  },
+  {
+   "id": "tempest-listings",
+   "name": "City and county tourism boards' partner listings (Tempest): restaurants, shops, attractions, hotels and venues",
+   "short": "tourism boards' Tempest listings",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "attribution": "Partner listings of city and county tourism boards' Tempest sites (26 boards; the list is in placepacks/directories/tempest.py SITES), read by place-packs (placepacks/directories/tempest.py); facts only.",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/directories",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "release_csv",
+    "release": "tempest-listings",
+    "prefix": "tempest-listings"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "class_column": "main_value",
+    "first": "first",
+    "last": "last"
+   },
+   "type_column": "type",
+   "type_map": "humanise",
+   "contact_columns": {
+    "phone": "phone",
+    "website": "website",
+    "opening_hours": "opening_hours"
+   },
+   "note_column": "note",
+   "dedupe_against": [
+    "alltheplaces",
+    "chain-locators",
+    "overture-places",
+    "fsq-places",
+    "simpleview-listings"
+   ],
+   "dedupe_m": 75,
+   "dedupe_phone": true,
+   "dedupe_carry": true,
+   "history": "From the first build that has a set, month by month, keyed by the site and the listing's own number. A site whose collection fails or is blocked in a month keeps its listings from the previous set (up to three months in a row), so a failed run never closes places.",
+   "contact": "The listing's phone number and the business's own website, cleaned by placepacks/contact.py; the listing's accessibility amenities (wheelchair access and the like) become the place's note. The description, e-mail, photos, social links and reviews are never read; Tempest pages give no opening hours in a structured form, so none are taken.",
+   "notes": "Collected once a month by the tempest-listings workflow (the 26th), in matrix groups of sites, each site: robots.txt (obeyed; its Crawl-delay kept, 2 to 5 seconds between requests), its Craft sitemap index (sitemaps-1-sitemap.xml) and partner-directory sitemaps, then each /directory/ page's schema.org JSON-LD LocalBusiness and the page's category. Tempest (formerly iDSS) is the second common platform of US city tourism boards: 26 of the 169 boards checked on 27 November 2026 name its Craft sitemap index in robots.txt (Visit Indy's partner directory and one listing read as the sample); a board whose index has no partner-directory sitemap fails with that reason and is checked by a person. Boards that refused (a 403 or an anti-bot page) are recorded as blocked (placepacks/directories/simpleview.py CITY_BLOCKED) and never tried another way. Listings without a street address or with a person's name are left out. A listing another business source already has (the same phone number within 500 m, else the same name within 75 m) is not added again: its phone, website and note go to that place. Owner's decision of 26 November 2026: listing facts of tourism boards may be collected and published. Until the first set is there, the source is skipped.",
+   "class_map": {
+    "museum": "landmark",
+    "attraction": "landmark",
+    "zoo": "landmark",
+    "gallery": "landmark",
+    "park": "park",
+    "*": "business"
+   }
   },
   {
    "id": "chambermaster-listings",

@@ -60,8 +60,8 @@ CONTACT_SEP = "\x1f"
 # The sources whose contact details the build keeps, best first (placepacks/contact.py: CONTACT_SOURCES; written
 # here too, so that a copy of this file without contact.py still writes packs).
 CONTACT_ORDER = ("alltheplaces", "chain-locators", "ssa-field-offices", "nps-places", "usfs-recreation-sites",
-                 "ridb-recreation", "overture-places", "fsq-places", "simpleview-listings", "chambermaster-listings",
-                 "business-websites", "yp-lookups")
+                 "ridb-recreation", "overture-places", "fsq-places", "simpleview-listings",
+                 "tempest-listings", "chambermaster-listings", "business-websites", "yp-lookups")
 # drop_duplicates with phone: the same telephone number within this many metres is the same business.
 PHONE_M = 500
 TYPED = {"points": "point_types", "areas": "area_types"}

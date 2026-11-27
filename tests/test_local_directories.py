@@ -31,6 +31,7 @@ from placepacks.chains import polite, release  # noqa: E402
 from placepacks.directories import chambermaster as cm  # noqa: E402
 from placepacks.directories import run as dirrun  # noqa: E402
 from placepacks.directories import simpleview as sv  # noqa: E402
+from placepacks.directories import tempest  # noqa: E402
 from placepacks.lookup import PackReader  # noqa: E402
 from placepacks.readers.tabular import read as read_tabular  # noqa: E402
 from placepacks.writer import PackWriter  # noqa: E402
@@ -141,16 +142,111 @@ def test_a_run_writes_its_csv_or_records_a_block(tmp_path):
     summary = dirrun.run("simpleview", "visitdenver", str(tmp_path), opener=ypt.FakeWeb(routes), sleep=clock.sleep,
                          clock=clock)
     assert summary["status"] == "blocked" and not (tmp_path / "visitdenver.csv.gz").exists()
-    assert dirrun.matrix("simpleview", "visitdenver iloveny") == [{"unit": "visitdenver", "timeout": 300},
-                                                                  {"unit": "iloveny", "timeout": 300}]
+    assert dirrun.matrix("simpleview", "visitdenver iloveny") == [
+        {"unit": "group-01", "units": "iloveny visitdenver", "timeout": 321}]
+    assert dirrun.matrix("chambermaster", "vt")[0] == {"unit": "vt", "timeout": 300}
     with pytest.raises(SystemExit):
         dirrun.matrix("simpleview", "visitnowhere")
 
 
-def test_the_sites_are_the_simpleview_states_and_the_blocked_are_not():
-    assert len([s for s in sv.SITES if s != "visitdenver"]) == 11
-    hosts = " ".join(s["home"] for s in sv.SITES.values())
-    assert not any(b in hosts for b in sv.BLOCKED)
+def test_the_sites_are_the_simpleview_states_and_cities_and_the_blocked_are_not():
+    assert len(sv.SITES) == 12 + len(sv.CITY_SITES) and len(sv.CITY_SITES) >= 70
+    hosts = " ".join(s["home"] for s in list(sv.SITES.values()) + list(tempest.SITES.values()))
+    assert not any(b in hosts for b in list(sv.BLOCKED) + list(sv.CITY_BLOCKED) + sv.NOT_STRUCTURED)
+    assert not set(sv.SITES) & set(tempest.SITES)
+    assert all(s["state"] in tempest.STATE_CODES.values() for s in tempest.SITES.values())
+
+
+def test_the_sites_run_in_matrix_groups_within_githubs_limits():
+    for collection in ("simpleview", "tempest"):
+        jobs = dirrun.matrix(collection)
+        units = [u for j in jobs for u in j["units"].split()]
+        assert sorted(units) == sorted(dirrun.collections()[collection]["units"])     # every site once
+        assert len(jobs) <= 256 and all(j["timeout"] <= 350 for j in jobs)
+        spec = dirrun.collections()[collection]
+        for j in jobs:
+            members = j["units"].split()
+            assert len(members) == 1 or sum(dirrun.expected_minutes(spec["units"][u]) for u in members) <= 300
+
+
+def test_a_group_runs_its_sites_one_after_another(tmp_path):
+    clock = ypt.Clock()
+    routes = dict(site_routes())
+    routes.update({"https://www.iloveny.com/robots.txt": (403, "<title>Just a moment...</title>")})
+    got = dirrun.run_units("simpleview", ["iloveny", "visitdenver"], str(tmp_path), total_minutes=350,
+                           opener=ypt.FakeWeb(routes), sleep=clock.sleep, clock=clock)
+    assert [s["status"] for s in got] == ["blocked", "ok"]
+    assert (tmp_path / "visitdenver.csv.gz").exists() and (tmp_path / "iloveny.json").exists()
+    got = dirrun.run_units("simpleview", ["visitdenver"], str(tmp_path / "late"), total_minutes=5,
+                           opener=ypt.FakeWeb(routes), sleep=clock.sleep, clock=clock)
+    assert got[0]["status"] == "incomplete" and got[0]["requests"] == 0
+
+
+# ------------------------------------------------------------------------------------------------ Tempest
+
+TEMPEST = "https://www.visitmadeup.example"
+
+
+def tempest_page(listing_id, name, address, phone="(802) 555-0140", category="Craft Cocktails",
+                 amenities=("Outdoor Seating", "Wheelchair Accessible")):
+    """A made-up Tempest listing page: the listing's and the board's own JSON-LD, the page data and amenities."""
+    ld = {"@context": "http://schema.org", "@graph": [
+        {"@type": "LocalBusiness", "address": address, "description": "Never kept.", "latitude": "44.4760",
+         "longitude": "-73.2125", "name": name, "telephone": phone, "url": "https://bar.example/",
+         "email": "owner@bar.example"},
+        {"@id": f"{TEMPEST}#identity", "@type": "TouristInformationCenter", "name": "Visit Madeup",
+         "telephone": "802-555-0000", "address": {"@type": "PostalAddress", "streetAddress": "1 Board St"}}]}
+    items = "".join(f"<li>{a}</li>" for a in amenities)
+    return (f'<html><script type="application/ld+json">{json.dumps(ld)}</script>'
+            f'<main data-dms-partner-id="9{listing_id}" data-dms-category-name="{category}" '
+            f'data-dms-listing-id="{listing_id}"><ul class="text--content detail__amenities">{items}</ul></main>'
+            f'</html>')
+
+
+def tempest_routes():
+    """A made-up Tempest board: robots.txt, the Craft sitemap index, a partner sitemap and three listings."""
+    return {f"{TEMPEST}/robots.txt": f"User-agent: *\nDisallow: /directory/private-club/\n"
+                                     f"Sitemap: {TEMPEST}/sitemaps-1-sitemap.xml\n",
+            f"{TEMPEST}/sitemaps-1-sitemap.xml": "<sitemapindex>" + "".join(
+                f"<sitemap><loc>{TEMPEST}/sitemaps-1-section-{s}-1-sitemap.xml</loc></sitemap>"
+                for s in ("blogDirectory", "partnerDirectory")) + "</sitemapindex>",
+            f"{TEMPEST}/sitemaps-1-section-partnerDirectory-1-sitemap.xml": "<urlset>" + "".join(
+                f"<url><loc>{TEMPEST}/directory/{s}/</loc></url>" for s in ("made-up-lounge", "made-up-tours",
+                                                                            "private-club")) + "</urlset>",
+            f"{TEMPEST}/directory/made-up-lounge/": tempest_page(31, "Made-up Lounge &amp; Bar",
+                                                                 "184 Main Street Burlington, Vermont 05401"),
+            f"{TEMPEST}/directory/made-up-tours/": tempest_page(32, "Made-up Walking Tours", "Burlington, VT 05401"),
+            f"{TEMPEST}/directory/private-club/": tempest_page(33, "Private Club", "1 Oak St Burlington, VT 05401")}
+
+
+def test_a_tempest_listing_gives_facts_and_accessibility_only():
+    row = tempest.listing(tempest_page(31, "Made-up Lounge &amp; Bar", "184 Main Street Burlington, Vermont 05401"),
+                          "visitmadeup", f"{TEMPEST}/directory/made-up-lounge/")
+    assert row["key"] == "visitmadeup:31" and row["name"] == "Made-up Lounge & Bar"
+    assert (row["street"], row["city"], row["state"], row["postcode"]) == ("184 Main Street", "Burlington", "VT",
+                                                                          "05401")
+    assert row["phone"] == "(802) 555-0140" and row["website"] == "https://bar.example/"
+    assert row["main_value"] == "bar" and row["category"] == "Craft Cocktails"
+    assert row["note"] == "Accessibility: Wheelchair Accessible"            # not "Outdoor Seating"
+    assert "owner@" not in json.dumps(row) and "Never kept" not in json.dumps(row)
+    assert tempest.listing(tempest_page(4, "Alice Example", "12 Elm St Burlington, VT 05401"), "x",
+                           f"{TEMPEST}/directory/a/") is None              # a person's name
+
+
+def test_a_tempest_site_is_read_through_its_partner_sitemaps(monkeypatch):
+    monkeypatch.setitem(tempest.SITES, "visitmadeup", tempest._site("Visit Madeup", TEMPEST, "VT"))
+    client, web, _ = fake(tempest_routes())
+    stats = {}
+    rows = list(tempest.collect(client, "visitmadeup", stats))
+    assert [r["key"] for r in rows] == ["visitmadeup:31"]                  # the tour operator has no street
+    assert stats == {"listings": 2, "gone": 0, "left_out": 1, "failed": 0}
+    asked = [u for u, _ in web.requests]
+    assert not any("private-club" in u or "blogDirectory" in u for u in asked)
+    routes = dict(tempest_routes())
+    routes[f"{TEMPEST}/sitemaps-1-sitemap.xml"] = "<sitemapindex><sitemap><loc>x/pages.xml</loc></sitemap></sitemapindex>"
+    client, _, _ = fake(routes)
+    with pytest.raises(tempest.NotTempest):
+        list(tempest.collect(client, "visitmadeup", {}))
 
 
 # ------------------------------------------------------------------------------------------------ ChamberMaster
@@ -252,7 +348,7 @@ def entry_of(source):
 
 
 def test_the_catalogue_entries():
-    for source in ("simpleview-listings", "chambermaster-listings"):
+    for source in ("simpleview-listings", "tempest-listings", "chambermaster-listings"):
         e = entry_of(source)
         assert e["part"] == "businesses" and e["fetch"]["method"] == "release_csv" and e["licence"] == "directory-facts"
         assert e["dedupe_phone"] and e["dedupe_carry"] and e["dedupe_m"] == 75
@@ -331,4 +427,5 @@ def test_a_chamber_member_is_placed_by_the_geocoder_and_homes_are_left_out(tmp_p
 
 def test_the_workflows_are_monthly_read_only_and_publish_in_one_job():
     workflow_shape(os.path.join(ROOT, ".github", "workflows", "simpleview-listings.yml"), day="25")
+    workflow_shape(os.path.join(ROOT, ".github", "workflows", "tempest-listings.yml"), day="26")
     workflow_shape(os.path.join(ROOT, ".github", "workflows", "chambermaster-listings.yml"), day="15")

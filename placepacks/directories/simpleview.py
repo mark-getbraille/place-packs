@@ -4,8 +4,10 @@ simpleview-listings workflow).
 What: state tourism offices and city tourism boards (destination marketing organisations) that run Simpleview list
 the restaurants, shops, attractions, hotels and venues of their area. Research of 26 November 2026 (notes/
 US-LOCAL-BUSINESS-DIRECTORIES.md) found 11 state sites on Simpleview that answered without a challenge (DE, FL, IN,
-KS, NM, NY, PA, RI, TX, VA, WY) and tested Visit Denver; SITES lists them. The 20 state sites that answered with an
-anti-bot challenge (Cloudflare, Incapsula) are not collected (BLOCKED), and never tried another way.
+KS, NM, NY, PA, RI, TX, VA, WY) and tested Visit Denver; the city and county boards found on 27 November 2026 (76
+more, CITY_SITES) were added after one robots.txt request each. SITES lists them all. The 20 state sites and the
+city boards that answered with an anti-bot challenge or a plain 403 are not collected (BLOCKED, CITY_BLOCKED), and
+never tried another way. The monthly workflow runs the sites in matrix groups (placepacks/directories/run.py).
 
 How, per site (collect()):
   1. robots.txt (obeyed: every listing page is checked; its Crawl-delay is kept, at least 2 and at most 5 seconds
@@ -70,6 +72,92 @@ SITES = {
     "travelwyoming": _site("Travel Wyoming", "https://travelwyoming.com", 1000),
     "visitdenver": _site("Visit Denver", "https://visitdenver.com", 1833),
 }
+# City and county tourism boards found on Simpleview (27 November 2026): one robots.txt request each, whose
+# "Disallow: /plugins/crm/count/" line is Simpleview's own; candidates from the boards named by Simpleview's
+# customer pages and the "Visit <city>" boards of the 200 largest US cities and main tourist towns (Destinations
+# International's member list answered with a Cloudflare challenge, and Wikipedia/Wikidata with "too many requests",
+# so neither was used). id, title, home, state, about how many listings (1000, or 2000 for a big destination).
+CITY_SITES = [
+    ('visithoustontexas', 'Houston, TX tourism board (visithoustontexas.com)', 'https://www.visithoustontexas.com', 'TX', 2000),
+    ('fortworth', 'Fort Worth, TX tourism board (fortworth.com)', 'https://www.fortworth.com', 'TX', 2000),
+    ('visitsanantonio', 'San Antonio, TX tourism board (visitsanantonio.com)', 'https://www.visitsanantonio.com', 'TX', 2000),
+    ('visitaustin', 'Austin, TX tourism board (visitaustin.org)', 'https://www.austintexas.org', 'TX', 2000),
+    ('visitphoenix', 'Phoenix, AZ tourism board (visitphoenix.com)', 'https://www.visitphoenix.com', 'AZ', 2000),
+    ('visittucson', 'Tucson, AZ tourism board (visittucson.org)', 'https://www.visittucson.org', 'AZ', 2000),
+    ('visitalbuquerque', 'Albuquerque, NM tourism board (visitalbuquerque.org)', 'https://www.visitalbuquerque.org', 'NM', 2000),
+    ('visitsaltlake', 'Salt Lake City, UT tourism board (visitsaltlake.com)', 'https://www.visitsaltlake.com', 'UT', 2000),
+    ('visitoakland', 'Oakland, CA tourism board (visitoakland.com)', 'https://www.visitoakland.com', 'CA', 2000),
+    ('visitsacramento', 'Sacramento, CA tourism board (visitsacramento.com)', 'https://www.visitsacramento.com', 'CA', 2000),
+    ('visitanaheim', 'Anaheim, CA tourism board (visitanaheim.org)', 'https://www.visitanaheim.org', 'CA', 2000),
+    ('visitlasvegas', 'Las Vegas, NV tourism board (visitlasvegas.com)', 'https://www.visitlasvegas.com', 'NV', 2000),
+    ('traveltacoma', 'Tacoma, WA tourism board (traveltacoma.com)', 'https://www.visitpiercecounty.com', 'WA', 1000),
+    ('experiencecolumbus', 'Columbus, OH tourism board (experiencecolumbus.com)', 'https://www.experiencecolumbus.com', 'OH', 2000),
+    ('cincinnatiusa', 'Cincinnati, OH tourism board (cincinnatiusa.com)', 'https://www.visitcincy.com', 'OH', 2000),
+    ('experiencegr', 'Grand Rapids, MI tourism board (experiencegr.com)', 'https://www.experiencegr.com', 'MI', 1000),
+    ('visitmilwaukee', 'Milwaukee, WI tourism board (visitmilwaukee.org)', 'https://www.visitmilwaukee.org', 'WI', 2000),
+    ('catchdesmoines', 'Des Moines, IA tourism board (catchdesmoines.com)', 'https://www.catchdesmoines.com', 'IA', 1000),
+    ('visitomaha', 'Omaha, NE tourism board (visitomaha.com)', 'https://www.visitomaha.com', 'NE', 2000),
+    ('visitwichita', 'Wichita, KS tourism board (visitwichita.com)', 'https://www.visitwichita.com', 'KS', 1000),
+    ('visittulsa', 'Tulsa, OK tourism board (visittulsa.com)', 'https://www.visittulsa.com', 'OK', 2000),
+    ('visitokc', 'Oklahoma City, OK tourism board (visitokc.com)', 'https://www.visitokc.com', 'OK', 2000),
+    ('visitknoxville', 'Knoxville, TN tourism board (visitknoxville.com)', 'https://www.visitknoxville.com', 'TN', 1000),
+    ('chattanoogafun', 'Chattanooga, TN tourism board (chattanoogafun.com)', 'https://www.visitchattanooga.com', 'TN', 1000),
+    ('visitlex', 'Lexington, KY tourism board (visitlex.com)', 'https://www.visitlex.com', 'KY', 1000),
+    ('neworleans', 'New Orleans, LA tourism board (neworleans.com)', 'https://www.neworleans.com', 'LA', 2000),
+    ('visitorlando', 'Orlando, FL tourism board (visitorlando.com)', 'https://www.visitorlando.com', 'FL', 2000),
+    ('visittampabay', 'Tampa, FL tourism board (visittampabay.com)', 'https://www.visittampabay.com', 'FL', 2000),
+    ('visitlauderdale', 'Fort Lauderdale, FL tourism board (visitlauderdale.com)', 'https://www.visitlauderdale.com', 'FL', 1000),
+    ('visitraleigh', 'Raleigh, NC tourism board (visitraleigh.com)', 'https://www.visitraleigh.com', 'NC', 1000),
+    ('experiencecolumbiasc', 'Columbia, SC tourism board (experiencecolumbiasc.com)', 'https://www.experiencecolumbiasc.com', 'SC', 1000),
+    ('visitgreenvillesc', 'Greenville, SC tourism board (visitgreenvillesc.com)', 'https://www.visitgreenvillesc.com', 'SC', 1000),
+    ('visitrichmondva', 'Richmond, VA tourism board (visitrichmondva.com)', 'https://www.visitrichmondva.com', 'VA', 1000),
+    ('visitrochester', 'Rochester, NY tourism board (visitrochester.com)', 'https://www.visitrochester.com', 'NY', 1000),
+    ('bostonusa', 'Boston, MA tourism board (bostonusa.com)', 'https://www.meetboston.com', 'MA', 1000),
+    ('discovernewport', 'Newport, RI tourism board (discovernewport.org)', 'https://www.discovernewport.org', 'RI', 1000),
+    ('visitwilmingtonde', 'Wilmington, DE tourism board (visitwilmingtonde.com)', 'https://www.visitwilmingtonde.com', 'DE', 1000),
+    ('visithersheyharrisburg', 'Hershey, PA tourism board (visithersheyharrisburg.org)', 'https://www.visithersheyharrisburg.org', 'PA', 1000),
+    ('visitbloomington', 'Bloomington, IN tourism board (visitbloomington.com)', 'https://www.visitbloomington.com', 'IN', 1000),
+    ('visitfortwayne', 'Fort Wayne, IN tourism board (visitfortwayne.com)', 'https://www.visitfortwayne.com', 'IN', 1000),
+    ('visitevansville', 'Evansville, IN tourism board (visitevansville.com)', 'https://www.exploreevansville.com', 'IN', 1000),
+    ('visitmadison', 'Madison, WI tourism board (visitmadison.com)', 'https://www.visitmadison.com', 'WI', 1000),
+    ('greenbay', 'Green Bay, WI tourism board (greenbay.com)', 'https://www.greenbay.com', 'WI', 1000),
+    ('experiencerochestermn', 'Rochester, MN tourism board (experiencerochestermn.com)', 'https://www.experiencerochestermn.com', 'MN', 1000),
+    ('visitcheyenne', 'Cheyenne, WY tourism board (visitcheyenne.org)', 'https://www.cheyenne.org', 'WY', 1000),
+    ('visitftcollins', 'Fort Collins, CO tourism board (visitftcollins.com)', 'https://www.visitftcollins.com', 'CO', 1000),
+    ('bouldercoloradousa', 'Boulder, CO tourism board (bouldercoloradousa.com)', 'https://www.bouldercoloradousa.com', 'CO', 1000),
+    ('santafe', 'Santa Fe, NM tourism board (santafe.org)', 'https://www.santafe.org', 'NM', 1000),
+    ('visitlascruces', 'Las Cruces, NM tourism board (visitlascruces.com)', 'https://www.visitlascruces.com', 'NM', 1000),
+    ('visitamarillo', 'Amarillo, TX tourism board (visitamarillo.com)', 'https://www.visitamarillo.com', 'TX', 1000),
+    ('visitcorpuschristi', 'Corpus Christi, TX tourism board (visitcorpuschristi.com)', 'https://www.visitcorpuschristi.com', 'TX', 1000),
+    ('irvingtexas', 'Irving, TX tourism board (irvingtexas.com)', 'https://www.irvingtexas.com', 'TX', 1000),
+    ('experiencescottsdale', 'Scottsdale, AZ tourism board (experiencescottsdale.com)', 'https://www.experiencescottsdale.com', 'AZ', 2000),
+    ('playfresno', 'Fresno, CA tourism board (playfresno.com)', 'https://www.visitfresnocounty.org', 'CA', 1000),
+    ('visitgreaterpalmsprings', 'Palm Springs, CA tourism board (visitgreaterpalmsprings.com)', 'https://www.visitgreaterpalmsprings.com', 'CA', 1000),
+    ('visitnapavalley', 'Napa, CA tourism board (visitnapavalley.com)', 'https://www.visitnapavalley.com', 'CA', 1000),
+    ('eugenecascadescoast', 'Eugene, OR tourism board (eugenecascadescoast.org)', 'https://www.eugenecascadescoast.org', 'OR', 1000),
+    ('visitbellevuewa', 'Bellevue, WA tourism board (visitbellevuewa.com)', 'https://www.visitbellevue.com', 'WA', 1000),
+    ('traveljuneau', 'Juneau, AK tourism board (traveljuneau.com)', 'https://www.traveljuneau.com', 'AK', 1000),
+    ('explorefairbanks', 'Fairbanks, AK tourism board (explorefairbanks.com)', 'https://www.explorefairbanks.com', 'AK', 1000),
+    ('unmistakablylawrence', 'Lawrence, KS tourism board (unmistakablylawrence.com)', 'https://www.explorelawrence.com', 'KS', 1000),
+    ('shreveportbossier', 'Shreveport, LA tourism board (shreveport-bossier.org)', 'https://www.visitshreveportbossier.org', 'LA', 1000),
+    ('lafayettetravel', 'Lafayette, LA tourism board (lafayettetravel.com)', 'https://www.lafayettetravel.com', 'LA', 1000),
+    ('mobile', 'Mobile, AL tourism board (mobile.org)', 'https://www.mobile.org', 'AL', 1000),
+    ('huntsville', 'Huntsville, AL tourism board (huntsville.org)', 'https://www.huntsville.org', 'AL', 1000),
+    ('visitwilliamsburg', 'Williamsburg, VA tourism board (visitwilliamsburg.com)', 'https://www.visitwilliamsburg.com', 'VA', 1000),
+    ('fxva', 'Fairfax County, VA tourism board (fxva.com)', 'https://www.fxva.com', 'VA', 1000),
+    ('visitloudoun', 'Loudoun County, VA tourism board (visitloudoun.org)', 'https://www.visitloudoun.org', 'VA', 1000),
+    ('visitannapolis', 'Annapolis, MD tourism board (visitannapolis.org)', 'https://www.visitannapolis.org', 'MD', 1000),
+    ('visitfrederick', 'Frederick, MD tourism board (visitfrederick.org)', 'https://www.visitfrederick.org', 'MD', 1000),
+    ('ococean', 'Ocean City, MD tourism board (ococean.com)', 'https://www.ococean.com', 'MD', 1000),
+    ('atlanticcitynj', 'Atlantic City, NJ tourism board (atlanticcitynj.com)', 'https://www.visitatlanticcity.com', 'NJ', 1000),
+    ('visitrapidcity', 'Rapid City, SD tourism board (visitrapidcity.com)', 'https://www.visitrapidcity.com', 'SD', 1000),
+    ('visiteauclaire', 'Eau Claire, WI tourism board (visiteauclaire.com)', 'https://www.visiteauclaire.com', 'WI', 1000),
+    ('visitstillwater', 'Stillwater, OK tourism board (visitstillwater.org)', 'https://www.visitstillwater.org', 'OK', 1000),
+    ('visitlincoln', 'Lincoln, NE tourism board (visitlincoln.com)', 'https://www.visitlincoln.com', 'NE', 1000),
+]
+for _id, _title, _home, _state, _expected in CITY_SITES:
+    SITES[_id] = _site(_title, _home, _expected)
+
 # State tourism sites that answered with an anti-bot challenge or a plain 403 (26 November 2026): not collected.
 BLOCKED = {"travelalaska.com": "Cloudflare", "visitarizona.com": "Cloudflare", "colorado.com": "Cloudflare",
            "exploregeorgia.org": "Cloudflare", "gohawaii.com": "Cloudflare", "visitidaho.org": "Cloudflare",
@@ -78,6 +166,82 @@ BLOCKED = {"travelalaska.com": "Cloudflare", "visitarizona.com": "Cloudflare", "
            "visitmississippi.org": "plain 403", "visitnebraska.com": "Cloudflare", "travelnevada.com": "Cloudflare",
            "visitnh.gov": "Cloudflare", "visitnj.org": "Incapsula", "ndtourism.com": "Cloudflare",
            "travelsouthdakota.com": "Cloudflare", "ohio.org": "404 to programs"}
+# City and county boards that refused our one robots.txt request (27 November 2026), or did not answer: not collected,
+# never tried another way (no browser, no other address); a person may check them again later.
+CITY_BLOCKED = {
+    'nycgo.com': 'no answer',  # New York City, NY
+    'sftravel.com': 'refused (HTTP 403 or an anti-bot page)',  # San Francisco, CA
+    'sandiego.org': 'refused (HTTP 403 or an anti-bot page)',  # San Diego, CA
+    'visitanchorage.net': 'robots.txt not found (404): the address may have changed',  # Anchorage, AK
+    'memphistravel.com': 'refused (HTTP 403 or an anti-bot page)',  # Memphis, TN
+    'visitmusiccity.com': 'refused (HTTP 403 or an anti-bot page)',  # Nashville, TN
+    'visitsavannah.com': 'refused (HTTP 403 or an anti-bot page)',  # Savannah, GA
+    'visitstpeteclearwater.com': 'refused (HTTP 403 or an anti-bot page)',  # St. Petersburg, FL
+    'visitwinstonsalem.com': 'refused (HTTP 403 or an anti-bot page)',  # Winston-Salem, NC
+    'exploreasheville.com': 'refused (HTTP 403 or an anti-bot page)',  # Asheville, NC
+    'charlestoncvb.com': 'refused (HTTP 403 or an anti-bot page)',  # Charleston, SC
+    'visitvirginiabeach.com': 'refused (HTTP 403 or an anti-bot page)',  # Virginia Beach, VA
+    'visitspringfieldillinois.com': 'robots.txt not found (404): the address may have changed',  # Springfield, IL
+    'visitpeoria.org': 'no answer',  # Peoria, IL
+    'visitsiouxfalls.com': 'robots.txt not found (404): the address may have changed',  # Sioux Falls, SD
+    'visitelpaso.com': 'no answer',  # El Paso, TX
+    'santabarbaraca.com': 'refused (HTTP 403 or an anti-bot page)',  # Santa Barbara, CA
+    'visittopekaks.com': 'no answer',  # Topeka, KS
+    'visitsarasota.com': 'refused (HTTP 403 or an anti-bot page)',  # Sarasota, FL
+    'visitmyrtlebeach.com': 'refused (HTTP 403 or an anti-bot page)',  # Myrtle Beach, SC
+}
+# City boards that answered but run neither Simpleview nor Tempest (mostly WordPress sites with their own listings
+# pages): no common structured platform, so not collected here (the business-website collector may still read
+# each business's own homepage).
+NOT_STRUCTURED = [
+    'choosechicago.com',  # Chicago, IL
+    'visitphilly.com',  # Philadelphia, PA
+    'discoverlosangeles.com',  # Los Angeles, CA
+    'visitseattle.org',  # Seattle, WA
+    'travelportland.com',  # Portland, OR
+    'sanjose.org',  # San Jose, CA
+    'visitrenotahoe.com',  # Reno, NV
+    'visitboise.com',  # Boise, ID
+    'visitkc.com',  # Kansas City, MO
+    'explorestlouis.com',  # St. Louis, MO
+    'thisiscleveland.com',  # Cleveland, OH
+    'inbirmingham.com',  # Birmingham, AL
+    'discoveratlanta.com',  # Atlanta, GA
+    'miamiandbeaches.com',  # Miami, FL
+    'thepalmbeaches.com',  # Palm Beach County, FL
+    'charlottesgotalot.com',  # Charlotte, NC
+    'visitgreensboronc.com',  # Greensboro, NC
+    'visitnorfolk.com',  # Norfolk, VA
+    'washington.org',  # Washington, DC
+    'baltimore.org',  # Baltimore, MD
+    'visitbuffaloniagara.com',  # Buffalo, NY
+    'visitportland.com',  # Portland, ME
+    'visitduluth.com',  # Duluth, MN
+    'visitbillings.com',  # Billings, MT
+    'visitlubbock.org',  # Lubbock, TX
+    'visitplano.com',  # Plano, TX
+    'arlington.org',  # Arlington, TX
+    'visitfrisco.com',  # Frisco, TX
+    'wacoheartoftexas.com',  # Waco, TX
+    'tempetourism.com',  # Tempe, AZ
+    'flagstaffarizona.org',  # Flagstaff, AZ
+    'santacruz.org',  # Santa Cruz, CA
+    'seemonterey.com',  # Monterey, CA
+    'sonomacounty.com',  # Sonoma County, CA
+    'visitbend.com',  # Bend, OR
+    'greaterzion.com',  # St. George, UT
+    'visitcolumbiamo.com',  # Columbia, MO
+    'springfieldmo.org',  # Springfield, MO
+    'experiencefayetteville.com',  # Fayetteville, AR
+    'hotsprings.org',  # Hot Springs, AR
+    'visitingmontgomery.com',  # Montgomery, AL
+    'visittuscaloosa.com',  # Tuscaloosa, AL
+    'visitgainesville.com',  # Gainesville, FL
+    'visittallahassee.com',  # Tallahassee, FL
+    'paradisecoast.com',  # Naples, FL
+    'visitfortmyers.com',  # Fort Myers, FL
+    'visitalexandria.com',  # Alexandria, VA
+]
 
 
 def listing_data(page):

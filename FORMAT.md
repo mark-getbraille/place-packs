@@ -102,6 +102,7 @@ Only the business directories and the government sources of public offices and s
 | Overture places (`overture-places`) | the first of `phones` | the first of `websites` | none |
 | Foursquare OS Places (`fsq-places`) | `tel` | `website` | none |
 | Tourism boards' Simpleview listings (`simpleview-listings`, since November 2026) | `phone` | `website` (the business's own) | `opening_hours` when the listing's hours read as OpenStreetMap syntax |
+| Tourism boards' Tempest listings (`tempest-listings`, since November 2026) | `phone` | `website` (the business's own) | none |
 | Chambers' ChamberMaster directories (`chambermaster-listings`, since November 2026) | `phone` | `website` | none |
 | Businesses' own homepages (`business-websites`, details only) | schema.org `telephone` | none (the place has it) | `openingHoursSpecification` / `openingHours` |
 | Yellow Pages lookups (`yp-lookups`, details only) | the matched result's phone | its website | its hours |
@@ -109,7 +110,7 @@ Only the business directories and the government sources of public offices and s
 The two details-only sources (`placepacks/details.py`, reader `details`) add no places: their files hold
 `key, lat, lon, phone, website, opening_hours, matched_on, checked` for places other sources list, and the build
 (reading them after every other source) gives the place listed now under each key only the fields it lacks
-(`PackWriter.fill_details`), cleaned with the same rules. The Simpleview and ChamberMaster listings are places of
+(`PackWriter.fill_details`), cleaned with the same rules. The Simpleview, Tempest and ChamberMaster listings are places of
 their own unless another business source has the same phone number within 500 m or the same name within 75 m; then
 their details go to that place (`drop_duplicates` with `dedupe_phone` and `dedupe_carry`).
 

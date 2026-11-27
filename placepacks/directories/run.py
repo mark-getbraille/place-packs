@@ -3,12 +3,20 @@ the month's set (the workflow's last job). The same shape as the chain collector
 release.py), for the collections:
 
   simpleview     units: the tourism boards' sites (placepacks/directories/simpleview.py SITES)
+  tempest        units: the tourism boards' sites on the Tempest platform (placepacks/directories/tempest.py SITES)
   chambermaster  units: the states, each found through the US Chamber of Commerce's directory
                  (placepacks/directories/chambermaster.py STATES)
 
     python -m placepacks.directories.run simpleview --list [--only "visitdenver iloveny"]   the matrix
     python -m placepacks.directories.run simpleview --unit visitdenver --out out/           one unit's CSV + summary
+    python -m placepacks.directories.run simpleview --unit "visitdenver visitkc" --out out/  several, one after another
     python -m placepacks.directories.run simpleview --publish --dir results/ --units "..."  the month's set
+
+Matrix groups: a collection with many small units (the tourism boards' sites: "group_minutes" in its settings)
+is run as GROUPS of units, so the monthly workflow stays well under GitHub's limits (at most 256 jobs in a matrix,
+6 hours a job): matrix() packs the units into groups of about group_minutes of expected work each (a site's
+expected listings times 3 seconds), and each matrix job runs its group's units one after another (run_units), every
+unit with its own summary and CSV, so the release still keeps or carries over each site on its own.
 
 The summary (out/<unit>.json) says how it went: "ok" (everything was read: the CSV is the unit's whole set),
 "blocked" (a site refused us: stopped at once, never got round), "incomplete" (the request budget or the time ran
@@ -30,19 +38,29 @@ import time
 from placepacks.chains.polite import Blocked, BudgetSpent, Polite
 
 MARGIN_MIN = 10        # minutes kept free before the job's time limit, to write the files
+GROUP_TIMEOUT = 350    # the longest a matrix job of a group may run, in minutes (GitHub stops a job at 360)
+SECONDS_PER_ITEM = 3   # the expected seconds per listing, for packing units into groups
 
 
 def collections():
     """{name: its settings}: units {id: {"title", "expected", "budget", "timeout"}}, collect(client, unit, stats),
     fields (the CSV's columns), agent, pause, and the release's tag, prefix, title and notes."""
-    from placepacks.directories import chambermaster, simpleview
+    from placepacks.directories import chambermaster, simpleview, tempest
     return {
         "simpleview": {"units": simpleview.SITES, "collect": simpleview.collect, "fields": simpleview.FIELDS,
                        "agent": simpleview.USER_AGENT, "pause": simpleview.PAUSE, "tag": "simpleview-listings",
+                       "group_minutes": 300,
                        "prefix": "simpleview-listings", "title": "Tourism boards' Simpleview listings",
                        "notes": "Monthly listings of tourism boards' Simpleview sites (placepacks/directories/"
                                 "simpleview.py), read by the pack build (source simpleview-listings). Not for "
                                 "download."},
+        "tempest": {"units": tempest.SITES, "collect": tempest.collect, "fields": tempest.FIELDS,
+                    "agent": tempest.USER_AGENT, "pause": tempest.PAUSE, "tag": "tempest-listings",
+                    "group_minutes": 300, "prefix": "tempest-listings",
+                    "title": "Tourism boards' Tempest listings",
+                    "notes": "Monthly partner listings of city and county tourism boards' Tempest sites "
+                             "(placepacks/directories/tempest.py), read by the pack build (source "
+                             "tempest-listings). Not for download."},
         "chambermaster": {"units": chambermaster.STATES, "collect": chambermaster.collect,
                           "fields": chambermaster.FIELDS, "agent": chambermaster.USER_AGENT,
                           "pause": chambermaster.PAUSE, "tag": "chambermaster-listings",
@@ -53,14 +71,16 @@ def collections():
     }
 
 
-def run(collection, unit, out, opener=None, sleep=time.sleep, clock=time.monotonic, today=None):
-    """Collect one unit into out/ (see the module docstring). Returns its summary dict."""
+def run(collection, unit, out, opener=None, sleep=time.sleep, clock=time.monotonic, today=None, minutes=None):
+    """Collect one unit into out/ (see the module docstring). minutes: the time this unit may take (default its
+    own "timeout"; a group gives each unit what is left of the job's time). Returns its summary dict."""
     spec = collections()[collection]
     unit_spec = spec["units"][unit]
     os.makedirs(out, exist_ok=True)
     started = clock()
+    limit = unit_spec["timeout"] if minutes is None else minutes
     client = Polite(unit_spec["budget"], spec["pause"], opener=opener, sleep=sleep, clock=clock,
-                    deadline=started + 60 * max(5, unit_spec["timeout"] - MARGIN_MIN), agent=spec["agent"])
+                    deadline=started + 60 * max(1, limit - MARGIN_MIN), agent=spec["agent"])
     stats, rows, status, reason = {}, [], "ok", ""
     try:
         for row in spec["collect"](client, unit, stats):
@@ -94,15 +114,76 @@ def run(collection, unit, out, opener=None, sleep=time.sleep, clock=time.monoton
     return summary
 
 
+def expected_minutes(unit_spec):
+    """About how many minutes one unit's collection takes: its expected listings at SECONDS_PER_ITEM each, plus
+    five minutes for robots.txt and the sitemaps."""
+    return int(unit_spec.get("expected", 0) * SECONDS_PER_ITEM / 60) + 5
+
+
+def groups(units, wanted, capacity):
+    """The wanted unit ids packed into groups of at most `capacity` expected minutes each (the biggest units
+    first, each into the first group with room; a unit bigger than capacity gets a group of its own). Returns
+    [[id, ...], ...] in a stable order."""
+    packed = []
+    for u in sorted(wanted, key=lambda u: (-expected_minutes(units[u]), u)):
+        need = expected_minutes(units[u])
+        for g in packed:
+            if g[0] + need <= capacity:
+                g[0] += need
+                g[1].append(u)
+                break
+        else:
+            packed.append([need, [u]])
+    return [g[1] for g in packed]
+
+
 def matrix(collection, only=""):
-    """[{"unit", "timeout"}] of the units to run (only: ids separated by spaces or commas; empty: all). An unknown
-    id stops with an error that lists the known ones."""
-    units = collections()[collection]["units"]
+    """The matrix jobs of a run (only: ids separated by spaces or commas; empty: all). An unknown id stops with an
+    error that lists the known ones. A collection without "group_minutes": [{"unit", "timeout"}], one job a unit;
+    with it: [{"unit": "group-01", "units": "id id ...", "timeout"}], one job a group (see the module
+    docstring)."""
+    spec = collections()[collection]
+    units = spec["units"]
     wanted = [u for u in only.replace(",", " ").split() if u] or list(units)
     unknown = [u for u in wanted if u not in units]
     if unknown:
         raise SystemExit(f"unknown unit(s): {', '.join(unknown)}; known: {', '.join(units)}")
-    return [{"unit": u, "timeout": units[u]["timeout"]} for u in wanted]
+    if not spec.get("group_minutes"):
+        return [{"unit": u, "timeout": units[u]["timeout"]} for u in wanted]
+    out = []
+    for i, members in enumerate(groups(units, wanted, spec["group_minutes"]), 1):
+        need = sum(expected_minutes(units[u]) for u in members)
+        out.append({"unit": f"group-{i:02d}", "units": " ".join(members),
+                    "timeout": min(GROUP_TIMEOUT, int(need * 1.5) + 2 * MARGIN_MIN)})
+    return out
+
+
+def run_units(collection, ids, out, total_minutes=GROUP_TIMEOUT, opener=None, sleep=time.sleep,
+              clock=time.monotonic, today=None):
+    """Run several units one after another in one job (a matrix group), sharing the job's total_minutes: each
+    unit may take what is left, but at most twice its expected time (at least 30 minutes), so one slow site does
+    not use up the others' time. A unit with no time left is recorded as "incomplete" without a request (its
+    previous file is kept). Returns the summaries."""
+    spec = collections()[collection]
+    end = clock() + 60 * (total_minutes - MARGIN_MIN)
+    summaries = []
+    for unit in ids:
+        left = (end - clock()) / 60
+        if left < MARGIN_MIN + 2:
+            unit_spec = spec["units"][unit]
+            summary = {"chain": unit, "title": unit_spec["title"], "status": "incomplete",
+                       "reason": "no time was left in the group's job", "rows": 0,
+                       "expected": unit_spec["expected"], "endpoint": collection, "requests": 0, "hosts": 0,
+                       "seconds": 0, "date": (today or datetime.date.today()).isoformat(), "stats": {}}
+            os.makedirs(out, exist_ok=True)
+            with open(os.path.join(out, f"{unit}.json"), "w", encoding="utf-8") as f:
+                json.dump(summary, f, indent=1)
+            summaries.append(summary)
+            continue
+        share = max(30, 2 * expected_minutes(spec["units"][unit])) + MARGIN_MIN
+        summaries.append(run(collection, unit, out, opener=opener, sleep=sleep, clock=clock, today=today,
+                             minutes=min(left, share)))
+    return summaries
 
 
 def publish(collection, folder, date, ran, sleep=time.sleep):
@@ -116,10 +197,11 @@ def publish(collection, folder, date, ran, sleep=time.sleep):
 def main(argv=None):
     """The command line (see the module docstring)."""
     p = argparse.ArgumentParser()
-    p.add_argument("collection", choices=["simpleview", "chambermaster"])
+    p.add_argument("collection", choices=["simpleview", "tempest", "chambermaster"])
     p.add_argument("--list", action="store_true")
     p.add_argument("--only", default="")
-    p.add_argument("--unit", default="")
+    p.add_argument("--unit", default="", help="a unit's id, or several separated by spaces (a matrix group)")
+    p.add_argument("--minutes", type=int, default=GROUP_TIMEOUT, help="the job's time for several units")
     p.add_argument("--out", default="directory-out")
     p.add_argument("--publish", action="store_true")
     p.add_argument("--dir", default="results")
@@ -140,9 +222,14 @@ def main(argv=None):
             with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
                 f.write(text)
         return 0
-    if a.unit not in collections()[a.collection]["units"]:
-        raise SystemExit(f"unknown unit {a.unit!r}")
-    run(a.collection, a.unit, a.out)
+    ids = a.unit.replace(",", " ").split()
+    unknown = [u for u in ids if u not in collections()[a.collection]["units"]]
+    if not ids or unknown:
+        raise SystemExit(f"unknown unit {' '.join(unknown) or a.unit!r}")
+    if len(ids) == 1:
+        run(a.collection, ids[0], a.out)
+    else:
+        run_units(a.collection, ids, a.out, total_minutes=a.minutes)
     return 0
 
 

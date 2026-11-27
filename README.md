@@ -191,6 +191,16 @@ Each region has these parts:
   forecast zone" (`weather_zone`) and "my NOAA Weather Radio frequency" (`weather_radio`). What could not be used
   (the SSA office locator, the VA Facilities API without a key, SAMHSA's locator, 211, FEMA's shelters) is in
   sources.json "rejected", with the reason.
+- **Inside a site** (since November 2026, in core and extra, no extra download): the buildings, accessible
+  entrances, elevators, accessible parking and restrooms, step-free routes, help and information desks, emergency
+  phones and dining of college campuses, hospitals, zoos, malls, airports and stadiums, each with its site, its
+  building and its floor (`site_features`: OpenStreetMap's, and the campus maps' found by the map vendor discovery,
+  `placepacks/mapvendors`). `PackReader.features_of(site, kinds)` answers "which buildings have an elevator",
+  `features_near(lat, lon, kinds)` "is there an accessible entrance near me" and `building_of(key)` "which building
+  is this entrance on". Schools and colleges have their phone, website, grades and type, and colleges their
+  disability services office's page (NCES); hospitals and clinics their accessibility facts (wheelchair access, sign
+  language, TTY, braille and large print, hours) from health insurers' public provider directories and their own
+  pages. FORMAT.md, "Site features" and "School and college details".
 
 Core and extra are files of the release `packs`. The names, businesses and addresses of each publish are in a
 release of their own, `packs-detail-YYYYMMDD` (GitHub allows 1000 files in one release); each entry of `packs.json`

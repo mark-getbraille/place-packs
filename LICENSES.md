@@ -162,6 +162,13 @@ licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD
   directory) although yellowpages.com's robots.txt disallows its search pages; and (27 November 2026) directories
   that answer without a challenge searched town by town (Hotfrog, obeying its robots.txt). All are collected
   politely (an identified User-Agent, paced, never past a refusal, a challenge or a login).
+  Also under `directory-facts`, by the owner's decisions of 27 November 2026: campus and indoor maps' buildings and
+  accessibility features (`map-vendors`: MazeMap's public API, universities' open ArcGIS building layers; their
+  robots.txt obeyed, so Concept3D, whose API's robots.txt disallows programs, is not read), and hospitals' and
+  clinics' accessibility facts (`health-access`, `health-access-businesses`: health insurers' public FHIR provider
+  directories, published openly under the CMS Interoperability and Patient Access rule, Location records only; and
+  a fixed list of facts from hospitals' own accessibility pages). No person's name is kept (rooms, offices and
+  practitioners are never read).
 - **OpenHistoricalMap:** CC0, except features with their own `license` tag, which the packs leave out.
 - **Personal data:** the business sources keep only a business's trade name, class, position and dates. Records
   that may be someone's home (home-based businesses, contractors, mobile caterers, childminders, short-term rentals,

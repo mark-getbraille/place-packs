@@ -53,8 +53,9 @@ CONTACT_SOURCES = (("alltheplaces", "chain-locators") + GOVERNMENT_SOURCES + ("o
 HOURS_SOURCES = ("alltheplaces", "chain-locators") + GOVERNMENT_SOURCES + ("simpleview-listings",) + DETAIL_ONLY_SOURCES
 CONTACT_FIELDS = ("phone", "website", "opening_hours")
 
-# A name that is a person's: "Alice Example", "Jane Q. Doe Jr." (as fetch._PERSON, used for All The Places).
-PERSON_NAME = re.compile(r"^[A-Z][a-z]+(?: [A-Z]\.?)?(?: [A-Z][a-z'-]+){1,2}(?:,? (?:Jr|Sr|II|III)\.?)?$")
+# A name that is a person's: "Alice Example", "Jane Q. Doe Jr." -- the shape of a name AND a known first name
+# (placepacks/person.py; "Golden Corral" or "Muddy Waters" are not people). Also used for All The Places.
+from placepacks.person import PERSON as PERSON_NAME  # noqa: E402
 # Fine types that are an individual's own office (as fetch.ATP_PERSONAL, in the words of Overture and Foursquare).
 PERSONAL_TYPES = re.compile(r"insurance|estate agent|real estate|realtor|lawyer|attorney|law office|legal service|"
                             r"financial advis|financial planner|tax advis|tax prepar|accountant|notary", re.I)

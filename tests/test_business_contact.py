@@ -314,3 +314,11 @@ def test_find_and_local_services_give_the_details_best_source_first(tmp_path):
     assert Finder(packs=[reader]).details("alltheplaces:rx:1")["phone"] == "802-555-0180"
     near = LocalServices(packs=[reader]).nearest(*SPOT, "pharmacy")
     assert near["places"][0]["phone"] == "802-555-0180" and "Phone 802-555-0180." in near["phrase"]
+
+
+def test_a_person_needs_a_first_name_not_just_two_capitalised_words():
+    """"Golden Corral", "Muddy Waters" and "Lost Lake" are not people; "Mary Jones" and "Jane Q. Doe Jr." are."""
+    from placepacks.person import PERSON
+    assert not any(PERSON.match(n) for n in ("Golden Corral", "Muddy Waters", "Lost Lake", "Taco Bell", "Royal Oak"))
+    assert all(PERSON.match(n) for n in ("Mary Jones", "Jane Q. Doe Jr.", "John Smith"))
+    assert contact.allowed("overture-places", "Muddy Waters") and not contact.allowed("overture-places", "Mary Jones")

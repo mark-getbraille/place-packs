@@ -5,6 +5,10 @@
 The code of this repository (the `placepacks` package, the tools and the workflows) is under the MIT licence
 (`LICENSE`).
 
+`placepacks/data/first_names.txt` (used only to tell a person's name from a business's, never written into a pack)
+comes from the US Census Bureau's 1990 first-name lists (dist.female.first, dist.male.first): a US government work in
+the public domain.
+
 ## The data: each pack is a collective database
 
 A pack mixes OpenStreetMap with other open data. OpenStreetMap is under the Open Database License (ODbL) 1.0, which

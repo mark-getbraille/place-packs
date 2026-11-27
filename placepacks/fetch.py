@@ -1044,7 +1044,7 @@ def bunzip(path, target):
 # Offices of individual people (an insurance agent's or an estate agent's own office, a financial adviser): left out.
 ATP_PERSONAL = {"office": {"insurance", "estate_agent", "financial_advisor", "financial", "lawyer", "tax_advisor",
                            "accountant"}}
-_PERSON = re.compile(r"^[A-Z][a-z]+(?: [A-Z]\.?)?(?: [A-Z][a-z'-]+){1,2}(?:,? (?:Jr|Sr|II|III)\.?)?$")
+from placepacks.person import PERSON as _PERSON  # noqa: E402  (a person's name: shape AND a known first name)
 
 
 ATP_FIELDS = ["key", "spider", "name", "branch", "brand", "brand_wikidata", "main_key", "main_value", "type", "lat",

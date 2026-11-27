@@ -562,7 +562,9 @@ def test_a_brand_that_looks_like_a_person_is_kept_with_its_details(tmp_path):
     assert [(r["skip"], r.get("name")) for r in rows] == [("", "Pretend Burgers"), ("noname", None)]
     assert contact.clean("chain-locators", "Pretend Burgers", None, "8025550188", brand="Pretend Burgers") == {
         "phone": "802-555-0188"}
-    assert contact.clean("chain-locators", "Pretend Burgers", None, "8025550188") == {}     # no brand: a person?
+    # Without a brand, "Pretend Burgers" is still not a person (no first name); "Mary Jones" is.
+    assert contact.clean("chain-locators", "Pretend Burgers", None, "8025550188") == {"phone": "802-555-0188"}
+    assert contact.clean("chain-locators", "Mary Jones", None, "8025550188") == {}
     assert base.make_row("x", "1", "Pretend Burgers", {"amenity": "fast_food"}, 44.2, -72.5,
                          brand="Pretend Burgers")["name"] == "Pretend Burgers"
 

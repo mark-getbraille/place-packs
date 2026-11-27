@@ -15,6 +15,9 @@ release.py), for the collections:
                  (placepacks/health_access UNITS)
   malls          units: the mall operators and the shares of independent malls (placepacks/indoor MALL_UNITS)
   airports       units: the shares of the airports with scheduled service (placepacks/indoor AIRPORT_UNITS)
+  streetaccess   units: accessible pedestrian signals, curb ramp shares, transit elevator lists and Amtrak
+                 stations (placepacks/street_access UNITS)
+  museumaccess   units: the shares of museums' own accessibility pages (placepacks/museum_access UNITS)
 
     python -m placepacks.directories.run simpleview --list [--only "visitdenver iloveny"]   the matrix
     python -m placepacks.directories.run simpleview --unit visitdenver --out out/           one unit's CSV + summary
@@ -55,9 +58,10 @@ SECONDS_PER_ITEM = 3   # the expected seconds per listing, for packing units int
 def collections():
     """{name: its settings}: units {id: {"title", "expected", "budget", "timeout"}}, collect(client, unit, stats),
     fields (the CSV's columns), agent, pause, and the release's tag, prefix, title and notes."""
-    from placepacks import health_access, indoor, mapvendors
+    from placepacks import health_access, indoor, mapvendors, museum_access, street_access
     from placepacks.directories import chambermaster, city_facilities, hotfrog, simpleview, tempest
     from placepacks.mapvendors import discover
+    from placepacks.street_access import open_data
     return {
         # Campus and indoor maps (placepacks/mapvendors): the units read the month's map list (MAP_VENDORS_LIST).
         "mapvendors": {"units": mapvendors.UNITS, "collect": mapvendors.collect, "fields": mapvendors.FIELDS,
@@ -94,6 +98,27 @@ def collections():
                               "services and ground transport of US airports from their own websites and public "
                               "Atrius maps (placepacks/indoor/airports.py), read by the pack build (sources "
                               "airport-directories and airport-directories-businesses). Not for download."},
+        # Street and transit accessibility (placepacks/street_access): the signals and curb ramps units read the
+        # month's layer list (STREET_ACCESS_LIST), stored in the release beside the set.
+        "streetaccess": {"units": street_access.UNITS, "collect": street_access.collect,
+                         "fields": street_access.FIELDS, "agent": street_access.USER_AGENT,
+                         "pause": street_access.PAUSE, "tag": street_access.TAG, "prefix": "street-access",
+                         "title": "Street and transit accessibility",
+                         "extra_files": {open_data.LIST_FILE: open_data.RELEASE_LIST},
+                         "notes": "Monthly accessible pedestrian signals and curb ramps from US cities' and "
+                                  "transportation departments' open data, transit agencies' elevator and "
+                                  "escalator lists and Amtrak stations' accessibility (placepacks/street_access), "
+                                  "read by the pack build (sources street-access and street-access-navigation). "
+                                  f"The month's layer list is {open_data.RELEASE_LIST}. Not for download."},
+        # Museums' own accessibility pages (placepacks/museum_access.py).
+        "museumaccess": {"units": museum_access.UNITS, "collect": museum_access.collect,
+                         "fields": museum_access.FIELDS, "agent": museum_access.USER_AGENT,
+                         "pause": museum_access.PAUSE, "tag": museum_access.TAG, "prefix": "museum-access",
+                         "title": "Museum accessibility",
+                         "notes": "Monthly accessibility facts of US museums (audio description, touch tours, "
+                                  "braille, sign language, wheelchairs, sensory-friendly programs ...) from their "
+                                  "own websites (placepacks/museum_access.py), read by the pack build (source "
+                                  "museum-access). Not for download."},
         "hotfrog": {"units": hotfrog.STATES, "collect": hotfrog.collect, "fields": hotfrog.FIELDS,
                     "agent": hotfrog.USER_AGENT, "pause": hotfrog.PAUSE, "tag": "hotfrog-listings",
                     "prefix": "hotfrog-listings", "title": "Hotfrog business listings",
@@ -274,7 +299,8 @@ def main(argv=None):
     """The command line (see the module docstring)."""
     p = argparse.ArgumentParser()
     p.add_argument("collection", choices=["simpleview", "tempest", "chambermaster", "cityfacilities", "hotfrog",
-                                          "mapvendors", "healthaccess", "malls", "airports"])
+                                          "mapvendors", "healthaccess", "malls", "airports", "streetaccess",
+                                          "museumaccess"])
     p.add_argument("--list", action="store_true")
     p.add_argument("--only", default="")
     p.add_argument("--unit", default="", help="a unit's id, or several separated by spaces (a matrix group)")

@@ -1,5 +1,5 @@
 {
- "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). Three exceptions, by the owner's decisions of 26 November 2026: chain-locators, facts read from big chains' own store locators (licence store-locator-facts); government facts used regardless of a copy's missing licence or a site's own terms (licence government-facts: the Social Security offices' ArcGIS copy, US cities' and counties' open-data layers of public places, Recreation.gov's RIDB export, California's health and human services files); and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview and Tempest listings, chambers' ChamberMaster directories, Hotfrog's business listings, businesses' own homepages, Yellow Pages lookups of businesses already in the packs; since 27 November 2026 also campus and indoor maps' buildings and accessibility features, map-vendors, and hospitals' and clinics' accessibility facts from insurers' public provider directories and hospitals' own pages, health-access). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
+ "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). Three exceptions, by the owner's decisions of 26 November 2026: chain-locators, facts read from big chains' own store locators (licence store-locator-facts); government facts used regardless of a copy's missing licence or a site's own terms (licence government-facts: the Social Security offices' ArcGIS copy, US cities' and counties' open-data layers of public places, Recreation.gov's RIDB export, California's health and human services files); and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview and Tempest listings, chambers' ChamberMaster directories, Hotfrog's business listings, businesses' own homepages, Yellow Pages lookups of businesses already in the packs; since 27 November 2026 also campus and indoor maps' buildings and accessibility features, map-vendors, hospitals' and clinics' accessibility facts from insurers' public provider directories and hospitals' own pages, health-access, and museums' accessibility facts from their own pages, museum-access); since 27 November 2026 the government facts also include street-access and street-access-navigation (cities' and transportation departments' accessible pedestrian signals and curb ramps, transit agencies' elevator lists, Amtrak's station information). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
  "settings": {
   "tiger_year": "2025",
   "tiger_seed_years": [
@@ -166,12 +166,12 @@
    "file": ""
   },
   "government-facts": {
-   "name": "Facts published by US government agencies, used by the owner's decision of 26 November 2026 even where the copy carries no licence or the site's own terms or robots.txt say otherwise (the Esri-hosted copy of the Social Security Administration's field office list, Recreation.gov's RIDB export, the California Health and Human Services open data portal). Federal works are public domain (17 U.S.C. 105) and facts are not protected by copyright in the United States (Feist Publications v. Rural Telephone Service, 499 U.S. 340, 1991); state agencies' facility lists are public records. Only facts are kept (names, positions, addresses, public telephone numbers, hours, accessibility), collected politely (identified, rate-limited, never past a refusal or a challenge)",
+   "name": "Facts published by US government agencies, used by the owner's decision of 26 November 2026 even where the copy carries no licence or the site's own terms or robots.txt say otherwise (the Esri-hosted copy of the Social Security Administration's field office list, Recreation.gov's RIDB export, the California Health and Human Services open data portal; since 27 November 2026 also US cities', counties' and state transportation departments' open-data layers of accessible pedestrian signals and curb ramps, transit agencies' elevator lists, and Amtrak's station information, Amtrak being a federally chartered corporation owned by the United States). Federal works are public domain (17 U.S.C. 105) and facts are not protected by copyright in the United States (Feist Publications v. Rural Telephone Service, 499 U.S. 340, 1991); state agencies' facility lists are public records. Only facts are kept (names, positions, addresses, public telephone numbers, hours, accessibility), collected politely (identified, rate-limited, never past a refusal or a challenge)",
    "url": "https://www.usa.gov/government-works",
    "file": ""
   },
   "directory-facts": {
-   "name": "Facts read from public listing pages: tourism boards' visitor listings (Simpleview), chambers of commerce's public member directories (ChamberMaster), businesses' own homepages, and Yellow Pages lookups of businesses already in the packs (names, street addresses, positions, telephone numbers, websites, opening hours, categories, accessibility notes). The sites grant no licence; facts are not protected by copyright in the United States (Feist Publications v. Rural Telephone Service, 499 U.S. 340, 1991). Collected by the owner's decisions of 26 November 2026, politely (identified, rate-limited, never past a refusal, a challenge or a login); only facts are kept, never reviews, ratings, descriptions, photos, e-mail addresses or people's names, and one-person and home businesses are left out",
+   "name": "Facts read from public listing pages: tourism boards' visitor listings (Simpleview), chambers of commerce's public member directories (ChamberMaster), businesses' own homepages, Yellow Pages lookups of businesses already in the packs, and (since 27 November 2026) museums' own accessibility pages (names, street addresses, positions, telephone numbers, websites, opening hours, categories, accessibility notes). The sites grant no licence; facts are not protected by copyright in the United States (Feist Publications v. Rural Telephone Service, 499 U.S. 340, 1991). Collected by the owner's decisions of 26 November 2026, politely (identified, rate-limited, never past a refusal, a challenge or a login); only facts are kept, never reviews, ratings, descriptions, photos, e-mail addresses or people's names, and one-person and home businesses are left out",
    "url": "https://supreme.justia.com/cases/federal/us/499/340/",
    "file": ""
   }
@@ -14045,6 +14045,134 @@
    ],
    "history": "From the first build on (a place dropped from the source is closed at its last build).",
    "notes": "The open entrances and access points of Connecticut's state parks, forests, wildlife management areas and water access areas. Boat launches are left out: they come from ct-deep-boat-launches."
+  },
+  {
+   "id": "street-access",
+   "name": "Street and transit accessibility: accessible pedestrian signals from US cities' and transportation departments' open data, transit station elevators and escalators (MTA New York City Transit, MBTA) and Amtrak stations' accessibility and staffed hours (site features)",
+   "short": "US cities' and transportation departments' open data, transit agencies and Amtrak",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "government-facts",
+   "attribution": "Accessible pedestrian signals from the open-data layers of US cities, counties and state transportation departments (found each month; the month's list of layers, with each publisher, is layers-street-access.json in this repository's release street-access); station elevators and escalators from MTA New York City Transit's and the MBTA's public lists; Amtrak station accessibility from Amtrak's Great American Stations; read by place-packs (placepacks/street_access).",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/street_access",
+   "reader": "site_features",
+   "kind": "points",
+   "fetch": {
+    "method": "release_csv",
+    "release": "street-access",
+    "prefix": "street-access"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "key": "key"
+   },
+   "kinds": [
+    "accessible pedestrian signal",
+    "elevator",
+    "escalator",
+    "accessible restroom",
+    "accessibility service"
+   ],
+   "sites": false,
+   "history": "No history: the site features of the newest monthly set (the site_features table is written whole each build); each signal's install date is in its note. A unit whose collection fails or is blocked keeps the previous set's file (up to three months).",
+   "contact": "An Amtrak station's waiting-room hours (OpenStreetMap syntax) where its place (ntad-amtrak) lacks them; its note lists the accessibility facts and the ticket office's and passenger assistance's hours (\"Accessibility (Amtrak station information): accessible platform; accessible restrooms; high platform; wheelchair available; no wheelchair lift; elevator; ticket office Mo-Su 05:00-23:30; passenger assistance Mo-Su 05:30-23:30\").",
+   "notes": "Owner's request of 27 November 2026 (notes/helper-rules.txt, queue item Q4); government data used regardless of a copy's licence (owner's decision of 26 November 2026); the standing limits: facts only; no people's names (a name added to an intersection's description is taken out), no e-mail addresses, no free-text comments; polite and identified (User-Agent place-packs-street-access), at least 3 seconds between requests to one host (10 for Great American Stations, its robots.txt Crawl-delay), a request budget per unit, robots.txt read and obeyed for websites; never past a CAPTCHA, a login or an anti-bot challenge, no headless or Chrome-imitating browser, no other IP address: a refusal is recorded as blocked and left. Units of the monthly street-access workflow (the 12th): signals (layers found in the Socrata catalogue and ArcGIS Hub by the words accessible pedestrian signal, audible signal, APS, pedestrian push button; a publisher must be a US government: a city, county, town, state or city transportation or public works department, a regional planning body; never a university, a company, a consultant's or a person's own account; positions checked to lie in a US state; fields mapped automatically: the intersection's name or its two streets, the install date, the status, locator tone, vibrating arrow, push button, speech message and an APS yes/no column; rows marked planned, pending, removed or without an APS left out); curb-ramps-1..4 (found the same way, for the navigation part only); mta-elevators (New York City Transit's elevator and escalator list, api-endpoint.mta.info nyct_ene_equipments.json, placed by the MTA station list on data.ny.gov, dataset 39hk-dx4f: each elevator and escalator with what it serves and whether it is ADA accessible; inactive equipment and other operators' left out); mbta-elevators (the MBTA's V3 API /facilities, without a key, at most 20 requests a minute); amtrak-stations (Great American Stations' station pages, about 530: the Accessibility list, the station building's elevator and the waiting room's, ticket office's and passenger assistance's hours; the station's position from the BTS layer ntad-amtrak; the regional contact's name and e-mail, the history and the ridership never read; Amtrak is a federally chartered corporation owned by the United States). A first check on 27 November 2026 (about 60 requests): the sweep found accessible pedestrian signal layers of New York City (4,546 signals with install dates), Seattle (456 in service), Charlotte, Atlanta, New Orleans, Ann Arbor and the Utah DOT (two layers), and about 30 curb ramp layers (New York City's pedestrian ramps, Austin, Tacoma, Portland, Sioux Falls, Anne Arundel County, Lake County IL, the Alaska, Colorado, Utah and Virginia DOTs, Washington DC ...); MTA: 370 elevators and 226 escalators in 143 stations; MBTA: 252 elevators and 169 escalators; Great American Stations answered (three stations read)."
+  },
+  {
+   "id": "street-access-navigation",
+   "name": "Accessible pedestrian signals and curb ramps from US cities' and transportation departments' open data, for the navigation part",
+   "short": "US cities' and transportation departments' open data",
+   "part": "navigation",
+   "countries": [
+    "US"
+   ],
+   "licence": "government-facts",
+   "attribution": "Accessible pedestrian signals and curb ramps from the open-data layers of US cities, counties and state transportation departments (found each month; the month's list of layers, with each publisher, is layers-street-access.json in this repository's release street-access), read by place-packs (placepacks/street_access/open_data.py).",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/street_access",
+   "reader": "nav_street_access",
+   "kind": "points",
+   "fetch": {
+    "method": "release_csv",
+    "release": "street-access",
+    "prefix": "street-access"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "key": "key"
+   },
+   "kinds": [
+    "accessible pedestrian signal",
+    "curb ramp"
+   ],
+   "history": "No history: the signals and curb ramps of the newest monthly set (the navigation part is rebuilt whole each time); each signal's install date and each ramp's year built are in its tags.",
+   "notes": "The same monthly set as street-access, read again for the navigation part's nav_features (kinds \"accessible pedestrian signal\" and \"curb ramp\"; tags installed, locator_tone, vibration, button, speech, type, status; compliant, detectable_warning, condition; source: the publisher). Navigator.crossing_here says a listed signal within 35 m of a crossing (\"The city lists an accessible pedestrian signal here (installed 2023-12-16)\") and the listed curb ramps within 20 m. Curb ramps are only here, not in the extra part: a big city lists 100,000 or more, too many for the default download. Cities' sidewalk layers are not read: OpenStreetMap's sidewalks are already in the navigation part (footway=sidewalk ways with their surface, width and incline), and a city's every sidewalk as lines would about double the part's size without joining its routing graph."
+  },
+  {
+   "id": "gtfs-station-features",
+   "name": "Transit stations' entrances, elevators, escalators and stairs (GTFS pathways and levels) and stops' wheelchair boarding, from the open GTFS feeds (site features)",
+   "short": "transit agencies' open GTFS feeds",
+   "part": "extra",
+   "countries": [
+    "US",
+    "CA"
+   ],
+   "licence": "per-feed-open",
+   "attribution": "Station entrances, elevators, escalators and stairs, and stops' wheelchair boarding, from the agencies' GTFS feeds listed in the pack, each under its own open licence, found through the Mobility Database (mobilitydatabase.org).",
+   "url": "https://mobilitydatabase.org",
+   "reader": "gtfs_station_features",
+   "fetch": {
+    "method": "same_as",
+    "same_as": "gtfs"
+   },
+   "history": "No history: the stations as the feeds describe them at the build.",
+   "notes": "Queue item Q4 (placepacks/readers/gtfs_stations.py). From the same feed files as the source gtfs: stops.txt's station entrances (location_type 2; kind accessible entrance when wheelchair_boarding is 1, its parent station's value when it says 0), levels.txt's level names, and pathways.txt's stairs (with stair_count), escalators and elevators, each once per pair of points, at its end's position or its station's; each tied to its station (site: the station's key in the extra part). Every stop and station whose wheelchair_boarding (or its station's) says yes or no gets the note \"Wheelchair boarding: yes (the agency's timetable data)\". The navigation part's gtfs-navigation reader adds the same entrances, elevators, escalators and stairs as navigation features. A feed without pathways.txt gives no station features (many bus-only feeds)."
+  },
+  {
+   "id": "museum-access",
+   "name": "Museum accessibility: audio description, touch tours, braille and large print, sign language, assistive listening, wheelchairs, accessible entrances, service animals and sensory-friendly programs, from US museums' own websites",
+   "short": "the museums' own websites",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "attribution": "Accessibility facts of US museums from their own websites (the museums of the IMLS Museum Universe Data File and Wikidata that have a website), read by place-packs (placepacks/museum_access.py); facts only.",
+   "url": "https://github.com/mark-getbraille/place-packs/blob/main/placepacks/museum_access.py",
+   "reader": "site_features",
+   "kind": "points",
+   "fetch": {
+    "method": "release_csv",
+    "release": "museum-access",
+    "prefix": "museum-access"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "key": "key"
+   },
+   "keep_unmatched_sites": false,
+   "history": "No places of its own: notes and site features for museums other sources list (imls-museums, wikidata), from the newest monthly set. A share whose collection fails keeps the previous set's file (up to three months).",
+   "contact": "The note lists the facts found (\"Accessibility (museum's website): audio description; touch tours; braille; large print; sign language; wheelchairs available; service animals welcome; sensory-friendly programs; page https://...\"); no phone or hours are taken.",
+   "notes": "Owner's request of 27 November 2026 (notes/helper-rules.txt, queue item Q4). The museums: the IMLS Museum Universe Data File's museums with a website (historical societies left out, as in imls-museums) and Wikidata's US museums with an official website, each website once (about 9,000), in eight shares of the monthly museum-access workflow (the 20th). For each: robots.txt first (obeyed), the homepage and up to two of its own accessibility, access-programs, sensory or visiting pages; only a fixed list of facts is kept (never the page's text), and for the accessible entrance the one sentence that says where it is (telephone numbers and e-mail addresses taken out). Polite and identified (User-Agent place-packs-museum-access), at least 2 seconds between requests to one host, never past a CAPTCHA, a login or an anti-bot challenge, no headless or Chrome-imitating browser, no other IP address: a museum whose site refuses is counted as blocked and left. A first check on 27 November 2026 (six museums): the Mobile Museum of Art, the Museum of Fine Arts Boston and the Perot Museum answered (facts found); the Metropolitan Museum of Art, the Art Institute of Chicago and the Smithsonian's National Museum of Natural History answered 403 (blocked, never got round). Rows are tied to the museum already in the pack by its IMLS or Wikidata key, else the same name within 400 m; a row that matches nothing adds nothing."
   }
  ],
  "rejected": [
@@ -14852,6 +14980,26 @@
    "name": "Simon Property Group mall directories (simon.com)",
    "licence": "Terms of use",
    "reason": "Answers 403 to programs, and its robots.txt says automated collection and data mining are prohibited without written permission (checked 27 November 2026); recorded as blocked by the malls workflow's monthly check, never got round."
+  },
+  {
+   "name": "Amtrak station pages (amtrak.com)",
+   "licence": "Terms of use",
+   "reason": "Answers 403 to programs, robots.txt included (checked 27 November 2026); never got round. Amtrak's own station information is read from Great American Stations instead (source street-access, unit amtrak-stations)."
+  },
+  {
+   "name": "Smithsonian accessibility page (si.edu/accessibility)",
+   "licence": "none stated (facts)",
+   "reason": "www.si.edu answers 403 to programs (checked 27 November 2026); never got round. The Smithsonian museums' own sites come in with their Wikidata entries in museum-access (where they answer)."
+  },
+  {
+   "name": "WMATA elevator and escalator data (api.wmata.com)",
+   "licence": "WMATA developer licence",
+   "reason": "Every WMATA API needs a registered key (answered 401 on 27 November 2026), and it lists only the elevators out of service now; WMATA's GTFS feed also needs the key. Not read; a free key could be added to the keys list if the owner wants it."
+  },
+  {
+   "name": "SEPTA elevator outages (www3.septa.org/api/elevator)",
+   "licence": "none stated",
+   "reason": "Lists only the elevators out of service at the moment (6 on 27 November 2026), not the stations' elevators; the packs are made monthly and programs send nothing anywhere, so an outage list cannot be used. SEPTA's stations come from its GTFS feeds."
   }
  ],
  "candidates": [
@@ -15224,6 +15372,16 @@
    "name": "Airport websites that refuse programs (Atlanta, Denver, Los Angeles, Austin, Nashville)",
    "licence": "none stated (facts)",
    "note": "403 or an anti-bot challenge page on 27 November 2026; recorded as blocked by the airports workflow each month, never got round."
+  },
+  {
+   "name": "BART, CTA and LA Metro elevator lists",
+   "licence": "agencies' open data terms",
+   "note": "No static elevator list published as data was found on 27 November 2026 (BART's API gives only current outages with a public demo key; CTA's 'L' stop list has an ADA column per station; LA Metro publishes a status page). Their GTFS feeds' pathways and wheelchair_boarding, where given, are read by gtfs-station-features. CTA's station ADA list could be added as station notes."
+  },
+  {
+   "name": "Museums whose websites refuse programs (Metropolitan Museum of Art, Art Institute of Chicago, Smithsonian museums)",
+   "licence": "none stated (facts)",
+   "note": "403 on 27 November 2026; recorded as blocked by the museum-access workflow each month, never got round. Permission letters could be sent (as for the blocked state tourism offices)."
   }
  ]
 }

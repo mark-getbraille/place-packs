@@ -1,0 +1,149 @@
+# Street and transit accessibility, once a month (the sources "street-access" and "street-access-navigation";
+# placepacks/street_access): accessible pedestrian signals (audible and vibrating crosswalk signals) and curb ramps
+# from US cities', counties' and state transportation departments' open data, New York City Transit's and the MBTA's
+# station elevators and escalators, and Amtrak stations' accessibility and staffed hours (Great American Stations).
+#
+# - When: the 12th of each month (05:41 UTC), or by hand (Actions, "Street and transit accessibility", Run
+#   workflow), optionally for some units only ("signals amtrak-stations").
+# - plan: sweeps the Socrata catalogue and ArcGIS Hub for signal and curb ramp layers of US governments, maps their
+#   fields automatically and writes the month's layer list (if the catalogues refuse or fail, last month's list is
+#   taken from the release); chooses the units.
+# - collect: one job per unit, three at a time. Each names the project in its User-Agent, waits between requests
+#   (10 seconds for Great American Stations, as its robots.txt asks), reads robots.txt where it reads a website and
+#   stops at once if a site refuses (403, 429 or an anti-bot page): that layer or site is "blocked", nothing is ever
+#   got round (no CAPTCHA, no login, no headless browser).
+# - publish: the only job that can write (contents: write); the month's set goes to the release "street-access"
+#   with the layer list as layers-street-access.json (placepacks/chains/release.py; a unit that failed keeps its
+#   previous file, up to three months).
+# The pack build (build-packs.yml) reads the newest set in its prepare step. Only the repository's own GITHUB_TOKEN
+# is used.
+name: Street and transit accessibility
+
+on:
+  schedule:
+    - cron: "41 5 12 * *"
+  workflow_dispatch:
+    inputs:
+      units:
+        description: "Units separated by spaces, for example signals amtrak-stations (empty: every unit)"
+        required: false
+        default: ""
+
+# Read-only by default; only publish may write (the "street-access" release).
+permissions:
+  contents: read
+
+concurrency:
+  group: street-access
+  cancel-in-progress: false
+
+env:
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      units: ${{ steps.plan.outputs.units }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Find the signal and curb ramp layers (or take last month's list)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          if ! python -m placepacks.street_access.open_data discover --out street-access-layers.json; then
+            echo "Discovery failed: last month's list is used."
+            gh release download street-access --repo "$REPO" --pattern layers-street-access.json --clobber || true
+            if [ -f layers-street-access.json ]; then mv layers-street-access.json street-access-layers.json; fi
+          fi
+      - name: Choose the units
+        id: plan
+        env:
+          UNITS: ${{ inputs.units }}
+        run: |
+          # An unknown unit stops here, naming the known ones.
+          matrix=$(python -m placepacks.directories.run streetaccess --list --only "$UNITS")
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "units=$(python -c 'import json, sys; print(" ".join(u["unit"] for u in json.loads(sys.argv[1])))' "$matrix")" >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: street-access-layers
+          path: street-access-layers.json
+          retention-days: 7
+          if-no-files-found: ignore
+
+  collect:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ matrix.timeout }}
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        continue-on-error: true   # no saved list: the signal and curb ramp units find the layers themselves
+        with:
+          name: street-access-layers
+          path: layers
+      - name: Read the unit
+        env:
+          STREET_ACCESS_LIST: layers/street-access-layers.json
+          UNIT: ${{ matrix.unit }}
+        run: python -m placepacks.directories.run streetaccess --unit "$UNIT" --out directory-out
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        if: ${{ always() }}
+        with:
+          name: streetaccess-unit-${{ matrix.unit }}
+          path: directory-out/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  publish:
+    needs: [plan, collect]
+    # Also when some jobs failed or ran out of time: their previous files are kept.
+    if: ${{ always() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write   # this month's set and layer list are stored in, and older sets deleted from, the release
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          pattern: streetaccess-unit-*
+          merge-multiple: true
+          path: results
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        continue-on-error: true   # no layer list this month: the release keeps last month's
+        with:
+          name: street-access-layers
+          path: results
+      - name: Publish the set in the release "street-access"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UNITS: ${{ needs.plan.outputs.units }}
+        run: |
+          mkdir -p results
+          python -m placepacks.directories.run streetaccess --publish --dir results --units "$UNITS"

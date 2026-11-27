@@ -51,7 +51,8 @@ def test_the_navigation_part_and_its_sources_are_in_the_catalogue():
     cat = catalogue.load()
     assert catalogue.check(cat) == []
     entries = {e["id"]: e for e in catalogue.sources_for(catalogue.regions()[VT], "navigation", cat)}
-    assert set(entries) == {"osm-navigation", "gtfs-navigation"}
+    # street-access-navigation: cities' accessible pedestrian signals and curb ramps (queue item Q4)
+    assert set(entries) == {"osm-navigation", "gtfs-navigation", "street-access-navigation"}
     assert entries["osm-navigation"]["licence"] == "ODbL-1.0"          # share-alike, like the core OSM layer
     assert entries["osm-navigation"]["fetch"] == {"method": "same_as", "same_as": "osm"}
     assert entries["gtfs-navigation"]["fetch"]["same_as"] == "gtfs"
@@ -107,7 +108,8 @@ def test_the_pack_holds_segments_intersections_features_and_timetables(pack):
     assert con.execute("SELECT feed, provider, licence_url, timezone FROM nav_feeds").fetchall() == [
         ("mdb-9999", "Made-up Transit", "https://creativecommons.org/licenses/by/4.0/", "America/New_York")]
     sources = {r[0]: r[1] for r in con.execute("SELECT id, licence FROM sources")}
-    assert sources == {"osm-navigation": "ODbL-1.0", "gtfs-navigation": "per-feed-open"}
+    assert sources == {"osm-navigation": "ODbL-1.0", "gtfs-navigation": "per-feed-open",
+                       "street-access-navigation": "government-facts"}
     assert not {"nav_tmp_names", "nav_tmp_on"} & {r[0] for r in con.execute("SELECT name FROM sqlite_master")}
 
 

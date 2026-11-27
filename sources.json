@@ -5073,6 +5073,43 @@
    "notes": "Collected once a month by the chain-locators workflow (the 28th), one job per chain: Burger King, Jack in the Box, Avis, Budget, Wyndham's hotel brands (Days Inn, Super 8, La Quinta, Baymont, Microtel, Travelodge, Ramada, Wingate and others), Buick, GMC, Ford and Lincoln dealers. Each chain's collector (placepacks/chains) reads its own store-locator API or its sitemap of store pages with schema.org data, with an identified User-Agent, at least a second between requests, a request budget, and a clean stop when a site refuses (recorded as blocked). The set is kept in this repository's release \"chain-locators\" (the newest two); the pack build's prepare job reads the newest set once and splits it per region. A store that All The Places also has (the same name within 100 m) is left to All The Places. Chains that refused even a first check (McDonald's, Jersey Mike's, YMCA, Planet Fitness, Health Mart, Citgo, Choice Hotels, H&R Block, Best Western, Stellantis dealers, Fastenal, Tractor Supply, Goodwill) are listed in placepacks/chains/__init__.py; individuals' offices (insurance agents) are never collected. Until the first set is there, the source is skipped (waiting for the first chain-locators set)."
   },
   {
+   "id": "business-websites",
+   "name": "Businesses' own websites (phone numbers and opening hours from the schema.org data on their homepages)",
+   "short": "the businesses' own websites",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "attribution": "Phone numbers and opening hours read by place-packs from the schema.org data (JSON-LD, microdata) on businesses' own homepages (placepacks/directories/websites.py).",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/directories",
+   "reader": "details",
+   "kind": "points",
+   "fetch": {
+    "method": "release_latest",
+    "release": "web-details",
+    "prefix": "web-details"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "key": "key",
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "contact_columns": {
+    "phone": "phone",
+    "website": "website",
+    "opening_hours": "opening_hours"
+   },
+   "history": "No places of its own: details for businesses other sources list, from the first build that has a web-details file. Each file holds every homepage read so far, the newest result of each.",
+   "contact": "Only the telephone number and the opening hours (openingHoursSpecification or openingHours, in OpenStreetMap's syntax) of the business's own schema.org LocalBusiness data (Restaurant, Store and the other local-business types) on its homepage, cleaned by placepacks/contact.py; never an e-mail address. Added only to the places that lack them (PackWriter.fill_details).",
+   "notes": "Collected once a month by the web-details workflow (the 20th), split into jobs by region, with a budget of about 30,000 homepages a run: the businesses in the newest published businesses packs that have a website but no phone or no opening hours, the homepages never read first, then those read longest ago (none again within 180 days). Each homepage is read once, after its robots.txt (always obeyed here: the owner's override of robots.txt applies only to big chains' store locators and government sites, never to small businesses' own sites), with an identified User-Agent and at least a second between requests to a host; a site that refuses or sends an anti-bot page is recorded as blocked and passed over. Only a page whose schema.org data names one local business is used (several businesses on one page are a directory or a chain's list, never taken). The merged file is kept in this repository's release \"web-details\" (the newest two); until the first file is there, the source is skipped. Owner's decision of 26 November 2026 (evening): scraping businesses' websites for phone, website and hours is OK for accessibility, obeying robots.txt and site terms for what is published."
+  },
+  {
    "id": "yp-lookups",
    "name": "Yellow Pages lookups (phone numbers, websites and opening hours of businesses already in the packs)",
    "short": "Yellow Pages lookups",

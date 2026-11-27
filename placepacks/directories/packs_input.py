@@ -12,8 +12,27 @@ Only the Python standard library is used (and placepacks.lookup's PackReader).
 
 import sqlite3
 
+# The states (and DC and Puerto Rico) by population, the most people first (2020 census): the order the details
+# collectors work in.
+POPULATION = ["CA", "TX", "FL", "NY", "PA", "IL", "OH", "GA", "NC", "MI", "NJ", "VA", "WA", "AZ", "MA", "TN", "IN",
+              "MD", "MO", "WI", "CO", "MN", "SC", "AL", "LA", "KY", "OR", "OK", "CT", "UT", "IA", "NV", "AR", "MS",
+              "KS", "NM", "NE", "ID", "WV", "HI", "NH", "ME", "RI", "MT", "DE", "SD", "ND", "AK", "DC", "VT", "WY",
+              "PR"]
 ADDRESS_M = 75                  # an address this close to a place may be its own (the matching rule's distance)
 TOWN_M = 500                    # the town of the nearest address this close is the place's town
+
+
+def region_order(regions=None):
+    """[(region id, state code)] in POPULATION order; a state with sub-regions gives its sub-regions."""
+    from placepacks import catalogue
+    regions = regions or catalogue.regions()
+    by_code = {r.get("code"): r for r in regions.values() if r.get("cc") == "US" and not r.get("parent")}
+    out = []
+    for code in POPULATION:
+        r = by_code.get(code)
+        if r:
+            out += [(c, code) for c in r.get("children") or [r["id"]]]
+    return out
 
 
 def places(path):

@@ -48,10 +48,11 @@ import time
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
-from placepacks import catalogue, details  # noqa: E402
+from placepacks import details  # noqa: E402
 from placepacks.chains.polite import Blocked, BudgetSpent, Polite  # noqa: E402
 from placepacks.directories import yellowpages as yp  # noqa: E402
 from placepacks.directories.common import plain_name  # noqa: E402
+from placepacks.directories.packs_input import region_order  # noqa: E402
 
 PROGRESS = "/home/user/notes/yp-progress"
 RELEASE = "uploaded-sources"
@@ -59,24 +60,7 @@ PREFIX = "yp-lookups"
 KEEP = 2                        # yp-lookups files kept in the release
 RECHECK_DAYS = 180              # a place looked up this recently is not looked up again
 SAME_M = 100                    # two sources' places of one name this close are one business
-# The states (and DC and Puerto Rico) by population, the most people first (2020 census).
-POPULATION = ["CA", "TX", "FL", "NY", "PA", "IL", "OH", "GA", "NC", "MI", "NJ", "VA", "WA", "AZ", "MA", "TN", "IN",
-              "MD", "MO", "WI", "CO", "MN", "SC", "AL", "LA", "KY", "OR", "OK", "CT", "UT", "IA", "NV", "AR", "MS",
-              "KS", "NM", "NE", "ID", "WV", "HI", "NH", "ME", "RI", "MT", "DE", "SD", "ND", "AK", "DC", "VT", "WY",
-              "PR"]
 WORK_FIELDS = ["key", "name", "type", "brand", "lat", "lon", "town", "addresses", "need"]
-
-
-def region_order(regions=None):
-    """[(region id, state code)] in POPULATION order; a state with sub-regions gives its sub-regions."""
-    regions = regions or catalogue.regions()
-    by_code = {r.get("code"): r for r in regions.values() if r.get("cc") == "US" and not r.get("parent")}
-    out = []
-    for code in POPULATION:
-        r = by_code.get(code)
-        if r:
-            out += [(c, code) for c in r.get("children") or [r["id"]]]
-    return out
 
 
 # ------------------------------------------------------------------------------------------------ the state
@@ -309,7 +293,7 @@ def run(progress, gh, work, forever=False, day_limit=yp.DAY_LIMIT, opener=None, 
                 if client is None:
                     # One client a day: its budget is what is left of the day's requests; it keeps the pause.
                     client = Polite(day_limit - state["requests_today"], yp.PAUSE, opener=opener, sleep=sleep,
-                                    clock=clock, waits=(30, 120))
+                                    clock=clock, waits=(30, 120), agent=yp.USER_AGENT)
                 used = client.used
                 sleep(jitter(0, 1.0))                   # one request every 3 to 4 seconds
                 allow = state.get("details_today", 0) < yp.DETAIL_SHARE * max(1, state.get("searches_today", 0))
@@ -363,8 +347,8 @@ def main(argv=None):
     if a.action == "try":
         record = {"key": "try", "name": a.name, "type": a.type, "brand": "", "lat": float(a.lat or 0),
                   "lon": float(a.lon or 0), "town": a.town, "addresses": [a.street] if a.street else []}
-        client = Polite(3, yp.PAUSE)
-        row, extra = yp.lookup(client, record, a.state)
+        client = Polite(3, yp.PAUSE, agent=yp.USER_AGENT)
+        row, _ = yp.lookup(client, record, a.state)
         print(json.dumps(row, indent=1))
         return 0
     progress = Progress(a.progress)

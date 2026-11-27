@@ -73,13 +73,15 @@ def _urllib_opener(request, timeout):
 class Polite:
     """One chain's client for one run. budget: the most requests it may send; pause: seconds between two requests
     to one host (at least MIN_PAUSE). opener(request, timeout) -> (status, headers, body) and sleep/clock are for
-    tests; deadline: a clock() time after which no new request is sent (the job's time limit: BudgetSpent).
-    .used is the number of requests sent; .hosts the hosts asked."""
+    tests; deadline: a clock() time after which no new request is sent (the job's time limit: BudgetSpent);
+    agent: the User-Agent (default USER_AGENT; the local-directory collectors name themselves, placepacks/
+    directories). .used is the number of requests sent; .hosts the hosts asked."""
 
     def __init__(self, budget, pause=1.5, opener=None, sleep=time.sleep, clock=time.monotonic, waits=WAITS,
-                 deadline=None):
+                 deadline=None, agent=USER_AGENT):
         """See the class docstring."""
         self.budget, self.pause, self.deadline = int(budget), max(MIN_PAUSE, float(pause)), deadline
+        self.agent = agent
         self.opener, self.sleep, self.clock, self.waits = opener or _urllib_opener, sleep, clock, tuple(waits)
         self.used, self.last, self.hosts = 0, {}, set()
 
@@ -94,7 +96,7 @@ class Polite:
         """The body of url as text (GET, or POST of `data`: a dict is sent as JSON). Raises Blocked, BudgetSpent,
         NotFound or RequestFailed (see the module docstring)."""
         host = urllib.parse.urlsplit(url).hostname or ""
-        send = {"User-Agent": USER_AGENT, "Accept-Encoding": "gzip",
+        send = {"User-Agent": self.agent, "Accept-Encoding": "gzip",
                 "Accept": "application/json, text/html;q=0.9, application/xml;q=0.9, */*;q=0.5"}
         send.update(headers or {})
         if data is not None and not isinstance(data, bytes):

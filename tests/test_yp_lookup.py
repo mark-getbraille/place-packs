@@ -82,7 +82,8 @@ def client(routes, budget=50):
     """A polite client over a FakeWeb with a pretend clock."""
     clock = Clock()
     web = FakeWeb(routes)
-    return polite.Polite(budget, yp.PAUSE, opener=web, sleep=clock.sleep, clock=clock, waits=(5,)), web, clock
+    return (polite.Polite(budget, yp.PAUSE, opener=web, sleep=clock.sleep, clock=clock, waits=(5,),
+                          agent=yp.USER_AGENT), web, clock)
 
 
 def result(ypid, name, street, phone, hours=None, town="Madeup", website=None, rating=True):
@@ -159,7 +160,7 @@ def test_a_lookup_takes_phone_website_and_hours():
     assert extra == 0 and len(web.requests) == 1
     url, headers = web.requests[0]
     assert "search_terms=Pretend+Cafe+%26+Deli" in url and "geo_location_terms=Madeup%2C+VT" in url
-    assert headers["User-agent"] == polite.USER_AGENT
+    assert headers["User-agent"] == yp.USER_AGENT and "place-packs" in yp.USER_AGENT
 
 
 def test_the_listing_page_is_read_for_hours_only_when_allowed_and_socials_are_dropped():
@@ -393,7 +394,7 @@ def detail_entry(source="yp-lookups"):
 
 
 def test_the_catalogue_entries_are_details_sources_last_in_line():
-    for source in ("yp-lookups",):
+    for source in ("yp-lookups", "business-websites"):
         e = detail_entry(source)
         assert e["reader"] == "details" and e["part"] == "businesses" and e["fetch"]["method"] == "release_latest"
         assert source in contact.CONTACT_SOURCES and source in contact.HOURS_SOURCES

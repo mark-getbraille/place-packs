@@ -31,7 +31,9 @@ sources give them that month (like the navigation part); the site and building k
 
 Where it is written: the core part holds the OpenStreetMap features (placepacks/readers/osm_features.py, ODbL like
 the rest of the core part); the extra part holds the other sources' (the campus map platforms and universities' GIS
-layers: placepacks/mapvendors; hospitals' own pages and the insurers' directories: placepacks/health_access). Both
+layers: placepacks/mapvendors; hospitals' own pages and the insurers' directories: placepacks/health_access; malls
+and airports: placepacks/indoor; cities' accessible pedestrian signals, station elevators and Amtrak stations:
+placepacks/street_access; GTFS stations: placepacks/readers/gtfs_stations.py; museums: placepacks/museum_access.py). Both
 parts are downloaded by default and read by PackReader (placepacks/lookup.py: features_of, features_near,
 building_of).
 
@@ -62,7 +64,12 @@ KINDS = ("accessible entrance", "entrance", "elevator", "escalator", "accessible
          # Added for malls and airports (queue item Q3, placepacks/indoor): a family or companion-care restroom, a
          # service-animal and pet relief area, a wheelchair or scooter loan or wheelchair-assistance point, a
          # taxi, rideshare, shuttle or bus pick-up area, and an airport concourse.
-         "family restroom", "pet relief area", "accessibility service", "ground transport", "concourse")
+         "family restroom", "pet relief area", "accessibility service", "ground transport", "concourse",
+         # Added for street and transit accessibility (queue item Q4, placepacks/street_access and
+         # placepacks/readers/gtfs_stations.py): an accessible pedestrian signal (an audible or vibrating crosswalk
+         # signal, from cities' open data), a curb ramp (written only to the navigation part, being very many), and
+         # a station's stairs (GTFS pathways).
+         "accessible pedestrian signal", "curb ramp", "stairs")
 # The columns of the collectors' CSV files (see the module docstring).
 FEATURE_FIELDS = ["key", "kind", "name", "site", "site_name", "place_key", "npi", "building", "level", "lat", "lon",
                   "line", "notes", "phone", "website", "opening_hours", "address", "org", "vendor", "map_id"]
@@ -344,8 +351,12 @@ def read(path, entry, region, writer):
     into the pack. Site rows give their place the details it lacks; feature rows go to site_features (unless the
     entry's "features" is false: a part that only takes the details, such as the businesses part). A site that
     matches no place is written as a row of kind "site", unless the entry's "keep_unmatched_sites" is false (the
-    insurers' directories: thousands of clinics the packs do not have are not added as sites). Returns the number
-    of features written plus the places that got details."""
+    insurers' directories: thousands of clinics the packs do not have are not added as sites; nor are the features
+    of such a site, a museum the packs do not have). The entry's "kinds"
+    (a list) keeps only the features of those kinds (the street-access set's curb ramps go only to the navigation
+    part); its "sites": false gives a feature without a site of its own no site at all (an accessible pedestrian
+    signal is not "inside" the campus around it). Returns the number of features written plus the places that got
+    details."""
     from placepacks import contact as contacts
     source = entry["id"]
     rows = []
@@ -360,7 +371,7 @@ def read(path, entry, region, writer):
     resolver = SiteResolver(writer)
     with_features = entry.get("features", True)
     feats = store(writer) if with_features else None
-    sites, count = {}, 0
+    sites, unmatched, count = {}, set(), 0
     # The sites first: each collector site key -> the pack key it resolves to (or its own key, written as a row of
     # kind "site").
     for row in rows:
@@ -379,18 +390,21 @@ def read(path, entry, region, writer):
                          row.get("lon"), notes=note):
                 count += 1
             sites[ref] = ref
+        else:
+            unmatched.add(ref)              # its features are left out too (a museum the packs do not have)
     if not with_features:
         return count
+    only = set(entry.get("kinds") or KINDS)
     for row in rows:
         kind = row.get("kind") or ""
-        if kind == "site" or kind not in KINDS:
+        if kind == "site" or kind not in KINDS or kind not in only or (row.get("site") or "") in unmatched:
             continue
         lat, lon = _float(row.get("lat")), _float(row.get("lon"))
         points = parse_line(row.get("line"))
         site = sites.get(row.get("site") or "", "")
         if not site and row.get("site"):
             site = resolver.resolve({**row, "kind": "site", "name": row.get("site_name", "")}) or row["site"]
-        if not site and lat is not None:
+        if not site and lat is not None and entry.get("sites", True):
             site = resolver.holding_area(lat, lon, ("campus", "landmark", "park", "public"))
         if feats.add(row.get("key"), source, kind, row.get("name"), lat, lon, site=site,
                      building=row.get("building", ""), level=row.get("level", ""), line=points,

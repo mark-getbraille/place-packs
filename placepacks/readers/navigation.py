@@ -5,7 +5,8 @@
                    ramps, elevators, entrances, stops and places with wheelchair=* (ODbL)
   gtfs_navigation  the region's open GTFS feeds (the same files as the extra part's transit stops, fetch "same_as":
                    "gtfs"): stops with wheelchair_boarding, routes, the days each timetable runs, trips with
-                   wheelchair_accessible and every departure; each feed under its own open licence
+                   wheelchair_accessible and every departure, and the stations' entrances, elevators, escalators and
+                   stairs of pathways.txt (placepacks/readers/gtfs_stations.py); each feed under its own open licence
 """
 
 import csv
@@ -154,6 +155,7 @@ def read_feed(file, region, nav, licence_url=""):
                 stops[row.get("stop_id", "")] = rid
         if not stops:
             return 0
+        add_station_features(z, feed, region, nav)
         routes = {}
         for row in _rows(z, "routes.txt"):
             routes[row.get("route_id", "")] = nav.add_route(
@@ -200,6 +202,30 @@ def read_feed(file, region, nav, licence_url=""):
         nav.add_feed(feed, (agency.get("agency_name") or "").strip(), licence_url,
                      (agency.get("agency_timezone") or "").strip(), first or 0, last or 0)
     return len(stops)
+
+
+# The tags a GTFS station feature keeps in nav_features (placepacks/readers/gtfs_stations.py).
+STATION_TAGS = ("name", "wheelchair", "level", "station", "source", "description", "conveying")
+
+
+def add_station_features(z, feed, region, nav):
+    """The station entrances, elevators, escalators and stairs of a feed's pathways (gtfs_stations.station_features)
+    as navigation features: kinds "entrance" (wheelchair yes or no), "elevator", "escalator" and "steps". Returns
+    how many were added."""
+    from placepacks.readers.gtfs_stations import station_features
+    found, _ = station_features(z)
+    count = 0
+    for f in found:
+        if not in_region(region, f["lat"], f["lon"]):
+            continue
+        kind = {"accessible entrance": "entrance", "stairs": "steps"}.get(f["kind"], f["kind"])
+        tags = {"name": f["name"], "level": f["level"], "station": f["station_name"], "source": "gtfs",
+                "description": f["notes"], "wheelchair": {1: "yes", 2: "no"}.get(f["wheelchair"], "")}
+        if kind == "escalator":
+            tags["conveying"] = "yes"
+        if nav.add_feature(f"gtfs:{feed}:{f['key']}", kind, tags, f["lat"], f["lon"], keep=STATION_TAGS):
+            count += 1
+    return count
 
 
 @reader("gtfs_navigation")

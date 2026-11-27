@@ -15,7 +15,12 @@ What is kept, from OpenStreetMap (ODbL, like the core part's OpenStreetMap layer
     paving, departures board), and named places that say whether a wheelchair can get in (wheelchair=*).
 From the agencies' open GTFS feeds (each under its own open licence, the same feeds as the extra part's stops):
   - nav_feeds, nav_stops (with wheelchair_boarding), nav_routes, nav_services and nav_service_dates (the days each
-    timetable runs), nav_trips (with wheelchair_accessible) and nav_times (every departure from every stop).
+    timetable runs), nav_trips (with wheelchair_accessible) and nav_times (every departure from every stop);
+  - nav_features from the feeds' stations (queue item Q4, placepacks/readers/gtfs_stations.py): station entrances
+    (kind "entrance", wheelchair=yes/no), elevators, escalators and stairs (kind "steps") from pathways.txt.
+From cities' and transportation departments' open data (source street-access-navigation, queue item Q4,
+placepacks/readers/street_access.py): nav_features of kind "accessible pedestrian signal" (with its install date,
+locator tone, vibrating arrow) and "curb ramp" (with condition, ADA compliance, detectable warning surface).
 
 A NavStore is attached to a PackWriter (store(writer)); the readers (placepacks/readers/navigation.py) add rows to
 it, and PackWriter.finish calls NavStore.finish, which works out the intersections, puts each feature on its street,
@@ -176,9 +181,11 @@ class NavStore:
         w._extend(lat, lon)
         return True
 
-    def add_feature(self, key, kind, tags, lat, lon, node=None):
+    def add_feature(self, key, kind, tags, lat, lon, node=None, keep=FEATURE_TAGS):
         """A feature (feature_kind) at a position (degrees); node: its OpenStreetMap node id, when it is a node that
-        may lie on a street. Returns its row id, or None when it is outside the pack's area."""
+        may lie on a street; keep: the tags kept (OpenStreetMap's FEATURE_TAGS; the open-data and GTFS features
+        give their own, placepacks/readers/street_access.py). Returns its row id, or None when it is outside the
+        pack's area."""
         if not self._inside(lat, lon):
             return None
         if kind == "crossing" and tags.get("crossing") == "traffic_signals" or kind == "traffic signals":
@@ -187,7 +194,7 @@ class NavStore:
         cur = self.db.execute("INSERT INTO nav_features (key, kind, name, lat, lon, cell, tags, streets) VALUES "
                               "(?, ?, ?, ?, ?, ?, ?, '')",
                               (key, kind, (tags.get("name") or "").strip(), int(round(lat * fmt.SCALE)),
-                               int(round(lon * fmt.SCALE)), fmt.fine_cell(lat, lon), compact_tags(tags, FEATURE_TAGS)))
+                               int(round(lon * fmt.SCALE)), fmt.fine_cell(lat, lon), compact_tags(tags, keep)))
         if node is not None:
             self.feature_nodes[node] = cur.lastrowid
         return cur.lastrowid

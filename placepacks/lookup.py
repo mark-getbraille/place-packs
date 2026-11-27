@@ -50,7 +50,8 @@ BUSINESS_SOURCES = {"overture-places", "fsq-places"}
 # details, the services part's svc_details, come before all of them). FORMAT.md, "Business contact details".
 DETAIL_ORDER = ("alltheplaces", "chain-locators", "ssa-field-offices", "nps-places", "usfs-recreation-sites",
                 "ridb-recreation", "city-facilities", "nces-details", "map-vendors", "mall-directories",
-                 "airport-directories", "health-access",
+                 "airport-directories", "street-access", "gtfs-station-features",
+                 "museum-access", "health-access",
                 "health-access-businesses", "overture-places", "fsq-places", "simpleview-listings",
                 "tempest-listings", "chambermaster-listings", "hotfrog-listings", "mall-directories-businesses",
                  "airport-directories-businesses", "business-websites",

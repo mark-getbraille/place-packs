@@ -21,6 +21,10 @@ downloaded), the source's catalogue entry (sources.json) and the region, and add
   osm_features.py  the "osm_site_features" reader: OpenStreetMap's buildings, entrances, elevators, accessible
               toilets and parking inside campus, hospital, zoo, mall and other site areas
   placepacks/schools.py  the "key_details" reader: phone, website and a note for schools and colleges by their NCES id
+  gtfs_stations.py  the "gtfs_station_features" reader: GTFS stations' entrances, elevators, escalators and stairs
+              (pathways.txt) as site features, and the stops' wheelchair boarding as notes
+  street_access.py  the "nav_street_access" reader: cities' accessible pedestrian signals and curb ramps
+              (placepacks/street_access) into the navigation part
 """
 
 READERS = {}
@@ -42,4 +46,7 @@ def load_all():
     from placepacks import details  # noqa: F401 - the "details" reader (details-only sources)
     from placepacks import features, schools  # noqa: F401 - the "site_features" and "key_details" readers
     from placepacks.readers import osm_features  # noqa: F401 - the "osm_site_features" reader
+    # The GTFS stations' entrances, elevators and stairs ("gtfs_station_features") and the open-data signals and
+    # curb ramps of the navigation part ("nav_street_access"), queue item Q4.
+    from placepacks.readers import gtfs_stations, street_access  # noqa: F401
     return READERS

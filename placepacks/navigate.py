@@ -124,6 +124,37 @@ def crossing_phrase(facts, street, distance_m, bearing, units="metres", kerbs=()
     return " ".join(out)
 
 
+LISTED_SIGNAL_M = 35       # a city's listed accessible pedestrian signal this near a crossing belongs to it
+LISTED_RAMP_M = 20         # a city's listed curb ramp this near a crossing is one of its ramps
+
+
+def listed_phrase(listed, ramps, lead=True):
+    """Sentences about a city's own lists at a crossing: "The city lists an accessible pedestrian signal here
+    (installed 2023-12-16; locator tone; vibrating arrow button)." and "Curb ramp in the city's list: ADA compliant:
+    yes; detectable warning surface: yes; condition: good." ("" when there is nothing.) lead=False leaves out the
+    first sentence's opening (the caller has said it)."""
+    out = []
+    if listed:
+        t = listed["tags"]
+        bits = [f"installed {t['installed']}"] if t.get("installed") else []
+        bits += [w for k, w in (("locator_tone", "locator tone"), ("vibration", "vibrating arrow button"),
+                                ("speech", "speech message")) if t.get(k) == "yes"]
+        if lead:
+            out.append("The city lists an accessible pedestrian signal here" + (f" ({'; '.join(bits)})." if bits
+                                                                                  else "."))
+        elif bits:
+            out.append(f"It is listed with: {'; '.join(bits)}.")
+    if ramps:
+        t = ramps[0]["tags"]
+        bits = [f"{w}: {t[k]}" for k, w in (("compliant", "ADA compliant"),
+                                            ("detectable_warning", "detectable warning surface"),
+                                            ("condition", "condition")) if t.get(k)]
+        n = len(ramps)
+        out.append(("A curb ramp" if n == 1 else f"{n} curb ramps") + " in the city's list"
+                   + (f" (the nearest: {'; '.join(bits)})." if bits else "."))
+    return " ".join(out)
+
+
 def service_runs(service, day, exceptions):
     """True when a timetable (days bitmask, start, end) runs on a date (datetime.date); exceptions: {YYYYMMDD: 1
     added or 0 removed} of that timetable."""
@@ -270,12 +301,16 @@ class Navigator:
     def crossing_here(self, lat, lon, within=60, units="metres"):
         """How to cross here: the nearest crossing (or crossing with traffic signals) within metres, {"type",
         "street", "signals", "sound", "vibration", "button", "arrow", "tactile_paving", "kerb", "island",
-        "distance_m", "bearing", "phrase"}, or None. Kerbs mapped as their own points within 15 m of the crossing
-        fill in its kerb when the crossing itself does not say."""
+        "distance_m", "bearing", "phrase", "listed_signal", "curb_ramps"}, or None. Kerbs mapped as their own points
+        within 15 m of the crossing fill in its kerb when the crossing itself does not say. A city's or DOT's own
+        list (open data, source street-access-navigation) adds the accessible pedestrian signal it lists within
+        LISTED_SIGNAL_M of the crossing (listed_signal: its install date, locator tone, vibrating arrow) and its curb
+        ramps within LISTED_RAMP_M (curb_ramps: condition, ADA compliance, detectable warning), said after the map's
+        facts; where the map has no crossing but a city lists a signal within metres, that signal is said."""
         found = self.features_near(lat, lon, within, {"crossing", "traffic signals"})
         crossings = [f for f in found if f["kind"] == "crossing"] or found
         if not crossings:
-            return None
+            return self._listed_signal_only(lat, lon, within, units)
         c = crossings[0]
         tags = dict(c["tags"])
         if c["kind"] == "crossing" and not tags.get("crossing"):
@@ -294,10 +329,43 @@ class Navigator:
                  if f["tags"].get("kerb")]
         streets = [s for s in c["streets"] if s not in ("footway", "path", "crossing")]
         street = join_names(streets)
+        listed = self.listed_signal(c["lat"], c["lon"])
+        ramps = self.listed_curb_ramps(c["lat"], c["lon"])
+        phrase = crossing_phrase(facts, street, c["distance_m"], c["bearing"], units, kerbs)
+        extra = listed_phrase(listed, ramps)
+        attribution = ATTRIBUTION_OSM + ("; " + ", ".join(dict.fromkeys(
+            x["tags"].get("source", "") for x in ([listed] if listed else []) + ramps if x["tags"].get("source")))
+            if listed or ramps else "")
         return dict(facts, street=street, kerbs=kerbs, distance_m=c["distance_m"], bearing=c["bearing"],
-                    lat=c["lat"], lon=c["lon"], key=c["key"],
-                    phrase=crossing_phrase(facts, street, c["distance_m"], c["bearing"], units, kerbs),
-                    attribution=ATTRIBUTION_OSM)
+                    lat=c["lat"], lon=c["lon"], key=c["key"], listed_signal=listed, curb_ramps=ramps,
+                    phrase=phrase + (" " + extra if extra else ""), attribution=attribution.rstrip("; "))
+
+    # -- cities' own lists (open data, source street-access-navigation)
+
+    def listed_signal(self, lat, lon, within=LISTED_SIGNAL_M):
+        """The nearest accessible pedestrian signal of a city's or a DOT's own list within metres of a crossing:
+        {"name", "tags" (installed, locator_tone, vibration, button, source ...), "distance_m", ...}, or None."""
+        found = self.features_near(lat, lon, within, {"accessible pedestrian signal"})
+        return found[0] if found else None
+
+    def listed_curb_ramps(self, lat, lon, within=LISTED_RAMP_M):
+        """The curb ramps of a city's own inventory within metres of a crossing, nearest first."""
+        return self.features_near(lat, lon, within, {"curb ramp"})
+
+    def _listed_signal_only(self, lat, lon, within, units):
+        """crossing_here where the map has no crossing but a city lists an accessible pedestrian signal nearby: its
+        facts and a sentence, or None."""
+        listed = self.listed_signal(lat, lon, within)
+        if not listed:
+            return None
+        where = f" at {listed['name']}" if listed["name"] else ""
+        phrase = (f"No crossing is mapped here, but the city lists an accessible pedestrian signal{where}, "
+                  f"{distance_words(listed['distance_m'], units)} {listed['bearing']}. "
+                  + listed_phrase(listed, [], lead=False))
+        facts = crossing_facts({})
+        return dict(facts, street="", kerbs=[], distance_m=listed["distance_m"], bearing=listed["bearing"],
+                    lat=listed["lat"], lon=listed["lon"], key=listed["key"], listed_signal=listed, curb_ramps=[],
+                    phrase=phrase.strip(), attribution=listed["tags"].get("source", ""))
 
     # -- transit
 

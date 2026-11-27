@@ -46,7 +46,11 @@ GOVERNMENT_SOURCES = ("ssa-field-offices", "nps-places", "usfs-recreation-sites"
 # like the government sources, the person-name check does not apply ("Mary Lee Elementary" is a school), and
 # opening hours are kept. Also the malls' and airports' own details from their directories (placepacks/indoor:
 # "Christiana Mall" is a mall, not a person).
-INSTITUTION_SOURCES = ("nces-details", "map-vendors", "mall-directories", "airport-directories")
+# Since queue item Q4: Amtrak stations' accessibility and hours and the transit agencies' stations
+# (placepacks/street_access), the GTFS stops' wheelchair boarding (placepacks/readers/gtfs_stations.py) and museums'
+# accessibility (placepacks/museum_access.py): stations and museums, not people.
+INSTITUTION_SOURCES = ("nces-details", "map-vendors", "mall-directories", "airport-directories", "street-access",
+                       "gtfs-station-features", "museum-access")
 # Hospitals' and clinics' accessibility details from health insurers' public provider directories and hospitals'
 # own pages (placepacks/health_access): an organisation's phone and hours, but the person-name and personal-office
 # checks DO apply (a practice listed under a doctor's own name gets nothing).

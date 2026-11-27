@@ -154,7 +154,7 @@ CATEGORY_TAGS = [
     (r"pharmac|drug store", {"amenity": "pharmacy"}),
     (r"dentist|dental", {"amenity": "dentist"}),
     (r"veterinar|animal hospital|pet care", {"amenity": "veterinary"}),
-    (r"hospital", {"amenity": "hospital"}),
+    (r"hospitals?\b", {"amenity": "hospital"}),          # not "Hospitality" (Louisville's business network)
     (r"health|medical|clinic|chiropract|optometr|physical therapy|urgent care", {"amenity": "clinic"}),
     (r"bank|credit union", {"amenity": "bank"}),
     (r"grocer|supermarket|\bmarkets?\b|\bdeli\b|delicatessen", {"shop": "supermarket"}),

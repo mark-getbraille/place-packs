@@ -233,6 +233,83 @@ def test_a_tempest_listing_gives_facts_and_accessibility_only():
                            f"{TEMPEST}/directory/a/") is None              # a person's name
 
 
+def tempest_bare_page(path, name, body, kind="LocalBusiness", category="Restaurants", extra=None):
+    """A made-up Tempest listing whose JSON-LD has no address, position or telephone (as on Albany's, Salem's,
+    Louisville's and Pittsburgh's pages on 27 November 2026): those are in the page itself (body)."""
+    graph = [{"@type": kind, "mainEntityOfPage": path, "name": name, "url": f"{TEMPEST}{path}"},
+             {"@id": f"{TEMPEST}#identity", "@type": "Organization", "name": "Visit Madeup",
+              "telephone": "802-555-0000"}] + list(extra or [])
+    return (f'<html><script type="application/ld+json">{json.dumps({"@graph": graph})}</script>'
+            f'<h1>{name}</h1><main data-dms-partner-id="77" data-dms-category-name="{category}">{body}</main>'
+            f'<footer><a href="tel:802-555-0000">Visit Madeup</a><p>1 Board St, Burlington, VT 05401</p></footer>'
+            f'</html>')
+
+
+def test_a_tempest_listing_without_json_ld_facts_reads_them_from_the_page():
+    """The first GitHub run (27 November 2026) left out every listing of 10 boards: their JSON-LD has no
+    position (and some no address or telephone), or types the listing "TouristInformationCenter". The page's map
+    button, its "maps?q=" link, its detail address block (the business's name before the street at Pittsburgh),
+    the "Contact Information" list (Minneapolis), the telephone link after the address (never the board's own
+    number) and the "Website" button are read instead."""
+    path = "/directory/made-up-diner/"
+    body = ('<button data-imap-point="1" data-marker-lat="44.4761" data-marker-lng="-73.2126" '
+            'data-marker-title="Made-up Diner &amp;amp; Grill"></button>'
+            '<div class="detail__address links"><div class="detail__address-title">Made-up Diner &amp; Grill</div>'
+            '<p>12 Church St<br>Burlington, Vermont 05401</p></div>'
+            '<ul class="detail__info"><li><a href="tel:+1-802-555-0141">(802) 555-0141</a></li></ul>'
+            '<a class="btn" href="http://diner.example" data-dms-partner-detail-website-click>Website</a>'
+            '<button data-marker-lat="40.1" data-marker-lng="-75.1" data-marker-title="An event elsewhere">')
+    row = tempest.listing(tempest_bare_page(path, "Made-up Diner &amp; Grill", body, "TouristInformationCenter"),
+                          "visitmadeup", f"{TEMPEST}{path}")
+    assert row["key"] == "visitmadeup:77" and (row["lat"], row["lon"]) == ("44.476100", "-73.212600")
+    assert (row["street"], row["city"], row["state"], row["postcode"]) == ("12 Church St", "Burlington", "VT",
+                                                                          "05401")
+    assert row["phone"] == "+1-802-555-0141" and row["website"] == "http://diner.example"
+    assert row["main_value"] == "restaurant"
+    contact = ('<a href="https://www.google.com/maps?q=44.4762,-73.2127">Directions</a>'
+               '<h3 class="h3">Contact Information</h3><ul class="list links"><li>Made-up Brewery</li>'
+               '<li><a href="mailto:beer@brewery.example">beer@brewery.example</a></li><li>520 Pine St</li>'
+               '<li> Burlington, Vermont 05401</li></ul>')
+    row = tempest.listing(tempest_bare_page("/directory/made-up-brewery/", "Made-up Brewery", contact,
+                                            category="Uniquely Madeup"),
+                          "visitmadeup", f"{TEMPEST}/directory/made-up-brewery/")
+    assert row["street"] == "520 Pine St" and row["city"] == "Burlington" and row["lat"] == "44.476200"
+    assert row["phone"] == "" and "beer@" not in json.dumps(row)            # the footer's board number is not it
+    # A listing the board says nothing more about (no street anywhere) is still left out.
+    assert tempest.listing(tempest_bare_page("/directory/x/", "Made-up Tours", ""), "visitmadeup",
+                           f"{TEMPEST}/directory/x/") is None
+    # "Hospitality" is not a hospital.
+    assert tempest.tags_of("Hospitality Business Network") == {}
+
+
+def test_a_destinationcore_board_listing_and_its_sitemap():
+    """Providence moved from Tempest to DestinationCore (seen 27 November 2026): its "businessDirectory" sitemap
+    lists "/listing/<name>" pages whose page entry has no address; a second entry of the same name has the
+    address (all in streetAddress), telephone and position. The board's own listing page is not the website."""
+    extra = [{"@type": "LodgingBusiness", "name": "Made-up Inn",
+              "address": {"@type": "PostalAddress", "streetAddress": "32 Exchange Terrace, Burlington, VT 05401"},
+              "telephone": "(802) 555-0150", "geo": {"@type": "GeoCoordinates", "latitude": 44.47,
+                                                     "longitude": -73.21}}]
+    page = tempest_bare_page("/listing/made-up-inn", "Made-up Inn", "", "LodgingBusiness", category="", extra=extra)
+    page = page.replace('data-dms-partner-id="77" ', "")
+    row = tempest.listing(page, "visitmadeup", f"{TEMPEST}/listing/made-up-inn")
+    assert row["key"] == "visitmadeup:made-up-inn" and row["main_value"] == "hotel"
+    assert (row["street"], row["city"], row["state"], row["postcode"]) == ("32 Exchange Terrace", "Burlington",
+                                                                          "VT", "05401")
+    assert row["phone"] == "(802) 555-0150" and row["website"] == "" and row["lat"] == "44.470000"
+    assert tempest.PARTNER_MAP.search("sitemaps-1-section-businessDirectory-1-sitemap.xml")
+    assert not tempest.PARTNER_MAP.search("sitemaps-1-section-businessDirectoryHome-1-sitemap.xml")
+    assert not tempest.PARTNER_MAP.search("sitemaps-1-section-blogDirectory-1-sitemap.xml")
+
+
+def test_tempest_sites_have_their_own_size():
+    """Each board has its own expected size (so its request budget and time share fit; the first run gave every
+    board 800, and Detroit and Pittsburgh ran out of requests)."""
+    assert tempest.SITES["visitpittsburgh"]["expected"] >= 3300
+    assert tempest.SITES["visitpittsburgh"]["budget"] > 3300 * 1.4
+    assert tempest.SITES["visitcasper"]["expected"] < 800
+
+
 def test_a_tempest_site_is_read_through_its_partner_sitemaps(monkeypatch):
     monkeypatch.setitem(tempest.SITES, "visitmadeup", tempest._site("Visit Madeup", TEMPEST, "VT"))
     client, web, _ = fake(tempest_routes())

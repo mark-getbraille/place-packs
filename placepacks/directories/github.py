@@ -155,7 +155,11 @@ class GitHub:
             manifest = self.download(item, os.path.join(folder, "packs.json"))
         with open(manifest, encoding="utf-8") as f:
             data = json.load(f)
-        return {(p["region"], p["part"]): p for p in data.get("packs", []) if p.get("region") and p.get("part")}
+        packs = data.get("packs", [])
+        if isinstance(packs, dict):             # packs.json keeps its packs by key ({"us-vermont": {...}, ...})
+            packs = list(packs.values())
+        return {(p["region"], p["part"]): p for p in packs
+                if isinstance(p, dict) and p.get("region") and p.get("part")}
 
     def download_pack(self, info, folder):
         """Download one pack (a packs_of() item) from its release into folder; checked by its SHA-256. Returns the

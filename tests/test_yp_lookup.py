@@ -516,3 +516,14 @@ def test_sqlite_is_closed_after_reading_places(tmp_path):
     list(packs_input.places(packs[(VT, "businesses")]))
     os.remove(packs[(VT, "businesses")])                    # not held open
     assert not os.path.exists(packs[(VT, "businesses")]) and sqlite3 and gzip
+
+
+def test_packs_json_keeps_its_packs_by_key(tmp_path):
+    """The real packs.json keeps packs in a dict by key; packs_of reads both shapes."""
+    from placepacks.directories.github import GitHub
+    item = {"region": "us-vermont", "part": "businesses", "name": "us-vermont-businesses-20261126.osmpack",
+            "release": "packs-detail-20261126"}
+    for packs in ({"us-vermont-businesses": item}, [item]):
+        path = tmp_path / "packs.json"
+        path.write_text(json.dumps({"packs": packs}))
+        assert GitHub.packs_of(None, str(tmp_path), manifest=str(path)) == {("us-vermont", "businesses"): item}

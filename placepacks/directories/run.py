@@ -6,6 +6,7 @@ release.py), for the collections:
   tempest        units: the tourism boards' sites on the Tempest platform (placepacks/directories/tempest.py SITES)
   chambermaster  units: the states, each found through the US Chamber of Commerce's directory
                  (placepacks/directories/chambermaster.py STATES)
+  hotfrog        units: the states; each searches Hotfrog town by town (placepacks/directories/hotfrog.py)
   cityfacilities units: the states; each reads the layers the month's discovery found in it
                  (placepacks/directories/city_facilities.py)
 
@@ -48,8 +49,13 @@ SECONDS_PER_ITEM = 3   # the expected seconds per listing, for packing units int
 def collections():
     """{name: its settings}: units {id: {"title", "expected", "budget", "timeout"}}, collect(client, unit, stats),
     fields (the CSV's columns), agent, pause, and the release's tag, prefix, title and notes."""
-    from placepacks.directories import chambermaster, city_facilities, simpleview, tempest
+    from placepacks.directories import chambermaster, city_facilities, hotfrog, simpleview, tempest
     return {
+        "hotfrog": {"units": hotfrog.STATES, "collect": hotfrog.collect, "fields": hotfrog.FIELDS,
+                    "agent": hotfrog.USER_AGENT, "pause": hotfrog.PAUSE, "tag": "hotfrog-listings",
+                    "prefix": "hotfrog-listings", "title": "Hotfrog business listings",
+                    "notes": "Monthly business listings found town by town on Hotfrog (placepacks/directories/"
+                             "hotfrog.py), read by the pack build (source hotfrog-listings). Not for download."},
         "cityfacilities": {"units": city_facilities.STATES, "collect": city_facilities.collect,
                            "fields": city_facilities.FIELDS, "agent": city_facilities.USER_AGENT,
                            "pause": city_facilities.PAUSE, "tag": "city-facilities", "prefix": "city-facilities",
@@ -224,7 +230,7 @@ def publish(collection, folder, date, ran, sleep=time.sleep):
 def main(argv=None):
     """The command line (see the module docstring)."""
     p = argparse.ArgumentParser()
-    p.add_argument("collection", choices=["simpleview", "tempest", "chambermaster", "cityfacilities"])
+    p.add_argument("collection", choices=["simpleview", "tempest", "chambermaster", "cityfacilities", "hotfrog"])
     p.add_argument("--list", action="store_true")
     p.add_argument("--only", default="")
     p.add_argument("--unit", default="", help="a unit's id, or several separated by spaces (a matrix group)")

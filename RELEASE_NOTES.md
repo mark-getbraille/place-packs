@@ -12,6 +12,6 @@ no licence covers, a few government lists used by the owner's decision regardles
 a site's own terms (licence government-facts: Social Security offices, Recreation.gov, California's licensing files, cities' and
 counties' public places;
 LICENSES.md), and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview
-and Tempest listings, chambers' ChamberMaster directories, businesses' own homepages, Yellow Pages lookups of businesses already
+and Tempest listings, chambers' ChamberMaster directories, Hotfrog's business listings, businesses' own homepages, Yellow Pages lookups of businesses already
 in the packs; facts only, never reviews, descriptions, photos, e-mails or people's names).
 Built by .github/workflows/build-packs.yml from this repository's code (MIT).

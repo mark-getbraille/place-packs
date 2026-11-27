@@ -340,7 +340,17 @@ address or connection tried.
   and does not start again by itself. Start it with
   `nohup python3 tools/yp_lookup.py run --forever --work <a scratch folder> > yp.log 2>&1 &`; see where it is with
   `python3 tools/yp_lookup.py status` (progress in `/home/user/notes/yp-progress/`). yellowpages.com's robots.txt
-  disallows its search pages for programs; the owner decided to make these lookups all the same.
+  disallows its search pages for programs; the owner decided to make these lookups all the same. When Yellow Pages
+  has no match, the same business is looked up on Hotfrog (same rules); a fallback directory that refuses is
+  switched off for good (`fallbacks_blocked` in the progress file).
+- **Hotfrog business listings** (source `hotfrog-listings`,
+  [.github/workflows/hotfrog-listings.yml](.github/workflows/hotfrog-listings.yml), "Hotfrog business listings"):
+  on the 12th, one job per state, two at a time: Hotfrog's search pages for 20 kinds of public-facing business in
+  each town of at least 25,000 people (from the Census Bureau's population file, biggest first, within a
+  4,800-request budget), 4 seconds apart, robots.txt obeyed: name, street address, phone, website and category.
+  Addresses are placed by the offline NAD geocoder; home addresses, people and individuals' offices are left out.
+  Release `hotfrog-listings`. Of the other directories tested (Superpages, Manta, MerchantCircle, Local.com, Cylex,
+  Brownbook, EZlocal), none could be used (`sources.json`, "rejected").
 - **Business websites** (source `business-websites`, [.github/workflows/web-details.yml](.github/workflows/web-details.yml),
   "Business websites"): on the 20th of each month, ten jobs read up to 30,000 homepages of businesses that have a
   website but no phone or hours; robots.txt is always obeyed (the owner's override is for chains and government
@@ -367,7 +377,7 @@ address or connection tried.
   personal services, recreation), 6 seconds apart. Members are placed by the offline NAD geocoder; home addresses
   are left out. Release `chambermaster-listings`.
 
-In the packs (businesses part): Simpleview, Tempest and ChamberMaster listings are new places unless another business source
+In the packs (businesses part): Simpleview, Tempest, ChamberMaster and Hotfrog listings are new places unless another business source
 already lists them (the same phone number within 500 m, else the same name within 75 m); then their details go to
 that place. The two details-only sources only fill what a place still lacks, after every other source. Each
 workflow keeps a source's previous set when a month's run fails or is blocked, and the pack build skips a source

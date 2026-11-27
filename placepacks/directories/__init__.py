@@ -10,6 +10,11 @@
                     matrix groups of sites)
   tempest.py        city and county tourism boards' partner listings on the Tempest platform (source
                     "tempest-listings"; the monthly tempest-listings workflow)
+  hotfrog.py        Hotfrog: the Yellow Pages job's fallback lookups, and business listings collected town by town
+                    (source "hotfrog-listings"; the monthly hotfrog-listings workflow)
+  city_facilities.py  cities' and counties' public places from their open-data layers, found by a monthly
+                    discovery in the Socrata and ArcGIS Hub catalogues (source "city-facilities"; the monthly
+                    city-facilities workflow)
   chambermaster.py  chambers of commerce's public member directories on the older ChamberMaster (GrowthZone v1)
                     platform, found through the US Chamber of Commerce's directory (source "chambermaster-listings";
                     the monthly chambermaster-listings workflow)

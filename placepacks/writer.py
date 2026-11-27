@@ -61,7 +61,8 @@ CONTACT_SEP = "\x1f"
 # here too, so that a copy of this file without contact.py still writes packs).
 CONTACT_ORDER = ("alltheplaces", "chain-locators", "ssa-field-offices", "nps-places", "usfs-recreation-sites",
                  "ridb-recreation", "city-facilities", "overture-places", "fsq-places", "simpleview-listings",
-                 "tempest-listings", "chambermaster-listings", "business-websites", "yp-lookups")
+                 "tempest-listings", "chambermaster-listings", "hotfrog-listings", "business-websites",
+                 "yp-lookups")
 # drop_duplicates with phone: the same telephone number within this many metres is the same business.
 PHONE_M = 500
 TYPED = {"points": "point_types", "areas": "area_types"}

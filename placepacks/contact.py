@@ -7,8 +7,8 @@ government sources of public offices and sites (GOVERNMENT_SOURCES: Social Secur
 and the National Park Service's sites, Recreation.gov's facilities, placepacks/gov_details.py; cities' and counties'
 public places, placepacks/directories/city_facilities.py), Overture's places
 and Foursquare's Open Source Places, then the local directories this project reads itself (DIRECTORY_SOURCES:
-tourism boards' Simpleview and Tempest listings and chambers of commerce's ChamberMaster directories,
-placepacks/directories) and, last, the two "details only" sources that add nothing but details to businesses already in the packs
+tourism boards' Simpleview and Tempest listings, chambers of commerce's ChamberMaster directories and Hotfrog's
+business listings, placepacks/directories) and, last, the two "details only" sources that add nothing but details to businesses already in the packs
 (DETAIL_ONLY_SOURCES: the business's own homepage, and Yellow Pages lookups; placepacks/details.py). The licence
 and inspection lists never do: their phone numbers are often an owner's personal number. PackWriter.add_point
 ignores contact details from any other source.
@@ -43,8 +43,9 @@ GOVERNMENT_SOURCES = ("ssa-field-offices", "nps-places", "usfs-recreation-sites"
 # The sources whose phone, website and hours are kept, best first (the order a lookup prefers when several sources
 # list the same business; OpenStreetMap's own svc_details come before all of them).
 # The local directories read by placepacks/directories (tourism boards' Simpleview and Tempest listings, chambers of
-# commerce's ChamberMaster directories): new places of their own, and details for the places they match.
-DIRECTORY_SOURCES = ("simpleview-listings", "tempest-listings", "chambermaster-listings")
+# commerce's ChamberMaster directories, Hotfrog's listings): new places of their own, and details for the places
+# they match.
+DIRECTORY_SOURCES = ("simpleview-listings", "tempest-listings", "chambermaster-listings", "hotfrog-listings")
 # Sources that give only details (phone, website, hours) to businesses already in the packs, by their key: the
 # business's own homepage (schema.org data) and Yellow Pages lookups. Last of all: they only fill what the
 # business's own sources lack (PackWriter.fill_details).

@@ -27,6 +27,14 @@ What it writes: at the end of each day (and when it stops), the newest yp-lookup
 "uploaded-sources" with the pending results merged in (placepacks/details.py merge: a new result wins, except that
 "nothing found" never wipes out details found before) is uploaded as yp-lookups-<today>.csv.gz, and files older
 than the newest KEEP are deleted. The pack build reads the newest file each month.
+Fallback directories (FALLBACKS; the owner's decision of 27 November 2026): when Yellow Pages has no match for a
+business ("no match" or "no results"), the same business is looked up on Hotfrog (placepacks/directories/
+hotfrog.py), with the same matching rules (name alike AND the same street address) and facts only; its answer
+is kept with matched_on "hotfrog ...". A fallback directory that refuses (403, 429, an anti-bot page) is switched
+off for good in progress.json ("fallbacks_blocked") and never asked again by itself; the Yellow Pages lookups go
+on. Superpages (Yellow Pages' sister site, the same listings), Manta, Cylex, EZlocal (anti-bot challenges),
+MerchantCircle (robots.txt disallows everything), Local.com (no longer a directory) and Brownbook (an internal
+API only) were tested and are not used.
 Stops: any refusal or anti-bot page (HTTP 403 or 429, a CAPTCHA, "Access Denied") stops the run at once (exit code
 3, progress.json says "blocked"); the day's results are uploaded and the job does NOT start again by itself: a
 person decides whether to run it again later. Nothing is ever got round: no CAPTCHA, no browser, no other
@@ -50,6 +58,7 @@ sys.path.insert(0, ROOT)
 
 from placepacks import details  # noqa: E402
 from placepacks.chains.polite import Blocked, BudgetSpent, Polite  # noqa: E402
+from placepacks.directories import hotfrog  # noqa: E402
 from placepacks.directories import yellowpages as yp  # noqa: E402
 from placepacks.directories.common import plain_name  # noqa: E402
 from placepacks.directories.packs_input import region_order  # noqa: E402
@@ -61,6 +70,33 @@ KEEP = 2                        # yp-lookups files kept in the release
 RECHECK_DAYS = 180              # a place looked up this recently is not looked up again
 SAME_M = 100                    # two sources' places of one name this close are one business
 WORK_FIELDS = ["key", "name", "type", "brand", "lat", "lon", "town", "addresses", "need"]
+# The directories tried, in order, when Yellow Pages has no match: name -> lookup(client, record, state, today).
+FALLBACKS = {"hotfrog": hotfrog.lookup}
+NO_MATCH = ("no match", "no results")
+
+
+def fallback(client, record, code, row, state, today=None, fallbacks=None):
+    """The details row of a business Yellow Pages did not match (row), from the first fallback directory that
+    matches it (see the module docstring), or row itself (its matched_on telling what each directory answered).
+    A directory that refuses is put in state["fallbacks_blocked"] and skipped from then on."""
+    if row["matched_on"] not in NO_MATCH:
+        return row
+    blocked = state.setdefault("fallbacks_blocked", {})
+    notes = [row["matched_on"]]
+    for name, look in (fallbacks if fallbacks is not None else FALLBACKS).items():
+        if name in blocked:
+            continue
+        try:
+            got = look(client, record, code, today=today)
+        except Blocked as e:
+            blocked[name] = {"reason": str(e), "at": datetime.datetime.now(datetime.timezone.utc).isoformat(
+                timespec="seconds")}
+            print(f"{name} refused ({e}): it is not asked again; the Yellow Pages lookups go on.", flush=True)
+            continue
+        if got["phone"] or got["website"] or got["opening_hours"]:
+            return got
+        notes.append(got["matched_on"])
+    return {**row, "matched_on": "; ".join(notes)}
 
 
 # ------------------------------------------------------------------------------------------------ the state
@@ -299,6 +335,7 @@ def run(progress, gh, work, forever=False, day_limit=yp.DAY_LIMIT, opener=None, 
                 allow = state.get("details_today", 0) < yp.DETAIL_SHARE * max(1, state.get("searches_today", 0))
                 try:
                     row, extra = yp.lookup(client, record, code, allow_detail=allow, today=today)
+                    row = fallback(client, record, code, row, state, today=today)
                 except Blocked as e:
                     state["blocked"] = {"reason": str(e), "region": rid, "at": datetime.datetime.now(
                         datetime.timezone.utc).isoformat(timespec="seconds")}

@@ -150,16 +150,18 @@ licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD
   adapted from All The Places' spiders (github.com/alltheplaces/alltheplaces), whose code is under the MIT licence,
   Copyright (c) 2016 Ian Dees; its notice is in `NOTICE`.
 - **Local directories and lookups (licence `directory-facts`, since November 2026):** tourism boards' Simpleview
-  and Tempest listings (`simpleview-listings`, `tempest-listings`), chambers of commerce's ChamberMaster member directories
-  (`chambermaster-listings`), the schema.org data on businesses' own homepages (`business-websites`) and Yellow Pages
-  lookups of businesses already in the packs (`yp-lookups`). The sites grant no licence; only facts are kept (names,
-  street addresses, positions, telephone numbers, websites, opening hours, categories, accessibility notes), which
-  are not protected by copyright in the United States (Feist v. Rural Telephone, 1991); never reviews, ratings,
+  and Tempest listings (`simpleview-listings`, `tempest-listings`), chambers of commerce's ChamberMaster member
+  directories (`chambermaster-listings`), Hotfrog's business listings (`hotfrog-listings`), the schema.org data on
+  businesses' own homepages (`business-websites`) and Yellow Pages lookups of businesses already in the packs, with
+  Hotfrog as their fallback (`yp-lookups`). The sites grant no licence; only facts are kept (names, street
+  addresses, positions, telephone numbers, websites, opening hours, categories, accessibility notes), which are not
+  protected by copyright in the United States (Feist v. Rural Telephone, 1991); never reviews, ratings,
   descriptions, photos, e-mail addresses or people's names, and one-person and home businesses are left out. The
   owner decided (26 November 2026) to collect and publish them: the homepages, tourism sites and chambers obeying
   their robots.txt; the Yellow Pages lookups (only for businesses already listed by other sources, never copying its
-  directory) although yellowpages.com's robots.txt disallows its search pages. All are collected politely (an
-  identified User-Agent, paced, never past a refusal, a challenge or a login).
+  directory) although yellowpages.com's robots.txt disallows its search pages; and (27 November 2026) directories
+  that answer without a challenge searched town by town (Hotfrog, obeying its robots.txt). All are collected
+  politely (an identified User-Agent, paced, never past a refusal, a challenge or a login).
 - **OpenHistoricalMap:** CC0, except features with their own `license` tag, which the packs leave out.
 - **Personal data:** the business sources keep only a business's trade name, class, position and dates. Records
   that may be someone's home (home-based businesses, contractors, mobile caterers, childminders, short-term rentals,

@@ -1,5 +1,5 @@
 {
- "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). Three exceptions, by the owner's decisions of 26 November 2026: chain-locators, facts read from big chains' own store locators (licence store-locator-facts); government facts used regardless of a copy's missing licence or a site's own terms (licence government-facts: the Social Security offices' ArcGIS copy, US cities' and counties' open-data layers of public places, Recreation.gov's RIDB export, California's health and human services files); and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview and Tempest listings, chambers' ChamberMaster directories, businesses' own homepages, Yellow Pages lookups of businesses already in the packs). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
+ "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). Three exceptions, by the owner's decisions of 26 November 2026: chain-locators, facts read from big chains' own store locators (licence store-locator-facts); government facts used regardless of a copy's missing licence or a site's own terms (licence government-facts: the Social Security offices' ArcGIS copy, US cities' and counties' open-data layers of public places, Recreation.gov's RIDB export, California's health and human services files); and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview and Tempest listings, chambers' ChamberMaster directories, Hotfrog's business listings, businesses' own homepages, Yellow Pages lookups of businesses already in the packs). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
  "settings": {
   "tiger_year": "2025",
   "tiger_seed_years": [
@@ -5324,6 +5324,66 @@
    "notes": "Collected once a month by the chambermaster-listings workflow (the 15th), one job per state: the US Chamber of Commerce's directory page of the state gives the chambers and their websites (discovery only); each chamber's homepage gives its directory host; that host's robots.txt tells the classic ChamberMaster directory (collected) from GrowthZone v2 (exactly 51 bytes, no sitemap: left without asking for any directory page, as its pages answer with a Cloudflare challenge) and from hosts closed to programs; then the classic directory's SiteMap.xml and its public-facing quick-link pages (restaurants, shopping, lodging, health care, automotive, personal services, arts and entertainment, sports and recreation, home and garden, pets), 6 seconds apart. Left out: members without a street address or with a post office box, names that are a person's, individuals' offices (insurance and estate agents, lawyers, accountants), the Individuals and Government-education-individuals groups, the chamber's own entry, and addresses the NAD marks residential (home businesses; geocode skip_homes). Placed by the offline NAD geocoder. A member that another business source already has (the same phone number within 500 m, else the same name within 75 m) is not added again: its phone and website go to that place. A chamber's site that refuses is recorded as blocked and left. Owner's decision of 26 November 2026: chamber directory facts may be collected and published; headless browsers to pass the newer chambers' challenges were declined (27 November 2026). Until the first set is there, the source is skipped."
   },
   {
+   "id": "hotfrog-listings",
+   "name": "Hotfrog business listings, town by town: restaurants, shops, pharmacies, hotels and other public-facing businesses",
+   "short": "Hotfrog's business directory",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "attribution": "Business listings of Hotfrog (hotfrog.com), searched town by town by place-packs (placepacks/directories/hotfrog.py); facts only.",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/directories",
+   "reader": "tabular",
+   "kind": "businesses",
+   "fetch": {
+    "method": "release_csv",
+    "release": "hotfrog-listings",
+    "prefix": "hotfrog-listings"
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "state",
+    "equals": "{code}"
+   },
+   "geocode": {
+    "street": "street",
+    "city": "city",
+    "zip": "postcode",
+    "from": "nad",
+    "skip_homes": true
+   },
+   "columns": {
+    "name": "name",
+    "key": "key",
+    "class_column": "main_value"
+   },
+   "class_map": {
+    "*": "business"
+   },
+   "type_column": "type",
+   "type_map": "humanise",
+   "contact_columns": {
+    "phone": "phone",
+    "website": "website"
+   },
+   "dedupe_against": [
+    "alltheplaces",
+    "chain-locators",
+    "overture-places",
+    "fsq-places",
+    "simpleview-listings",
+    "tempest-listings",
+    "chambermaster-listings"
+   ],
+   "dedupe_m": 75,
+   "dedupe_phone": true,
+   "dedupe_carry": true,
+   "history": "From the first build that has a set, month by month, keyed by Hotfrog's own listing id. A state whose collection is blocked or fails one month keeps its previous month's listings (up to three months running).",
+   "contact": "The listing's phone number (its tel: link, never a number written in the business's description) and website, cleaned by placepacks/contact.py. Hotfrog's search cards give no opening hours. Descriptions, tags, reviews and photos are never read.",
+   "notes": "Collected once a month by the hotfrog-listings workflow (the 12th), one job per state, two at a time: robots.txt obeyed (it disallows only /search/ankh/), the Census Bureau's population estimates choose the towns of at least 25,000 people (biggest first, as many as the job's 4,800-request budget allows), then one search page per town and each of 20 public-facing kinds of business, 4 seconds apart, with an identified User-Agent; a refusal stops the state at once (blocked; never got round). Listings without a street address or with a post office box, with a person's name, or of an individual's office (insurance and estate agents, lawyers, accountants) are left out; the pack build places each address with the offline NAD geocoder and leaves home addresses out (skip_homes). A listing that another business source already has (the same phone within 500 m, else the same name within 75 m) is not added again: its phone and website go to that place. Research of 27 November 2026 (robots.txt and one search page each): Hotfrog answered from this project's cloud environment without a challenge; whether it answers GitHub's machines is seen at the first run (if it refuses them, the job is recorded as blocked and can be moved to the owner's cloud session like the Yellow Pages lookups). Owner's decision of 27 November 2026: directories that answer without a challenge may be searched city by city and their listings' facts collected and published; no people's names, no e-mails, no one-person or home businesses, a street address required, polite pacing and budgets, stop on any block. Until the first set is there, the source is skipped."
+  },
+  {
    "id": "business-websites",
    "name": "Businesses' own websites (phone numbers and opening hours from the schema.org data on their homepages)",
    "short": "the businesses' own websites",
@@ -5369,7 +5429,7 @@
     "US"
    ],
    "licence": "directory-facts",
-   "attribution": "Phone numbers, websites and opening hours looked up on yellowpages.com for businesses already listed by other sources (tools/yp_lookup.py); facts only.",
+   "attribution": "Phone numbers, websites and opening hours looked up on yellowpages.com for businesses already listed by other sources (tools/yp_lookup.py); facts only; when Yellow Pages has no match, Hotfrog (hotfrog.com) lookups of the same businesses.",
    "url": "https://www.yellowpages.com",
    "reader": "details",
    "kind": "points",
@@ -5395,7 +5455,7 @@
    },
    "history": "No places of its own: details for businesses other sources list, from the first build that has a yp-lookups file. Each file holds every lookup made so far, the newest result of each.",
    "contact": "The telephone number, the business's own website (social-media pages are dropped) and the opening hours (OpenStreetMap syntax) of the one search result that matches: a name at least 85% alike AND the same street address (normalised) as an address point within 75 m of the place, or coordinates within 75 m. Cleaned by placepacks/contact.py; added only to the places that lack them, after every other source (the lowest priority).",
-   "notes": "The owner's decision (26 November 2026, night): Yellow Pages is used only to LOOK UP details (phone, hours, website) for businesses already in the packs from other sources, never to copy its directory. Facts only: never a review, a rating, a description, a photo, an e-mail address or a person's name; one-person and home businesses (a person's name, an individual's office, a result without a street address) are skipped. The job (tools/yp_lookup.py) runs slowly in the background from the owner's cloud session, not from GitHub: one search per business, one request every 3 to 4 seconds, at most 25,000 a day, states in order of population, the listing's own page read for hours only when the results page has none (a quarter of the searches at most). It stops at once on any refusal or anti-bot page and does not start again by itself; no CAPTCHA, browser imitation or other connection is ever used. yellowpages.com's robots.txt (read 27 November 2026) disallows \"/search*\" for every program; the owner decided to make these lookups all the same (his decision and risk). Results are uploaded at the end of each day to this repository's release \"uploaded-sources\" as yp-lookups-<YYYYMMDD>.csv.gz (the previous file merged in; the newest two kept); the build reads the newest. Until the first file is there, the source is skipped."
+   "notes": "The owner's decision (26 November 2026, night): Yellow Pages is used only to LOOK UP details (phone, hours, website) for businesses already in the packs from other sources, never to copy its directory. Facts only: never a review, a rating, a description, a photo, an e-mail address or a person's name; one-person and home businesses (a person's name, an individual's office, a result without a street address) are skipped. The job (tools/yp_lookup.py) runs slowly in the background from the owner's cloud session, not from GitHub: one search per business, one request every 3 to 4 seconds, at most 25,000 a day, states in order of population, the listing's own page read for hours only when the results page has none (a quarter of the searches at most). It stops at once on any refusal or anti-bot page and does not start again by itself; no CAPTCHA, browser imitation or other connection is ever used. yellowpages.com's robots.txt (read 27 November 2026) disallows \"/search*\" for every program; the owner decided to make these lookups all the same (his decision and risk). Results are uploaded at the end of each day to this repository's release \"uploaded-sources\" as yp-lookups-<YYYYMMDD>.csv.gz (the previous file merged in; the newest two kept); the build reads the newest. Until the first file is there, the source is skipped. Fallback (owner's decision of 27 November 2026): when Yellow Pages has no match, the same business is looked up on Hotfrog with the same matching rules (name alike AND the same street address), facts only; such rows say matched_on \"hotfrog ...\". A fallback directory that refuses is switched off for good in the job's progress file. Tested and not used (27 November 2026, one robots.txt and at most one search page each): Superpages (Yellow Pages' sister site with the same listings; robots.txt disallows /search), Manta, Cylex and EZlocal (Cloudflare challenges), MerchantCircle (robots.txt disallows everything), Local.com (now an articles site, not a directory), Brownbook (search only through an internal API; its city pages are disallowed); no newspaper business-directory platform with public listings was found. People-search and white-pages sites (Whitepages, 411, Spokeo and the like) are never used: personal data."
   },
   {
    "id": "ny-thruway-travel-plazas",
@@ -14359,6 +14419,56 @@
    "name": "Private-use airstrips and heliports of private owners (FAA NASR)",
    "licence": "Public domain (US government work)",
    "reason": "Left out on purpose: about 13,000 private-use facilities, many at people's homes and named after their owners (privacy). Private-use heliports and airfields of hospitals, universities, police, counties, states and the military are used (faa-other-airports)."
+  },
+  {
+   "name": "Manta business directory",
+   "licence": "none (directory terms)",
+   "reason": "Search pages answered with a Cloudflare challenge on 27 November 2026 (one request); the owner's rule: never past a challenge, so not used."
+  },
+  {
+   "name": "Cylex US business directory",
+   "licence": "none (directory terms)",
+   "reason": "robots.txt itself answered with a Cloudflare challenge on 27 November 2026; not used."
+  },
+  {
+   "name": "EZlocal business directory",
+   "licence": "none (directory terms)",
+   "reason": "robots.txt itself answered with a Cloudflare challenge on 27 November 2026; not used."
+  },
+  {
+   "name": "MerchantCircle business directory",
+   "licence": "none (directory terms)",
+   "reason": "robots.txt disallows every page for all programs (checked 27 November 2026); not used."
+  },
+  {
+   "name": "Superpages",
+   "licence": "none (directory terms)",
+   "reason": "Yellow Pages' sister site (the same company and listings), already used for lookups (yp-lookups); its robots.txt disallows /search. Not used."
+  },
+  {
+   "name": "Local.com",
+   "licence": "none",
+   "reason": "No longer a business directory (an articles site, checked 27 November 2026)."
+  },
+  {
+   "name": "Brownbook business directory",
+   "licence": "none (directory terms)",
+   "reason": "Its search is a JavaScript app over an internal API, and robots.txt disallows its business and city listing pages (checked 27 November 2026); not used."
+  },
+  {
+   "name": "Destinations International member directory (US tourism boards)",
+   "licence": "none",
+   "reason": "Answered with a Cloudflare challenge on 27 November 2026; tourism boards were found from Simpleview's customer pages and the boards of the largest US cities instead."
+  },
+  {
+   "name": "City tourism boards that refused a robots.txt request (San Francisco, San Diego, Memphis, Nashville, Savannah, St. Petersburg-Clearwater, Winston-Salem, Asheville, Charleston, Virginia Beach, Santa Barbara, Sarasota, Myrtle Beach)",
+   "licence": "none",
+   "reason": "Answered with HTTP 403 or an anti-bot page on 27 November 2026 (placepacks/directories/simpleview.py CITY_BLOCKED); never tried another way."
+  },
+  {
+   "name": "People-search and white-pages sites (Whitepages, 411.com, Spokeo and the like)",
+   "licence": "none",
+   "reason": "Never used: they list people's personal data."
   }
  ],
  "candidates": [

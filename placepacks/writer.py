@@ -60,7 +60,8 @@ CONTACT_SEP = "\x1f"
 # The sources whose contact details the build keeps, best first (placepacks/contact.py: CONTACT_SOURCES; written
 # here too, so that a copy of this file without contact.py still writes packs).
 CONTACT_ORDER = ("alltheplaces", "chain-locators", "ssa-field-offices", "nps-places", "usfs-recreation-sites",
-                 "ridb-recreation", "city-facilities", "overture-places", "fsq-places", "simpleview-listings",
+                 "ridb-recreation", "city-facilities", "nces-details", "map-vendors", "health-access",
+                 "health-access-businesses", "overture-places", "fsq-places", "simpleview-listings",
                  "tempest-listings", "chambermaster-listings", "hotfrog-listings", "business-websites",
                  "yp-lookups")
 # drop_duplicates with phone: the same telephone number within this many metres is the same business.
@@ -415,6 +416,10 @@ class PackWriter:
         # The services part's own tables (placepacks/services.py): its indexes.
         if getattr(self, "_svc", None) is not None:
             nav_counts.update(self._svc.finish())
+        # The site features (placepacks/features.py: buildings, accessible entrances, elevators ... of campuses,
+        # hospitals, zoos and malls): a table of its own, written fresh each build (no history), and its indexes.
+        if getattr(self, "_features", None) is not None:
+            nav_counts.update(self._features.finish())
         for fields in self.sources.values():
             db.execute(f"INSERT INTO sources VALUES ({', '.join('?' * len(SOURCE_COLUMNS))})",
                        [fields[c] for c in SOURCE_COLUMNS])

@@ -1,6 +1,8 @@
 """Looking up a position in the place packs: what is there, as it was named when the picture was taken.
 
-  PackReader(path)              one pack file (read-only); the low-level queries below
+  PackReader(path)              one pack file (read-only); the low-level queries below, including the site
+                                features: features_of(site, kinds=None, building=None), features_near(lat, lon,
+                                kinds=None, metres=200), building_of(key=None, lat=None, lon=None, metres=100)
   Finder(folder=None, packs=None, water=None, nearest=None)
       .lookup(lat, lon, when=None, detail="street", altitude=None) -> Result
       .areas_at(lat, lon, when=None) -> [(name, cls, size_m2, source)]   every named area holding the point
@@ -47,7 +49,8 @@ BUSINESS_SOURCES = {"overture-places", "fsq-places"}
 # several sources list one business, a lookup takes each detail from the first that has it (OpenStreetMap's own
 # details, the services part's svc_details, come before all of them). FORMAT.md, "Business contact details".
 DETAIL_ORDER = ("alltheplaces", "chain-locators", "ssa-field-offices", "nps-places", "usfs-recreation-sites",
-                "ridb-recreation", "city-facilities", "overture-places", "fsq-places", "simpleview-listings",
+                "ridb-recreation", "city-facilities", "nces-details", "map-vendors", "health-access",
+                "health-access-businesses", "overture-places", "fsq-places", "simpleview-listings",
                 "tempest-listings", "chambermaster-listings", "hotfrog-listings", "business-websites",
                 "yp-lookups")
 DETAIL_FIELDS = ("phone", "website", "opening_hours")
@@ -368,6 +371,9 @@ class PackReader:
         # The phone, website and opening hours of businesses (businesses part, since November 2026; none in older
         # packs): see details_of.
         self.has_details = "biz_details" in tables
+        # Features inside or around sites (campus buildings, accessible entrances, elevators ...; since November
+        # 2026, none in older packs): see features_of, features_near and building_of.
+        self.has_features = "site_features" in tables
         _open.add(self)
 
     def notes_for(self, key):
@@ -387,6 +393,81 @@ class PackReader:
         rows = self._rows("SELECT d.phone, d.website, d.opening_hours FROM points p JOIN biz_details d ON d.id = "
                           "p.id WHERE p.key = ? ORDER BY p.last IS NULL DESC, p.last DESC LIMIT 1", (key,))
         return {k: v for k, v in rows[0].items() if v} if rows else {}
+
+    # -- site features (placepacks/features.py; FORMAT.md, "Site features")
+
+    def _features(self, where, args=()):
+        """Rows of site_features as dicts: key, source, kind, name, site, building, level, lat, lon (degrees),
+        line ([(lat, lon)] degrees for a route, else None) and notes. [] for a pack without the table."""
+        if not self.has_features:
+            return []
+        rows = self._rows("SELECT key, source, kind, name, site, building, level, lat, lon, pts, notes FROM "
+                          f"site_features WHERE {where}", args)
+        for r in rows:
+            r["lat"], r["lon"] = r["lat"] / fmt.SCALE, r["lon"] / fmt.SCALE
+            pts = r.pop("pts")
+            r["line"] = [(a / fmt.SCALE, b / fmt.SCALE) for a, b in fmt.unpack_points(pts)] if pts else None
+        return rows
+
+    @staticmethod
+    def _kinds(kinds):
+        """A kinds argument as a set (one kind as text, a list, or None for every kind)."""
+        if kinds is None:
+            return None
+        return {kinds} if isinstance(kinds, str) else set(kinds)
+
+    def features_of(self, site, kinds=None, building=None):
+        """The features of a site, by the key of its place ("w123", "nces-postsecondary:166027") or a source's own
+        site key ("mazemap:campus:1"): [{key, source, kind, name, site, building, level, lat, lon, line, notes}],
+        buildings first, then by kind and name. kinds: one kind or several ("accessible entrance", "elevator" ...;
+        features.KINDS), None for all; building: only the features of that building (its feature key). [] for a
+        pack without site features."""
+        if not site:
+            return []
+        rows = self._features("site = ?" + (" AND building = ?" if building else ""),
+                              (site, building) if building else (site,))
+        want = self._kinds(kinds)
+        rows = [r for r in rows if want is None or r["kind"] in want]
+        return sorted(rows, key=lambda r: (r["kind"] != "building", r["kind"], r["name"] or "", r["key"]))
+
+    def features_near(self, lat, lon, kinds=None, metres=200):
+        """The features within metres of a position (at most about 1 km), nearest first, each with "d" (metres; a
+        route's nearest point). kinds: one kind or several, None for all. [] for a pack without site features."""
+        if not self.has_features:
+            return []
+        cells = ",".join(map(str, _around(lat, lon)))
+        want = self._kinds(kinds)
+        out = []
+        for r in self._features(f"cell IN ({cells})"):
+            if want is not None and r["kind"] not in want:
+                continue
+            if r["line"]:
+                pts = fmt.micro(r["line"])
+                r["d"] = min(fmt.segment_metres(lat, lon, pts[i], pts[i + 1]) for i in range(len(pts) - 1))
+            else:
+                r["d"] = fmt.metres(lat, lon, r["lat"], r["lon"])
+            if r["d"] <= metres:
+                out.append(r)
+        return sorted(out, key=lambda r: r["d"])
+
+    def building_of(self, key=None, lat=None, lon=None, metres=100):
+        """The building (a site feature of kind "building") that a feature is in, given the feature's key, or the
+        nearest building to a position within metres; None when there is none. The building's own row is a dict like
+        features_of's (with "d" when found by position)."""
+        if key:
+            rows = self._features("key = ?", (key,))
+            if not rows:
+                return None
+            if rows[0]["kind"] == "building":
+                return rows[0]
+            if rows[0]["building"]:
+                found = self._features("key = ? AND kind = 'building'", (rows[0]["building"],))
+                return found[0] if found else None
+            lat, lon = rows[0]["lat"], rows[0]["lon"]
+        if lat is None or lon is None:
+            return None
+        near = self.features_near(lat, lon, "building", metres)
+        return near[0] if near else None
 
     def labels(self, key):
         """{language: name} of a place's key in a "names" part pack ({} in other packs)."""
@@ -1030,3 +1111,32 @@ def search_names(text, folder=None, regions=None, when=None, limit=20, type=None
             Finder(packs=[p], water=False)._attribute(res, p, r["source"])
             out.append(res)
     return out[:limit]
+
+
+# ------------------------------------------------------------------------------------------- site features
+
+def site_features_near(lat, lon, kinds=None, metres=200, folder=None, packs=None):
+    """The site features (placepacks/features.py) within metres of a position in every pack of a folder (or the
+    given PackReaders), nearest first; each dict also has "region" (the pack's region id). A feature in two packs
+    (a sub-region's overlap) is given once."""
+    out, seen = [], set()
+    for pack in (packs if packs is not None else open_packs(folder)):
+        if not pack.has_features or not pack.covers(lat, lon):
+            continue
+        for r in pack.features_near(lat, lon, kinds, metres):
+            if (r["source"], r["key"]) not in seen:
+                seen.add((r["source"], r["key"]))
+                out.append({**r, "region": pack.region_id})
+    return sorted(out, key=lambda r: r["d"])
+
+
+def site_features_of(site, kinds=None, folder=None, packs=None):
+    """The features of a site (its place's key) in every pack of a folder (or the given PackReaders): the core
+    part's OpenStreetMap features and the extra part's campus maps together, each feature once."""
+    out, seen = [], set()
+    for pack in (packs if packs is not None else open_packs(folder)):
+        for r in pack.features_of(site, kinds):
+            if (r["source"], r["key"]) not in seen:
+                seen.add((r["source"], r["key"]))
+                out.append({**r, "region": pack.region_id})
+    return sorted(out, key=lambda r: (r["kind"] != "building", r["kind"], r["name"] or "", r["key"]))

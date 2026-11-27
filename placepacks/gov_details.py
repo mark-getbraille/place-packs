@@ -6,6 +6,9 @@
                          (placepacks/nps_api.py; needs the free key in the NPS_API_KEY secret)
   convert "ridb"         Recreation.gov's RIDB full export: facilities, recreation areas and permit entrances of every
                          federal agency (placepacks/ridb.py)
+  convert "nces_details" schools' and colleges' phone numbers, websites and notes from the NCES directories (CCD,
+                         PSS, IPEDS), for the schools and colleges already in the packs (placepacks/schools.py; its
+                         own CSV columns, read by the "key_details" reader)
 
 The Forest Service's Recreation Opportunities layer is not a place list of its own: its hours, season and
 accessibility are joined to the existing Forest Service recreation sites when they are fetched
@@ -35,7 +38,8 @@ import time
 
 FIELDS = ["key", "name", "kind", "type", "state", "lat", "lon", "phone", "website", "opening_hours", "note"]
 # The converters, by the catalogue's "convert" name: the module whose prepare(entry, folder) writes the CSV.
-CONVERTERS = {"ssa_offices": "placepacks.ssa_offices", "nps_api": "placepacks.nps_api", "ridb": "placepacks.ridb"}
+CONVERTERS = {"ssa_offices": "placepacks.ssa_offices", "nps_api": "placepacks.nps_api", "ridb": "placepacks.ridb",
+              "nces_details": "placepacks.schools"}
 NOTE_LIMIT = 1200               # as the tabular reader's notes (placepacks/readers/tabular.py, NOTE_LIMIT)
 _EMAIL = re.compile(r"[\w.+-]+@[\w-]+(\.[\w-]+)+")
 

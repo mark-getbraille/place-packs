@@ -187,8 +187,8 @@ def build(region_id, part, fetched, out, previous=None, month=None, only=None, c
             "parent": region.get("parent", ""),
             "state": catalogue.parent_values(region).get("name") or region["name"], "part": part, "sources_used": ",".join(used), "sources_missing": ",".join(missing),
             "licence": "collective (see sources)", "attribution": fmt.ATTRIBUTION,
-            "notice": "This pack is a collective database. Its OpenStreetMap layer (source osm) is a database "
-                      "derived from OpenStreetMap, (c) OpenStreetMap contributors, made available under the Open "
+            "notice": "This pack is a collective database. Its OpenStreetMap layers (sources osm and "
+                      "osm-site-features) are a database derived from OpenStreetMap, (c) OpenStreetMap contributors, made available under the Open "
                       "Database License (ODbL) 1.0. Every other layer is an independent database under its own "
                       "licence, listed in the sources table with its attribution.",
             "tool": "place-packs (github.com/mark-getbraille/place-packs)",

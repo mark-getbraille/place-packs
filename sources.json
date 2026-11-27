@@ -301,6 +301,47 @@
    "time_limit_min": 60
   },
   {
+   "id": "osm-site-features",
+   "name": "OpenStreetMap: buildings, entrances, elevators, accessible restrooms and parking inside campuses, hospitals, zoos, malls, airports and stadiums (site features)",
+   "short": "OpenStreetMap",
+   "part": "core",
+   "countries": [
+    "US",
+    "CA",
+    "GB",
+    "IE",
+    "FR",
+    "BE",
+    "NL",
+    "LU",
+    "DE",
+    "CH",
+    "AT",
+    "ES",
+    "PT",
+    "IT",
+    "DK",
+    "NO",
+    "SE",
+    "FI",
+    "IS",
+    "AU",
+    "NZ",
+    "JP"
+   ],
+   "licence": "ODbL-1.0",
+   "attribution": "© OpenStreetMap contributors, available under the Open Database License (ODbL) 1.0: https://www.openstreetmap.org/copyright",
+   "url": "https://www.openstreetmap.org",
+   "reader": "osm_site_features",
+   "fetch": {
+    "method": "same_as",
+    "same_as": "osm"
+   },
+   "history": "No history: the site features as mapped at the build (the site_features table is written whole each time).",
+   "notes": "The core part's site_features table (placepacks/readers/osm_features.py, FORMAT.md \"Site features\"): inside every named site area (university, college and school campuses, hospitals, zoos, aquariums, theme parks, museums, malls, airports, stadiums, convention and exhibition centres), the named buildings, entrances (accessible when wheelchair=yes), elevators, escalators, toilets (accessible with wheelchair=yes or toilets:wheelchair=yes), car parks with accessible spaces (capacity:disabled) and disabled parking spaces, footways and ramps with wheelchair=yes (as lines), reception and information desks, emergency phones, named dining places, shops, airport gates and terminals; each with its site (the area's key) and its building. The note keeps only accessibility tags (wheelchair, automatic door, door, width, ramp, handrail, accessible spaces, changing table).",
+   "time_limit_min": 60
+  },
+  {
    "id": "nad",
    "name": "National Address Database (USDOT)",
    "short": "the National Address Database",
@@ -3469,6 +3510,37 @@
    "history": "The newest school year from the first build on; older files can seed closures."
   },
   {
+   "id": "nces-details",
+   "name": "School and college details: phone numbers, websites, grades, school types and colleges' admissions, disability services and financial aid pages (NCES CCD, PSS and IPEDS)",
+   "short": "the National Center for Education Statistics",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "US-Government-Work",
+   "attribution": "School and college details from the National Center for Education Statistics (Common Core of Data school directory, Private School Universe Survey, IPEDS institutional characteristics), U.S. Department of Education (public domain).",
+   "url": "https://nces.ed.gov/ccd/files.asp",
+   "reader": "key_details",
+   "kind": "points",
+   "fetch": {
+    "method": "national",
+    "url": "https://nces.ed.gov/ccd/files.asp",
+    "convert": "nces_details",
+    "pause": 2
+   },
+   "member": "*.csv",
+   "filter": {
+    "column": "state",
+    "equals": "{code}"
+   },
+   "columns": {
+    "key": "key"
+   },
+   "history": "No places of its own: details for the schools and colleges of nces-schools, nces-private-schools and nces-postsecondary (by their NCES ids), from the newest files at each build.",
+   "contact": "The school's or college's public telephone number and website (CCD PHONE and WEBSITE, PSS PPHONE, IPEDS GENTELE and WEBADDR), added only where the place lacks them (PackWriter.fill_details). The note gives the grades (CCD GSLO-GSHI), the type (CCD SCH_TYPE_TEXT, charter, exclusively or primarily virtual; PSS TYPOLOGY; IPEDS SECTOR, tribal college, HBCU), a state school for the blind or the deaf (by its name), and for colleges the disability services office's page (IPEDS DISAURL), the admissions page (ADMINURL) and the financial aid page (FAIDURL).",
+   "notes": "Requested by the owner on 27 November 2026. Read once a month by the prepare job (placepacks/schools.py): the CCD school directory and characteristics files found through the CCD file list's own API (about 100,000 open public schools), the newest PSS public-use file (about 22,500 private schools) and the newest IPEDS HD file (about 6,000 colleges, trade and vocational schools, community and tribal colleges; about 6,000 with a disability services page). Never read: people's names (IPEDS CHFNM and CHFTITLE, principals), e-mail addresses, enrolment or staff figures. Magnet status is no longer in the CCD files (2024-25). State pre-K and adult education lists were not added: no national open list with positions or ids was found in the quick sweep (see candidates)."
+  },
+  {
    "id": "newberry-counties",
    "name": "Atlas of Historical County Boundaries (Newberry Library)",
    "short": "the Newberry Library's Atlas of Historical County Boundaries",
@@ -4523,6 +4595,105 @@
    "history": "From the first build that has a set, month by month, keyed by the layer and the record's own id. A state whose collection fails in a month keeps its places from the previous set (up to three months running); a layer that refuses or fails within a state's run is missing that month.",
    "contact": "The place's public telephone number, website and opening hours as the city gives them, cleaned by placepacks/contact.py (city-facilities counts as a government source); hours are turned into OpenStreetMap's syntax where placepacks/hours.py can be sure (one range a day, or a day field each), otherwise the city's own words become the note (\"Hours: ...\"). Only the mapped fields are ever requested: managers' or staff names and e-mail addresses are never read.",
    "notes": "Found and read automatically once a month by the city-facilities workflow (the 18th): a discovery job sweeps the Socrata catalogue (api.us.socrata.com) and ArcGIS Hub's search (hub.arcgis.com) for 14 keywords (facilities, community centers, recreation centers, libraries, city hall, municipal buildings, parks facilities, senior centers, points of interest ...), keeps US city and county layers of points with a name field (state, federal and university portals, private accounts and layers whose titles name inspections, permits, energy use, staff or the like are left out; a layer with people fields, such as first and last names or job titles, is a staff directory and is never read), maps their fields automatically (NAME/FACILITY/FAC_NAME, ADDRESS, CITY, ZIP, PHONE, HOURS or one field per weekday, TYPE, WEBSITE) and reads one record of each to find its state; placepacks/data/city_facilities_overrides.json adds, skips or corrects layers by hand. Then one job per state reads its layers (at most 5,000 records a layer; a bigger layer is not a list of public places and is left out whole). The kind of each place comes from its type field, else its name, else the layer's title. Owner's decisions: government data regardless of licence (26 November 2026); every US city and town that publishes facilities data, found automatically, with a manual override list (27 November 2026). Research of 27 November 2026: the catalogues answered without a key; samples (Chicago's senior centers, Seattle's community centers, Phoenix's park buildings, Harris County's community centers) mapped name, address, phone, hours and type correctly. Until the first set is there, the source is skipped."
+  },
+  {
+   "id": "map-vendors",
+   "name": "Campus and indoor maps: buildings, accessible entrances, elevators, accessible parking and restrooms, routes, desks and dining of colleges, hospitals, zoos and other sites (MazeMap, universities' campus GIS layers; Concept3D waiting for the owner's decision)",
+   "short": "the sites' own campus maps",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "attribution": "Buildings and accessibility features from the organisations' own campus and indoor maps (MazeMap) and universities' open campus GIS layers (ArcGIS Hub), read by place-packs (placepacks/mapvendors); the month's list of maps, with each organisation, is map-vendors-orgs.json in this repository's release map-vendors.",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/mapvendors",
+   "reader": "site_features",
+   "kind": "points",
+   "fetch": {
+    "method": "release_csv",
+    "release": "map-vendors",
+    "prefix": "map-vendors"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "key": "key"
+   },
+   "history": "No history: the site features of the newest monthly set (the site_features table is written whole each build). A unit whose collection fails or is blocked keeps the previous set's file (up to three months).",
+   "contact": "A site's own website (its homepage from the discovery) where its place lacks one; the site's note (\"Indoor map with wheelchair routes\").",
+   "notes": "Owner's decisions of 27 November 2026 (queue item Q2): plot each building of a campus with its accessible entrances; use campus map platforms with public data and universities' open GIS layers; scraping campus websites approved where needed, with the standing limits (facts only; no people's names; polite, identified, rate-limited; never past a CAPTCHA, a login or an anti-bot challenge, no headless or Chrome-imitating browser, no other IP address: a refusal is recorded as blocked). Discovery (placepacks/mapvendors/discover.py, monthly, in shards) scans the homepages of every active IPEDS institution and of Wikidata's US hospitals, zoos, aquariums, museums, convention centres, stadiums, malls and airports, and up to three of each one's own map, visitor, parking and accessibility pages, for the fingerprints of the vendors in placepacks/mapvendors/registry.py (robots.txt obeyed); unknown map embeds go to new-map-vendors.txt. Collectors: MazeMap (public API without a key; rooms and offices never read, only POI types that name a kind: entrances, elevators, toilets, parking, desks, dining), universities' ArcGIS building layers (name, address; layers with people fields never read), Concept3D (ready, but api.concept3d.com's robots.txt disallows all programs, so it records \"blocked\" and reads nothing until the owner decides). Site rows are tied to the place already in the pack (its NCES or Wikidata key, else the same name nearby, else the campus area holding it)."
+  },
+  {
+   "id": "health-access",
+   "name": "Hospital and clinic accessibility: accessibility facts, hours and phone numbers from health insurers' public FHIR provider directories (Cigna, Humana, Molina) and hospitals' own accessibility pages",
+   "short": "health insurers' provider directories and hospitals' own pages",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "attribution": "Accessibility facts, hours and phone numbers of hospitals and clinics from health insurers' public provider directories (FHIR APIs published under the CMS Interoperability and Patient Access rule: Cigna, Humana, Molina Healthcare) and from hospitals' own websites, read by place-packs (placepacks/health_access).",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/health_access",
+   "reader": "site_features",
+   "kind": "points",
+   "fetch": {
+    "method": "release_csv",
+    "release": "health-access",
+    "prefix": "health-access"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "key": "key"
+   },
+   "keep_unmatched_sites": false,
+   "history": "No places of its own: details and notes for hospitals and clinics other sources list, from the newest monthly set.",
+   "contact": "A clinic's or hospital's phone and opening hours (FHIR Location telecom and hoursOfOperation, in OpenStreetMap syntax) where its place lacks them; the note lists the accessibility facts (\"Accessibility (Humana provider directory): handicap accessible; American Sign Language; TTY\"; \"Accessibility (hospital's website): wheelchairs available; sign language interpreters; braille materials; accessibility services phone ...\").",
+   "notes": "Owner's request of 27 November 2026 (added to queue item Q2). Insurers' directories: only Location records (never Practitioner or PractitionerRole); a Location named like a person or a practitioner's own office, without a position, named only by its street address, or saying nothing about accessibility or hours is left out; robots.txt obeyed. Hospitals' pages: the hospitals of Wikidata with an official website; the homepage and up to three of its own accessibility, interpreter and patients-and-visitors pages; only a fixed list of facts is kept (never the page's text), and the phone number of a sentence about accessibility services. Rows are tied to the clinic or hospital already in the pack by the NPI (cms-nppes-organisations), the Wikidata key, or the same name within 400 m; a row that matches nothing adds nothing. Section 1557 notices were not found as data."
+  },
+  {
+   "id": "health-access-businesses",
+   "name": "Clinic accessibility from health insurers' provider directories, for the businesses part's health care organisations",
+   "short": "health insurers' provider directories and hospitals' own pages",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "attribution": "Accessibility facts, hours and phone numbers of hospitals and clinics from health insurers' public provider directories (FHIR APIs published under the CMS Interoperability and Patient Access rule: Cigna, Humana, Molina Healthcare) and from hospitals' own websites, read by place-packs (placepacks/health_access).",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/health_access",
+   "reader": "site_features",
+   "kind": "points",
+   "fetch": {
+    "method": "release_csv",
+    "release": "health-access",
+    "prefix": "health-access"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "key": "key"
+   },
+   "keep_unmatched_sites": false,
+   "history": "No places of its own: details and notes for hospitals and clinics other sources list, from the newest monthly set.",
+   "contact": "A clinic's or hospital's phone and opening hours (FHIR Location telecom and hoursOfOperation, in OpenStreetMap syntax) where its place lacks them; the note lists the accessibility facts (\"Accessibility (Humana provider directory): handicap accessible; American Sign Language; TTY\"; \"Accessibility (hospital's website): wheelchairs available; sign language interpreters; braille materials; accessibility services phone ...\").",
+   "notes": "The same monthly set as health-access, read again for the businesses part, where the CMS NPPES organisations (clinics, pharmacies, dentists ...) are: only the details and notes of places it matches (by NPI or the same name nearby); no site features are written in this part.",
+   "features": false
   },
   {
    "id": "hrsa-site-dashboard",
@@ -14469,6 +14640,21 @@
    "name": "People-search and white-pages sites (Whitepages, 411.com, Spokeo and the like)",
    "licence": "none",
    "reason": "Never used: they list people's personal data."
+  },
+  {
+   "name": "UnitedHealthcare / Optum public FHIR provider directory (public.fhir.flex.optum.com)",
+   "licence": "none stated (CMS-mandated public API)",
+   "reason": "Did not answer from the build environment on 27 November 2026 (connection failed); tried once, not got round. Retry in a later month (placepacks/health_access/fhir.py PAYERS)."
+  },
+  {
+   "name": "Centene public FHIR provider directory (production.api.centene.com/fhir/providerdirectory)",
+   "licence": "none stated (CMS-mandated public API)",
+   "reason": "Did not answer on 27 November 2026 (connection failed); tried once. Retry later."
+  },
+  {
+   "name": "Elevance Health (Anthem) public FHIR provider directory (totalview.healthos.elevancehealth.com, Medicaid)",
+   "licence": "none stated (CMS-mandated public API)",
+   "reason": "Answered HTTP 500 to a Location search on 27 November 2026; tried once. Retry later."
   }
  ],
  "candidates": [
@@ -14791,6 +14977,31 @@
    "name": "Small city alcohol, grocery and business licence lists (Grand Junction CO, Aspen CO, Corona CA)",
    "licence": "CC0, CC BY 4.0, public domain",
    "note": "Open but under 2,000 places each; Grand Junction and Aspen are in Colorado, which the NAD leaves out, so only layers with their own points can be used. Add one by one after checking each layer's fields."
+  },
+  {
+   "name": "Concept3D interactive campus maps (api.concept3d.com locations and categories)",
+   "licence": "none stated; facts of the organisations' own maps",
+   "note": "Used by hundreds of colleges, hospitals, zoos and cities; its public data (accessible entrances, parking, elevators, buildings) is what its own web maps read, with a public key built into its script. api.concept3d.com's robots.txt says \"User-agent: * Disallow: /\" (27 November 2026), so by the standing rule nothing is read for the published packs. The collector (placepacks/mapvendors/concept3d.py) is ready and the discovery records every Concept3D map id; NEEDS THE OWNER'S DECISION: an explicit override (registry robots_override) or the personal-use-only layer."
+  },
+  {
+   "name": "Other campus and indoor map vendors (Nuvo/CampusBird, Rave, Mappedin, Atrius/LocusLabs, MapsIndoors, Pointr, Jibestream, Mapwize, Mapsted, ArcGIS Indoors viewers)",
+   "licence": "none stated",
+   "note": "In the registry with their fingerprints (placepacks/mapvendors/registry.py), so the discovery records which organisations use them; no collector yet: their data needs a customer key or login (Rave, Mappedin, LocusLabs, MapsIndoors, Pointr, Jibestream) or was not looked at (CampusBird, Mapwize, Mapsted). Malls' and airports' indoor directories are queue item Q3."
+  },
+  {
+   "name": "State pre-K program lists and adult education provider lists",
+   "licence": "varies by state",
+   "note": "Quick sweep 27 November 2026: no national open list with positions or NCES ids. Public pre-K classes are part of the CCD schools (grades PK); adult education providers are partly in IPEDS. State lists (for example state pre-K site finders) would be added one by one after checking each layer's fields and licence."
+  },
+  {
+   "name": "Section 1557 nondiscrimination notices (disability assistance contact lines) as data",
+   "licence": "n/a",
+   "note": "Looked for 27 November 2026: published only as each provider's web page or PDF, not as a dataset; the hospital pages collector picks up accessibility desk phone numbers from hospitals' own accessibility pages instead."
+  },
+  {
+   "name": "Magnet school status (NCES CCD)",
+   "licence": "US-Government-Work",
+   "note": "No longer in the CCD school files (2024-25); would come back if NCES publishes it again."
   }
  ]
 }

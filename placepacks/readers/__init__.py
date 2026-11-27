@@ -16,6 +16,11 @@ downloaded), the source's catalogue entry (sources.json) and the region, and add
   ohm.py      OpenHistoricalMap features (CC0) with their own start and end dates, from its Overpass API
   placepacks/details.py  the "details" reader: phone, website and hours for places other sources list (Yellow Pages
               lookups, the businesses' own homepages)
+  placepacks/features.py  the "site_features" reader: features inside or around a site (accessible entrances,
+              elevators, buildings ...) from the collectors' CSV files (placepacks/mapvendors, placepacks/health_access)
+  osm_features.py  the "osm_site_features" reader: OpenStreetMap's buildings, entrances, elevators, accessible
+              toilets and parking inside campus, hospital, zoo, mall and other site areas
+  placepacks/schools.py  the "key_details" reader: phone, website and a note for schools and colleges by their NCES id
 """
 
 READERS = {}
@@ -35,4 +40,6 @@ def load_all():
     from placepacks.readers import (gtfs, navigation, ohm, osm, parquet, services, shapes,  # noqa: F401
                                     sqlite_query, tabular, wikidata)
     from placepacks import details  # noqa: F401 - the "details" reader (details-only sources)
+    from placepacks import features, schools  # noqa: F401 - the "site_features" and "key_details" readers
+    from placepacks.readers import osm_features  # noqa: F401 - the "osm_site_features" reader
     return READERS

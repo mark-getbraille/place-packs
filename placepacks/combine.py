@@ -18,7 +18,7 @@ import os
 import sqlite3
 import sys
 
-from placepacks import fmt
+from placepacks import features, fmt
 from placepacks.writer import SOURCE_COLUMNS, TABLES, PackWriter, previous_addresses
 
 ROW_TABLES = ("points", "areas", "lines", "ranges")
@@ -84,6 +84,8 @@ def combine(region_id, part, paths, out):
                 writer.sources.setdefault(fields["id"], {c: str(fields.get(c, "") or "") for c in SOURCE_COLUMNS})
         if "removals" in have:
             db.execute(f"INSERT INTO main.removals SELECT * FROM {alias}.removals")
+        # The site features (placepacks/features.py), when the child pack has them; each key is kept once.
+        features.copy_from(writer, alias, have)
         for sid, st in json.loads(meta.get("source_status", "{}") or "{}").items():
             old = statuses.get(sid)
             if old is None or (old.get("status") != "ok" and st.get("status") == "ok"):

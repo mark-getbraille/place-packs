@@ -22,6 +22,7 @@ A pack is one SQLite file. Coordinates are whole microdegrees. Months are YYYYMM
 | biz_details | id, phone, website, opening_hours | in the businesses part, and in the extra part for the government sources' offices and sites, since November 2026 (absent in older packs): a business's or a public office's contact details, points.id -> its phone, web address and opening hours ("Business contact details", "Government places with details") |
 | notes | id, text | short notes about places, each once ("filming location of ..."); data only, never spoken |
 | point_notes | id, note | a point's note: points.id -> notes.id |
+| site_features | id, key, source, kind, name, site, building, level, lat, lon, cell, pts, notes | in the core part (OpenStreetMap) and the extra part (campus maps), since November 2026 (absent in older packs): buildings, accessible entrances, elevators, accessible parking and restrooms, routes, desks, dining and the like inside or around a site (campus, hospital, zoo, mall, airport), with their site, building and floor ("Site features") |
 | labels | key, lang, name | only in the optional "names" part: a place's name in another language, by the key of the place in the main packs ("wikidata:Q42", "fr", "Lac Champlain") |
 | svc_* | (below) | only in the optional "services" part: offices and services, NWS zones and NOAA Weather Radio ("The services part") |
 | nav_* | (below) | only in the optional "navigation" part: the street network, crossings, accessibility details and transit timetables ("The navigation part") |
@@ -173,6 +174,94 @@ not added where another source has the same normalised name nearby; instead the 
 point's phone, web page and hours that it lacks, and its note after its own (`PackWriter.drop_duplicates`). A lookup
 then gives each detail from the best source (`lookup.DETAIL_ORDER`: OpenStreetMap, All The Places, the chain store
 locators, the government sources, Overture, Foursquare).
+
+## School and college details (November 2026, still version 2)
+
+No new table: the extra part's `biz_details` and notes also hold the details of the schools and colleges of
+`nces-schools`, `nces-private-schools` and `nces-postsecondary`, from the source `nces-details`
+(`placepacks/schools.py`, reader `key_details`: rows found by the place's NCES key, filling only what the place
+lacks):
+
+| From | phone | website | note |
+|---|---|---|---|
+| CCD school directory (public schools) | PHONE | WEBSITE | "Grades: PK-5; Type: special education school, charter school, virtual school (exclusively virtual), school for the blind" |
+| PSS (private schools) | PPHONE | none | "Type: private Catholic diocesan school" |
+| IPEDS HD (colleges, community, tribal, trade and vocational schools) | GENTELE | WEBADDR | "Type: public 2-year college (community or technical college), tribal college; Disability services: https://...; Admissions: https://...; Financial aid: https://..." |
+
+The note is data for programs (the Assistant can say "the college's disability services page is ..."). No person's
+name is read (IPEDS's chief administrator's columns are never taken).
+
+## Site features (November 2026, still version 2)
+
+What is inside or around a site: a college campus, a hospital, a zoo, a mall, an airport, a stadium. A NEW table,
+`site_features`, written by `placepacks/features.py` (`features.store(writer).add(...)`) and read by
+`PackReader.features_of`, `features_near` and `building_of` (and `lookup.site_features_near` /
+`site_features_of` across every pack of a folder):
+
+| Column | What |
+|---|---|
+| id | the row's number |
+| key | the feature's own stable key: "n123" or "w123" (OpenStreetMap), "mazemap:212:poi:17", "campusgis:...:5" |
+| source | the source id: `osm-site-features` (core part), `map-vendors` (extra part) |
+| kind | accessible entrance, entrance, elevator, escalator, accessible parking, parking, accessible restroom, restroom, accessible route, service desk, information desk, emergency phone, dining, store, gate, terminal, building, site (`features.KINDS`) |
+| name | the feature's name as the source gives it ("North Entrance", "Smith Hall"), or NULL |
+| site | the key of the site's place in the packs (an OpenStreetMap campus area "w900", a college "nces-postsecondary:166027", a hospital "hrsa-site-dashboard:..."), or the source's own site key when no place matched (then the site itself is a row of kind "site") |
+| building | the key of the building feature (a row of kind "building") the feature is in or on, or NULL |
+| level | the floor or level as the source labels it ("1", "Ground", "B1"), or NULL |
+| lat, lon | whole microdegrees (a route: its middle point) |
+| cell | the fine cell of the position (as `points.cell`) |
+| pts | only for kind "accessible route": its points, packed like a line's |
+| notes | a short accessibility note ("wheelchair: yes; automatic door; main entrance"), never an e-mail address, at most 600 characters |
+
+Indexes: by cell, site, building and key. The table has no history: each build writes it whole from the sources of
+that month (like the navigation part); a key appears once per source.
+
+Compatibility: the points, areas and lines tables keep their version 2 columns, so programs and merges made before
+the table read new packs unchanged (they never look at it), and a pack without it has no site features
+(`PackReader.has_features` is False and the methods answer `[]` or None). The pack version stays 2. A parent
+region's pack put together from its sub-regions (`placepacks.combine`) copies the table.
+
+Where the rows come from:
+
+- core part, `osm-site-features` (`placepacks/readers/osm_features.py`, ODbL like the rest of the core part):
+  inside every named site area of OpenStreetMap (amenity=university, college, school, kindergarten, hospital,
+  conference_centre, exhibition_centre; healthcare=hospital; tourism=zoo, aquarium, theme_park, museum;
+  shop=mall, department_store; leisure=stadium, water_park; aeroway=aerodrome; landuse=education): named buildings,
+  entrance=* (accessible with wheelchair=yes), highway=elevator, escalators, toilets (accessible with wheelchair=yes
+  or toilets:wheelchair=yes), car parks with capacity:disabled and disabled parking spaces, footways and ramps with
+  wheelchair=yes (as routes), reception and information desks, emergency phones, named dining places and shops,
+  airport gates and terminals. A feature outside every site is not kept (the navigation part has those).
+- extra part, `map-vendors` (`placepacks/mapvendors`): the campus and indoor maps found by the map vendor discovery
+  (MazeMap campuses; universities' ArcGIS building layers; Concept3D waits for the owner's decision on its API's
+  robots.txt), from the monthly release "map-vendors".
+
+The collectors' common CSV (`features.FEATURE_FIELDS`): key, kind, name, site, site_name, place_key, npi, building,
+level, lat, lon, line ("lat lon;lat lon"), notes, phone, website, opening_hours, address, org, vendor, map_id. A row
+of kind "site" describes the organisation; the reader `site_features` ties it to the place already in the pack
+(`features.SiteResolver`: its place_key such as "nces-postsecondary:166027" or "wikidata:Q...", else the NPI's
+organisation "cms-nppes-organisations:<NPI>", else the same name within 400 m, else the campus area holding it) and
+gives that place the phone, website, hours and note it lacks (`PackWriter.fill_details`). A feature row without a
+site takes the campus area holding it.
+
+Hospital and clinic accessibility (`health-access` in the extra part and `health-access-businesses` in the
+businesses part, `placepacks/health_access`) use the same CSV with "site" rows only: insurers' public FHIR provider
+directories (accessibility extensions, hours, phone) and hospitals' own accessibility pages (a fixed list of facts
+and the accessibility desk's phone) become details and notes of the hospitals and clinics already in the packs; a
+row that matches no place adds nothing (`keep_unmatched_sites`: false), and the businesses part writes no features
+(`features`: false).
+
+The reader methods (`placepacks/lookup.py`), for the Toolkit's Assistant:
+
+- `PackReader.features_of(site, kinds=None, building=None)`: the features of a site (its place's key), buildings
+  first; `kinds` one kind or a list; `building` a building's key. Each a dict: key, source, kind, name, site,
+  building, level, lat, lon, line, notes.
+- `PackReader.features_near(lat, lon, kinds=None, metres=200)`: the features within metres (about 1 km at most),
+  nearest first, each with "d" in metres.
+- `PackReader.building_of(key=None, lat=None, lon=None, metres=100)`: the building a feature is in, or the nearest
+  building to a position.
+- `lookup.site_features_near(lat, lon, kinds=None, metres=200, folder=None, packs=None)` and
+  `lookup.site_features_of(site, kinds=None, folder=None, packs=None)`: the same over every pack of a folder, each
+  feature once, with "region".
 
 ## Utility service areas (November 2026, no pack change)
 

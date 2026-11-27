@@ -40,6 +40,16 @@ import urllib.parse
 # looks like a person's name to PERSON_NAME).
 GOVERNMENT_SOURCES = ("ssa-field-offices", "nps-places", "usfs-recreation-sites", "ridb-recreation",
                       "city-facilities")
+# Schools, colleges and the sites of the campus map platforms (27 November 2026): public and private schools'
+# and colleges' own phone numbers and websites from the NCES directories (placepacks/schools.py), and the
+# organisations' details from their campus maps and GIS layers (placepacks/mapvendors). Institutions, not people:
+# like the government sources, the person-name check does not apply ("Mary Lee Elementary" is a school), and
+# opening hours are kept.
+INSTITUTION_SOURCES = ("nces-details", "map-vendors")
+# Hospitals' and clinics' accessibility details from health insurers' public provider directories and hospitals'
+# own pages (placepacks/health_access): an organisation's phone and hours, but the person-name and personal-office
+# checks DO apply (a practice listed under a doctor's own name gets nothing).
+HEALTH_SOURCES = ("health-access", "health-access-businesses")
 # The sources whose phone, website and hours are kept, best first (the order a lookup prefers when several sources
 # list the same business; OpenStreetMap's own svc_details come before all of them).
 # The local directories read by placepacks/directories (tourism boards' Simpleview and Tempest listings, chambers of
@@ -50,11 +60,12 @@ DIRECTORY_SOURCES = ("simpleview-listings", "tempest-listings", "chambermaster-l
 # business's own homepage (schema.org data) and Yellow Pages lookups. Last of all: they only fill what the
 # business's own sources lack (PackWriter.fill_details).
 DETAIL_ONLY_SOURCES = ("business-websites", "yp-lookups")
-CONTACT_SOURCES = (("alltheplaces", "chain-locators") + GOVERNMENT_SOURCES + ("overture-places", "fsq-places")
-                   + DIRECTORY_SOURCES + DETAIL_ONLY_SOURCES)
+CONTACT_SOURCES = (("alltheplaces", "chain-locators") + GOVERNMENT_SOURCES + INSTITUTION_SOURCES + HEALTH_SOURCES
+                   + ("overture-places", "fsq-places") + DIRECTORY_SOURCES + DETAIL_ONLY_SOURCES)
 # The sources whose opening hours are kept (the chains' own store locators, the government sources, the tourism
 # boards' listings and the details-only sources, in OpenStreetMap's syntax).
-HOURS_SOURCES = ("alltheplaces", "chain-locators") + GOVERNMENT_SOURCES + ("simpleview-listings",) + DETAIL_ONLY_SOURCES
+HOURS_SOURCES = (("alltheplaces", "chain-locators") + GOVERNMENT_SOURCES + INSTITUTION_SOURCES + HEALTH_SOURCES
+                 + ("simpleview-listings",) + DETAIL_ONLY_SOURCES)
 CONTACT_FIELDS = ("phone", "website", "opening_hours")
 
 # A name that is a person's: "Alice Example", "Jane Q. Doe Jr." -- the shape of a name AND a known first name
@@ -86,8 +97,8 @@ def allowed(source, name, kind=None, brand=None):
     own office."""
     if source not in CONTACT_SOURCES:
         return False
-    if source in GOVERNMENT_SOURCES:
-        return True                     # a public office or site, never a person's details
+    if source in GOVERNMENT_SOURCES or source in INSTITUTION_SOURCES:
+        return True                     # a public office, a school or a campus, never a person's details
     if PERSON_NAME.match((name or "").strip()) and not is_brand_name(name, brand):
         return False
     return not (kind and PERSONAL_TYPES.search(kind))

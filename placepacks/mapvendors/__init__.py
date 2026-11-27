@@ -12,6 +12,8 @@ sites' details; placepacks/features.py).
   concept3d.py   Concept3D maps (ready, but api.concept3d.com's robots.txt disallows programs: blocked until the
                  owner decides)
   campus_gis.py  universities' open ArcGIS building layers, found through ArcGIS Hub
+  atrius.py      Atrius (LocusLabs) maps on the organisations' own map hosts (public venue files); airports are
+                 read by placepacks/indoor/airports.py, other venues the discovery finds by the unit "atrius"
 
 The monthly workflow (.github/workflows/map-vendors.yml): discovery shards, then one collector job per unit of
 UNITS (placepacks/directories/run.py, collection "mapvendors"), then the release "map-vendors" (the month's set of
@@ -39,6 +41,8 @@ UNITS = {
                   "module": "placepacks.mapvendors.concept3d"},
     "campus-gis": {"title": "Universities' campus GIS layers (ArcGIS Hub)", "expected": 20000, "budget": 1500,
                    "timeout": 180, "module": "placepacks.mapvendors.campus_gis"},
+    "atrius": {"title": "Atrius (LocusLabs) maps", "expected": 0, "budget": 1500, "timeout": 120,
+               "module": "placepacks.mapvendors.atrius"},
 }
 
 

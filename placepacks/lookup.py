@@ -49,9 +49,11 @@ BUSINESS_SOURCES = {"overture-places", "fsq-places"}
 # several sources list one business, a lookup takes each detail from the first that has it (OpenStreetMap's own
 # details, the services part's svc_details, come before all of them). FORMAT.md, "Business contact details".
 DETAIL_ORDER = ("alltheplaces", "chain-locators", "ssa-field-offices", "nps-places", "usfs-recreation-sites",
-                "ridb-recreation", "city-facilities", "nces-details", "map-vendors", "health-access",
+                "ridb-recreation", "city-facilities", "nces-details", "map-vendors", "mall-directories",
+                 "airport-directories", "health-access",
                 "health-access-businesses", "overture-places", "fsq-places", "simpleview-listings",
-                "tempest-listings", "chambermaster-listings", "hotfrog-listings", "business-websites",
+                "tempest-listings", "chambermaster-listings", "hotfrog-listings", "mall-directories-businesses",
+                 "airport-directories-businesses", "business-websites",
                 "yp-lookups")
 DETAIL_FIELDS = ("phone", "website", "opening_hours")
 

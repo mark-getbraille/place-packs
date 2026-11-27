@@ -4696,6 +4696,198 @@
    "features": false
   },
   {
+   "id": "mall-directories",
+   "name": "Mall directories: stores (name, category, level, unit, hours, phone, website) and amenities (guest services, wheelchair and scooter loans, family and accessible restrooms, accessible parking) of US malls and outlet centres, from their own websites",
+   "short": "the malls' own store directories",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "reader": "site_features",
+   "kind": "points",
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "key": "key"
+   },
+   "attribution": "Stores and amenities of US malls and outlet centres from the malls' own websites (Tanger, Macerich, Brookfield Properties, Westfield, CBL Properties and independent malls), read by place-packs (placepacks/indoor/malls.py); facts only.",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/indoor",
+   "history": "No history: the site features of the newest monthly set (the site_features table is written whole each build). An operator whose collection fails or is blocked keeps the previous set's file (up to three months).",
+   "contact": "The mall's own phone, website and weekly hours (OpenStreetMap syntax) where its place lacks them; each store's note says where it is (\"In Christiana Mall, near Macy's\").",
+   "notes": "Owner's decisions of 27 November 2026 (notes/helper-rules.txt, queue item Q3): scraping mall and airport websites approved, stopping at any block; the standing limits: facts only (store names, category, floor or level, unit, hours, phone, website, gates, desks, restrooms, accessibility features); no people's names, no e-mail addresses, no descriptions, reviews, ratings or photos; polite, identified (User-Agent place-packs-indoor-directories), at least 2 seconds between requests to a host, a request budget per unit, robots.txt read first and obeyed; never past a CAPTCHA, a login or an anti-bot challenge, no headless or Chrome-imitating browser, no other IP address: a refusal is recorded as blocked and the site left. Collected once a month by the malls workflow (the 5th), one job per operator (placepacks/indoor/malls.py): Tanger (tanger.com's sitemap; each centre's page data: stores with categories, suite and own hours, the centre's phone and weekly hours, its visitor-info amenities), Macerich (macerich.com's sitemap to each mall's own site; its Directory page: stores with level, phone and category, the mall's regular hours; its Services page), Brookfield Properties (its property sitemap to each mall's own site; the directory page's JSON: stores with phone, website, categories, level and the anchor store they are near, the mall's weekly hours; the visit page's questions and answers for amenities), Westfield US centres (the US sitemap; the retailers and restaurants pages' data: stores with categories, level and own hours, the centre's position and phone; the services cards), CBL Properties (its portfolio to each mall's own site; the directory's store names, the mall's phone and the coming week's hours), and three shares of every other mall with a website in Wikidata or OpenStreetMap (schema.org data, directory store links, the amenities the visitor pages name). Checked 27 November 2026 with one to three requests per site: Simon answers 403 and its robots.txt forbids automated collection; PREIT's property pages answer 403; Washington Prime's site has a TLS certificate that does not verify; Federal Realty's and Kimco's centre lists are script-only applications. Those five are recorded as not read and checked once a month. Mappedin maps (Macerich, Brookfield, Tanger) need a customer key and are not read. A mall gets the position and place key of the Wikidata or OpenStreetMap mall with the same website host, else the same name; stores and amenities take the mall's position, with the level, unit and \"near\" anchor store in the note. An amenity a mall's questions and answers deny (\"No, ...\") is left out.",
+   "fetch": {
+    "method": "release_csv",
+    "release": "malls",
+    "prefix": "malls"
+   }
+  },
+  {
+   "id": "mall-directories-businesses",
+   "name": "Mall stores and restaurants with their own phone number or opening hours, for the businesses part",
+   "short": "the malls' own store directories",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "reader": "tabular",
+   "kind": "businesses",
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "exclude": {
+    "column": "business",
+    "values": [
+     ""
+    ]
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "class_column": "main_value"
+   },
+   "class_map": {
+    "*": "business"
+   },
+   "type_column": "type",
+   "type_map": "humanise",
+   "contact_columns": {
+    "phone": "phone",
+    "website": "website",
+    "opening_hours": "opening_hours"
+   },
+   "note_column": "notes",
+   "dedupe_against": [
+    "alltheplaces",
+    "chain-locators",
+    "overture-places",
+    "fsq-places",
+    "simpleview-listings",
+    "tempest-listings",
+    "chambermaster-listings",
+    "hotfrog-listings"
+   ],
+   "dedupe_m": 150,
+   "dedupe_phone": true,
+   "dedupe_carry": true,
+   "attribution": "Stores and amenities of US malls and outlet centres from the malls' own websites (Tanger, Macerich, Brookfield Properties, Westfield, CBL Properties and independent malls), read by place-packs (placepacks/indoor/malls.py); facts only.",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/indoor",
+   "history": "From the first build that has a set, month by month, keyed by the mall and the directory's own store number. An operator whose collection fails or is blocked keeps its stores from the previous set (up to three months).",
+   "contact": "The store's own phone, website and hours (OpenStreetMap syntax), cleaned by placepacks/contact.py; the note says which mall, level, unit and anchor store.",
+   "notes": "The same monthly set as mall-directories, read again for the businesses part: only the stores and restaurants that have their own phone number or their own opening hours (column business = 1; the owner's rule of 27 November 2026), at the mall's position. A store another business source already has (the same phone within 500 m, else the same name within 150 m) is not added again: its details go to that place.",
+   "fetch": {
+    "method": "release_csv",
+    "release": "malls",
+    "prefix": "malls"
+   }
+  },
+  {
+   "id": "airport-directories",
+   "name": "Airport terminal directories: gates, terminals, shops, restaurants, restrooms, family and accessible restrooms, service-animal relief areas, information desks, accessibility services and ground transport of US airports, from their own websites and public Atrius maps",
+   "short": "the airports' own websites and maps",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "reader": "site_features",
+   "kind": "points",
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "key": "key"
+   },
+   "attribution": "Gates, shops, restaurants, restrooms, desks and accessibility services of US airports from the airports' own websites and their public Atrius (LocusLabs) maps, read by place-packs (placepacks/indoor/airports.py, placepacks/mapvendors/atrius.py); airports from OurAirports (public domain); facts only.",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/indoor",
+   "history": "No history: the site features of the newest monthly set. A share whose collection fails keeps the previous set's file (up to three months).",
+   "contact": "The airport's own phone, website and hours (from its Atrius map) where its place (faa-airports) lacks them.",
+   "notes": "Owner's decisions of 27 November 2026 (notes/helper-rules.txt, queue item Q3): scraping mall and airport websites approved, stopping at any block; the standing limits: facts only (store names, category, floor or level, unit, hours, phone, website, gates, desks, restrooms, accessibility features); no people's names, no e-mail addresses, no descriptions, reviews, ratings or photos; polite, identified (User-Agent place-packs-indoor-directories), at least 2 seconds between requests to a host, a request budget per unit, robots.txt read first and obeyed; never past a CAPTCHA, a login or an anti-bot challenge, no headless or Chrome-imitating browser, no other IP address: a refusal is recorded as blocked and the site left. Collected once a month by the airports workflow (the 22nd), in six shares (placepacks/indoor/airports.py) of OurAirports' US airports with scheduled service (about 700, public domain), large airports first, each airport's website from Wikidata, else OurAirports. For each: robots.txt, the homepage (map vendors fingerprinted), its public Atrius (LocusLabs) map when it links one on a maps.<its site> host (the map's own config.json names the account and venue; the venue files on a.locuslabs.com answer without a login or key: every gate, shop, restaurant, restroom, family restroom, service-animal relief area, information desk, elevator, escalator and ground transport point with its terminal, level, own position, before or after security and nearby landmark), then up to six of its own shops-and-dining, accessibility, amenities, map and ground transport pages: schema.org data, shop and restaurant cards that say where (terminal, concourse, gate, security), and the amenities they name (wheelchair assistance, TSA Cares, the Sunflower programme, sensory rooms, relief areas, family restrooms, information desks), each with the sentence that says where. A first check on 27 November 2026 (one or two requests each): Atlanta, Denver, Los Angeles and Austin answered 403 with an anti-bot page and Nashville with a challenge page (blocked, never got round); Charlotte reset the connection; the Atrius map hosts of Dallas-Fort Worth and Phoenix could not be verified securely from this project's cloud environment (TLS); Dallas-Fort Worth, Baltimore-Washington, San Francisco, Minneapolis-Saint Paul (Atrius: 1,195 points, 2 terminals), Phoenix, Portland and Charleston answered. Portland's shops list is filled by a script and gives nothing without it. Features without a position of their own take the airport's.",
+   "fetch": {
+    "method": "release_csv",
+    "release": "airports",
+    "prefix": "airports"
+   }
+  },
+  {
+   "id": "airport-directories-businesses",
+   "name": "Airport shops and restaurants with their own phone number or opening hours, for the businesses part",
+   "short": "the airports' own websites and maps",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "reader": "tabular",
+   "kind": "businesses",
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "exclude": {
+    "column": "business",
+    "values": [
+     ""
+    ]
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "class_column": "main_value"
+   },
+   "class_map": {
+    "*": "business"
+   },
+   "type_column": "type",
+   "type_map": "humanise",
+   "contact_columns": {
+    "phone": "phone",
+    "website": "website",
+    "opening_hours": "opening_hours"
+   },
+   "note_column": "notes",
+   "dedupe_against": [
+    "alltheplaces",
+    "chain-locators",
+    "overture-places",
+    "fsq-places",
+    "simpleview-listings",
+    "tempest-listings",
+    "chambermaster-listings",
+    "hotfrog-listings"
+   ],
+   "dedupe_m": 150,
+   "dedupe_phone": true,
+   "dedupe_carry": true,
+   "attribution": "Gates, shops, restaurants, restrooms, desks and accessibility services of US airports from the airports' own websites and their public Atrius (LocusLabs) maps, read by place-packs (placepacks/indoor/airports.py, placepacks/mapvendors/atrius.py); airports from OurAirports (public domain); facts only.",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/indoor",
+   "history": "From the first build that has a set, month by month, keyed by the airport and the map's or page's own id.",
+   "contact": "The shop's or restaurant's own phone, website and hours (OpenStreetMap syntax); the note says the terminal side (before or after security) and the nearby gate.",
+   "notes": "The same monthly set as airport-directories, read again for the businesses part: only the shops and restaurants with their own phone number or opening hours (column business = 1), at their own position when the airport's Atrius map gives one, else at the airport's.",
+   "fetch": {
+    "method": "release_csv",
+    "release": "airports",
+    "prefix": "airports"
+   }
+  },
+  {
    "id": "hrsa-site-dashboard",
    "name": "HRSA Site Dashboard: Medicare- and Medicaid-certified hospitals, nursing homes, dialysis centers, rural health clinics and surgery centers",
    "short": "the Health Resources and Services Administration",
@@ -14655,6 +14847,11 @@
    "name": "Elevance Health (Anthem) public FHIR provider directory (totalview.healthos.elevancehealth.com, Medicaid)",
    "licence": "none stated (CMS-mandated public API)",
    "reason": "Answered HTTP 500 to a Location search on 27 November 2026; tried once. Retry later."
+  },
+  {
+   "name": "Simon Property Group mall directories (simon.com)",
+   "licence": "Terms of use",
+   "reason": "Answers 403 to programs, and its robots.txt says automated collection and data mining are prohibited without written permission (checked 27 November 2026); recorded as blocked by the malls workflow's monthly check, never got round."
   }
  ],
  "candidates": [
@@ -15002,6 +15199,31 @@
    "name": "Magnet school status (NCES CCD)",
    "licence": "US-Government-Work",
    "note": "No longer in the CCD school files (2024-25); would come back if NCES publishes it again."
+  },
+  {
+   "name": "PREIT mall directories (preit.com)",
+   "licence": "none stated (facts)",
+   "note": "Property pages answered 403 on 27 November 2026 (the sitemap answered); checked monthly by the malls workflow."
+  },
+  {
+   "name": "Washington Prime Group mall directories (wpgus.com)",
+   "licence": "none stated (facts)",
+   "note": "The site's TLS certificate did not verify on 27 November 2026; checked monthly by the malls workflow."
+  },
+  {
+   "name": "Federal Realty and Kimco open-air centre tenant lists",
+   "licence": "none stated (facts)",
+   "note": "Their property lists are script-only applications (no directory in the pages); their centres' own websites are read by the independent malls units."
+  },
+  {
+   "name": "Mappedin indoor maps of malls (Macerich, Brookfield, Tanger)",
+   "licence": "none stated (facts)",
+   "note": "Mappedin Web reads api-gateway.mappedin.com with the customer's key; no public endpoint (27 November 2026)."
+  },
+  {
+   "name": "Airport websites that refuse programs (Atlanta, Denver, Los Angeles, Austin, Nashville)",
+   "licence": "none stated (facts)",
+   "note": "403 or an anti-bot challenge page on 27 November 2026; recorded as blocked by the airports workflow each month, never got round."
   }
  ]
 }

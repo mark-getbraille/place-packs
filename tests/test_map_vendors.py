@@ -69,7 +69,7 @@ def test_fingerprints_and_unknown_embeds():
     unknown = registry.unknown_embeds(page, "https://www.madeup.edu/map", page_is_map=True)
     assert [u["host"] for u in unknown] == ["maps.newvendor.example"]
     assert registry.fingerprints("<p>vid=12 is a video</p>") == []
-    assert registry.collectors() == {"concept3d": "concept3d", "mazemap": "mazemap"}
+    assert registry.collectors() == {"concept3d": "concept3d", "mazemap": "mazemap", "locuslabs": "atrius"}
     assert registry.VENDORS["concept3d"]["data"] == "robots-disallowed"
     assert not registry.VENDORS["concept3d"].get("robots_override")
 
@@ -266,7 +266,7 @@ def test_run_and_catalogue_and_workflow(tmp_path, monkeypatch):
     "blocked" without a file, a MazeMap run writing its CSV), the catalogue entry read by the "site_features"
     reader, and the workflow's shape."""
     specs = dirrun.collections()
-    assert set(specs["mapvendors"]["units"]) == {"mazemap", "concept3d", "campus-gis"}
+    assert set(specs["mapvendors"]["units"]) == {"mazemap", "concept3d", "campus-gis", "atrius"}
     assert specs["mapvendors"]["tag"] == "map-vendors" and specs["mapvendors"]["fields"] == features.FEATURE_FIELDS
     listing = tmp_path / "list.json"
     listing.write_text(json.dumps({"maps": [{"vendor": "mazemap", "map_id": "212", "org": "Madeup State College",

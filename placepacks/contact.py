@@ -44,8 +44,9 @@ GOVERNMENT_SOURCES = ("ssa-field-offices", "nps-places", "usfs-recreation-sites"
 # and colleges' own phone numbers and websites from the NCES directories (placepacks/schools.py), and the
 # organisations' details from their campus maps and GIS layers (placepacks/mapvendors). Institutions, not people:
 # like the government sources, the person-name check does not apply ("Mary Lee Elementary" is a school), and
-# opening hours are kept.
-INSTITUTION_SOURCES = ("nces-details", "map-vendors")
+# opening hours are kept. Also the malls' and airports' own details from their directories (placepacks/indoor:
+# "Christiana Mall" is a mall, not a person).
+INSTITUTION_SOURCES = ("nces-details", "map-vendors", "mall-directories", "airport-directories")
 # Hospitals' and clinics' accessibility details from health insurers' public provider directories and hospitals'
 # own pages (placepacks/health_access): an organisation's phone and hours, but the person-name and personal-office
 # checks DO apply (a practice listed under a doctor's own name gets nothing).
@@ -60,12 +61,16 @@ DIRECTORY_SOURCES = ("simpleview-listings", "tempest-listings", "chambermaster-l
 # business's own homepage (schema.org data) and Yellow Pages lookups. Last of all: they only fill what the
 # business's own sources lack (PackWriter.fill_details).
 DETAIL_ONLY_SOURCES = ("business-websites", "yp-lookups")
+# The stores and restaurants inside malls and airports that have their own phone or hours, read from the malls' and
+# airports' own directories (placepacks/indoor): new places of their own in the businesses part (the person-name
+# and personal-office checks apply).
+INDOOR_SOURCES = ("mall-directories-businesses", "airport-directories-businesses")
 CONTACT_SOURCES = (("alltheplaces", "chain-locators") + GOVERNMENT_SOURCES + INSTITUTION_SOURCES + HEALTH_SOURCES
-                   + ("overture-places", "fsq-places") + DIRECTORY_SOURCES + DETAIL_ONLY_SOURCES)
+                   + ("overture-places", "fsq-places") + DIRECTORY_SOURCES + INDOOR_SOURCES + DETAIL_ONLY_SOURCES)
 # The sources whose opening hours are kept (the chains' own store locators, the government sources, the tourism
 # boards' listings and the details-only sources, in OpenStreetMap's syntax).
 HOURS_SOURCES = (("alltheplaces", "chain-locators") + GOVERNMENT_SOURCES + INSTITUTION_SOURCES + HEALTH_SOURCES
-                 + ("simpleview-listings",) + DETAIL_ONLY_SOURCES)
+                 + ("simpleview-listings",) + INDOOR_SOURCES + DETAIL_ONLY_SOURCES)
 CONTACT_FIELDS = ("phone", "website", "opening_hours")
 
 # A name that is a person's: "Alice Example", "Jane Q. Doe Jr." -- the shape of a name AND a known first name

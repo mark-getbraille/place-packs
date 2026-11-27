@@ -1,0 +1,135 @@
+# Mall directories, once a month (the sources "mall-directories" and "mall-directories-businesses";
+# placepacks/indoor/malls.py): the stores of US malls and outlet centres (name, category, level, unit, hours, phone,
+# website) and their amenities (guest services, wheelchair and scooter loans, family and accessible restrooms,
+# accessible parking), from the malls' own websites: one job per operator (Tanger, Macerich, Brookfield Properties,
+# Westfield, CBL Properties), a monthly check of the operators that refuse programs (Simon, PREIT, Washington
+# Prime) or have no readable list (Federal Realty, Kimco), and three shares of every other mall with a website.
+#
+# - When: the 5th of each month (04:29 UTC), or by hand (Actions, "Mall directories", Run workflow), optionally for
+#   some units only ("tanger westfield").
+# - plan: chooses the units and saves the list of malls (Wikidata and OpenStreetMap) once for every job.
+# - collect: one job per unit, three at a time. Each reads robots.txt first and obeys it, names the project in its
+#   User-Agent, waits between requests and stops at once if a site refuses (403, 429 or an anti-bot page): that
+#   operator or mall is "blocked", nothing is ever got round (no CAPTCHA, no login, no headless browser).
+# - publish: the only job that can write (contents: write); the month's set goes to the release "malls"
+#   (placepacks/chains/release.py; a unit that failed keeps its previous file, up to three months).
+# The pack build (build-packs.yml) reads the newest set in its prepare step. Only the repository's own GITHUB_TOKEN
+# is used.
+name: Mall directories
+
+on:
+  schedule:
+    - cron: "29 4 5 * *"
+  workflow_dispatch:
+    inputs:
+      units:
+        description: "Units separated by spaces, for example tanger westfield (empty: every unit)"
+        required: false
+        default: ""
+
+# Read-only by default; only publish may write (the "malls" release).
+permissions:
+  contents: read
+
+concurrency:
+  group: malls
+  cancel-in-progress: false
+
+env:
+  PYTHONUNBUFFERED: "1"
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      matrix: ${{ steps.plan.outputs.matrix }}
+      units: ${{ steps.plan.outputs.units }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: Choose the units
+        id: plan
+        env:
+          UNITS: ${{ inputs.units }}
+        run: |
+          # An unknown unit stops here, naming the known ones.
+          matrix=$(python -m placepacks.directories.run malls --list --only "$UNITS")
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "units=$(python -c 'import json, sys; print(" ".join(u["unit"] for u in json.loads(sys.argv[1])))' "$matrix")" >> "$GITHUB_OUTPUT"
+          cat "$GITHUB_OUTPUT"
+      - name: Save the list of malls once for every unit
+        # Wikidata's and OpenStreetMap's (Overpass) malls are asked once here, not by every job. When the list cannot be made, each job asks itself.
+        run: python -m placepacks.indoor.seeds malls --out mall-seeds.json || true
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        with:
+          name: malls-seeds
+          path: mall-seeds.json
+          retention-days: 3
+          if-no-files-found: ignore
+
+  collect:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: ${{ matrix.timeout }}
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        include: ${{ fromJSON(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        continue-on-error: true   # no saved list: the job asks for it itself
+        with:
+          name: malls-seeds
+          path: seeds
+      - name: Read the unit
+        env:
+          MALL_SEEDS: seeds/mall-seeds.json
+          UNIT: ${{ matrix.unit }}
+        run: python -m placepacks.directories.run malls --unit "$UNIT" --out directory-out
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02  # v4.6.2
+        if: ${{ always() }}
+        with:
+          name: malls-unit-${{ matrix.unit }}
+          path: directory-out/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  publish:
+    needs: [plan, collect]
+    # Also when some jobs failed or ran out of time: their previous files are kept.
+    if: ${{ always() && needs.plan.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write   # this month's set is stored in, and older sets deleted from, the release
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4.4.0
+        with:
+          persist-credentials: false   # this job pushes no commit: the token is not left in .git/config
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5.6.0
+        with:
+          python-version: "3.12"
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093  # v4.3.0
+        with:
+          pattern: malls-unit-*
+          merge-multiple: true
+          path: results
+      - name: Publish the set in the release "malls"
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UNITS: ${{ needs.plan.outputs.units }}
+        run: |
+          mkdir -p results
+          python -m placepacks.directories.run malls --publish --dir results --units "$UNITS"

@@ -13,6 +13,9 @@ Each vendor in VENDORS has:
                login or key and that robots.txt allows), "robots-disallowed" (it answers, but its robots.txt asks
                programs not to read it: nothing is published until the owner decides), "login" (needs an account or
                a customer key), "unknown" (not looked at yet)
+  marks        regular expressions of the vendor's own map page (its script or title), for a vendor whose maps are
+               served from the customer's own host ("maps.<airport>.com" for Atrius); a page with a mark is that
+               vendor's map, the page's own address its "url" (optional)
   showcase     public pages of the vendor listing its customers' maps (a discovery seed), may be empty
   verified     False for a fingerprint written from the vendor's public documentation or product pages but not yet
                seen on an organisation's page (the first discovery run confirms or corrects it)
@@ -80,8 +83,9 @@ VENDORS = {
         "ids": [r"app\.mappedin\.com/map/([0-9a-f]{24})", r"mappedin\.com/[^\"'\s<>]*?[?&]venue=([a-z0-9-]+)"],
         "collector": "",
         "data": "login",
-        "data_note": "Mappedin's data API needs a customer key (its viewer's public map links may be readable: "
-                     "queue item Q3).",
+        "data_note": "Mappedin's data API needs a customer key. Queue item Q3 looked again (27 November 2026): the "
+                     "malls' Mappedin Web maps (Macerich, Brookfield, Tanger) read api-gateway.mappedin.com with "
+                     "the customer's key; no public endpoint, so nothing is read (the maps are recorded).",
         "showcase": [],
         "verified": False,
     },
@@ -89,11 +93,14 @@ VENDORS = {
         "name": "Atrius / LocusLabs (airport maps)",
         "hosts": ["locuslabs.com", "atrius.com", "atriusmaps.com"],
         "ids": [r"locuslabs\.com/[^\"'\s<>]*?venueId=([a-z0-9-]+)", r"[?&]vid=([a-z0-9-]+)"],
-        "collector": "",
-        "data": "login",
-        "data_note": "Needs a customer account id (queue item Q3 looks again for public airport maps).",
+        "marks": [r"LocusLabsMaps", r"<title>\s*Atrius Maps"],
+        "collector": "atrius",
+        "data": "public",
+        "data_note": "An airport's public Atrius map (maps.<its site>/?vid=<venue>) names its account and venue in "
+                     "its own config.json; the map then reads the venue's files from a.locuslabs.com without a "
+                     "login or key (placepacks/mapvendors/atrius.py; checked 27 November 2026, queue item Q3).",
         "showcase": [],
-        "verified": False,
+        "verified": True,
     },
     "mapsindoors": {
         "name": "MapsIndoors by MapsPeople",
@@ -205,6 +212,8 @@ def fingerprints(text, base=""):
             for m in re.finditer(pattern, text, re.I):
                 ids.append((m.group(1), m.group(0)))
         hit = next((u for u in urls if v["hosts"] and host_matches(host_of(u), v["hosts"])), "")
+        if not ids and not hit and base and any(re.search(m, text, re.I) for m in v.get("marks") or []):
+            ids, hit = [("", base)], base       # the vendor's own map page, on the customer's host
         if not ids and not hit:
             continue
         if vid == "locuslabs" and not hit:

@@ -13,6 +13,8 @@ release.py), for the collections:
                  reading the month's map list of the discovery (MAP_VENDORS_LIST)
   healthaccess   units: the insurers' FHIR provider directories and the shards of hospitals' own pages
                  (placepacks/health_access UNITS)
+  malls          units: the mall operators and the shares of independent malls (placepacks/indoor MALL_UNITS)
+  airports       units: the shares of the airports with scheduled service (placepacks/indoor AIRPORT_UNITS)
 
     python -m placepacks.directories.run simpleview --list [--only "visitdenver iloveny"]   the matrix
     python -m placepacks.directories.run simpleview --unit visitdenver --out out/           one unit's CSV + summary
@@ -53,7 +55,7 @@ SECONDS_PER_ITEM = 3   # the expected seconds per listing, for packing units int
 def collections():
     """{name: its settings}: units {id: {"title", "expected", "budget", "timeout"}}, collect(client, unit, stats),
     fields (the CSV's columns), agent, pause, and the release's tag, prefix, title and notes."""
-    from placepacks import health_access, mapvendors
+    from placepacks import health_access, indoor, mapvendors
     from placepacks.directories import chambermaster, city_facilities, hotfrog, simpleview, tempest
     from placepacks.mapvendors import discover
     return {
@@ -77,6 +79,21 @@ def collections():
                                   "from health insurers' public FHIR provider directories and hospitals' own pages "
                                   "(placepacks/health_access), read by the pack build (source health-access). Not "
                                   "for download."},
+        # Mall and airport directories (placepacks/indoor).
+        "malls": {"units": indoor.MALL_UNITS, "collect": indoor.collect_malls, "fields": indoor.FIELDS,
+                  "agent": indoor.USER_AGENT, "pause": indoor.PAUSE, "tag": indoor.MALL_TAG, "prefix": "malls",
+                  "title": "Mall directories: stores and amenities",
+                  "notes": "Monthly store directories (name, category, level, unit, hours, phone, website) and "
+                           "amenities (guest services, wheelchairs, family restrooms ...) of US malls and outlet "
+                           "centres from their own websites (placepacks/indoor/malls.py), read by the pack build "
+                           "(sources mall-directories and mall-directories-businesses). Not for download."},
+        "airports": {"units": indoor.AIRPORT_UNITS, "collect": indoor.collect_airports, "fields": indoor.FIELDS,
+                     "agent": indoor.USER_AGENT, "pause": indoor.PAUSE, "tag": indoor.AIRPORT_TAG,
+                     "prefix": "airports", "title": "Airport terminal directories",
+                     "notes": "Monthly gates, shops, restaurants, restrooms, relief areas, desks, accessibility "
+                              "services and ground transport of US airports from their own websites and public "
+                              "Atrius maps (placepacks/indoor/airports.py), read by the pack build (sources "
+                              "airport-directories and airport-directories-businesses). Not for download."},
         "hotfrog": {"units": hotfrog.STATES, "collect": hotfrog.collect, "fields": hotfrog.FIELDS,
                     "agent": hotfrog.USER_AGENT, "pause": hotfrog.PAUSE, "tag": "hotfrog-listings",
                     "prefix": "hotfrog-listings", "title": "Hotfrog business listings",
@@ -257,7 +274,7 @@ def main(argv=None):
     """The command line (see the module docstring)."""
     p = argparse.ArgumentParser()
     p.add_argument("collection", choices=["simpleview", "tempest", "chambermaster", "cityfacilities", "hotfrog",
-                                          "mapvendors", "healthaccess"])
+                                          "mapvendors", "healthaccess", "malls", "airports"])
     p.add_argument("--list", action="store_true")
     p.add_argument("--only", default="")
     p.add_argument("--unit", default="", help="a unit's id, or several separated by spaces (a matrix group)")

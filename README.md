@@ -47,7 +47,10 @@ church" or "lighthouse" (`type` in a lookup's result; `search_names(..., type="b
   hours come from OpenStreetMap where it has them, else (since November 2026) from the business directories in the
   businesses part: All The Places (phone, website and hours from the chains' own store locators), the chain store
   locators this project reads itself for big US chains All The Places misses (phone, store page and hours), Overture
-  (phone and website) and Foursquare (phone and website). Never from a licence or inspection list (their numbers are often
+  (phone and website) and Foursquare (phone and website), the tourism boards' and chambers' listings (phone, website,
+  some hours), and last the details-only sources that fill what a business still lacks: its own homepage's
+  schema.org data (phone and hours) and Yellow Pages lookups (phone, website and hours). Never from a licence or
+  inspection list (their numbers are often
   an owner's own), never an e-mail address, and nothing for an individual's office or a place under a person's
   name. `PackReader.details_of(key)` gives one business's details; only the business as listed now has them, not
   its older names (FORMAT.md, "Business contact details").
@@ -107,6 +110,7 @@ How far back each layer goes:
 | Overture places | From the first build. Past monthly releases (for example one a quarter) can be merged first while Overture still keeps them. |
 | All The Places (chain stores) | Seeded once from its archived past runs, the largest run of each quarter since April 2018 (the archive's 2017 runs are listed without their files): each store from the first quarter it was listed in to the last, and a store that closed since is kept, closed at its last quarter. Then month by month. Stores are matched by the chain's own store reference; when a reference changes (a spider renamed, a locator renumbered), by the same name or brand within about 100 m. About 16 GB of archives are read once (`seed_chain_history`), and the small result is kept in the "seeds" release for every later build. |
 | Chain store locators (big US chains missing from All The Places), since November 2026 | From the first monthly set (collected on the 28th), month by month, matched by the chain and its own store number. A chain whose collection is blocked or fails one month keeps its previous month's stores (up to three months running), so a failed run never closes stores. |
+| Tourism boards' Simpleview listings and chambers' ChamberMaster directories, since November 2026 | From the first monthly set, month by month, keyed by the site (or the chamber's directory) and the listing's own number. A site or state whose collection is blocked or fails one month keeps its previous month's listings (up to three months running). |
 | Foursquare Open Source Places | Foursquare's own creation and closing dates. |
 | Wikidata | Its start and end dates, often decades back (a mill from 1923 to 1998). |
 | France (BAN), Netherlands (BAG), New Zealand (LINZ) | From the first build. Their published archives and change sets can seed earlier years. |
@@ -315,6 +319,52 @@ and others), and Buick, GMC, Ford and Lincoln dealers.
 - **Chains that refused even a first check** (26 November 2026): McDonald's, Jersey Mike's, YMCA, Planet Fitness,
   Health Mart, Citgo, Choice Hotels, H&R Block, Best Western, the Stellantis dealers, Fastenal, Tractor Supply,
   Goodwill and Bitcoin Depot. They are listed with what each site answered in `placepacks/chains/__init__.py`.
+
+### Business details from local directories and lookups
+
+Four collectors add phone numbers, websites and opening hours, and some new local businesses, by the owner's
+decisions of 26 November 2026 (`placepacks/directories`). The same rules hold for all four: facts only (name, street
+address, position, phone, website, opening hours, category, accessibility notes), never a review, a rating, a
+description, a photo, an e-mail address or a person's name; one-person and home businesses are left out (no street
+address, a post office box, a person's name, an individual's office such as an insurance agent); every request names
+this project; a site that refuses or sends an anti-bot check page is recorded as "blocked" and left. No CAPTCHA is
+ever solved, no login used, no browser imitated (the owner declined headless browsers on 27 November 2026), no other
+address or connection tried.
+
+- **Yellow Pages lookups** (source `yp-lookups`, `tools/yp_lookup.py`): runs from the owner's cloud session, not
+  from GitHub, slowly in the background (one request every 3 to 4 seconds, at most 25,000 a day, states with the most
+  people first). For each business in the newest businesses packs that lacks a phone or hours, one search by name
+  and town; a result is taken only when its name is at least 85% alike and its street address is an address point
+  within 75 m of the place (or its coordinates are within 75 m). Results are uploaded each day to the release
+  `uploaded-sources` as `yp-lookups-<YYYYMMDD>.csv.gz`, the previous file merged in. It stops at the first refusal
+  and does not start again by itself. Start it with
+  `nohup python3 tools/yp_lookup.py run --forever --work <a scratch folder> > yp.log 2>&1 &`; see where it is with
+  `python3 tools/yp_lookup.py status` (progress in `/home/user/notes/yp-progress/`). yellowpages.com's robots.txt
+  disallows its search pages for programs; the owner decided to make these lookups all the same.
+- **Business websites** (source `business-websites`, [.github/workflows/web-details.yml](.github/workflows/web-details.yml),
+  "Business websites"): on the 20th of each month, ten jobs read up to 30,000 homepages of businesses that have a
+  website but no phone or hours; robots.txt is always obeyed (the owner's override is for chains and government
+  sites only); only the schema.org data of one local business (phone and hours) is kept. Release `web-details`.
+- **Tourism boards' listings** (source `simpleview-listings`,
+  [.github/workflows/simpleview-listings.yml](.github/workflows/simpleview-listings.yml), "Tourism boards' listings"):
+  on the 25th, one job per Simpleview site (the 11 state tourism sites on Simpleview and Visit Denver; the `units`
+  box takes site ids such as `visitdenver iloveny`): robots.txt and its Crawl-delay obeyed (2 to 5 seconds), the
+  sitemap, then each listing's name, address, position, phone, website, category, hours and accessibility fields.
+  Release `simpleview-listings`.
+- **Chambers' directories** (source `chambermaster-listings`,
+  [.github/workflows/chambermaster-listings.yml](.github/workflows/chambermaster-listings.yml), "Chambers'
+  directories"): on the 15th, one job per state (the `units` box takes codes such as `vt oh`). The US Chamber of
+  Commerce's directory finds the chambers; only those on the older ChamberMaster directory are read (the newer
+  GrowthZone v2 directories answer programs with an anti-bot check, so they are told apart by their robots.txt and
+  never asked for a page), through their public-facing groups (restaurants, shops, lodging, health care, auto,
+  personal services, recreation), 6 seconds apart. Members are placed by the offline NAD geocoder; home addresses
+  are left out. Release `chambermaster-listings`.
+
+In the packs (businesses part): Simpleview and ChamberMaster listings are new places unless another business source
+already lists them (the same phone number within 500 m, else the same name within 75 m); then their details go to
+that place. The two details-only sources only fill what a place still lacks, after every other source. Each
+workflow keeps a source's previous set when a month's run fails or is blocked, and the pack build skips a source
+until its first set or file is there.
 
 ### Government places with details
 

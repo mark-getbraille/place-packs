@@ -8,7 +8,9 @@ Each pack is a collective database: its OpenStreetMap layer is (c) OpenStreetMap
 Open Database License (ODbL) 1.0 (https://www.openstreetmap.org/copyright); every other layer is under its own
 open licence, listed with its attribution in SOURCES.md, LICENSES.md and NOTICE (all attached to this release),
 except the chain store locators (source chain-locators): facts read from big US chains' own store locators, which
-no licence covers, and a few government lists used by the owner's decision regardless of a copy's missing licence or
+no licence covers, a few government lists used by the owner's decision regardless of a copy's missing licence or
 a site's own terms (licence government-facts: Social Security offices, Recreation.gov, California's licensing files;
-LICENSES.md).
+LICENSES.md), and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview
+listings, chambers' ChamberMaster directories, businesses' own homepages, Yellow Pages lookups of businesses already
+in the packs; facts only, never reviews, descriptions, photos, e-mails or people's names).
 Built by .github/workflows/build-packs.yml from this repository's code (MIT).

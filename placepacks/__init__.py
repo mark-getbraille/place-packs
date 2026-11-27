@@ -11,8 +11,11 @@ Reading and lookup use the Python standard library only:
 Building (needs requirements.txt): placepacks.fetch, placepacks.build, placepacks.split, placepacks.readers,
 placepacks.combine (a parent's pack from its sub-regions'), placepacks.seed (the TIGER history seed),
 placepacks.status (sources-status.md), placepacks.gov_details (government places with phone, hours and
-accessibility: ssa_offices, nps_api, ridb, usfs_details; opening hours in OpenStreetMap's syntax: placepacks.hours).
-Developer tools: tools/.
+accessibility: ssa_offices, nps_api, ridb, usfs_details; opening hours in OpenStreetMap's syntax: placepacks.hours),
+placepacks.chains (big chains' store locators), placepacks.directories (tourism boards' Simpleview listings,
+chambers' ChamberMaster directories, businesses' homepages, Yellow Pages lookups) and placepacks.details (the
+details-only sources' files and their "details" reader).
+Developer tools: tools/ (tools/yp_lookup.py: the Yellow Pages lookup job).
 """
 
 __version__ = "2.0"

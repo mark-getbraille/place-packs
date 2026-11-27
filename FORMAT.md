@@ -101,6 +101,17 @@ Only the business directories and the government sources of public offices and s
 | Chain store locators (`chain-locators`, `placepacks/chains`) | `phone` | `website` (the store's own page) | `opening_hours` (OpenStreetMap syntax) |
 | Overture places (`overture-places`) | the first of `phones` | the first of `websites` | none |
 | Foursquare OS Places (`fsq-places`) | `tel` | `website` | none |
+| Tourism boards' Simpleview listings (`simpleview-listings`, since November 2026) | `phone` | `website` (the business's own) | `opening_hours` when the listing's hours read as OpenStreetMap syntax |
+| Chambers' ChamberMaster directories (`chambermaster-listings`, since November 2026) | `phone` | `website` | none |
+| Businesses' own homepages (`business-websites`, details only) | schema.org `telephone` | none (the place has it) | `openingHoursSpecification` / `openingHours` |
+| Yellow Pages lookups (`yp-lookups`, details only) | the matched result's phone | its website | its hours |
+
+The two details-only sources (`placepacks/details.py`, reader `details`) add no places: their files hold
+`key, lat, lon, phone, website, opening_hours, matched_on, checked` for places other sources list, and the build
+(reading them after every other source) gives the place listed now under each key only the fields it lacks
+(`PackWriter.fill_details`), cleaned with the same rules. The Simpleview and ChamberMaster listings are places of
+their own unless another business source has the same phone number within 500 m or the same name within 75 m; then
+their details go to that place (`drop_duplicates` with `dedupe_phone` and `dedupe_carry`).
 
 Never kept: e-mail addresses (no source's e-mail column is read; a value with "@" is dropped), social-media accounts
 (Overture's `socials`, Foursquare's `facebook_id`, `instagram`, `twitter`, and a website that is a social-media
@@ -131,8 +142,8 @@ new version would stop every installed program from reading the new packs.
 
 When several sources list one place, a lookup takes each detail from the best source that has it: OpenStreetMap's
 own (the services part's `svc_details` and office details), then All The Places, the chain store locators, Overture
-and Foursquare
-(`lookup.join_details`). Size: about 50 bytes for each business of the directories on average (measured on a
+and Foursquare, the tourism boards' and chambers' listings, the businesses' own homepages and last the Yellow Pages
+lookups (`lookup.join_details`). Size: about 50 bytes for each business of the directories on average (measured on a
 made-up pack with 70% phones, 55% web addresses and All The Places' hours; most of it is the web address), so a
 businesses part grows by about a quarter; the licence lists' points add nothing.
 

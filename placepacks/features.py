@@ -58,7 +58,11 @@ NOTE_LIMIT = 600
 # The kinds of feature, in plain words (the Assistant says them as they are).
 KINDS = ("accessible entrance", "entrance", "elevator", "escalator", "accessible parking", "parking",
          "accessible restroom", "restroom", "accessible route", "service desk", "information desk",
-         "emergency phone", "dining", "store", "gate", "terminal", "building", "site")
+         "emergency phone", "dining", "store", "gate", "terminal", "building", "site",
+         # Added for malls and airports (queue item Q3, placepacks/indoor): a family or companion-care restroom, a
+         # service-animal and pet relief area, a wheelchair or scooter loan or wheelchair-assistance point, a
+         # taxi, rideshare, shuttle or bus pick-up area, and an airport concourse.
+         "family restroom", "pet relief area", "accessibility service", "ground transport", "concourse")
 # The columns of the collectors' CSV files (see the module docstring).
 FEATURE_FIELDS = ["key", "kind", "name", "site", "site_name", "place_key", "npi", "building", "level", "lat", "lon",
                   "line", "notes", "phone", "website", "opening_hours", "address", "org", "vendor", "map_id"]
@@ -79,6 +83,17 @@ KIND_WORDS = [
     (rf"{_ACCESS}.*\b(restroom|restrooms|toilet|toilets|bathroom|bathrooms|washroom|washrooms|wc)\b|"
      rf"\b(restroom|toilet|bathroom|washroom)s?\b.*{_ACCESS}|\b(family|all[- ]gender|gender[- ]inclusive|unisex)\b"
      rf".*\b(restroom|toilet|bathroom)s?\b.*{_ACCESS}", "accessible restroom"),
+    (r"\b(pet|animal|service animal|service dog|dog)s? (relief|potty|rest) ?(area|areas|station|stations|room)?\b|"
+     r"\banimal ?relief", "pet relief area"),
+    (r"\b(family|companion[- ]care|all[- ]gender|gender[- ]neutral|unisex)\b.*\b(restroom|restrooms|toilet|toilets|"
+     r"bathroom|bathrooms)\b|\brestroom\W+family\b", "family restroom"),
+    (r"\b(wheel ?chairs?|scooters?|mobility (device|devices|scooter|scooters|aid|aids))\b.*\b(loan|loans|loaner|"
+     r"rental|rentals|rent|borrow|available|assistance|escort|service|services)\b|\btsa cares\b|"
+     r"\b(wheel ?chair|passenger|special) (assistance|service|services)\b", "accessibility service"),
+    (r"\b(ground transport\w*|taxis?|taxi stand|rideshares?|ride[- ]share|ride[- ]app|app[- ]based ride\w*|"
+     r"shuttles?|limo\w*|bus (stop|stops|station)|transit (center|centre|station)|pick[- ]?up (area|zone|point))\b",
+     "ground transport"),
+    (r"\bconcourses?\b", "concourse"),
     (r"\b(entrance|entrances|entry|entries|doors?|ingang|inngang|eingang)\b", "entrance"),
     (r"\b(elevator|elevators|lift|lifts|heis|aufzug)\b", "elevator"),
     (r"\bescalators?\b", "escalator"),

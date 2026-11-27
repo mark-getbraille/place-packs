@@ -188,6 +188,16 @@ def host_of(url):
         return ""
 
 
+def join(base, href):
+    """href made absolute against base (urllib.parse.urljoin), or "" when either is not a readable address (a
+    page's broken link such as "http://[x": urljoin raises ValueError, which stopped whole collector units on
+    the first GitHub runs of 27 November 2026)."""
+    try:
+        return urllib.parse.urljoin(base, href)
+    except ValueError:
+        return ""
+
+
 def host_matches(host, names):
     """True when host is one of names or a sub-domain of one ("map.concept3d.com" matches "concept3d.com")."""
     return any(host == n or host.endswith("." + n) for n in names)
@@ -206,7 +216,7 @@ def fingerprints(text, base=""):
     it)}], each (vendor, map id) once. base: the page's own address (for relative embeds)."""
     found, seen = [], set()
     text = str(text or "")
-    urls = [urllib.parse.urljoin(base, m.group(2)) for m in _EMBED.finditer(text)] + _URL.findall(text)
+    urls = [join(base, m.group(2)) for m in _EMBED.finditer(text)] + _URL.findall(text)
     for vid, v in VENDORS.items():
         ids = []
         for pattern in v["ids"]:
@@ -240,7 +250,7 @@ def unknown_embeds(text, base="", page_is_map=False):
     own_root = ".".join(own.split(".")[-2:]) if own else ""
     out, seen = [], set()
     for m in _EMBED.finditer(str(text or "")):
-        url = urllib.parse.urljoin(base, m.group(2))
+        url = join(base, m.group(2))
         host = host_of(url)
         if not host or host in seen or known_host(host) or host_matches(host, GENERIC_HOSTS):
             continue

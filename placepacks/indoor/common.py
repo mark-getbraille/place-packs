@@ -82,7 +82,10 @@ def website(value, base=""):
     """A website made plain (placepacks/contact.py website), relative addresses joined to base; "" for none."""
     if not value:
         return ""
-    url = urllib.parse.urljoin(base, str(value).strip()) if base else str(value).strip()
+    try:
+        url = urllib.parse.urljoin(base, str(value).strip()) if base else str(value).strip()
+    except ValueError:                  # a broken address ("http://[x")
+        return ""
     return contacts.website(url)
 
 
@@ -350,13 +353,14 @@ _A = re.compile(r"<a\b[^>]*?\bhref\s*=\s*[\"']([^\"'#]+)[\"'][^>]*>(.*?)</a>", r
 def own_links(page, base, words, limit):
     """A site's own pages worth reading, best first: [(url, score)] (at most limit), from the page's links whose
     text or address matches words; never a data: address, a file (PDF, picture, document) or another site's page."""
+    from placepacks.mapvendors import registry
     from placepacks.mapvendors.discover import same_site
     scored = {}
     for m in _A.finditer(page or ""):
         raw = html.unescape(m.group(1).strip())
         if raw.startswith(("data:", "mailto:", "tel:", "javascript:")):
             continue
-        href = urllib.parse.urljoin(base, raw)
+        href = registry.join(base, raw)          # "" for a broken link ("http://[x")
         if not href.startswith("http") or not same_site(href, base) or re.search(r"\.(pdf|jpe?g|png|gif|docx?|xlsx?)"
                                                                                  r"($|\?)", href, re.I):
             continue

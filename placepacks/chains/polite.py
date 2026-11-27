@@ -50,6 +50,42 @@ class RequestFailed(Exception):
     """A request that still failed after every retry (server errors, timeouts)."""
 
 
+class BadAddress(NotFound):
+    """An address that cannot be asked for at all (a broken link on a page: "http://[x", a script's template such
+    as "/${getUrl(item)}"). Nothing is sent; as a NotFound, collectors skip it like a page that has gone."""
+
+
+def clean_url(url):
+    """url made safe to send: spaces, non-ASCII letters and other characters a request line may not hold are
+    percent-encoded ("/dinning at MFE.html" -> "/dinning%20at%20MFE.html", "/directory/café/" ->
+    "/directory/caf%C3%A9/"), a non-ASCII host is IDNA-encoded, the "#fragment" is dropped; existing %XX escapes
+    are kept. Raises BadAddress for an address that cannot be read (no http(s) scheme or host, a broken IPv6 host,
+    a script template left in the page). Seen on the first GitHub runs of 27 November 2026, where such links
+    stopped whole units."""
+    text = str(url or "").strip()
+    if "${" in text or "{{" in text:
+        raise BadAddress(f"{text[:200]!r}: a script template, not an address")
+    try:
+        parts = urllib.parse.urlsplit(text)
+        host = parts.hostname or ""
+        port = parts.port
+    except ValueError as e:
+        raise BadAddress(f"{text[:200]!r}: {e}") from None
+    if parts.scheme.lower() not in ("http", "https") or not host:
+        raise BadAddress(f"{text[:200]!r}: not a web address")
+    try:
+        host.encode("ascii")
+        netloc = parts.netloc
+    except UnicodeEncodeError:
+        try:
+            netloc = host.encode("idna").decode("ascii") + (f":{port}" if port else "")
+        except UnicodeError as e:
+            raise BadAddress(f"{text[:200]!r}: {e}") from None
+    path = urllib.parse.quote(parts.path, safe="/%:@!$&'()*+,;=~")
+    query = urllib.parse.quote(parts.query, safe="/%:@!$&'()*+,;=?~")
+    return urllib.parse.urlunsplit((parts.scheme, netloc, path, query, ""))
+
+
 def challenge(text):
     """True when a page is an anti-bot challenge (see CHALLENGES). Only the first 20,000 characters are looked at:
     a challenge page is small, and a real store page that merely mentions a word deep inside is not one."""
@@ -92,9 +128,12 @@ class Polite:
             if left > 0:
                 self.sleep(left)
 
-    def fetch(self, url, data=None, headers=None):
+    def fetch(self, url, data=None, headers=None, timeout=None):
         """The body of url as text (GET, or POST of `data`: a dict is sent as JSON). Raises Blocked, BudgetSpent,
-        NotFound or RequestFailed (see the module docstring)."""
+        NotFound or RequestFailed (see the module docstring); BadAddress (a NotFound) for an address that
+        cannot be sent (clean_url), without a request. timeout: seconds this request may take (default TIMEOUT;
+        a slow service such as Overpass is given longer)."""
+        url = clean_url(url)
         host = urllib.parse.urlsplit(url).hostname or ""
         send = {"User-Agent": self.agent, "Accept-Encoding": "gzip",
                 "Accept": "application/json, text/html;q=0.9, application/xml;q=0.9, */*;q=0.5"}
@@ -112,10 +151,12 @@ class Polite:
             self.hosts.add(host)
             request = urllib.request.Request(url, data=data, headers=send, method="POST" if data else "GET")
             try:
-                status, got_headers, body = self.opener(request, TIMEOUT)
+                status, got_headers, body = self.opener(request, timeout or TIMEOUT)
                 error = ""
             except (urllib.error.URLError, ConnectionError, TimeoutError, OSError) as e:
                 status, got_headers, body, error = 0, {}, b"", f"{type(e).__name__}: {e}"
+            except (ValueError, UnicodeError) as e:      # http.client's InvalidURL and the like: never sent
+                raise BadAddress(f"{url[:200]}: {type(e).__name__}: {e}") from None
             self.last[host] = self.clock()
             lowered = {str(k).lower(): v for k, v in (got_headers or {}).items()}
             if body[:2] == b"\x1f\x8b":                  # gzip, asked for or a .gz sitemap
@@ -140,9 +181,9 @@ class Polite:
             raise RequestFailed(f"{url}: {error}")
         raise RequestFailed(f"{url}: no answer")                     # not reached
 
-    def json(self, url, data=None, headers=None):
+    def json(self, url, data=None, headers=None, timeout=None):
         """fetch() read as JSON. A page that is not JSON (an error page) raises RequestFailed."""
-        text = self.fetch(url, data, headers)
+        text = self.fetch(url, data, headers, timeout)
         try:
             return json.loads(text)
         except ValueError:

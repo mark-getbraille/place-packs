@@ -136,6 +136,27 @@ def test_the_budget_and_server_errors_end_cleanly():
         c.fetch("https://a.example/gone")
 
 
+def test_odd_addresses_are_encoded_or_skipped_without_a_request():
+    """Non-ASCII letters and spaces are percent-encoded (the first GitHub runs of 27 November 2026 stopped on
+    "/directory/café/" with UnicodeEncodeError and on "/dinning at MFE.html" with InvalidURL); a script template
+    or a broken IPv6 host is a BadAddress (a NotFound, so collectors skip it) and nothing is sent; a slow
+    service may be given a longer time limit."""
+    assert polite.clean_url("https://a.example/directory/café-é/?q=a b#top") == \
+        "https://a.example/directory/caf%C3%A9-%C3%A9/?q=a%20b"
+    assert polite.clean_url("https://a.example/x%20y/") == "https://a.example/x%20y/"
+    assert polite.clean_url("https://bücher.example/") == "https://xn--bcher-kva.example/"
+    seen = []
+    c, web, _ = client({"https://a.example/dinning%20at%20MFE.html": "menu",
+                        "https://a.example/directory/caf%C3%A9/": "cafe"})
+    c.opener = lambda request, timeout: (seen.append(timeout), web(request, timeout))[1]
+    assert c.fetch("https://a.example/dinning at MFE.html") == "menu"
+    assert c.fetch("https://a.example/directory/café/", timeout=300) == "cafe" and seen == [polite.TIMEOUT, 300]
+    for bad in ("https://a.example/${getRetailerUrl(retailer)}", "http://[broken/stores", "mailto:x@a.example"):
+        with pytest.raises(polite.NotFound):
+            c.fetch(bad)
+    assert len(web.requests) == 2 and c.used == 2
+
+
 # ------------------------------------------------------------------------------------------- hours
 
 def test_opening_hours_in_openstreetmap_syntax():

@@ -214,7 +214,7 @@ def map_links(page, base, home):
     from the page's links whose text or address says map, visitors, parking, directions or accessibility."""
     scored = {}
     for m in _A.finditer(page or ""):
-        href = urllib.parse.urljoin(base, m.group(1).strip())
+        href = registry.join(base, m.group(1).strip())
         if not href.startswith("http") or not same_site(href, home) or re.search(r"\.(pdf|jpe?g|png|docx?)$", href, re.I):
             continue
         words = " ".join(_TAG.sub(" ", m.group(2)).split()) + " " + urllib.parse.urlsplit(href).path

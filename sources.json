@@ -1,5 +1,5 @@
 {
- "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). Three exceptions, by the owner's decisions of 26 November 2026: chain-locators, facts read from big chains' own store locators (licence store-locator-facts); government facts used regardless of a copy's missing licence or a site's own terms (licence government-facts: the Social Security offices' ArcGIS copy, Recreation.gov's RIDB export, California's health and human services files); and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview and Tempest listings, chambers' ChamberMaster directories, businesses' own homepages, Yellow Pages lookups of businesses already in the packs). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
+ "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). Three exceptions, by the owner's decisions of 26 November 2026: chain-locators, facts read from big chains' own store locators (licence store-locator-facts); government facts used regardless of a copy's missing licence or a site's own terms (licence government-facts: the Social Security offices' ArcGIS copy, US cities' and counties' open-data layers of public places, Recreation.gov's RIDB export, California's health and human services files); and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview and Tempest listings, chambers' ChamberMaster directories, businesses' own homepages, Yellow Pages lookups of businesses already in the packs). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
  "settings": {
   "tiger_year": "2025",
   "tiger_seed_years": [
@@ -4452,6 +4452,77 @@
    "history": "From the first build on (the list has no opening dates); an office that leaves the list is closed at its last build.",
    "contact": "The office's public telephone number and its weekday hours in OpenStreetMap's syntax (\"Mo-Fr 09:00-16:00\"; days with other hours written apart), from the list's MONDAY..FRIDAY_OPEN_TIME and _CLOSE_TIME (placepacks/hours.py, weekday_table). The address is the place's note (\"Address: 68 Sewall St, Ste 209, Augusta, ME 04330\"), which the \"nearest Social Security office\" lookup says.",
    "notes": "About 1,170 field offices, named \"Social Security office, <city>\", at the list's own points. ssa.gov refuses every program (\"Access Denied\", even for robots.txt), so this ArcGIS copy of SSA's own list, published by Esri's health GIS staff without a licence, is used by the owner's decision of 26 November 2026; no evasion of ssa.gov's block is ever tried. Read once a month by the prepare job (one or two requests, placepacks/ssa_offices.py) and split per state. Only the office code, name, address lines, city, state, ZIP code, telephone number and weekday opening and closing times are asked for: the layer's internal columns (costs, staff numbers, square feet, lease dates, waiting times, utilisation, local demographics, fax numbers) are never requested or stored."
+  },
+  {
+   "id": "city-facilities",
+   "name": "US cities' and counties' public places: city halls, libraries, community, recreation and senior centers, pools, police and fire stations, with their phone numbers, websites and hours",
+   "short": "US cities' and counties' open data",
+   "part": "extra",
+   "countries": [
+    "US"
+   ],
+   "licence": "government-facts",
+   "attribution": "Public places from the open-data layers of US cities and counties (Socrata and ArcGIS portals found each month; the month's list of layers, with each publisher, is layers-city-facilities.json in this repository's release city-facilities), read by place-packs (placepacks/directories/city_facilities.py); facts of local governments.",
+   "url": "https://github.com/mark-getbraille/place-packs/tree/main/placepacks/directories",
+   "reader": "tabular",
+   "kind": "points",
+   "cls": "public",
+   "tag": "city facility",
+   "fetch": {
+    "method": "release_csv",
+    "release": "city-facilities",
+    "prefix": "city-facilities"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "lat": "lat",
+    "lon": "lon",
+    "name": "name",
+    "key": "key",
+    "class_column": "main_value",
+    "first": "first",
+    "last": "last"
+   },
+   "class_map": {
+    "library": "public:library",
+    "social_centre": "public:senior center",
+    "community_centre": "public:community center",
+    "townhall": "public:city hall",
+    "courthouse": "public:courthouse",
+    "police": "public:police station",
+    "fire_station": "public:fire station",
+    "swimming_pool": "park:swimming pool",
+    "museum": "landmark:museum",
+    "arts_centre": "landmark:arts center",
+    "golf_course": "park:golf course",
+    "ice_rink": "park:ice rink",
+    "fitness_centre": "public:fitness center",
+    "sports_centre": "park:sports center",
+    "information": "public:visitor center",
+    "park": "park",
+    "post_office": "public:post office",
+    "recycling": "public:recycling center",
+    "animal_shelter": "public:animal shelter",
+    "slipway": "park:boat launch",
+    "cemetery": "landmark:cemetery",
+    "parking": "",
+    "public_building": "public:public building",
+    "*": "public:city facility"
+   },
+   "contact_columns": {
+    "phone": "phone",
+    "website": "website",
+    "opening_hours": "opening_hours"
+   },
+   "note_column": "note",
+   "note_keep_phones": false,
+   "history": "From the first build that has a set, month by month, keyed by the layer and the record's own id. A state whose collection fails in a month keeps its places from the previous set (up to three months running); a layer that refuses or fails within a state's run is missing that month.",
+   "contact": "The place's public telephone number, website and opening hours as the city gives them, cleaned by placepacks/contact.py (city-facilities counts as a government source); hours are turned into OpenStreetMap's syntax where placepacks/hours.py can be sure (one range a day, or a day field each), otherwise the city's own words become the note (\"Hours: ...\"). Only the mapped fields are ever requested: managers' or staff names and e-mail addresses are never read.",
+   "notes": "Found and read automatically once a month by the city-facilities workflow (the 18th): a discovery job sweeps the Socrata catalogue (api.us.socrata.com) and ArcGIS Hub's search (hub.arcgis.com) for 14 keywords (facilities, community centers, recreation centers, libraries, city hall, municipal buildings, parks facilities, senior centers, points of interest ...), keeps US city and county layers of points with a name field (state, federal and university portals, private accounts and layers whose titles name inspections, permits, energy use, staff or the like are left out; a layer with people fields, such as first and last names or job titles, is a staff directory and is never read), maps their fields automatically (NAME/FACILITY/FAC_NAME, ADDRESS, CITY, ZIP, PHONE, HOURS or one field per weekday, TYPE, WEBSITE) and reads one record of each to find its state; placepacks/data/city_facilities_overrides.json adds, skips or corrects layers by hand. Then one job per state reads its layers (at most 5,000 records a layer; a bigger layer is not a list of public places and is left out whole). The kind of each place comes from its type field, else its name, else the layer's title. Owner's decisions: government data regardless of licence (26 November 2026); every US city and town that publishes facilities data, found automatically, with a manual override list (27 November 2026). Research of 27 November 2026: the catalogues answered without a key; samples (Chicago's senior centers, Seattle's community centers, Phoenix's park buildings, Harris County's community centers) mapped name, address, phone, hours and type correctly. Until the first set is there, the source is skipped."
   },
   {
    "id": "hrsa-site-dashboard",

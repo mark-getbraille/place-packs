@@ -4,7 +4,8 @@ safe before they go into the businesses part (FORMAT.md, "Business contact detai
 Only these sources may give them (CONTACT_SOURCES): All The Places (the chains' own store locators), the chain
 stores this project reads itself from big chains' store locators (chain-locators, placepacks/chains), the
 government sources of public offices and sites (GOVERNMENT_SOURCES: Social Security offices, the Forest Service's
-and the National Park Service's sites, Recreation.gov's facilities; placepacks/gov_details.py), Overture's places
+and the National Park Service's sites, Recreation.gov's facilities, placepacks/gov_details.py; cities' and counties'
+public places, placepacks/directories/city_facilities.py), Overture's places
 and Foursquare's Open Source Places, then the local directories this project reads itself (DIRECTORY_SOURCES:
 tourism boards' Simpleview and Tempest listings and chambers of commerce's ChamberMaster directories,
 placepacks/directories) and, last, the two "details only" sources that add nothing but details to businesses already in the packs
@@ -33,10 +34,12 @@ import re
 import urllib.parse
 
 # Government sources whose offices' and sites' phone, website and hours are kept (placepacks/gov_details.py): the
-# public numbers and hours of Social Security offices, Forest Service and National Park Service sites and
-# Recreation.gov's facilities. They are public offices, so the person-name and personal-office checks below do not
-# apply to them (a campground called "Lost Lake Campground" looks like a person's name to PERSON_NAME).
-GOVERNMENT_SOURCES = ("ssa-field-offices", "nps-places", "usfs-recreation-sites", "ridb-recreation")
+# public numbers and hours of Social Security offices, Forest Service and National Park Service sites,
+# Recreation.gov's facilities, and cities' and counties' own public places. They are public offices, so the
+# person-name and personal-office checks below do not apply to them (a campground called "Lost Lake Campground"
+# looks like a person's name to PERSON_NAME).
+GOVERNMENT_SOURCES = ("ssa-field-offices", "nps-places", "usfs-recreation-sites", "ridb-recreation",
+                      "city-facilities")
 # The sources whose phone, website and hours are kept, best first (the order a lookup prefers when several sources
 # list the same business; OpenStreetMap's own svc_details come before all of them).
 # The local directories read by placepacks/directories (tourism boards' Simpleview and Tempest listings, chambers of

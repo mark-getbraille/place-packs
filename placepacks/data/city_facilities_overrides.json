@@ -1,0 +1,10 @@
+{
+ "note": "Manual fixes to the monthly discovery of cities' and counties' public-place layers (placepacks/directories/city_facilities.py). add: layers the catalogues miss, each {\"platform\": \"arcgis\", \"url\": \"https://.../FeatureServer/0\", \"title\", \"publisher\"} or {\"platform\": \"socrata\", \"domain\", \"dataset\", \"title\", \"publisher\"} (fields and state are found by the usual one-record check unless given). skip: {layer id or a part of its address: why} for layers that are wrong (not public places, a duplicate copy, a people list). fields: {layer id: {\"name\": field, \"phone\": field, ...}} to correct the automatic field mapping. Layer ids are in the month's layers-city-facilities.json in the release city-facilities.",
+ "add": [],
+ "skip": {
+  "Access_Cards_Map": "Portland's library-card map, not a list of community centers",
+  "Community_Centers_P4": "Harris County's precinct copy of its community centers layer (a duplicate)",
+  "Community_Centers_PCT4": "Harris County's precinct copy of its community centers layer (a duplicate)"
+ },
+ "fields": {}
+}

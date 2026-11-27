@@ -375,6 +375,15 @@ until its first set or file is there.
 
 ### Government places with details
 
+**Cities' and counties' public places** (source `city-facilities`,
+[.github/workflows/city-facilities.yml](.github/workflows/city-facilities.yml), "Cities' public places"): on the
+18th of each month a discovery job sweeps the Socrata catalogue and ArcGIS Hub's search for layers of US cities' and
+counties' public places (city halls, libraries, community, recreation and senior centers, pools, police and fire
+stations ...), keeps point layers with a name field (never staff directories), maps their fields automatically
+(name, address, phone, hours, type, website) and records the month's list (`layers-city-facilities.json` in the
+release `city-facilities`); then one job per state reads them. Fixes by hand go in
+`placepacks/data/city_facilities_overrides.json` (add a layer, skip one, correct its fields).
+
 Some government lists give more than a name and a position. Since November 2026 the packs carry their public
 telephone numbers, opening hours (in OpenStreetMap's syntax, such as "Mo-Fr 09:00-16:00"), web pages and short
 accessibility notes, so a lookup such as "the nearest Social Security office" can say the address, the phone number

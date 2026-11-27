@@ -104,6 +104,7 @@ Only the business directories and the government sources of public offices and s
 | Tourism boards' Simpleview listings (`simpleview-listings`, since November 2026) | `phone` | `website` (the business's own) | `opening_hours` when the listing's hours read as OpenStreetMap syntax |
 | Tourism boards' Tempest listings (`tempest-listings`, since November 2026) | `phone` | `website` (the business's own) | none |
 | Chambers' ChamberMaster directories (`chambermaster-listings`, since November 2026) | `phone` | `website` | none |
+| Cities' and counties' public places (`city-facilities`, extra part, since November 2026) | the layer's phone field | its website field | its hours, in OpenStreetMap syntax where they can be read surely (other hours text is the note) |
 | Businesses' own homepages (`business-websites`, details only) | schema.org `telephone` | none (the place has it) | `openingHoursSpecification` / `openingHours` |
 | Yellow Pages lookups (`yp-lookups`, details only) | the matched result's phone | its website | its hours |
 

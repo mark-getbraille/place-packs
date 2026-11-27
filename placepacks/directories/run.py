@@ -6,6 +6,8 @@ release.py), for the collections:
   tempest        units: the tourism boards' sites on the Tempest platform (placepacks/directories/tempest.py SITES)
   chambermaster  units: the states, each found through the US Chamber of Commerce's directory
                  (placepacks/directories/chambermaster.py STATES)
+  cityfacilities units: the states; each reads the layers the month's discovery found in it
+                 (placepacks/directories/city_facilities.py)
 
     python -m placepacks.directories.run simpleview --list [--only "visitdenver iloveny"]   the matrix
     python -m placepacks.directories.run simpleview --unit visitdenver --out out/           one unit's CSV + summary
@@ -32,6 +34,7 @@ import datetime
 import gzip
 import json
 import os
+import shutil
 import sys
 import time
 
@@ -45,8 +48,18 @@ SECONDS_PER_ITEM = 3   # the expected seconds per listing, for packing units int
 def collections():
     """{name: its settings}: units {id: {"title", "expected", "budget", "timeout"}}, collect(client, unit, stats),
     fields (the CSV's columns), agent, pause, and the release's tag, prefix, title and notes."""
-    from placepacks.directories import chambermaster, simpleview, tempest
+    from placepacks.directories import chambermaster, city_facilities, simpleview, tempest
     return {
+        "cityfacilities": {"units": city_facilities.STATES, "collect": city_facilities.collect,
+                           "fields": city_facilities.FIELDS, "agent": city_facilities.USER_AGENT,
+                           "pause": city_facilities.PAUSE, "tag": "city-facilities", "prefix": "city-facilities",
+                           "title": "Cities' and counties' public places",
+                           "extra_files": {city_facilities.LIST_FILE: city_facilities.RELEASE_LIST},
+                           "notes": "Monthly lists of public places (city halls, libraries, community and "
+                                    "recreation centers ...) from US cities' and counties' open-data layers, found "
+                                    "by a monthly discovery (placepacks/directories/city_facilities.py), read by "
+                                    "the pack build (source city-facilities). The month's layer list is "
+                                    f"{city_facilities.RELEASE_LIST}. Not for download."},
         "simpleview": {"units": simpleview.SITES, "collect": simpleview.collect, "fields": simpleview.FIELDS,
                        "agent": simpleview.USER_AGENT, "pause": simpleview.PAUSE, "tag": "simpleview-listings",
                        "group_minutes": 300,
@@ -187,17 +200,31 @@ def run_units(collection, ids, out, total_minutes=GROUP_TIMEOUT, opener=None, sl
 
 
 def publish(collection, folder, date, ran, sleep=time.sleep):
-    """Publish the month's set of a collection in its release (placepacks/chains/release.py). Returns the list."""
+    """Publish the month's set of a collection in its release (placepacks/chains/release.py), and then its extra
+    files (the city facilities' layer list: "extra_files" {file in folder: name in the release}, replaced each
+    month). Returns the list."""
+    from placepacks import uploaded
     from placepacks.chains import release
     spec = collections()[collection]
-    return release.publish(folder, date, ran, sleep=sleep, units=spec["units"], tag=spec["tag"],
-                           prefix=spec["prefix"], title=spec["title"], notes=spec["notes"])
+    listing = release.publish(folder, date, ran, sleep=sleep, units=spec["units"], tag=spec["tag"],
+                              prefix=spec["prefix"], title=spec["title"], notes=spec["notes"])
+    for name, target in (spec.get("extra_files") or {}).items():
+        path = os.path.join(folder, name)
+        if os.path.exists(path):
+            renamed = os.path.join(folder, target)
+            if renamed != path:
+                shutil.copy(path, renamed)
+            code, _, err = uploaded.run_gh(["release", "upload", spec["tag"], renamed, "--repo", uploaded.repo(),
+                                            "--clobber"])
+            if code != 0:
+                raise RuntimeError(f"uploading {target} failed: {' '.join(str(err).split())[:200]}")
+    return listing
 
 
 def main(argv=None):
     """The command line (see the module docstring)."""
     p = argparse.ArgumentParser()
-    p.add_argument("collection", choices=["simpleview", "tempest", "chambermaster"])
+    p.add_argument("collection", choices=["simpleview", "tempest", "chambermaster", "cityfacilities"])
     p.add_argument("--list", action="store_true")
     p.add_argument("--only", default="")
     p.add_argument("--unit", default="", help="a unit's id, or several separated by spaces (a matrix group)")

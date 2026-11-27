@@ -130,8 +130,9 @@ licence texts in `LICENSES/`; they cover the packs of the `packs-detail-YYYYMMDD
   (`ssa-field-offices`, an ArcGIS copy of the Social Security Administration's office list published by Esri staff
   without a licence; ssa.gov itself refuses programs), Recreation.gov's RIDB export (`ridb-recreation`, whose API
   agreement keeps the vendor's rights and which states no licence) and California's health and human services files
-  (`ca-health-facilities`, `ca-child-care-centers`; the portal names only its "Terms of Use"). The owner decided (26
-  November 2026) to use government data regardless of a copy's missing licence or a site's own terms or robots.txt.
+  (`ca-health-facilities`, `ca-child-care-centers`; the portal names only its "Terms of Use"), and US cities' and
+  counties' open-data layers of public places (`city-facilities`, found each month in the Socrata and ArcGIS Hub
+  catalogues; many carry an open licence, the others none). The owner decided (26 November 2026) to use government data regardless of a copy's missing licence or a site's own terms or robots.txt.
   Federal works are public domain (17 U.S.C. 105), facts are not protected by copyright in the United States (Feist
   v. Rural Telephone, 1991), and state facility lists are public records. Only facts are kept, collected politely
   (identified, slow, never past a refusal or a challenge); staff names, personal telephone numbers, e-mail addresses

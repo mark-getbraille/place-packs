@@ -17,7 +17,12 @@ Each source's catalogue "fetch" says how:
   release_csv     the monthly set of chain stores this repository's chain-locators workflow reads from big chains'
                   own store locators (placepacks/chains) and keeps in the release "chain-locators": --prepare reads
                   the newest complete set once into one national CSV, split per region like All The Places; skipped,
-                  "waiting for the first chain-locators set", until the first set is there (chains/release.py)
+                  "waiting for the first chain-locators set", until the first set is there (chains/release.py);
+                  the local directories' monthly sets work the same way (placepacks/directories: the releases
+                  "simpleview-listings" and "chambermaster-listings")
+  release_latest  the newest details-only file of a release ("<prefix>-<YYYYMMDD>.csv.gz": Yellow Pages lookups in
+                  "uploaded-sources", the businesses' own homepages in "web-details"), read once by --prepare and
+                  split per region; skipped until the first file is there (placepacks/details.py)
   wikidata        one query to the Wikidata Query Service, by bounding box
   overpass        one query to an Overpass API (OpenHistoricalMap), by bounding box
   gtfs            the region's feeds of the Mobility Database catalogue whose licence allows redistribution
@@ -1573,13 +1578,14 @@ def fetch_source(entry, region, values, work, national, fingerprint=False):
         fetch_slice({**entry, "remote": local, "query": entry["local_query"]}, region, target)
         out.update(ok=True, path=target, date=datetime.date.today().isoformat())
         return out
-    if method == "release_csv":
-        # The chain stores of the release "chain-locators" (placepacks/chains/release.py): the prepare job read the
-        # newest set once into national/<id>/<id>.csv and split it per region; the region reads its slice folder.
-        from placepacks import uploaded
+    if method in ("release_csv", "release_latest"):
+        # The chain stores of the release "chain-locators" (placepacks/chains/release.py), the local directories'
+        # sets (placepacks/directories) or a details-only file (placepacks/details.py): the prepare job read the
+        # newest one once into national/<id>/<id>.csv and split it per region; the region reads its slice folder.
+        from placepacks import details, uploaded
         from placepacks.chains import release
         try:
-            out["version"] = release.version(entry)
+            out["version"] = (details if method == "release_latest" else release).version(entry)
         except uploaded.Waiting as e:
             raise SourceUnavailable(str(e)) from None
         if fingerprint:
@@ -2094,7 +2100,7 @@ def prepare(national, cat=None):
         if entry["fetch"]["method"] == "uploaded_national":
             prepare_uploaded(entry, national)
             continue
-        if entry["fetch"]["method"] == "release_csv":
+        if entry["fetch"]["method"] in ("release_csv", "release_latest"):
             prepare_release(entry, national)
             continue
         if entry["fetch"]["method"] != "national":
@@ -2295,14 +2301,15 @@ def prepare_uploaded(entry, national):
 
 
 def prepare_release(entry, national):
-    """Read the newest chain-locators set from its release once into national/<id>/<id>.csv
-    (placepacks/chains/release.py). No set yet, or a failure, leaves the layer out this time (never the build): the
-    regions then say why, from the FAILED note."""
-    from placepacks import uploaded
+    """Read the newest set of a release source once into national/<id>/<id>.csv: a monthly set of CSV files
+    ("release_csv": the chain stores, placepacks/chains/release.py, and the local directories, placepacks/
+    directories) or the newest details file ("release_latest": placepacks/details.py). No set yet, or a failure,
+    leaves the layer out this time (never the build): the regions then say why, from the FAILED note."""
+    from placepacks import details, uploaded
     from placepacks.chains import release
     folder = os.path.join(national, entry["id"])
     try:
-        release.prepare(entry, national)
+        (details if entry["fetch"]["method"] == "release_latest" else release).prepare(entry, national)
         return
     except uploaded.Waiting as e:
         print(f"{entry['id']}: skipped ({e})")

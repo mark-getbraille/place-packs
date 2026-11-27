@@ -227,12 +227,13 @@ def main(argv=None):
     # workflow's "slice") and keeps what is in it.
     regions = {rid: r for rid, r in regions.items() if not r.get("parent")}
     for entry in cat["accepted"]:
-        if entry["fetch"]["method"] not in ("national", "duckdb_national", "uploaded_national", "release_csv"):
+        if entry["fetch"]["method"] not in ("national", "duckdb_national", "uploaded_national", "release_csv",
+                                            "release_latest"):
             continue
         folder = os.path.join(a.national, entry["id"])
         if not os.path.isdir(folder):
             continue
-        if entry["reader"] == "tabular" and (entry.get("filter") or entry.get("split_box")):
+        if entry["reader"] in ("tabular", "details") and (entry.get("filter") or entry.get("split_box")):
             # The whole folder in one pass (GeoNames has one file per country; each region gets one slice).
             try:
                 counts = split_tabular(entry, folder, a.out, regions)

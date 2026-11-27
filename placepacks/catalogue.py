@@ -27,11 +27,16 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # stores read from the chains' own store locators (source chain-locators, placepacks/chains): facts (positions,
 # addresses, phone numbers, hours) that the chains license to no one, published by the owner's decision of
 # 26 November 2026, also where a chain's terms or robots.txt say otherwise (see sources.json "licences").
+# directory-facts: facts read from public listing pages (tourism boards' Simpleview listings, chambers' ChamberMaster
+# directories, businesses' own homepages, Yellow Pages lookups of businesses already in the packs: placepacks/
+# directories, placepacks/details.py), by the owner's decisions of 26 November 2026; facts only, never reviews,
+# descriptions, photos, e-mails or people's names (see sources.json "licences").
 ALLOWED = {"ODbL-1.0", "CDLA-Permissive-2.0", "Apache-2.0", "OGL-Canada-2.0", "OGL-UK-3.0", "CC0-1.0", "CC-BY-4.0",
            "US-Government-Work", "etalab-2.0", "per-feed-open", "per-source-open", "PDDL-1.0", "ODC-By-1.0",
            "NYC-Open-Data", "OPEN-NY", "public-domain-marked", "Newberry-open", "OGL-Toronto", "OGL-BC", "OGL-Ontario",
            "OGL-Calgary", "Edmonton-Open-Data", "OGL-Nova-Scotia", "OGL-Vancouver", "OGL-NB", "CC-BY-3.0-US",
-           "CC-BY-3.0", "FL-public-records", "NLR-Data-Terms", "store-locator-facts", "government-facts"}
+           "CC-BY-3.0", "FL-public-records", "NLR-Data-Terms", "store-locator-facts", "government-facts",
+           "directory-facts"}
 SHARE_ALIKE = {"ODbL-1.0"}
 # The OpenStreetMap layers (ODbL, share-alike): the core part's places and streets, the navigation part's street
 # network and accessibility details and the services part's offices and services, all made from the same extract.

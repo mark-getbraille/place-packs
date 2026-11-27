@@ -14,6 +14,8 @@ downloaded), the source's catalogue entry (sources.json) and the region, and add
   services.py    the services part: OpenStreetMap's offices and services (osm_services), the NWS county and forecast
               zones (nws_zones) and the NOAA Weather Radio county coverage list (nwr)
   ohm.py      OpenHistoricalMap features (CC0) with their own start and end dates, from its Overpass API
+  placepacks/details.py  the "details" reader: phone, website and hours for places other sources list (Yellow Pages
+              lookups, the businesses' own homepages)
 """
 
 READERS = {}
@@ -32,4 +34,5 @@ def load_all():
     """Import every reader module, so READERS is complete."""
     from placepacks.readers import (gtfs, navigation, ohm, osm, parquet, services, shapes,  # noqa: F401
                                     sqlite_query, tabular, wikidata)
+    from placepacks import details  # noqa: F401 - the "details" reader (details-only sources)
     return READERS

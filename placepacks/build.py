@@ -134,7 +134,9 @@ def build(region_id, part, fetched, out, previous=None, month=None, only=None, c
     # A sub-region keeps only what is in it (its sources are often read from its parent's files).
     writer = PackWriter(out, month, clip=region if region.get("parent") else None)
     used, missing, status = [], [], {}
-    for entry in catalogue.sources_for(region, part, cat, only):
+    # The "details" sources (placepacks/details.py: details for businesses other sources list) are read last, when
+    # every place they may add to is in.
+    for entry in sorted(catalogue.sources_for(region, part, cat, only), key=lambda e: e.get("reader") == "details"):
         got = fetched.get(entry["id"]) or {}
         lic = cat["licences"][entry["licence"]]
         writer.add_source(id=entry["id"], name=entry["name"], short=entry["short"], kind=entry.get("kind", ""),
@@ -174,9 +176,10 @@ def build(region_id, part, fetched, out, previous=None, month=None, only=None, c
     # feeds): their duplicates are removed once every source has been read.
     for entry in catalogue.sources_for(region, part, cat, only):
         if entry.get("dedupe_against") and status.get(entry["id"], {}).get("status") == "ok":
-            # "dedupe_carry": the removed duplicate's phone, hours, website and note go to the point that stays.
+            # "dedupe_carry": the removed duplicate's phone, hours, website and note go to the point that stays;
+            # "dedupe_phone": the same telephone number nearby is a match first (placepacks/directories).
             gone = writer.drop_duplicates(entry["id"], entry["dedupe_against"], entry.get("dedupe_m", 100),
-                                          carry=bool(entry.get("dedupe_carry")))
+                                          carry=bool(entry.get("dedupe_carry")), phone=bool(entry.get("dedupe_phone")))
             if gone:
                 print(f"  {entry['id']}: {gone:,} duplicates of {', '.join(entry['dedupe_against'])} removed", flush=True)
     meta = {"region_id": region_id, "region_name": region["name"], "country": region["country"],

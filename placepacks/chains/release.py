@@ -19,6 +19,10 @@ Reading (the pack build's prepare job): newest() finds the newest set with a lis
 (checked by SHA-256) into one national/chain-locators/chain-locators.csv, which placepacks.split cuts per region
 like All The Places. No set yet: the source is skipped, "waiting for the first chain-locators set", and the build
 goes on.
+The same set-and-carry pattern serves the local directories (placepacks/directories: the tourism boards' Simpleview
+listings and the chambers' ChamberMaster directories): publish() takes the release, the file prefix and the list
+of units (sites or states in place of chains), and the reading takes the prefix from the catalogue entry's fetch
+settings ("prefix", default "chain-locators").
 gh is run through placepacks.uploaded.run_gh (tests replace it), with the job's own token.
 """
 
@@ -42,8 +46,19 @@ KEEP = 2                 # sets kept in the release
 MAX_CARRY = 3            # sets in a row a chain's old file may be carried over
 TOO_FEW = 0.5            # a run with fewer than this share of the previous set's stores is not used
 WAITING = "waiting for the first chain-locators set (the chain-locators workflow has not published one yet)"
-_LIST = re.compile(rf"^{PREFIX}-(\d{{4}}-\d{{2}}-\d{{2}})\.json$")
-_FILE = re.compile(rf"^{PREFIX}-(\d{{4}}-\d{{2}}-\d{{2}})-([a-z0-9-]+)\.csv\.gz$")
+
+
+def _list_re(prefix):
+    """The pattern of a set's list name, "<prefix>-<date>.json" (group 1: the date)."""
+    return re.compile(rf"^{re.escape(prefix)}-(\d{{4}}-\d{{2}}-\d{{2}})\.json$")
+
+
+def _file_re(prefix):
+    """The pattern of a set's file name, "<prefix>-<date>-<unit>.csv.gz" (groups: the date, the unit)."""
+    return re.compile(rf"^{re.escape(prefix)}-(\d{{4}}-\d{{2}}-\d{{2}})-([a-z0-9-]+)\.csv\.gz$")
+
+
+_LIST, _FILE = _list_re(PREFIX), _file_re(PREFIX)
 
 
 def _tag(entry=None):
@@ -51,22 +66,33 @@ def _tag(entry=None):
     return ((entry or {}).get("fetch") or {}).get("release", TAG)
 
 
-def newest(entry=None, names=None):
+def _prefix(entry=None):
+    """The file prefix of an entry's fetch settings (default "chain-locators")."""
+    return ((entry or {}).get("fetch") or {}).get("prefix", PREFIX)
+
+
+def _waiting(prefix):
+    """The skip reason while a release has no set yet."""
+    return WAITING if prefix == PREFIX else f"waiting for the first {prefix} set (its workflow has not published one)"
+
+
+def newest(entry=None, names=None, prefix=None):
     """(date, list name) of the newest complete set. Raises uploaded.Waiting when there is none."""
+    prefix = prefix or _prefix(entry)
     try:
         names = uploaded.assets(_tag(entry)) if names is None else names
     except uploaded.Waiting:
-        raise uploaded.Waiting(WAITING) from None
-    dates = sorted((m.group(1) for m in map(_LIST.match, names) if m), reverse=True)
+        raise uploaded.Waiting(_waiting(prefix)) from None
+    dates = sorted((m.group(1) for m in map(_list_re(prefix).match, names) if m), reverse=True)
     if not dates:
-        raise uploaded.Waiting(WAITING)
-    return dates[0], f"{PREFIX}-{dates[0]}.json"
+        raise uploaded.Waiting(_waiting(prefix))
+    return dates[0], f"{prefix}-{dates[0]}.json"
 
 
 def version(entry=None):
     """The source's version, "chain-locators/chain-locators-2026-11-28". Raises uploaded.Waiting."""
     dt, _ = newest(entry)
-    return f"{_tag(entry)}/{PREFIX}-{dt}"
+    return f"{_tag(entry)}/{_prefix(entry)}-{dt}"
 
 
 def sha256_of(path):
@@ -85,7 +111,7 @@ def rows_in(path):
 def prepare(entry, national, sleep=time.sleep):
     """Make national/<id>/<id>.csv from the newest set (see the module docstring). Returns the number of stores.
     Raises uploaded.Waiting (no set yet) or RuntimeError (a file could not be downloaded or is damaged)."""
-    tag = _tag(entry)
+    tag, prefix = _tag(entry), _prefix(entry)
     dt, list_name = newest(entry)
     folder = os.path.join(national, entry["id"])
     os.makedirs(folder, exist_ok=True)
@@ -102,7 +128,7 @@ def prepare(entry, national, sleep=time.sleep):
             writer = None
             for item in files:
                 name = str(item.get("name", ""))
-                if not _FILE.match(name) or not name.startswith(f"{PREFIX}-{dt}-"):
+                if not _file_re(prefix).match(name) or not name.startswith(f"{prefix}-{dt}-"):
                     raise RuntimeError(f"the list names a file this build will not read: {name!r}")
                 path = uploaded.download(tag, name, scratch, item.get("sha256"), sleep)
                 with gzip.open(path, "rt", newline="", encoding="utf-8") as f:
@@ -116,9 +142,9 @@ def prepare(entry, national, sleep=time.sleep):
                 os.remove(path)
         os.replace(target + ".partial", target)
         with open(target + ".version", "w", encoding="utf-8") as f:
-            f.write(f"{tag}/{PREFIX}-{dt}")
+            f.write(f"{tag}/{prefix}-{dt}")
         carried = [i["chain"] for i in files if i.get("status") != "new"]
-        print(f"{entry['id']}: {count:,} stores of {len(files)} chains from {tag}/{list_name}"
+        print(f"{entry['id']}: {count:,} rows of {len(files)} files from {tag}/{list_name}"
               + (f" (kept from an earlier month: {', '.join(carried)})" if carried else ""))
         return count
     finally:
@@ -160,37 +186,44 @@ def decide(chain, ran, summary, new_file, previous, prev_date):
             "sha256": previous.get("sha256")}, why
 
 
-def publish(folder, date, ran, sleep=time.sleep):
-    """Publish the set of date from folder (see the module docstring). ran: the chain ids of this run. Returns the
-    list written."""
-    from placepacks import chains
+CHAIN_NOTES = ("Monthly store lists of big US chains read from their own store locators (placepacks/chains), read "
+               "by the pack build (source chain-locators). Not for download.")
+
+
+def publish(folder, date, ran, sleep=time.sleep, units=None, tag=TAG, prefix=PREFIX, title="Chain store locators",
+            notes=CHAIN_NOTES):
+    """Publish the set of date from folder (see the module docstring). ran: the unit ids of this run (chains, or a
+    directory's sites or states); units: every unit id there is (default: the chains of placepacks/chains); tag,
+    prefix, title and notes: the release, the file prefix and the release's title and text when it is made.
+    Returns the list written."""
+    if units is None:
+        from placepacks import chains
+        units = chains.CHAINS
     repo = uploaded.repo()
     try:
-        os.remove(uploaded._cache_path(TAG))          # a fresh file list
+        os.remove(uploaded._cache_path(tag))          # a fresh file list
     except OSError:
         pass
     try:
-        names = uploaded.assets(TAG)
+        names = uploaded.assets(tag)
     except uploaded.Waiting:
         names = {}
-        if uploaded.run_gh(["release", "view", TAG, "--repo", repo])[0] != 0:
-            _gh(["release", "create", TAG, "--repo", repo, "--title", "Chain store locators", "--latest=false",
-                 "--notes", ("Monthly store lists of big US chains read from their own store locators "
-                             "(placepacks/chains), read by the pack build (source chain-locators). Not for download.")],
+        if uploaded.run_gh(["release", "view", tag, "--repo", repo])[0] != 0:
+            _gh(["release", "create", tag, "--repo", repo, "--title", title, "--latest=false", "--notes", notes],
                 "creating the release")
     previous, prev_date = {}, ""
     try:
-        prev_date, prev_list = newest(names=names)
+        prev_date, prev_list = newest(names=names, prefix=prefix)
     except uploaded.Waiting:
         prev_list = ""
-    scratch = tempfile.mkdtemp(prefix="chain-locators-")
+    scratch = tempfile.mkdtemp(prefix=f"{prefix}-")
     try:
         if prev_list:
             # (A second run on the same day finds that day's earlier list here, and builds on it.)
-            with open(uploaded.download(TAG, prev_list, scratch, sleep=sleep), encoding="utf-8") as f:
+            with open(uploaded.download(tag, prev_list, scratch, sleep=sleep), encoding="utf-8") as f:
                 previous = {i["chain"]: i for i in json.load(f).get("files", [])}
         files, runs, uploads = [], {}, []
-        for chain in sorted(set(chains.CHAINS) | set(previous)):
+        for chain in sorted(set(units) | set(previous)):
             summary = None
             path = os.path.join(folder, f"{chain}.json")
             if os.path.exists(path):
@@ -206,12 +239,12 @@ def publish(folder, date, ran, sleep=time.sleep):
             runs[chain]["why"] = why
             if not got:
                 continue
-            name = f"{PREFIX}-{date}-{chain}.csv.gz"
+            name = f"{prefix}-{date}-{chain}.csv.gz"
             target = os.path.join(scratch, name)
             if got["status"] == "new":
                 shutil.copy(got["path"], target)
             else:
-                old = uploaded.download(TAG, got["from"], scratch, got.get("sha256"), sleep)
+                old = uploaded.download(tag, got["from"], scratch, got.get("sha256"), sleep)
                 if old != target:
                     os.replace(old, target)
             files.append({"name": name, "chain": chain, "rows": rows_in(target), "sha256": sha256_of(target),
@@ -219,21 +252,21 @@ def publish(folder, date, ran, sleep=time.sleep):
                           "carried": got["carried"]})
             uploads.append(target)
         if not files:
-            raise RuntimeError("no chain has any stores to publish yet")
-        listing = {"date": date, "release": TAG, "files": files, "runs": runs,
-                   "note": "Store lists of big US chains from their own store locators (placepacks/chains)."}
-        list_path = os.path.join(scratch, f"{PREFIX}-{date}.json")
+            raise RuntimeError("no unit has any rows to publish yet")
+        listing = {"date": date, "release": tag, "title": title, "files": files, "runs": runs, "note": notes}
+        list_path = os.path.join(scratch, f"{prefix}-{date}.json")
         with open(list_path, "w", encoding="utf-8") as f:
             json.dump(listing, f, indent=1)
         for path in uploads + [list_path]:          # the list last
-            _gh(["release", "upload", TAG, path, "--repo", repo, "--clobber"], f"uploading {os.path.basename(path)}")
+            _gh(["release", "upload", tag, path, "--repo", repo, "--clobber"], f"uploading {os.path.basename(path)}")
         # Older sets: everything of a date older than the newest KEEP.
-        dates = sorted({m.group(1) for n in names for m in [_LIST.match(n) or _FILE.match(n)] if m} | {date},
+        list_re, file_re = _list_re(prefix), _file_re(prefix)
+        dates = sorted({m.group(1) for n in names for m in [list_re.match(n) or file_re.match(n)] if m} | {date},
                        reverse=True)
         for old in dates[KEEP:]:
             for n in names:
-                if n.startswith(f"{PREFIX}-{old}"):
-                    _gh(["release", "delete-asset", TAG, n, "--repo", repo, "-y"], f"deleting {n}")
+                if n.startswith(f"{prefix}-{old}"):
+                    _gh(["release", "delete-asset", tag, n, "--repo", repo, "-y"], f"deleting {n}")
         return listing
     finally:
         shutil.rmtree(scratch, ignore_errors=True)
@@ -242,8 +275,8 @@ def publish(folder, date, ran, sleep=time.sleep):
 def table(listing):
     """A Markdown table of a published list, for the job summary."""
     used = {f["chain"]: f for f in listing.get("files", [])}
-    lines = [f"## Chain store locators, {listing.get('date')}", "",
-             "| Chain | This run | Stores found | Expected | Requests | In the set | Note |",
+    lines = [f"## {listing.get('title') or 'Chain store locators'}, {listing.get('date')}", "",
+             "| Unit | This run | Rows found | Expected | Requests | In the set | Note |",
              "|---|---|---|---|---|---|---|"]
     for chain, r in sorted(listing.get("runs", {}).items()):
         f = used.get(chain)

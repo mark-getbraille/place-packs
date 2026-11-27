@@ -60,10 +60,20 @@ CONTACT_SEP = "\x1f"
 # The sources whose contact details the build keeps, best first (placepacks/contact.py: CONTACT_SOURCES; written
 # here too, so that a copy of this file without contact.py still writes packs).
 CONTACT_ORDER = ("alltheplaces", "chain-locators", "ssa-field-offices", "nps-places", "usfs-recreation-sites",
-                 "ridb-recreation", "overture-places", "fsq-places")
+                 "ridb-recreation", "overture-places", "fsq-places", "simpleview-listings", "chambermaster-listings",
+                 "business-websites", "yp-lookups")
+# drop_duplicates with phone: the same telephone number within this many metres is the same business.
+PHONE_M = 500
 TYPED = {"points": "point_types", "areas": "area_types"}
 SOURCE_COLUMNS = ("id", "name", "short", "kind", "part", "licence", "licence_url", "attribution", "url", "version",
                   "date", "history_start", "history_note")
+
+
+def _phone_key(contact):
+    """The last 10 digits of the phone in a build-time "contact" value (phone, website, hours joined by
+    CONTACT_SEP), or "" (fewer than 10 digits: not a number to match on)."""
+    digits = "".join(c for c in (contact or "").split(CONTACT_SEP)[0] if c.isdigit())
+    return digits[-10:] if len(digits) >= 10 else ""
 
 
 def location_key(source, cls, lat, lon):
@@ -126,6 +136,7 @@ class PackWriter:
         self.counts = {}
         self.bounds = [90.0, 180.0, -90.0, -180.0]
         self.sources = {}
+        self._key_ids = None            # fill_details: {key: point id}, made at its first call
 
     # -- adding this month's records
 
@@ -246,31 +257,81 @@ class PackWriter:
                                   fmt.pack_points(fmt.micro(points)), self.month, self.month))
         self._count(source, "ranges")
 
-    def drop_duplicates(self, source, against, metres=100, carry=False):
+    def drop_duplicates(self, source, against, metres=100, carry=False, phone=False):
         """Remove the points of source that another source in against already has: the same normalised name within
         metres (the national transit stops against each agency's GTFS feed). With carry, the removed point's
         details go to the point that stays (the nearest match), filling only what it lacks: its phone, website
         and opening hours (the build-time "contact" column) and its note (added after the kept point's own note).
         So a government list's details (Recreation.gov's phone, a park's hours) reach the agency's own point
-        without listing the place twice. Returns the number removed."""
+        without listing the place twice. With phone, a point with the same telephone number (its last 10 digits)
+        within PHONE_M metres is a match first, whatever its name ("Joe's Diner" and "Joe's Diner & Grill"), then
+        the name within metres as before (the tourism boards' and chambers' listings, placepacks/directories).
+        Returns the number removed."""
         from placepacks.lookup import normal_name
         tol = int(metres / 0.111)                       # microdegrees, about metres at the equator
-        others = {}
+        ptol = int(PHONE_M / 0.111)
+        others, phones = {}, {}
         marks = ",".join("?" * len(against))
-        for pid, name, lat, lon in self.db.execute(f"SELECT id, name, lat, lon FROM points WHERE source IN "
-                                                   f"({marks})", list(against)):
+        for pid, name, lat, lon, contact in self.db.execute(f"SELECT id, name, lat, lon, contact FROM points WHERE "
+                                                            f"source IN ({marks})", list(against)):
             others.setdefault(normal_name(name), []).append((lat, lon, pid))
+            digits = _phone_key(contact) if phone else ""
+            if digits:
+                phones.setdefault(digits, []).append((lat, lon, pid))
         gone = []
-        for pid, name, lat, lon in self.db.execute("SELECT id, name, lat, lon FROM points WHERE source = ?",
-                                                    (source,)).fetchall():
-            near = [(abs(lat - a) + abs(lon - b), kept) for a, b, kept in others.get(normal_name(name), [])
-                    if abs(lat - a) <= tol and abs(lon - b) <= tol]
+        for pid, name, lat, lon, contact in self.db.execute("SELECT id, name, lat, lon, contact FROM points WHERE "
+                                                            "source = ?", (source,)).fetchall():
+            near = []
+            digits = _phone_key(contact) if phone else ""
+            if digits:
+                near = [(abs(lat - a) + abs(lon - b), kept) for a, b, kept in phones.get(digits, [])
+                        if abs(lat - a) <= ptol and abs(lon - b) <= ptol]
+            if not near:
+                near = [(abs(lat - a) + abs(lon - b), kept) for a, b, kept in others.get(normal_name(name), [])
+                        if abs(lat - a) <= tol and abs(lon - b) <= tol]
             if near:
                 gone.append((pid,))
                 if carry:
                     self._carry(pid, min(near)[1])
         self.db.executemany("DELETE FROM points WHERE id = ?", gone)
         return len(gone)
+
+    def fill_details(self, source, key, contact, note=None):
+        """Give the point listed now under key (any source's: "overture-places:08f2...") the details of a
+        details-only source (placepacks/details.py: the business's own homepage, Yellow Pages lookups), filling
+        only what the point lacks: each of phone, website and opening hours it has no value for (the business's
+        own sources always come first), and the note after the point's own. The details are cleaned as the
+        details-only source's (placepacks/contact.py: never for a name that is a person's or an individual's own
+        office). Returns True when something was added. The keys are looked up in one table made at the first
+        call (a details source is read after every other source of the part: placepacks/build.py)."""
+        if self._key_ids is None:
+            self._key_ids = {k: i for i, k in self.db.execute("SELECT id, key FROM points")}
+        pid = self._key_ids.get(key)
+        if pid is None:
+            return False
+        name, kind, brand, mine, own_note = self.db.execute(
+            "SELECT name, type, brand, contact, note FROM points WHERE id = ?", (pid,)).fetchone()
+        from placepacks import contact as contacts
+        brand = (brand or "").split("|")[0]
+        if not contacts.allowed(source, name, kind, brand):
+            return False                    # a person's name or an individual's own office: nothing is added
+        got = contacts.clean(source, name, kind, (contact or {}).get("phone"), (contact or {}).get("website"),
+                             (contact or {}).get("opening_hours"), brand=brand)
+        values = ((mine or "").split(CONTACT_SEP) + ["", "", ""])[:3]
+        added = False
+        for i, field in enumerate(contacts.CONTACT_FIELDS):
+            if got.get(field) and not values[i]:
+                values[i], added = got[field], True
+        text = own_note
+        if note and (not own_note or note not in own_note):
+            text = f"{own_note}; {note}" if own_note else note
+            if len(text) > 1200:
+                text = text[:1200].rsplit(" ", 1)[0] + " ..."
+            added = added or text != own_note
+        if added:
+            self.db.execute("UPDATE points SET contact = ?, note = ? WHERE id = ?",
+                            (CONTACT_SEP.join(values) if any(values) else None, text, pid))
+        return added
 
     def _carry(self, removed, kept):
         """Give the point kept the details of the point removed that it lacks (drop_duplicates, carry): each of

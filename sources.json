@@ -1,5 +1,5 @@
 {
- "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). Two exceptions, by the owner's decisions of 26 November 2026: chain-locators, facts read from big chains' own store locators (licence store-locator-facts), and government facts used regardless of a copy's missing licence or a site's own terms (licence government-facts: the Social Security offices' ArcGIS copy, Recreation.gov's RIDB export, California's health and human services files). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
+ "note": "The sources of the place packs. Every accepted source has an open licence that allows redistribution (checked November 2026; check again when a source changes its terms). Three exceptions, by the owner's decisions of 26 November 2026: chain-locators, facts read from big chains' own store locators (licence store-locator-facts); government facts used regardless of a copy's missing licence or a site's own terms (licence government-facts: the Social Security offices' ArcGIS copy, Recreation.gov's RIDB export, California's health and human services files); and facts from local directories and lookups (licence directory-facts: tourism boards' Simpleview listings, chambers' ChamberMaster directories, businesses' own homepages, Yellow Pages lookups of businesses already in the packs). url fields marked verify: true were written from the publisher's documented pattern and must be checked at the first build (a failed download only leaves that layer out and is listed in the build summary). Placeholders: {geofabrik} {code} {fips} {pruid} {name} and the settings below.",
  "settings": {
   "tiger_year": "2025",
   "tiger_seed_years": [
@@ -168,6 +168,11 @@
   "government-facts": {
    "name": "Facts published by US government agencies, used by the owner's decision of 26 November 2026 even where the copy carries no licence or the site's own terms or robots.txt say otherwise (the Esri-hosted copy of the Social Security Administration's field office list, Recreation.gov's RIDB export, the California Health and Human Services open data portal). Federal works are public domain (17 U.S.C. 105) and facts are not protected by copyright in the United States (Feist Publications v. Rural Telephone Service, 499 U.S. 340, 1991); state agencies' facility lists are public records. Only facts are kept (names, positions, addresses, public telephone numbers, hours, accessibility), collected politely (identified, rate-limited, never past a refusal or a challenge)",
    "url": "https://www.usa.gov/government-works",
+   "file": ""
+  },
+  "directory-facts": {
+   "name": "Facts read from public listing pages: tourism boards' visitor listings (Simpleview), chambers of commerce's public member directories (ChamberMaster), businesses' own homepages, and Yellow Pages lookups of businesses already in the packs (names, street addresses, positions, telephone numbers, websites, opening hours, categories, accessibility notes). The sites grant no licence; facts are not protected by copyright in the United States (Feist Publications v. Rural Telephone Service, 499 U.S. 340, 1991). Collected by the owner's decisions of 26 November 2026, politely (identified, rate-limited, never past a refusal, a challenge or a login); only facts are kept, never reviews, ratings, descriptions, photos, e-mail addresses or people's names, and one-person and home businesses are left out",
+   "url": "https://supreme.justia.com/cases/federal/us/499/340/",
    "file": ""
   }
  },
@@ -5066,6 +5071,43 @@
    "history": "From the first build that has a set (December 2026 at the earliest), month by month, keyed by the chain and its own store number. A chain whose collection fails or is blocked in a month keeps its stores from the previous set (up to three months in a row), so a failed run never closes stores.",
    "contact": "The phone number, the store's own web page and the opening hours the chain's locator gives (OpenStreetMap syntax), cleaned by placepacks/contact.py. No e-mail address is ever read.",
    "notes": "Collected once a month by the chain-locators workflow (the 28th), one job per chain: Burger King, Jack in the Box, Avis, Budget, Wyndham's hotel brands (Days Inn, Super 8, La Quinta, Baymont, Microtel, Travelodge, Ramada, Wingate and others), Buick, GMC, Ford and Lincoln dealers. Each chain's collector (placepacks/chains) reads its own store-locator API or its sitemap of store pages with schema.org data, with an identified User-Agent, at least a second between requests, a request budget, and a clean stop when a site refuses (recorded as blocked). The set is kept in this repository's release \"chain-locators\" (the newest two); the pack build's prepare job reads the newest set once and splits it per region. A store that All The Places also has (the same name within 100 m) is left to All The Places. Chains that refused even a first check (McDonald's, Jersey Mike's, YMCA, Planet Fitness, Health Mart, Citgo, Choice Hotels, H&R Block, Best Western, Stellantis dealers, Fastenal, Tractor Supply, Goodwill) are listed in placepacks/chains/__init__.py; individuals' offices (insurance agents) are never collected. Until the first set is there, the source is skipped (waiting for the first chain-locators set)."
+  },
+  {
+   "id": "yp-lookups",
+   "name": "Yellow Pages lookups (phone numbers, websites and opening hours of businesses already in the packs)",
+   "short": "Yellow Pages lookups",
+   "part": "businesses",
+   "countries": [
+    "US"
+   ],
+   "licence": "directory-facts",
+   "attribution": "Phone numbers, websites and opening hours looked up on yellowpages.com for businesses already listed by other sources (tools/yp_lookup.py); facts only.",
+   "url": "https://www.yellowpages.com",
+   "reader": "details",
+   "kind": "points",
+   "fetch": {
+    "method": "release_latest",
+    "release": "uploaded-sources",
+    "prefix": "yp-lookups"
+   },
+   "member": "*.csv",
+   "split_box": {
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "columns": {
+    "key": "key",
+    "lat": "lat",
+    "lon": "lon"
+   },
+   "contact_columns": {
+    "phone": "phone",
+    "website": "website",
+    "opening_hours": "opening_hours"
+   },
+   "history": "No places of its own: details for businesses other sources list, from the first build that has a yp-lookups file. Each file holds every lookup made so far, the newest result of each.",
+   "contact": "The telephone number, the business's own website (social-media pages are dropped) and the opening hours (OpenStreetMap syntax) of the one search result that matches: a name at least 85% alike AND the same street address (normalised) as an address point within 75 m of the place, or coordinates within 75 m. Cleaned by placepacks/contact.py; added only to the places that lack them, after every other source (the lowest priority).",
+   "notes": "The owner's decision (26 November 2026, night): Yellow Pages is used only to LOOK UP details (phone, hours, website) for businesses already in the packs from other sources, never to copy its directory. Facts only: never a review, a rating, a description, a photo, an e-mail address or a person's name; one-person and home businesses (a person's name, an individual's office, a result without a street address) are skipped. The job (tools/yp_lookup.py) runs slowly in the background from the owner's cloud session, not from GitHub: one search per business, one request every 3 to 4 seconds, at most 25,000 a day, states in order of population, the listing's own page read for hours only when the results page has none (a quarter of the searches at most). It stops at once on any refusal or anti-bot page and does not start again by itself; no CAPTCHA, browser imitation or other connection is ever used. yellowpages.com's robots.txt (read 27 November 2026) disallows \"/search*\" for every program; the owner decided to make these lookups all the same (his decision and risk). Results are uploaded at the end of each day to this repository's release \"uploaded-sources\" as yp-lookups-<YYYYMMDD>.csv.gz (the previous file merged in; the newest two kept); the build reads the newest. Until the first file is there, the source is skipped."
   },
   {
    "id": "ny-thruway-travel-plazas",

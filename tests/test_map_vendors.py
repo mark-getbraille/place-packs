@@ -150,6 +150,32 @@ def test_wikidata_seeds_and_shards():
     assert "colleges-8" in shards and "health-3" in shards and "showcase" in shards and len(shards) <= 256
 
 
+
+def test_wikidata_too_many_requests_waits_then_skips_the_kind():
+    """Wikidata's 429 (several shards asking at once): wait and ask again; still refused: skip the kind, no crash."""
+    answer = {"results": {"bindings": [
+        {"item": {"value": "http://www.wikidata.org/entity/Q999902"}, "itemLabel": {"value": "Madeup Museum"},
+         "site": {"value": "https://www.madeupmuseum.example/"}, "coord": {"value": "Point(-71.5 43.5)"}}]}}
+
+    class Busy(Web):
+        def __init__(self, refusals):
+            super().__init__({discover.WDQS: (200, answer)})
+            self.refusals = refusals
+
+        def __call__(self, request, timeout):
+            if self.refusals:
+                self.refusals -= 1
+                self.asked.append(request.full_url)
+                return 429, {}, b"Too many requests"
+            return super().__call__(request, timeout)
+
+    waits = []
+    orgs = discover.wikidata_orgs(client(Busy(2)), ["hospital"], sleep=waits.append)
+    assert [o["place_key"] for o in orgs] == ["wikidata:Q999902"] and waits == list(discover.WIKIDATA_WAITS[:2])
+    waits = []
+    assert discover.wikidata_orgs(client(Busy(99)), ["hospital"], sleep=waits.append) == []
+    assert waits == list(discover.WIKIDATA_WAITS)
+
 MAZE = "https://api.mazemap.com/api/"
 
 

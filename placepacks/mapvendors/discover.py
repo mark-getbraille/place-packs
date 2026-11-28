@@ -123,15 +123,32 @@ def wikidata_query(classes, limit=WIKIDATA_LIMIT):
             "wikibase:language \"en\". } } LIMIT " + str(limit))
 
 
-def wikidata_orgs(client, kinds):
+WIKIDATA_WAITS = (60, 180, 420)     # seconds to wait after Wikidata's "too many requests" before asking again
+
+
+def wikidata_orgs(client, kinds, sleep=time.sleep):
     """The organisations of the kinds from Wikidata: one query per kind (WIKIDATA_KINDS), each item once."""
     out, seen = [], set()
     for kind in kinds:
         url = WDQS + "?" + urllib.parse.urlencode({"query": wikidata_query(WIKIDATA_KINDS[kind]), "format": "json"})
-        try:
-            answer = client.json(url, headers={"Accept": "application/sparql-results+json"})
-        except (NotFound, RequestFailed) as e:
-            print(f"Wikidata {kind}: {e}", flush=True)
+        answer = None
+        for wait in WIKIDATA_WAITS + (None,):
+            try:
+                answer = client.json(url, headers={"Accept": "application/sparql-results+json"})
+                break
+            except Blocked as e:
+                # Several shards ask at the same moment and Wikidata says "too many requests" (429): wait as asked
+                # and try again a few times; after that, or for another refusal, this kind is skipped, not the run.
+                if "HTTP 429" in str(e) and wait is not None:
+                    print(f"Wikidata {kind}: too many requests; waiting {wait} s", flush=True)
+                    sleep(wait)
+                    continue
+                print(f"Wikidata {kind}: {e}", flush=True)
+                break
+            except (NotFound, RequestFailed) as e:
+                print(f"Wikidata {kind}: {e}", flush=True)
+                break
+        if answer is None:
             continue
         for b in (answer.get("results") or {}).get("bindings") or []:
             qid = b["item"]["value"].rsplit("/", 1)[-1]

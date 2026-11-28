@@ -176,6 +176,18 @@ def test_wikidata_too_many_requests_waits_then_skips_the_kind():
     assert discover.wikidata_orgs(client(Busy(99)), ["hospital"], sleep=waits.append) == []
     assert waits == list(discover.WIKIDATA_WAITS)
 
+
+def test_merge_keeps_a_map_seen_without_an_id():
+    """A vendor seen on a site without a map id (kept per organisation) does not break the month's list."""
+    found = [{"vendor": "concept3d", "map_id": "", "org": "Madeup College", "homepage": "https://madeup.example",
+              "url": "https://map.concept3d.com/", "seen": "2026-11-28"},
+             {"vendor": "concept3d", "map_id": "123", "org": "Other College", "homepage": "https://other.example",
+              "url": "https://map.concept3d.com/?id=123", "seen": "2026-11-28"}]
+    listing = discover.merge([{"found": found}], today=datetime.date(2026, 11, 28))
+    assert [m["map_id"] for m in listing["maps"]] == ["", "123"]
+    again = discover.merge([{"found": found}], previous=listing, today=datetime.date(2026, 12, 28))
+    assert len(again["maps"]) == 2
+
 MAZE = "https://api.mazemap.com/api/"
 
 

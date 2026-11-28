@@ -373,7 +373,7 @@ def merge(results, previous=None, today=None):
 
     def ident(m):
         """A map's identity in the list."""
-        return (m["vendor"], m["map_id"] or m.get("homepage", ""))
+        return (m["vendor"], m.get("map_id") or m.get("homepage", ""))
 
     for m in (previous or {}).get("maps", []):
         if m.get("last_seen", "") >= cutoff:
@@ -386,6 +386,7 @@ def merge(results, previous=None, today=None):
             merged["first_seen"] = old.get("first_seen") or m.get("seen", today.isoformat())
             merged["last_seen"] = m.get("seen", today.isoformat())
             merged.pop("seen", None)
+            merged.setdefault("map_id", "")    # a vendor seen without an id: the empty id was filtered out above
             maps[key] = merged
     unknown = {}
     for u in (previous or {}).get("unknown", []):
@@ -394,7 +395,7 @@ def merge(results, previous=None, today=None):
         for u in r.get("unknown", []):
             unknown.setdefault(u["host"], u)
     blocked = [b for r in results for b in r.get("blocked", [])]
-    return {"date": today.isoformat(), "maps": sorted(maps.values(), key=lambda m: (m["vendor"], m["map_id"],
+    return {"date": today.isoformat(), "maps": sorted(maps.values(), key=lambda m: (m["vendor"], m.get("map_id", ""),
                                                                                     m.get("org", ""))),
             "unknown": sorted(unknown.values(), key=lambda u: u["host"]), "blocked": blocked}
 
